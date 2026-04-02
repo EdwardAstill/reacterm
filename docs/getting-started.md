@@ -8,7 +8,7 @@ Storm is a terminal UI framework built on React. It renders to a cell-based buff
 npm install @orchetron/storm-tui react
 ```
 
-Requires Node.js 18+ and React 18 or 19. TypeScript is recommended but not required.
+Requires Node.js 20+ and React 18 or 19. TypeScript is recommended but not required.
 
 ```bash
 # With TypeScript (recommended)

@@ -51,7 +51,7 @@ Plus: `.storm.css` hot-reload. Plugin system with async setup + scoping. i18n. D
 
 ## Get started in 5 minutes
 
-Requires Node.js 18+ and React 18 or 19.
+Requires Node.js 20+ and React 18 or 19.
 
 ```bash
 npm install @orchetron/storm-tui react
