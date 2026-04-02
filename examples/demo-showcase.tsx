@@ -35,6 +35,7 @@ import {
   useTerminal,
   useTui,
   useInterval,
+  useCleanup,
   // Widgets
   MessageBubble,
   ApprovalPrompt,
@@ -535,6 +536,12 @@ function App() {
 
   // Toast state
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Interval ref for streaming simulation cleanup
+  const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  useCleanup(() => {
+    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+  });
   const toastIdRef = useRef(0);
 
   function addToast(message: string, type: "info" | "success" | "warning" | "error" = "success") {
@@ -672,10 +679,12 @@ function App() {
       setIsStreaming(true);
     });
 
-    const streamInterval = setInterval(() => {
+    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+    streamIntervalRef.current = setInterval(() => {
       wordIndex++;
       if (wordIndex >= words.length) {
-        clearInterval(streamInterval);
+        clearInterval(streamIntervalRef.current!);
+        streamIntervalRef.current = null;
         flushSync(() => {
           setUserMessages((prev) => {
             const updated = [...prev];

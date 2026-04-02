@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import {
   render, Box, Text, ScrollView, TextInput, Spinner, Spacer,
-  StreamingText, useInput, useTerminal, useTui,
+  StreamingText, useInput, useTerminal, useTui, useCleanup,
 } from "../src/index.js";
 
 interface Message {
@@ -28,6 +28,11 @@ function Chat() {
   const [streamText, setStreamText] = useState("");
   const [tokens, setTokens] = useState(0);
   const [turns, setTurns] = useState(0);
+  const streamIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useCleanup(() => {
+    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+  });
 
   useInput(useCallback((e) => {
     if (e.key === "c" && e.ctrl) app.unmount();
@@ -50,9 +55,11 @@ function Chat() {
     // Simulate streaming response token by token
     const response = `I received your message: "${text.trim()}". This response streams token by token, demonstrating Storm's StreamingText component with a blinking cursor.`;
     let i = 0;
-    const interval = setInterval(() => {
+    if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
+    streamIntervalRef.current = setInterval(() => {
       if (i >= response.length) {
-        clearInterval(interval);
+        clearInterval(streamIntervalRef.current!);
+        streamIntervalRef.current = null;
         flushSync(() => {
           setMessages(prev => [...prev, { id: nextId++, role: "assistant", text: response }]);
           setStreaming(false);

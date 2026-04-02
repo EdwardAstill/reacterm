@@ -275,3 +275,66 @@ Since these are defaults, users can still override key bindings per-component:
   {/* These bindings override vim-mode's defaults */}
 </Select>
 ```
+
+## Async Setup
+
+Plugin setup can be async -- useful for loading config from files, databases, or APIs:
+
+```tsx
+const myPlugin: StormPlugin = {
+  name: "my-plugin",
+  async setup(context, config) {
+    const data = await fetch(config.apiUrl);
+    context.bus.emit("my-plugin:ready", data);
+  },
+};
+```
+
+When using async setup, register plugins via `pluginManager.setupAll(context)` to ensure each async setup is awaited before the next plugin initializes. If you use `register()` directly with an async setup, the promise is fire-and-forget with errors logged to stderr.
+
+## Plugin Communication (PluginBus)
+
+Plugins communicate via a shared message bus:
+
+```tsx
+// Plugin A: publish
+context.bus.emit("theme:changed", { name: "dark" });
+
+// Plugin B: subscribe
+const unsub = context.bus.on("theme:changed", (data) => {
+  console.log("Theme changed to:", data.name);
+});
+```
+
+The bus also supports one-shot subscriptions via `context.bus.once(channel, handler)`. All handlers are called synchronously on emit. Errors in handlers are caught and logged to stderr without interrupting other subscribers.
+
+## Scoped Plugins
+
+Restrict a plugin's effect to a specific subtree:
+
+```tsx
+const sidebarPlugin: StormPlugin = {
+  name: "sidebar-styles",
+  scope: "sidebar",
+  onComponentProps(name, props) {
+    return { ...props, borderStyle: "round" };
+  },
+};
+
+// In your app, push the scope:
+pluginManager.pushScope("sidebar");
+// ... render sidebar components (plugin applies here)
+pluginManager.popScope();
+```
+
+When a plugin has a `scope` set, its `onComponentProps` hook only applies while that scope is active on the scope stack. Plugins without a scope affect all components (the default behavior).
+
+## Plugin Discovery
+
+Query loaded plugins at runtime:
+
+```tsx
+pluginManager.hasPlugin("vim-mode"); // boolean
+pluginManager.getPlugins(); // [{ name, priority, failed, config }]
+pluginManager.getPluginConfig<VimConfig>("vim-mode");
+```

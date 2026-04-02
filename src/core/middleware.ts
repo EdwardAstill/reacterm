@@ -16,16 +16,24 @@ export interface RenderMiddleware {
   readonly name: string;
 
   /**
+   * Execution priority. Lower values run first. Default: 100.
+   * When two middlewares have equal priority, registration order is preserved.
+   */
+  readonly priority?: number;
+
+  /**
    * Called after painting, before diff. Receives the buffer and can modify it.
    * Return the buffer (same or new) to pass to the next middleware.
+   * `shared` is a key-value store for inter-middleware communication.
    */
-  onPaint?: (buffer: ScreenBuffer, width: number, height: number) => ScreenBuffer;
+  onPaint?: (buffer: ScreenBuffer, width: number, height: number, shared: Map<string, unknown>) => ScreenBuffer;
 
   /**
    * Called after diff output is computed, before writing to terminal.
    * Can inspect or modify the ANSI output string.
+   * `shared` is a key-value store for inter-middleware communication.
    */
-  onOutput?: (output: string) => string;
+  onOutput?: (output: string, shared: Map<string, unknown>) => string;
 
   /**
    * Called on each layout computation. Can inspect the layout tree.
@@ -33,17 +41,38 @@ export interface RenderMiddleware {
   onLayout?: (rootWidth: number, rootHeight: number) => void;
 }
 
+/** Default priority for middlewares that don't specify one. */
+const DEFAULT_MW_PRIORITY = 100;
+
 export class MiddlewarePipeline {
   private middlewares: RenderMiddleware[] = [];
+  /** Tracks registration order for stable sorting when priorities are equal. */
+  private registrationOrder = new Map<string, number>();
+  private registrationCounter = 0;
 
-  /** Register a middleware. Later registrations run later in the chain. */
+  /** Shared key-value store for inter-middleware communication. */
+  readonly shared = new Map<string, unknown>();
+
+  /** Sort middlewares by priority (lower first), then registration order for ties. */
+  private sortMiddlewares(): void {
+    this.middlewares.sort((a, b) => {
+      const priDiff = (a.priority ?? DEFAULT_MW_PRIORITY) - (b.priority ?? DEFAULT_MW_PRIORITY);
+      if (priDiff !== 0) return priDiff;
+      return (this.registrationOrder.get(a.name) ?? 0) - (this.registrationOrder.get(b.name) ?? 0);
+    });
+  }
+
+  /** Register a middleware. Sorted by priority (lower runs first); equal priority preserves registration order. */
   use(mw: RenderMiddleware): void {
+    this.registrationOrder.set(mw.name, this.registrationCounter++);
     this.middlewares.push(mw);
+    this.sortMiddlewares();
   }
 
   /** Remove a middleware by name. */
   remove(name: string): void {
     this.middlewares = this.middlewares.filter(m => m.name !== name);
+    this.registrationOrder.delete(name);
   }
 
   /** Check if a middleware with the given name is registered. */
@@ -56,28 +85,55 @@ export class MiddlewarePipeline {
     return this.middlewares.length;
   }
 
-  /** Run all onPaint hooks, threading the buffer through each. */
+  /** Middlewares that have thrown — skipped on subsequent frames. */
+  private failed = new Set<string>();
+
+  /** Run all onPaint hooks, threading the buffer through each. Errors are isolated. */
   runPaint(buffer: ScreenBuffer, width: number, height: number): ScreenBuffer {
     let buf = buffer;
     for (const mw of this.middlewares) {
-      if (mw.onPaint) buf = mw.onPaint(buf, width, height);
+      if (this.failed.has(mw.name)) continue;
+      if (mw.onPaint) {
+        try {
+          buf = mw.onPaint(buf, width, height, this.shared);
+        } catch (err) {
+          this.failed.add(mw.name);
+          process.stderr.write(`[storm-tui] Middleware "${mw.name}" error in onPaint: ${(err as Error).message}\n`);
+        }
+      }
     }
     return buf;
   }
 
-  /** Run all onOutput hooks, threading the ANSI string through each. */
+  /** Run all onOutput hooks, threading the ANSI string through each. Errors are isolated. */
   runOutput(output: string): string {
     let out = output;
     for (const mw of this.middlewares) {
-      if (mw.onOutput) out = mw.onOutput(out);
+      if (this.failed.has(mw.name)) continue;
+      if (mw.onOutput) {
+        try {
+          out = mw.onOutput(out, this.shared);
+        } catch (err) {
+          this.failed.add(mw.name);
+          process.stderr.write(`[storm-tui] Middleware "${mw.name}" error in onOutput: ${(err as Error).message}\n`);
+        }
+      }
     }
     return out;
   }
 
-  /** Run all onLayout hooks (notification only, no return value). */
+  /** Run all onLayout hooks (notification only, no return value). Errors are isolated. */
   runLayout(rootWidth: number, rootHeight: number): void {
     for (const mw of this.middlewares) {
-      if (mw.onLayout) mw.onLayout(rootWidth, rootHeight);
+      if (this.failed.has(mw.name)) continue;
+      if (mw.onLayout) {
+        try {
+          mw.onLayout(rootWidth, rootHeight);
+        } catch (err) {
+          this.failed.add(mw.name);
+          process.stderr.write(`[storm-tui] Middleware "${mw.name}" error in onLayout: ${(err as Error).message}\n`);
+        }
+      }
     }
   }
 }
@@ -113,7 +169,7 @@ export function darkenColor(color: number, factor: number): number {
 export function scanlineMiddleware(opacity?: number): RenderMiddleware {
   return {
     name: "scanline",
-    onPaint(buffer, width, height) {
+    onPaint(buffer, width, height, _shared) {
       const dim = opacity ?? 0.15;
       for (let y = 0; y < height; y += 2) {
         for (let x = 0; x < width; x++) {
@@ -173,7 +229,7 @@ export function debugBorderMiddleware(color?: number): RenderMiddleware {
   const fg = color ?? 0xff0000;
   return {
     name: "debug-border",
-    onPaint(buffer, width, height) {
+    onPaint(buffer, width, height, _shared) {
       // Top and bottom rows
       for (let x = 0; x < width; x++) {
         buffer.setCell(x, 0, { char: "─", fg, bg: -1, attrs: 0, ulColor: -1 });

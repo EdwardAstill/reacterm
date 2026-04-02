@@ -10,3 +10,5 @@ Thumbs.db
 playground/node_modules/
 playground/.tmp-example.tsx
 *.tgz
+host_key
+host_key.pub

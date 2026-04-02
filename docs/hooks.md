@@ -282,6 +282,31 @@ function CustomSpinner() {
 
 ---
 
+### useTick
+
+The recommended hook for periodic updates. Two modes:
+
+**Reactive** (default) -- triggers React re-render so computed values in JSX update:
+```tsx
+const tickRef = useRef(0);
+useTick(500, () => { tickRef.current++; });
+return <Text>{tickRef.current}</Text>; // updates every 500ms
+```
+
+**Imperative** -- cell-level repaint only, zero React overhead:
+```tsx
+useTick(80, (tick) => {
+  textRef.current.text = FRAMES[tick % FRAMES.length];
+}, { reactive: false });
+```
+
+Options: `{ active?: boolean; reactive?: boolean }`
+Returns: current tick count
+
+**Signature:** `useTick(intervalMs: number, callback: (tick: number) => void, options?: UseTickOptions) => number`
+
+---
+
 ### useInterval
 
 Repeating timer with automatic cleanup. The callback is stored in a ref so it always accesses the latest closure values. The `active` option pauses/resumes without destroying the timer.
@@ -323,6 +348,32 @@ function SplashScreen({ onDone }: { onDone: () => void }) {
 ```
 
 **Signature:** `useTimeout(callback: () => void, delayMs: number) => void`
+
+---
+
+## Buffer Access
+
+### useBuffer
+
+Direct cell-level read/write access to the screen buffer. For custom rendering that React components can't express.
+
+```tsx
+const { writeCell, readCell, requestRender } = useBuffer();
+
+// Write a character at absolute screen coordinates
+writeCell(10, 5, "\u2588", "#FF0000");
+
+// Read what's currently at a position
+const cell = readCell(10, 5); // { char, fg, bg }
+
+// Trigger a repaint (no React reconciliation)
+requestRender();
+```
+
+**Signature:** `useBuffer() => BufferAccess` where `BufferAccess` has:
+- `writeCell(x, y, char, fg?, bg?)` -- write a single character at absolute coordinates
+- `readCell(x, y)` -- read cell content, returns `{ char, fg, bg } | null`
+- `requestRender()` -- trigger a repaint without React reconciliation
 
 ---
 

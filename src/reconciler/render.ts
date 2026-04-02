@@ -262,6 +262,7 @@ export function render(
   setCustomElementLifecycleHooks(
     (type, element) => pluginManager.notifyCustomElementMount(type, element),
     (type, element) => pluginManager.notifyCustomElementUnmount(type, element),
+    (type, element, props) => pluginManager.notifyCustomElementUpdate(type, element, props),
   );
   const middlewarePipeline = new MiddlewarePipeline();
   // Wire middleware onOutput hooks into the screen's output path
@@ -282,7 +283,7 @@ export function render(
   let fullPaintWindowStart = 0;
   let lastStateWarnTime = 0;
   let stateWarnProdCount = 0;
-  const STATE_WARN_THRESHOLD = 10;      // reconciliations per second
+  const STATE_WARN_THRESHOLD = 15;      // reconciliations per second
   const STATE_WARN_COOLDOWN = 5000;     // ms between warnings
   const STATE_WARN_MAX_PROD = 3;        // max warnings in production
 

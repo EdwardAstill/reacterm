@@ -59,6 +59,7 @@ export { useLocale } from "./useLocale.js";
 export { useDirection } from "./useDirection.js";
 export { useTransition, type TransitionConfig, type UseTransitionResult } from "./useTransition.js";
 export { useStyleSheet } from "./useStyleSheet.js";
+export { useBuffer, type BufferAccess } from "./useBuffer.js";
 
 // ── Headless behavior hooks ────────────────────────────────────────
 export {

@@ -345,6 +345,7 @@ export { useReducedMotion } from "./hooks/useReducedMotion.js";
 export { useAdaptive } from "./hooks/useAdaptive.js";
 export { usePluginManager } from "./hooks/usePlugin.js";
 export { usePluginProps } from "./hooks/usePluginProps.js";
+export { useBuffer, type BufferAccess } from "./hooks/useBuffer.js";
 export { useAnnounce, type UseAnnounceResult } from "./hooks/useAnnounce.js";
 export { useTween, type UseTweenResult } from "./hooks/useTween.js";
 export { useTransition, type TransitionConfig, type UseTransitionResult } from "./hooks/useTransition.js";
@@ -531,6 +532,7 @@ export { AnimationScheduler, type AnimationCallback } from "./core/animation-sch
 
 export {
   PluginManager,
+  PluginBus,
   type StormPlugin,
   type PluginContext,
   type CustomElementHandler,
@@ -644,6 +646,10 @@ export {
   notifyResizeObservers,
   type ResizeObserverEntry,
 } from "./core/resize-observer.js";
+
+// ── SSH ────────────────────────────────────────────────────────────
+
+export { StormSSHServer, type StormSSHOptions, type SSHSession, type SSHEvent } from "./ssh/index.js";
 
 // ── Testing ─────────────────────────────────────────────────────────
 

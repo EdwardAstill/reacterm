@@ -131,6 +131,28 @@ function MyComponent() {
 }
 ```
 
+### useTick()
+
+The recommended hook for periodic updates (polling, animation, live metrics). Two modes:
+
+```tsx
+// Reactive (default) -- triggers React re-render
+const tickRef = useRef(0);
+useTick(500, () => { tickRef.current++; });
+return <Text>{tickRef.current}</Text>;
+
+// Imperative -- cell-level repaint, zero React overhead
+useTick(80, (tick) => {
+  textRef.current.text = FRAMES[tick % FRAMES.length];
+}, { reactive: false });
+```
+
+**Options:**
+- `active` (default: `true`) -- pause/resume the timer
+- `reactive` (default: `true`) -- when true, triggers a React re-render; when false, calls `requestRender()` for cell-level repaint only
+
+**Returns:** current tick count
+
 ---
 
 ## Tier 1 -- Common
@@ -354,6 +376,25 @@ function App() {
 }
 ```
 
+### useBuffer()
+
+Direct cell-level read/write access to the screen buffer. For custom rendering that bypasses the normal layout/paint pipeline.
+
+```tsx
+const { writeCell, readCell, requestRender } = useBuffer();
+
+// Write a character at absolute screen coordinates
+writeCell(10, 5, "\u2588", "#FF0000");
+
+// Read what's currently at a position
+const cell = readCell(10, 5); // { char, fg, bg }
+
+// Trigger a repaint (no React reconciliation)
+requestRender();
+```
+
+**Returns:** `BufferAccess` with `writeCell`, `readCell`, and `requestRender`.
+
 ### useMeasure()
 
 Read layout dimensions of a rendered element by ID.
@@ -544,6 +585,7 @@ const calendar = useCalendarBehavior({
 | Manage focus programmatically | `useFocusManager()` |
 | Run code on an interval | `useInterval()` |
 | Run code after a delay | `useTimeout()` |
+| Run a periodic callback (polling, animation) | `useTick()` |
 | Animate frames (spinner, etc.) | `useAnimation()` |
 | Tween a numeric value | `useTween()` |
 | Scroll content imperatively | `useScroll()` |
@@ -551,6 +593,7 @@ const calendar = useCalendarBehavior({
 | Add fuzzy command search | `useCommandPalette()` |
 | Show an inline yes/no prompt | `useInlinePrompt()` |
 | Display toast notifications | `useNotification()` |
+| Write/read cells directly on the screen buffer | `useBuffer()` |
 | Read element layout dimensions | `useMeasure()` |
 | Handle paste events | `usePaste()` |
 | Handle mouse events | `useMouse()` |

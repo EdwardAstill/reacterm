@@ -35,20 +35,24 @@ type StormHostConfig = Parameters<typeof Reconciler>[0];
 // Module-level because hostConfig is a static singleton.
 
 type ElementLifecycleHook = (type: string, element: unknown) => void;
+type ElementUpdateHook = (type: string, element: unknown, props: Record<string, unknown>) => void;
 let _onCustomElementMount: ElementLifecycleHook | null = null;
 let _onCustomElementUnmount: ElementLifecycleHook | null = null;
+let _onCustomElementUpdate: ElementUpdateHook | null = null;
 
 /**
- * Set callbacks for custom element mount/unmount lifecycle events.
+ * Set callbacks for custom element mount/unmount/update lifecycle events.
  * Called by render() to connect the PluginManager's lifecycle hooks.
  * @internal
  */
 export function setCustomElementLifecycleHooks(
   onMount: ElementLifecycleHook | null,
   onUnmount: ElementLifecycleHook | null,
+  onUpdate?: ElementUpdateHook | null,
 ): void {
   _onCustomElementMount = onMount;
   _onCustomElementUnmount = onUnmount;
+  _onCustomElementUpdate = onUpdate ?? null;
 }
 
 /** Known built-in element types — anything else is a custom element. */
@@ -245,6 +249,10 @@ export const hostConfig: StormHostConfig = {
   ): void {
     // React freezes props objects — never mutate, always replace
     instance.props = { ...newProps };
+    // Notify custom element handlers of prop updates
+    if (!BUILTIN_TYPES.has(instance.type) && _onCustomElementUpdate) {
+      _onCustomElementUpdate(instance.type, instance, { ...newProps });
+    }
     // Invalidate styled-run cache for this instance (props changed — runs may differ)
     instance._cachedRunsVersion = undefined;
     instance._runsDirty = true;

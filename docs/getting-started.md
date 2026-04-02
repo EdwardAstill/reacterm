@@ -579,6 +579,52 @@ console.log(output);
 cleanup();
 ```
 
+## SSH App Serving
+
+Serve your Storm app over SSH -- users connect with `ssh your-server.com` and get an interactive terminal UI.
+
+```bash
+npm install ssh2
+ssh-keygen -t ed25519 -f host_key -N ""
+```
+
+```tsx
+import { StormSSHServer } from "@orchetron/storm-tui/ssh";
+import { readFileSync } from "node:fs";
+
+const server = new StormSSHServer({
+  port: 2222,
+  hostKey: readFileSync("./host_key"),
+  authenticate: ({ username, password }) => username === "admin" && password === "secret",
+  app: (session) => <App user={session.username} />,
+  onEvent: (e) => console.log(e.type, e.remoteAddress),
+});
+
+await server.listen();
+```
+
+Each connection gets its own isolated React tree. Features:
+- Required authentication (no unsafe defaults)
+- Rate limiting (10 failed attempts per IP per minute)
+- Terminal dimension validation (clamped 1-500)
+- Auth timeout (30s default), idle timeout (configurable)
+- Session management: `server.getSessions()`, `server.disconnectUser(name)`
+- Event logging via `onEvent` callback
+
+## Playground
+
+Try Storm in your browser without installing anything:
+
+```bash
+npm run playground
+```
+
+Opens at `http://localhost:3777`. Features:
+- Code editor with 4 example apps (hello, counter, dashboard, form)
+- Live terminal via xterm.js
+- Run with Ctrl+Enter, stop with Ctrl+.
+- Auto-reconnect on connection loss
+
 ## Platform Support
 
 | Platform | Status |

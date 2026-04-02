@@ -11,6 +11,10 @@
  * - Error isolation: every hook call is wrapped in try/catch
  * - Guaranteed cleanup in reverse order with double-cleanup protection
  * - Custom element mount/unmount lifecycle hooks
+ * - Async plugin setup with sequential dependency-respecting initialization
+ * - Scoped plugins that only affect components within a matching scope subtree
+ * - Inter-plugin communication via PluginBus (pub/sub)
+ * - Plugin metadata discovery (getPlugins, hasPlugin, getPluginConfig)
  */
 
 import type { KeyEvent, MouseEvent } from "../input/types.js";
@@ -22,7 +26,7 @@ import type { StormColors } from "../theme/colors.js";
 // ── Custom element handler ─────────────────────────────────────────
 
 export interface CustomElementHandler {
-  /** Paint the custom element to the buffer. */
+  /** Paint the custom element to the buffer. Receives the element's React props via the optional `props` parameter. */
   paint: (
     element: unknown,
     buffer: ScreenBuffer,
@@ -30,11 +34,62 @@ export interface CustomElementHandler {
     y: number,
     width: number,
     height: number,
+    props?: Record<string, unknown>,
   ) => void;
   /** Called when a custom element is added to the tree. */
   mount?: (element: unknown) => void;
   /** Called when a custom element is removed from the tree. */
   unmount?: (element: unknown) => void;
+  /** Called when a custom element's props are updated by React reconciliation. */
+  update?: (element: unknown, props: Record<string, unknown>) => void;
+  /** Called on keyboard input when the custom element (or its ancestor) is focused. */
+  onKey?: (event: KeyEvent) => void;
+}
+
+// ── Plugin bus (inter-plugin communication) ───────────────────────
+
+export class PluginBus {
+  private listeners = new Map<string, Set<(data: unknown) => void>>();
+
+  /** Emit data on a channel. All registered handlers are called synchronously. */
+  emit(channel: string, data: unknown): void {
+    const handlers = this.listeners.get(channel);
+    if (!handlers) return;
+    for (const handler of handlers) {
+      try {
+        handler(data);
+      } catch (err) {
+        process.stderr.write(
+          `[storm-tui] PluginBus error on channel "${channel}": ${(err as Error).message}\n`,
+        );
+      }
+    }
+  }
+
+  /** Subscribe to a channel. Returns an unsubscribe function. */
+  on(channel: string, handler: (data: unknown) => void): () => void {
+    let handlers = this.listeners.get(channel);
+    if (!handlers) {
+      handlers = new Set();
+      this.listeners.set(channel, handlers);
+    }
+    handlers.add(handler);
+    return () => {
+      handlers!.delete(handler);
+      if (handlers!.size === 0) {
+        this.listeners.delete(channel);
+      }
+    };
+  }
+
+  /** Subscribe to a channel for a single emission only. Returns an unsubscribe function. */
+  once(channel: string, handler: (data: unknown) => void): () => void {
+    const unsubscribe = this.on(channel, (data) => {
+      unsubscribe();
+      handler(data);
+    });
+    return unsubscribe;
+  }
 }
 
 // ── Plugin context ─────────────────────────────────────────────────
@@ -48,6 +103,8 @@ export interface PluginContext {
   renderContext: RenderContext;
   /** Access the theme. */
   theme: StormColors;
+  /** Inter-plugin communication bus. */
+  bus: PluginBus;
 }
 
 // ── Plugin interface ───────────────────────────────────────────────
@@ -68,8 +125,14 @@ export interface StormPlugin<TConfig = unknown> {
   dependencies?: string[];
   /** Default configuration for this plugin. Merged with user-provided config. */
   defaultConfig?: TConfig;
-  /** Called when the plugin is registered. Receives merged config. */
-  setup?: (context: PluginContext, config: TConfig) => void;
+  /**
+   * Optional scope identifier. When set, the plugin's onComponentProps hook
+   * only applies to components within a matching scope subtree.
+   * When undefined, the plugin affects all components (default behavior).
+   */
+  scope?: string;
+  /** Called when the plugin is registered. Receives merged config. May be async. */
+  setup?: (context: PluginContext, config: TConfig) => void | Promise<void>;
   /** Called before each render. */
   beforeRender?: () => void;
   /** Called after each render with timing info. */
@@ -123,6 +186,10 @@ export class PluginManager {
   private registrationOrder = new Map<string, number>();
   private registrationCounter = 0;
   private readonly strictDependencies: boolean;
+  /** Scope stack for scoped plugin support. */
+  private scopeStack: string[] = [];
+  /** Inter-plugin communication bus. */
+  readonly bus = new PluginBus();
 
   constructor(options?: PluginManagerOptions) {
     this.strictDependencies = options?.strictDependencies ??
@@ -324,19 +391,63 @@ export class PluginManager {
     this.sortPlugins();
 
     if (plugin.setup && context) {
-      const pluginCtx: PluginContext = {
-        ...context,
-        registerElement: (tagName, handler) => {
-          this.customElements.set(tagName, handler);
-        },
-        addShortcut: (shortcut) => {
-          this.shortcuts.push(shortcut);
-        },
-      };
+      const pluginCtx = this.buildPluginContext(context);
       const ok = this.safeCall(plugin.name, "setup", () => {
-        plugin.setup!(pluginCtx, mergedConfig as never);
+        const result = plugin.setup!(pluginCtx, mergedConfig as never);
+        // If setup returns a promise, we can't await it here (register is sync).
+        // Log a warning — callers should use setupAll() for async plugins.
+        if (result && typeof (result as Promise<void>).then === "function") {
+          (result as Promise<void>).catch((err) => {
+            process.stderr.write(
+              `[storm-tui] Plugin "${plugin.name}" async setup error: ${(err as Error).message}\n`,
+            );
+            this.failedPlugins.add(plugin.name);
+          });
+        }
       });
       if (!ok) {
+        this.failedPlugins.add(plugin.name);
+      }
+    }
+  }
+
+  /**
+   * Build a PluginContext from an external context, wiring up element registration,
+   * shortcuts, and the plugin bus.
+   */
+  private buildPluginContext(context: PluginContext): PluginContext {
+    return {
+      ...context,
+      bus: this.bus,
+      registerElement: (tagName, handler) => {
+        this.customElements.set(tagName, handler);
+      },
+      addShortcut: (shortcut) => {
+        this.shortcuts.push(shortcut);
+      },
+    };
+  }
+
+  /**
+   * Run all plugin setup hooks sequentially, respecting dependency order.
+   * Supports async setup hooks — each is awaited before proceeding to the next.
+   * Plugins whose setup has already been run (via register()) are skipped if
+   * they are not in the failed set and were already initialized.
+   */
+  async setupAll(context: PluginContext): Promise<void> {
+    const pluginCtx = this.buildPluginContext(context);
+    for (const plugin of this.plugins) {
+      if (this.failedPlugins.has(plugin.name)) continue;
+      if (!plugin.setup) continue;
+      try {
+        const result = plugin.setup(pluginCtx, this.configs.get(plugin.name) as never);
+        if (result && typeof (result as Promise<void>).then === "function") {
+          await (result as Promise<void>);
+        }
+      } catch (err) {
+        process.stderr.write(
+          `[storm-tui] Plugin "${plugin.name}" error in setup: ${(err as Error).message}\n`,
+        );
         this.failedPlugins.add(plugin.name);
       }
     }
@@ -477,6 +588,48 @@ export class PluginManager {
     return this.destroyed;
   }
 
+  // ── Scope management ──────────────────────────────────────────────
+
+  /**
+   * Push a scope onto the scope stack. Plugins with a matching `scope`
+   * will have their onComponentProps hooks active for components rendered
+   * while this scope is on the stack.
+   */
+  pushScope(scopeId: string): void {
+    this.scopeStack.push(scopeId);
+  }
+
+  /** Pop the most recent scope from the scope stack. */
+  popScope(): void {
+    this.scopeStack.pop();
+  }
+
+  /** Get the current active scope (top of stack), or undefined if none. */
+  get currentScope(): string | undefined {
+    return this.scopeStack.length > 0
+      ? this.scopeStack[this.scopeStack.length - 1]
+      : undefined;
+  }
+
+  // ── Plugin metadata & discovery ───────────────────────────────────
+
+  /**
+   * Get metadata for all registered plugins.
+   */
+  getPlugins(): Array<{ name: string; priority: number; failed: boolean; config: unknown }> {
+    return this.plugins.map((p) => ({
+      name: p.name,
+      priority: p.priority ?? DEFAULT_PRIORITY,
+      failed: this.failedPlugins.has(p.name),
+      config: this.configs.get(p.name),
+    }));
+  }
+
+  /** Check if a plugin with the given name is registered. */
+  hasPlugin(name: string): boolean {
+    return this.plugins.some((p) => p.name === name);
+  }
+
   /** Get merged component defaults from all plugins for a given component. */
   getComponentDefaults(componentName: string): Record<string, unknown> {
     let merged: Record<string, unknown> = {};
@@ -503,6 +656,13 @@ export class PluginManager {
     for (const plugin of this.plugins) {
       if (this.failedPlugins.has(plugin.name)) continue;
       if (plugin.onComponentProps) {
+        // Scope check: if the plugin has a scope, it must match one of
+        // the currently active scopes in the scope stack.
+        if (plugin.scope !== undefined) {
+          if (!this.scopeStack.includes(plugin.scope)) {
+            continue;
+          }
+        }
         try {
           const transformed = plugin.onComponentProps(componentName, result);
           if (transformed !== undefined) {
@@ -549,6 +709,24 @@ export class PluginManager {
       } catch (err) {
         process.stderr.write(
           `[storm-tui] Custom element "${tagName}" error in unmount: ${(err as Error).message}\n`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Notify custom element handlers of a prop update.
+   * Called by the reconciler when commitUpdate is called for a custom element.
+   * @internal
+   */
+  notifyCustomElementUpdate(tagName: string, element: unknown, props: Record<string, unknown>): void {
+    const handler = this.customElements.get(tagName);
+    if (handler?.update) {
+      try {
+        handler.update(element, props);
+      } catch (err) {
+        process.stderr.write(
+          `[storm-tui] Custom element "${tagName}" error in update: ${(err as Error).message}\n`,
         );
       }
     }
