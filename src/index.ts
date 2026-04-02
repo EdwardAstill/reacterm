@@ -195,6 +195,7 @@ export {
   type RenderToStringOptions,
   type RenderToStringResult,
 } from "./reconciler/render-to-string.js";
+export type { BackgroundPreset, BackgroundPattern, BackgroundProp } from "./reconciler/types.js";
 
 // ── Components ──────────────────────────────────────────────────────
 
@@ -378,7 +379,7 @@ export { useInfiniteScroll, type UseInfiniteScrollOptions, type UseInfiniteScrol
 export { useClipboardAction, type UseClipboardActionOptions, type UseClipboardActionResult } from "./hooks/useClipboardAction.js";
 export { useLocale } from "./hooks/useLocale.js";
 export { useDirection } from "./hooks/useDirection.js";
-export { type MeasuredLayout } from "./reconciler/renderer.js";
+export { type MeasuredLayout, paintBackgroundToBuffer } from "./reconciler/renderer.js";
 
 // ── Headless Behavior Hooks ────────────────────────────────────────
 export {

@@ -8,6 +8,7 @@
 import React from "react";
 import type { FlexDirection, FlexWrap, Align, AlignSelf, Justify, Overflow, Display, Position } from "../layout/engine.js";
 import type { BorderStyle } from "../core/types.js";
+import type { BackgroundProp } from "../reconciler/types.js";
 
 export interface BoxProps {
   children?: React.ReactNode;
@@ -69,6 +70,8 @@ export interface BoxProps {
   borderRightDimColor?: boolean;
   // Rendering
   backgroundColor?: string | number;
+  /** Background pattern — painted into the buffer before children. */
+  background?: BackgroundProp;
   opaque?: boolean;
   // Sticky positioning (for use inside ScrollView)
   sticky?: boolean;

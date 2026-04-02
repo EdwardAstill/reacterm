@@ -33,8 +33,15 @@ import {
   TUI_SCROLL_VIEW,
   TUI_TEXT_INPUT,
   TUI_OVERLAY,
+  type BackgroundProp,
+  type BackgroundPattern,
 } from "./types.js";
 import { notifyResizeObservers, setResizeObserverMeasureMap } from "../core/resize-observer.js";
+
+// ── Animation baseline ─────────────────────────────────────────────
+
+/** Module-level start time for background animations — no timers needed. */
+const bgAnimStartTime = Date.now();
 
 // ── Clip rect ───────────────────────────────────────────────────────
 
@@ -142,6 +149,20 @@ export interface MeasuredLayout {
 }
 
 /**
+ * Paint a background pattern into an existing buffer.
+ * Public wrapper used by render() to apply full-app backgrounds
+ * before the component tree is painted.
+ */
+export function paintBackgroundToBuffer(
+  buffer: ScreenBuffer,
+  width: number,
+  height: number,
+  background: BackgroundProp,
+): void {
+  paintBackgroundPattern(buffer, 0, 0, width, height, background, DEFAULT_COLOR);
+}
+
+/**
  * Full paint: rebuild layout + paint buffer.
  * Called on React commits (structural changes).
  */
@@ -191,6 +212,11 @@ export function repaint(
   // commitUpdate and commitTextUpdate set _runsDirty on changed elements,
   // so only affected text elements rebuild their styled runs.
   ctx.links = [];
+
+  // Paint root-level background pattern (from render options) BEFORE the component tree
+  if (ctx.rootBackground) {
+    paintBackgroundPattern(ctx.buffer, 0, 0, width, height, ctx.rootBackground, DEFAULT_COLOR);
+  }
 
   // Single pass: paint normal elements, collect overlays for deferred painting
   const overlays: TuiElement[] = [];
@@ -481,6 +507,212 @@ function extractBorderFlags(props: Record<string, unknown>): { sides: BorderSide
   };
 }
 
+// ── Background patterns ────────────────────────────────────────────
+
+function paintBackgroundPattern(
+  buffer: ScreenBuffer,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  background: BackgroundProp,
+  bgColor: number,
+): void {
+  // Normalize shorthand preset to full pattern object
+  const pattern: BackgroundPattern = typeof background === "string"
+    ? { type: background }
+    : background;
+
+  const dim = pattern.dim ?? true;
+  const color = pattern.color ? parseColor(pattern.color) : parseColor("#565F89");
+  const attrs = dim ? Attr.DIM : Attr.NONE;
+
+  // Gradient color interpolation helpers
+  const gradFrom = pattern.gradient ? parseColor(pattern.gradient[0]) : 0;
+  const gradTo = pattern.gradient ? parseColor(pattern.gradient[1]) : 0;
+  const gradDir = pattern.direction ?? "horizontal";
+
+  // Animation offset — no timers, driven by the existing render cycle
+  const animOffset = pattern.animate
+    ? Math.floor((Date.now() - bgAnimStartTime) / (pattern.animateSpeed ?? 200))
+    : 0;
+
+  // Opacity blending — 1 means fully opaque (default)
+  const opacity = pattern.opacity ?? 1;
+  const useOpacity = opacity < 1;
+
+  function lerpColor(c1: number, c2: number, t: number): number {
+    const r1 = (c1 >> 16) & 0xff, g1 = (c1 >> 8) & 0xff, b1 = c1 & 0xff;
+    const r2 = (c2 >> 16) & 0xff, g2 = (c2 >> 8) & 0xff, b2 = c2 & 0xff;
+    const r = Math.round(r1 + (r2 - r1) * t);
+    const g = Math.round(g1 + (g2 - g1) * t);
+    const b = Math.round(b1 + (b2 - b1) * t);
+    return (r << 16) | (g << 8) | b;
+  }
+
+  function gradientT(px: number, py: number): number {
+    if (gradDir === "vertical") return height > 1 ? py / (height - 1) : 0;
+    if (gradDir === "diagonal") return (width + height) > 2 ? (px + py) / (width + height - 2) : 0;
+    return width > 1 ? px / (width - 1) : 0;
+  }
+
+  // If a non-gradient pattern has gradient colors, resolve per-cell color
+  function cellColor(px: number, py: number): number {
+    if (pattern.gradient) return lerpColor(gradFrom, gradTo, gradientT(px, py));
+    return color;
+  }
+
+  /** Blend a desired fg color with the existing buffer bg, respecting opacity. */
+  function blendFg(bx: number, by: number, fg: number): number {
+    if (!useOpacity) return fg;
+    const existing = bgColor === DEFAULT_COLOR ? 0 : bgColor;
+    return lerpColor(existing, fg, opacity);
+  }
+
+  /** Blend a desired bg color with existing buffer content, respecting opacity. */
+  function blendBg(bx: number, by: number, bg: number): number {
+    if (!useOpacity) return bg;
+    const existingBg = buffer.getBg(bx, by);
+    if (existingBg !== DEFAULT_COLOR) {
+      return lerpColor(existingBg, bg, opacity);
+    }
+    return bg;
+  }
+
+  switch (pattern.type) {
+    case "dots": {
+      const spacing = pattern.spacing ?? 4;
+      const char = pattern.char ?? "\u00B7"; // middle dot
+      for (let py = 0; py < height; py++) {
+        for (let px = 0; px < width; px++) {
+          // With animation, shift the modulo check so dots drift
+          if ((py + animOffset) % spacing === 0 && (px + animOffset) % spacing === 0) {
+            const bx = x + px;
+            const by = y + py;
+            if (bx < buffer.width && by < buffer.height) {
+              const fg = blendFg(bx, by, cellColor(px, py));
+              buffer.setCell(bx, by, { char, fg, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+            }
+          }
+        }
+      }
+      break;
+    }
+    case "grid": {
+      const spacing = pattern.spacing ?? 6;
+      for (let py = 0; py < height; py++) {
+        for (let px = 0; px < width; px++) {
+          const bx = x + px;
+          const by = y + py;
+          if (bx >= buffer.width || by >= buffer.height) continue;
+          const onRow = (py + animOffset) % spacing === 0;
+          const onCol = (px + animOffset) % spacing === 0;
+          const cc = blendFg(bx, by, cellColor(px, py));
+          if (onRow && onCol) {
+            buffer.setCell(bx, by, { char: "\u253C", fg: cc, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+          } else if (onRow) {
+            buffer.setCell(bx, by, { char: "\u2500", fg: cc, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+          } else if (onCol) {
+            buffer.setCell(bx, by, { char: "\u2502", fg: cc, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+          }
+        }
+      }
+      break;
+    }
+    case "crosshatch": {
+      const spacing = pattern.spacing ?? 3;
+      const char = pattern.char ?? "\u00B7";
+      for (let py = 0; py < height; py++) {
+        for (let px = 0; px < width; px++) {
+          if ((px + py + animOffset) % spacing === 0) {
+            const bx = x + px;
+            const by = y + py;
+            if (bx < buffer.width && by < buffer.height) {
+              const fg = blendFg(bx, by, cellColor(px, py));
+              buffer.setCell(bx, by, { char, fg, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+            }
+          }
+        }
+      }
+      break;
+    }
+    case "gradient": {
+      // Pure gradient — fills every cell's background color along the gradient
+      for (let py = 0; py < height; py++) {
+        for (let px = 0; px < width; px++) {
+          const bx = x + px;
+          const by = y + py;
+          if (bx < buffer.width && by < buffer.height) {
+            // Animation cycles the gradient t value
+            const baseT = gradientT(px, py);
+            const t = pattern.animate ? ((baseT + animOffset * 0.02) % 1) : baseT;
+            const gc = lerpColor(gradFrom, gradTo, t);
+            const finalBg = blendBg(bx, by, gc);
+            buffer.setCell(bx, by, { char: " ", fg: DEFAULT_COLOR, bg: finalBg, attrs: Attr.NONE, ulColor: DEFAULT_COLOR });
+          }
+        }
+      }
+      break;
+    }
+    case "watermark": {
+      const text = pattern.text ?? "";
+      if (!text) break;
+      const mode = pattern.mode ?? "tile";
+
+      if (mode === "center") {
+        // Render text ONCE centered in the area
+        const lines = text.split("\n");
+        const startY = y + Math.floor((height - lines.length) / 2);
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i]!;
+          const startX = x + Math.floor((width - line.length) / 2);
+          for (let c = 0; c < line.length; c++) {
+            const bx = startX + c;
+            const by = startY + i;
+            if (bx >= 0 && bx < buffer.width && by >= 0 && by < buffer.height && line[c] !== " ") {
+              const fg = blendFg(bx, by, color);
+              buffer.setCell(bx, by, { char: line[c]!, fg, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+            }
+          }
+        }
+      } else {
+        // Tile diagonally
+        const padded = text + "  ";
+        const len = padded.length;
+        for (let py = 0; py < height; py += 2) {
+          const tileOffset = Math.floor(py / 2) * 3; // diagonal shift
+          for (let px = 0; px < width; px++) {
+            const charIdx = (px + tileOffset) % len;
+            const ch = padded[charIdx]!;
+            const bx = x + px;
+            const by = y + py;
+            if (bx < buffer.width && by < buffer.height && ch !== " ") {
+              const fg = blendFg(bx, by, color);
+              buffer.setCell(bx, by, { char: ch, fg, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+            }
+          }
+        }
+      }
+      break;
+    }
+    case "custom": {
+      const char = pattern.char ?? "\u00B7"; // middle dot
+      const spacing = pattern.spacing ?? 4;
+      for (let py = 0; py < height; py += spacing) {
+        for (let px = 0; px < width; px += spacing) {
+          const bx = x + px;
+          const by = y + py;
+          if (bx < buffer.width && by < buffer.height) {
+            const fg = blendFg(bx, by, color);
+            buffer.setCell(bx, by, { char, fg, bg: bgColor, attrs, ulColor: DEFAULT_COLOR });
+          }
+        }
+      }
+      break;
+    }
+  }
+}
+
 function paintBox(
   buffer: ScreenBuffer,
   element: TuiElement,
@@ -514,8 +746,8 @@ function paintBox(
   }
 
   // Fill background color (inside border, covering padding + content area)
+  const effectiveBg = bgColorRaw !== undefined ? parseColor(bgColorRaw) : inheritedBg;
   if (bgColorRaw !== undefined) {
-    const bgColor = parseColor(bgColorRaw);
     buffer.fill(
       layout.innerX - scrollOffsetX,
       layout.innerY - scrollOffsetY,
@@ -523,7 +755,21 @@ function paintBox(
       layout.innerHeight,
       " ",
       DEFAULT_COLOR,
-      bgColor,
+      effectiveBg,
+    );
+  }
+
+  // Paint background pattern BEFORE children — children overwrite these cells
+  const bgPattern = props["background"] as BackgroundProp | undefined;
+  if (bgPattern) {
+    paintBackgroundPattern(
+      buffer,
+      layout.innerX - scrollOffsetX,
+      layout.innerY - scrollOffsetY,
+      layout.innerWidth,
+      layout.innerHeight,
+      bgPattern,
+      effectiveBg,
     );
   }
 
@@ -572,7 +818,7 @@ function paintBox(
 
   // Compute inherited background for children: this box's backgroundColor wins,
   // otherwise cascade whatever was inherited from ancestors.
-  const childBg = bgColorRaw !== undefined ? parseColor(bgColorRaw) : inheritedBg;
+  const childBg = effectiveBg;
 
   // Paint children — propagate stickyChildren flag via parameter (no prop mutation)
   const stickyChildren = props["stickyChildren"] === true;

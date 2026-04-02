@@ -660,3 +660,94 @@ Key: `alternateScreen: false` keeps the normal scrollback, and `commitText()` wr
 
 > **Tip: File Logging**
 > To log to a file while the TUI runs, use `fs.appendFileSync("app.log", message + "\n")` directly. Storm's `patchConsole` routes console output to the screen, not files. For structured logging, use any file-based logger (pino, winston with file transport).
+
+---
+
+## 12. Background Patterns
+
+Storm supports buffer-level background patterns on any Box. Patterns paint directly into the cell buffer before content -- zero extra render passes.
+
+**Dot pattern:**
+
+```tsx
+<Box background="dots" flex={1}>
+  <Text>Content on dots</Text>
+</Box>
+```
+
+**Grid pattern:**
+
+```tsx
+<Box background="grid" flex={1}>
+  <Text>Content on grid</Text>
+</Box>
+```
+
+**Gradient background:**
+
+```tsx
+<Box background={{ type: "gradient", gradient: ["#1a1b26", "#82AAFF"], direction: "horizontal" }}>
+  <Text>Left to right gradient</Text>
+</Box>
+```
+
+**Gradient dots:**
+
+```tsx
+<Box background={{ type: "dots", gradient: ["#F7768E", "#82AAFF"], spacing: 2 }}>
+  <Text>Dots shift from red to blue</Text>
+</Box>
+```
+
+**Animated background:**
+
+```tsx
+// Requires useTick to drive re-renders
+useTick(100, () => {});
+
+<Box background={{ type: "dots", animate: true, animateSpeed: 150 }}>
+  <Text>Dots drift across the screen</Text>
+</Box>
+```
+
+**Watermark:**
+
+```tsx
+<Box background={{ type: "watermark", text: "CONFIDENTIAL", mode: "tile" }}>
+  <App />
+</Box>
+
+<Box background={{ type: "watermark", text: "STORM", mode: "center" }}>
+  <App />
+</Box>
+```
+
+**Opacity blending:**
+
+```tsx
+<Box backgroundColor="#1a1b26" background={{ type: "gradient", gradient: ["#F7768E", "#82AAFF"], opacity: 0.3 }}>
+  <Text>Gradient blended at 30% over dark background</Text>
+</Box>
+```
+
+**Full-app background:**
+
+```tsx
+render(<App />, { background: "dots" });
+```
+
+**Available presets:** `"dots"`, `"grid"`, `"crosshatch"`
+
+**BackgroundPattern options:**
+- `type` -- preset name, "gradient", "watermark", or "custom"
+- `spacing` -- distance between pattern characters (default: 4 for dots, 6 for grid)
+- `char` -- custom character for "custom" type
+- `color` -- pattern color (default: theme dim)
+- `dim` -- render dimmed (default: true)
+- `gradient` -- `[from, to]` color pair for gradient coloring
+- `direction` -- "horizontal", "vertical", or "diagonal"
+- `text` -- text content for watermark
+- `mode` -- "tile" or "center" for watermark
+- `animate` -- enable animation (default: false)
+- `animateSpeed` -- animation speed in ms (default: 200)
+- `opacity` -- 0-1 for blending (default: 1)

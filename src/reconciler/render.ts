@@ -12,7 +12,7 @@
 import React from "react";
 import Reconciler from "react-reconciler";
 import { hostConfig, setCustomElementLifecycleHooks } from "./host.js";
-import { createRoot, type TuiRoot } from "./types.js";
+import { createRoot, type TuiRoot, type BackgroundProp } from "./types.js";
 import { paint, repaint } from "./renderer.js";
 import { Screen, type ScreenOptions } from "../core/screen.js";
 import { ScreenBuffer } from "../core/buffer.js";
@@ -198,6 +198,13 @@ export interface RenderOptions extends ScreenOptions {
    * - `false` or `undefined`: don't change terminal background
    */
   terminalBg?: string | boolean;
+  /**
+   * Full-app background pattern. Painted into the root buffer BEFORE
+   * the component tree, so content overwrites background cells naturally.
+   * Accepts a preset name ("dots", "grid", "crosshatch") or a full
+   * BackgroundPattern object for watermark/custom patterns.
+   */
+  background?: BackgroundProp;
 }
 
 export interface TuiApp {
@@ -583,6 +590,7 @@ export function render(
   // with pending state updates (from setState) actually re-render.
   // Also set theme on RenderContext so the renderer can read it for fallback colors
   if (options.theme) renderCtx.theme = options.theme;
+  if (options.background) renderCtx.rootBackground = options.background;
   let stableElement = React.createElement(TuiProvider, { value: stableContextValue },
     React.createElement(ThemeProvider, { ...(options.theme ? { theme: options.theme } : {}), children: wrapElement(element) }));
 

@@ -45,7 +45,7 @@ Storm treats your terminal like a display server — not a string printer.
 |:---:|:---:|:---:|:---:|:---:|
 | Input, Data, Layout, Viz, Feedback, Nav | OperationTree, MessageBubble, StreamingText... | useTick, useBuffer, useFocus, useScroll... | useSelectBehavior, useTreeBehavior... | Arctic, Midnight, Neon, Calm... |
 
-Plus: `.storm.css` hot-reload. Plugin system with async setup + scoping. i18n. Declarative animations. Online playground.
+Plus: `.storm.css` hot-reload. Plugin system with async setup + scoping. i18n. Declarative animations. Buffer-level backgrounds. Online playground.
 
 <br>
 

@@ -66,6 +66,7 @@ Flexbox container -- the primary layout primitive. Arranges children vertically 
 | `userSelect` | `boolean` | -- | Allow text selection |
 | `aria-label` | `string` | -- | Accessibility label |
 | `aria-hidden` | `boolean` | -- | Hide from accessibility tree |
+| `background` | `BackgroundProp` | -- | Background pattern painted into the buffer before children. Accepts preset ("dots", "grid", "crosshatch") or full BackgroundPattern object for gradients, watermarks, animation. |
 
 **Basic: Two-column layout**
 
@@ -79,6 +80,18 @@ import { Box, Text } from "@orchetron/storm-tui";
   <Box flex={1}>
     <Text>Main content</Text>
   </Box>
+</Box>
+```
+
+**Background patterns**
+
+```tsx
+<Box background="dots">
+  <Text>Content on dot pattern</Text>
+</Box>
+
+<Box background={{ type: "gradient", gradient: ["#1a1b26", "#82AAFF"] }}>
+  <Text>Gradient background</Text>
 </Box>
 ```
 

@@ -11,6 +11,7 @@ import { AnimationScheduler } from "./animation-scheduler.js";
 import type { MeasuredLayout } from "../reconciler/renderer.js";
 import type { ResizeObserver } from "./resize-observer.js";
 import { colors as defaultColors, type StormColors } from "../theme/colors.js";
+import type { BackgroundProp } from "../reconciler/types.js";
 
 export interface LinkRange {
   url: string;
@@ -148,6 +149,9 @@ export class RenderContext {
   // ── Render metrics ───────────────────────────────────────────────
   /** Active theme colors — set by render() from ThemeProvider, used by renderer for fallback colors. */
   theme: StormColors = defaultColors;
+
+  /** Root-level background pattern — set by render() options, painted before the component tree. */
+  rootBackground: BackgroundProp | undefined = undefined;
 
   /** Latest render metrics, updated after each frame. */
   metrics: RenderMetrics = {

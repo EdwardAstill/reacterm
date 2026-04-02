@@ -38,6 +38,8 @@ export interface TuiBoxProps extends LayoutProps {
   borderLeftDimColor?: boolean;
   borderRightDimColor?: boolean;
   backgroundColor?: string | number;
+  /** Background pattern — painted into the buffer before children. */
+  background?: BackgroundProp;
   opaque?: boolean;
   sticky?: boolean;
   stickyChildren?: boolean;
@@ -90,6 +92,39 @@ export interface TuiOverlayProps extends Omit<LayoutProps, "position"> {
 }
 
 export type TuiProps = TuiBoxProps | TuiTextProps | TuiScrollViewProps | TuiTextInputProps | TuiOverlayProps;
+
+// ── Background patterns ────────────────────────────────────────────
+
+export type BackgroundPreset = "dots" | "grid" | "crosshatch";
+
+export interface BackgroundPattern {
+  /** Preset or custom pattern */
+  type: BackgroundPreset | "watermark" | "gradient" | "custom";
+  /** Spacing between pattern characters. Default: 4 for dots, 6 for grid */
+  spacing?: number;
+  /** Custom character to use */
+  char?: string;
+  /** Pattern color. Uses theme dim color by default */
+  color?: string;
+  /** Render dimmed. Default: true */
+  dim?: boolean;
+  /** Text for watermark type */
+  text?: string;
+  /** Watermark mode: tile diagonally or center once. Default: "tile" */
+  mode?: "tile" | "center";
+  /** Gradient colors [from, to]. Applies to pattern chars OR fills cells for type "gradient" */
+  gradient?: [string, string];
+  /** Gradient direction. Default: "horizontal" */
+  direction?: "horizontal" | "vertical" | "diagonal";
+  /** Animate the background pattern. Default: false */
+  animate?: boolean;
+  /** Animation speed in ms. Default: 200 */
+  animateSpeed?: number;
+  /** Opacity 0-1. At < 1, blends background color with existing buffer content. Default: 1 */
+  opacity?: number;
+}
+
+export type BackgroundProp = BackgroundPreset | BackgroundPattern;
 
 // ── Element node ────────────────────────────────────────────────────
 
