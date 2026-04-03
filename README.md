@@ -159,27 +159,23 @@ All four run as render middleware — non-blocking, the app keeps running.
 
 ## What's inside
 
-| | |
-|:--|:--|
-| **92 components** | Box, Text, ScrollView, Tabs, Modal, Table, DataGrid, Tree, Form, Select, Spinner (14 types), DiffView, Calendar, and more. [Browse all →](docs/components.md) |
-| **19 AI widgets** | OperationTree, MessageBubble, ApprovalPrompt, StreamingText, SyntaxHighlight, MarkdownText, TokenStream, ContextWindow, CostTracker. [Browse all →](docs/widgets.md) |
-| **82 hooks** | 4 tiers: Essential, Common, Interactive, and 15 headless behavior hooks for building custom components from scratch. [Decision matrix →](docs/hook-guide.md) |
-| **12 themes** | Arctic, Midnight, Ember, Voltage, Neon, High Contrast + personality system + live `.storm.css` hot-reload. [Theming guide →](docs/theming.md) |
-| **Animations** | `<Transition>` enter/exit, `<AnimatePresence>` mount/unmount, `useTween` easing, spring physics. [Guide →](docs/animations.md) |
-| **Plugins** | Vim mode, compact mode, auto-scroll, screenshot, status bar — or write your own. [Guide →](docs/plugins.md) |
-| **i18n** | Locales, RTL, pluralization for EN/FR/AR/RU/JA. [Guide →](docs/i18n.md) |
-| **SSH** | Serve your app over SSH with built-in auth and rate limiting. |
+**92 components** — Box, Text, ScrollView, Tabs, Modal, Table, DataGrid, Tree, Form, Select, Spinner (14 types), DiffView, Calendar, and more. [Browse all →](docs/components.md)<br>
+**19 AI widgets** — OperationTree, MessageBubble, ApprovalPrompt, StreamingText, SyntaxHighlight, MarkdownText, TokenStream, ContextWindow, CostTracker. [Browse all →](docs/widgets.md)<br>
+**82 hooks** — 4 tiers: Essential, Common, Interactive, and 15 headless behavior hooks. [Decision matrix →](docs/hook-guide.md)<br>
+**12 themes** — Arctic, Midnight, Ember, Voltage, Neon, High Contrast + live `.storm.css` hot-reload. [Guide →](docs/theming.md)<br>
+**Animations** — `<Transition>` enter/exit, `<AnimatePresence>` mount/unmount, spring physics. [Guide →](docs/animations.md)<br>
+**Plugins** — Vim mode, compact mode, auto-scroll, screenshot, status bar. [Guide →](docs/plugins.md)<br>
+**i18n** — Locales, RTL, pluralization for EN/FR/AR/RU/JA. [Guide →](docs/i18n.md)<br>
+**SSH** — Serve your app over SSH with built-in auth and rate limiting.
 
 <br>
 
-## Scaffold a project
+## Get started
 
 ```bash
-npx create-storm-app my-app
+npx create-storm-app my-app    # scaffold a project
 cd my-app && npm run dev
 ```
-
-## Run the examples
 
 ```bash
 npx tsx examples/storm-code/index.tsx    # AI coding agent
@@ -188,11 +184,11 @@ npx tsx examples/devtools-demo.tsx       # DevTools showcase
 npx tsx examples/storm-website.tsx       # This README's demo
 ```
 
-## Docs
+<br>
 
 [Getting Started](docs/getting-started.md) · [Components](docs/components.md) · [AI Widgets](docs/widgets.md) · [Hook Guide](docs/hook-guide.md) · [Recipes](docs/recipes.md) · [Theming](docs/theming.md) · [DevTools](docs/devtools.md) · [Animations](docs/animations.md) · [Plugins](docs/plugins.md) · [Pitfalls](docs/pitfalls.md) · [Performance](docs/performance.md) · [i18n](docs/i18n.md)
 
-[Contributing](./CONTRIBUTING.md) · MIT License
+<br>
 
 <p align="center">
   <picture>
@@ -201,5 +197,5 @@ npx tsx examples/storm-website.tsx       # This README's demo
     <img src="assets/logo-black.png" width="24" alt="">
   </picture>
   <br>
-  <sub>Built by <b>Orchetron</b></sub>
+  <sub>Built by <b>Orchetron</b> · <a href="./CONTRIBUTING.md">Contributing</a> · MIT License</sub>
 </p>
