@@ -107,7 +107,11 @@ The OperationTree spinner animates at 80ms through imperative cell mutation — 
 ## How it renders
 
 <p align="center">
-  <img src="assets/diagram-pipeline.svg" width="800" alt="Five-stage rendering pipeline">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/diagram-pipeline-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/diagram-pipeline-light.svg">
+    <img src="assets/diagram-pipeline-dark.svg" width="800" alt="Five-stage rendering pipeline">
+  </picture>
 </p>
 
 Every frame flows through five stages: **React → Layout → Buffer → Diff → TTY**. Animation frames skip React and Layout entirely — buffer to terminal in 0.5ms.
@@ -115,7 +119,11 @@ Every frame flows through five stages: **React → Layout → Buffer → Diff �
 <br>
 
 <p align="center">
-  <img src="assets/diagram-cell-diff.svg" width="800" alt="Cell-level diffing">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/diagram-cell-diff-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/diagram-cell-diff-light.svg">
+    <img src="assets/diagram-cell-diff-dark.svg" width="800" alt="Cell-level diffing">
+  </picture>
 </p>
 
 On a typical scroll frame, **97% of cells are unchanged**. Storm skips them entirely — emitting only the bytes for mutated cells. The typed-array buffer eliminates ~30,000 Cell objects per frame.
@@ -130,7 +138,11 @@ On a typical scroll frame, **97% of cells are unchanged**. Storm skips them enti
 ## DevTools
 
 <p align="center">
-  <img src="assets/diagram-devtools.svg" width="800" alt="Four built-in DevTools">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/diagram-devtools-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/diagram-devtools-light.svg">
+    <img src="assets/diagram-devtools-dark.svg" width="800" alt="Four built-in DevTools">
+  </picture>
 </p>
 
 ```tsx
