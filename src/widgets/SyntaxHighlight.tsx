@@ -23,7 +23,9 @@
 import React, { useRef } from "react";
 import { Box } from "../components/Box.js";
 import { Text } from "../components/Text.js";
+import { ScrollView } from "../components/ScrollView.js";
 import { getTreeSitter, type TreeSitterToken } from "../utils/tree-sitter.js";
+import { wasmTokenizeLine, isWasmTokenizerAvailable } from "../core/wasm-tokenizer.js";
 import { usePersonality } from "../core/personality.js";
 import { useColors } from "../hooks/useColors.js";
 import { usePluginProps } from "../hooks/usePluginProps.js";
@@ -33,6 +35,8 @@ export interface SyntaxHighlightProps {
   code: string;
   language?: string;
   width?: number;
+  /** Visible height in lines. When set, wraps in ScrollView for native scrolling. */
+  height?: number;
 }
 
 /**
@@ -1843,102 +1847,198 @@ function getLanguageDef(lang: string): InternalLanguageDef {
 
 // ── Tokenizer with multiline state ──────────────────────────────────
 
+// ── Pre-compiled regex patterns (avoid re-compilation per call) ─────
+
+const RE_PREPROCESSOR = /^#\s*\w/;
+const RE_NUMBER = /^(?:0[xXoObB])?[0-9][0-9a-fA-F_]*(?:\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?/;
+const RE_JSX_OPEN = /^<([A-Z][A-Za-z0-9_$.]*)/;
+const RE_JSX_CLOSE = /^<\/([A-Za-z][A-Za-z0-9_$.]*)/;
+const RE_WORD = /^[A-Za-z_$][A-Za-z0-9_$]*/;
+const RE_OPERATOR = /^(?:=>|!==|===|!=|==|<=|>=|&&|\|\||[+\-*/%=<>!&|^~?:])/;
+const RE_JSON_NUMBER = /^-?[0-9][0-9_]*(?:\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?/;
+const RE_JSON_BOOL = /^(?:true|false|null)\b/;
+
+// ── Internal index-based token representation ──────────────────────
+
+interface TokenRef {
+  kind: TokenKind;
+  start: number;
+  end: number;
+}
+
+/** Convert index-based TokenRefs into materialized Tokens. */
+function materializeTokens(line: string, refs: TokenRef[]): Token[] {
+  const tokens: Token[] = new Array(refs.length);
+  for (let i = 0; i < refs.length; i++) {
+    const ref = refs[i]!;
+    tokens[i] = { kind: ref.kind, text: line.slice(ref.start, ref.end) };
+  }
+  return tokens;
+}
+
+// ── CharCode constants for hot-path checks ─────────────────────────
+
+const CC_BACKTICK = 96;    // `
+const CC_BACKSLASH = 92;   // \
+const CC_DOLLAR = 36;      // $
+const CC_LBRACE = 123;     // {
+const CC_RBRACE = 125;     // }
+const CC_DQUOTE = 34;      // "
+const CC_SQUOTE = 39;      // '
+const CC_HASH = 35;        // #
+const CC_LT = 60;          // <
+const CC_SLASH = 47;       // /
+const CC_GT = 62;          // >
+const CC_0 = 48;           // 0
+const CC_9 = 57;           // 9
+const CC_A = 65;
+const CC_Z = 90;
+const CC_a = 97;
+const CC_z = 122;
+const CC_UNDERSCORE = 95;  // _
+
+/** Check if charCode starts an identifier. */
+function isIdentStart(cc: number): boolean {
+  return (cc >= CC_A && cc <= CC_Z) || (cc >= CC_a && cc <= CC_z) || cc === CC_UNDERSCORE || cc === CC_DOLLAR;
+}
+
+/** Check if charCode continues an identifier. */
+function isIdentCont(cc: number): boolean {
+  return isIdentStart(cc) || (cc >= CC_0 && cc <= CC_9);
+}
+
+/** Check if charCode is a digit. */
+function isDigit(cc: number): boolean {
+  return cc >= CC_0 && cc <= CC_9;
+}
+
+/** Fast check: does `line` at `pos` start with `prefix`? */
+function startsWithAt(line: string, pos: number, prefix: string): boolean {
+  if (pos + prefix.length > line.length) return false;
+  for (let i = 0; i < prefix.length; i++) {
+    if (line.charCodeAt(pos + i) !== prefix.charCodeAt(i)) return false;
+  }
+  return true;
+}
+
+/** Fast word extraction: read identifier at pos, return end index (or pos if not an identifier). */
+function readWord(line: string, pos: number): number {
+  if (pos >= line.length) return pos;
+  const cc = line.charCodeAt(pos);
+  if (!isIdentStart(cc)) return pos;
+  let end = pos + 1;
+  while (end < line.length && isIdentCont(line.charCodeAt(end))) {
+    end++;
+  }
+  return end;
+}
+
 function tokenizeLine(
   line: string,
   langDef: InternalLanguageDef,
   state: MultilineState,
 ): { tokens: Token[]; state: MultilineState } {
-  const tokens: Token[] = [];
+  const refs: TokenRef[] = [];
   let pos = 0;
-
-  // Helper: push plain text if any accumulated
-  function pushPlain(end: number): void {
-    if (end > pos) {
-      tokens.push({ kind: "plain", text: line.slice(pos, end) });
-      pos = end;
-    }
-  }
+  const len = line.length;
 
   // --- Handle continuing multiline constructs from previous lines ---
 
   if (state.type === "block-comment") {
     const closeIdx = line.indexOf(state.closer);
     if (closeIdx === -1) {
-      // Entire line is still in block comment
-      tokens.push({ kind: "comment", text: line });
-      return { tokens, state };
+      refs.push({ kind: "comment", start: 0, end: len });
+      return { tokens: materializeTokens(line, refs), state };
     }
     const endPos = closeIdx + state.closer.length;
-    tokens.push({ kind: "comment", text: line.slice(0, endPos) });
+    refs.push({ kind: "comment", start: 0, end: endPos });
     pos = endPos;
     state = { type: "none" };
   } else if (state.type === "multiline-string") {
     const closeIdx = line.indexOf(state.closer);
     if (closeIdx === -1) {
-      tokens.push({ kind: "string", text: line });
-      return { tokens, state };
+      refs.push({ kind: "string", start: 0, end: len });
+      return { tokens: materializeTokens(line, refs), state };
     }
     const endPos = closeIdx + state.closer.length;
-    tokens.push({ kind: "string", text: line.slice(0, endPos) });
+    refs.push({ kind: "string", start: 0, end: endPos });
     pos = endPos;
     state = { type: "none" };
   } else if (state.type === "template-literal") {
-    // Continue inside template literal from previous line
     const result = tokenizeTemplateLiteralContinuation(line, pos, langDef, state.braceDepth);
-    tokens.push(...result.tokens);
+    refs.push(...result.refs);
     pos = result.pos;
     state = result.state;
-    if (pos >= line.length) {
-      return { tokens, state };
+    if (pos >= len) {
+      return { tokens: materializeTokens(line, refs), state };
     }
   }
 
   // --- Special handling for Markdown ---
-  const lang = langDef === getLanguageDef("md") ? "markdown" : "";
-  if (lang === "markdown" || langDef.keywords === EMPTY_SET && langDef.lineComment.length === 0 && langDef.blockCommentOpen === "" && langDef.stringChars.length === 0) {
-    // Check if this is actually markdown by checking keywords ref
+  const isMarkdownLang = langDef === getLanguageDef("md");
+  if (isMarkdownLang || (langDef.keywords === EMPTY_SET && langDef.lineComment.length === 0 && langDef.blockCommentOpen === "" && langDef.stringChars.length === 0)) {
     if (langDef.stringChars.length === 0 && langDef.lineComment.length === 0) {
       const rest = line.slice(pos);
       const mdTokens = tokenizeMarkdown(rest);
-      tokens.push(...mdTokens);
-      return { tokens, state };
+      // Markdown tokenizer returns Token[] — pass through directly
+      const existingTokens = materializeTokens(line, refs);
+      existingTokens.push(...mdTokens);
+      return { tokens: existingTokens, state };
     }
+  }
+
+  // --- Pre-extract first charCodes for line comment prefixes ---
+  const lcFirstCodes: number[] = new Array(langDef.lineComment.length);
+  for (let i = 0; i < langDef.lineComment.length; i++) {
+    lcFirstCodes[i] = langDef.lineComment[i]!.charCodeAt(0);
+  }
+  const blockOpenFirstCode = langDef.blockCommentOpen ? langDef.blockCommentOpen.charCodeAt(0) : -1;
+  const stringCharCodes: number[] = new Array(langDef.stringChars.length);
+  for (let i = 0; i < langDef.stringChars.length; i++) {
+    stringCharCodes[i] = langDef.stringChars[i]!.charCodeAt(0);
+  }
+  const mlDelimFirstCodes: number[] = new Array(langDef.multilineStringDelims.length);
+  for (let i = 0; i < langDef.multilineStringDelims.length; i++) {
+    mlDelimFirstCodes[i] = langDef.multilineStringDelims[i]!.charCodeAt(0);
   }
 
   // --- Main single-line tokenization ---
 
-  while (pos < line.length) {
-    const remaining = line.slice(pos);
+  while (pos < len) {
+    const cc = line.charCodeAt(pos);
 
     // Preprocessor directives (C/C++)
-    if (langDef.hasPreprocessor && remaining.match(/^#\s*\w/)) {
-      tokens.push({ kind: "preprocessor", text: line.slice(pos) });
-      pos = line.length;
-      break;
+    if (langDef.hasPreprocessor && cc === CC_HASH) {
+      // Only need to slice+match if first char matches
+      const remaining = line.slice(pos);
+      if (RE_PREPROCESSOR.test(remaining)) {
+        refs.push({ kind: "preprocessor", start: pos, end: len });
+        pos = len;
+        break;
+      }
     }
 
-    // Block comment open
-    if (langDef.blockCommentOpen && remaining.startsWith(langDef.blockCommentOpen)) {
+    // Block comment open — check first char fast
+    if (langDef.blockCommentOpen && cc === blockOpenFirstCode && startsWithAt(line, pos, langDef.blockCommentOpen)) {
       const closeIdx = line.indexOf(langDef.blockCommentClose, pos + langDef.blockCommentOpen.length);
       if (closeIdx !== -1) {
         const endPos = closeIdx + langDef.blockCommentClose.length;
-        tokens.push({ kind: "comment", text: line.slice(pos, endPos) });
+        refs.push({ kind: "comment", start: pos, end: endPos });
         pos = endPos;
         continue;
       }
-      // Block comment continues to next line
-      tokens.push({ kind: "comment", text: line.slice(pos) });
-      pos = line.length;
+      refs.push({ kind: "comment", start: pos, end: len });
+      pos = len;
       state = { type: "block-comment", closer: langDef.blockCommentClose };
       break;
     }
 
-    // Line comments
+    // Line comments — check first char fast
     let foundLineComment = false;
-    for (const lc of langDef.lineComment) {
-      if (remaining.startsWith(lc)) {
-        tokens.push({ kind: "comment", text: line.slice(pos) });
-        pos = line.length;
+    for (let i = 0; i < langDef.lineComment.length; i++) {
+      if (cc === lcFirstCodes[i] && startsWithAt(line, pos, langDef.lineComment[i]!)) {
+        refs.push({ kind: "comment", start: pos, end: len });
+        pos = len;
         foundLineComment = true;
         break;
       }
@@ -1947,16 +2047,17 @@ function tokenizeLine(
 
     // Multiline string delimiters (Python """ and ''')
     let foundMultilineString = false;
-    for (const delim of langDef.multilineStringDelims) {
-      if (remaining.startsWith(delim)) {
+    for (let i = 0; i < langDef.multilineStringDelims.length; i++) {
+      if (cc === mlDelimFirstCodes[i] && startsWithAt(line, pos, langDef.multilineStringDelims[i]!)) {
+        const delim = langDef.multilineStringDelims[i]!;
         const closeIdx = line.indexOf(delim, pos + delim.length);
         if (closeIdx !== -1) {
           const endPos = closeIdx + delim.length;
-          tokens.push({ kind: "string", text: line.slice(pos, endPos) });
+          refs.push({ kind: "string", start: pos, end: endPos });
           pos = endPos;
         } else {
-          tokens.push({ kind: "string", text: line.slice(pos) });
-          pos = line.length;
+          refs.push({ kind: "string", start: pos, end: len });
+          pos = len;
           state = { type: "multiline-string", closer: delim };
         }
         foundMultilineString = true;
@@ -1966,20 +2067,20 @@ function tokenizeLine(
     if (foundMultilineString) continue;
 
     // Template literals (JS/TS)
-    if (langDef.hasTemplateLiterals && remaining[0] === "`") {
+    if (langDef.hasTemplateLiterals && cc === CC_BACKTICK) {
       const result = tokenizeTemplateLiteral(line, pos, langDef);
-      tokens.push(...result.tokens);
+      refs.push(...result.refs);
       pos = result.pos;
       state = result.state;
       continue;
     }
 
-    // Regular strings
+    // Regular strings — check charCode against string delimiters
     let foundString = false;
-    for (const q of langDef.stringChars) {
-      if (remaining[0] === q) {
-        const endIdx = findStringEnd(line, pos + 1, q);
-        tokens.push({ kind: "string", text: line.slice(pos, endIdx) });
+    for (let i = 0; i < langDef.stringChars.length; i++) {
+      if (cc === stringCharCodes[i]) {
+        const endIdx = findStringEnd(line, pos + 1, langDef.stringChars[i]!);
+        refs.push({ kind: "string", start: pos, end: endIdx });
         pos = endIdx;
         foundString = true;
         break;
@@ -1987,71 +2088,94 @@ function tokenizeLine(
     }
     if (foundString) continue;
 
-    // Numbers
-    const numMatch = remaining.match(/^(?:0[xXoObB])?[0-9][0-9a-fA-F_]*(?:\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?/);
-    if (numMatch && /\b/.test(line[pos - 1] ?? " ")) {
-      tokens.push({ kind: "number", text: numMatch[0] });
-      pos += numMatch[0].length;
-      continue;
+    // Numbers — check first char is digit before regex
+    if (isDigit(cc)) {
+      const remaining = line.slice(pos);
+      const numMatch = remaining.match(RE_NUMBER);
+      if (numMatch) {
+        // word boundary check: char before must be non-identifier
+        const prevCC = pos > 0 ? line.charCodeAt(pos - 1) : 32; // space
+        if (!isIdentCont(prevCC)) {
+          refs.push({ kind: "number", start: pos, end: pos + numMatch[0].length });
+          pos += numMatch[0].length;
+          continue;
+        }
+      }
     }
-
     // JSX tag detection (for jsx/tsx languages)
-    if (langDef.jsxAware && remaining[0] === "<") {
+    if (langDef.jsxAware && cc === CC_LT) {
+      const remaining = line.slice(pos);
       // Opening tag: <ComponentName or <div
-      const jsxOpenMatch = remaining.match(/^<([A-Z][A-Za-z0-9_$.]*)/);
+      const jsxOpenMatch = remaining.match(RE_JSX_OPEN);
       if (jsxOpenMatch) {
-        tokens.push({ kind: "operator", text: "<" });
-        tokens.push({ kind: "tag", text: jsxOpenMatch[1]! });
+        refs.push({ kind: "operator", start: pos, end: pos + 1 });
+        refs.push({ kind: "tag", start: pos + 1, end: pos + jsxOpenMatch[0].length });
         pos += jsxOpenMatch[0].length;
         continue;
       }
       // Closing tag: </ComponentName> or </div>
-      const jsxCloseMatch = remaining.match(/^<\/([A-Za-z][A-Za-z0-9_$.]*)/);
+      const jsxCloseMatch = remaining.match(RE_JSX_CLOSE);
       if (jsxCloseMatch) {
-        tokens.push({ kind: "operator", text: "</" });
-        tokens.push({ kind: "tag", text: jsxCloseMatch[1]! });
+        refs.push({ kind: "operator", start: pos, end: pos + 2 });
+        refs.push({ kind: "tag", start: pos + 2, end: pos + jsxCloseMatch[0].length });
         pos += jsxCloseMatch[0].length;
         continue;
       }
     }
     // Self-closing /> in JSX
-    if (langDef.jsxAware && remaining.startsWith("/>")) {
-      tokens.push({ kind: "operator", text: "/>" });
+    if (langDef.jsxAware && cc === CC_SLASH && pos + 1 < len && line.charCodeAt(pos + 1) === CC_GT) {
+      refs.push({ kind: "operator", start: pos, end: pos + 2 });
       pos += 2;
       continue;
     }
 
-    // Words (keywords, types, identifiers)
-    const wordMatch = remaining.match(/^[A-Za-z_$][A-Za-z0-9_$]*/);
-    if (wordMatch) {
-      const word = wordMatch[0];
-      if (langDef.keywords.has(word)) {
-        tokens.push({ kind: "keyword", text: word });
-      } else if (langDef.typeKeywords.has(word)) {
-        tokens.push({ kind: "type", text: word });
-      } else if (/^[A-Z]/.test(word)) {
-        tokens.push({ kind: "type", text: word });
-      } else {
-        tokens.push({ kind: "plain", text: word });
+    // Words (keywords, types, identifiers) — use fast readWord
+    if (isIdentStart(cc)) {
+      const wordEnd = readWord(line, pos);
+      if (wordEnd > pos) {
+        const word = line.slice(pos, wordEnd);
+        let kind: TokenKind;
+        if (langDef.keywords.has(word)) {
+          kind = "keyword";
+        } else if (langDef.typeKeywords.has(word)) {
+          kind = "type";
+        } else if (cc >= CC_A && cc <= CC_Z) {
+          kind = "type";
+        } else {
+          kind = "plain";
+        }
+        refs.push({ kind, start: pos, end: wordEnd });
+        pos = wordEnd;
+        continue;
       }
-      pos += word.length;
-      continue;
     }
 
-    // Operators
-    const opMatch = remaining.match(/^(?:=>|!==|===|!=|==|<=|>=|&&|\|\||[+\-*/%=<>!&|^~?:])/);
-    if (opMatch) {
-      tokens.push({ kind: "operator", text: opMatch[0] });
-      pos += opMatch[0].length;
-      continue;
+    // Operators — only slice+regex when first char looks like an operator
+    if (isOperatorChar(cc)) {
+      const remaining = line.slice(pos);
+      const opMatch = remaining.match(RE_OPERATOR);
+      if (opMatch) {
+        refs.push({ kind: "operator", start: pos, end: pos + opMatch[0].length });
+        pos += opMatch[0].length;
+        continue;
+      }
     }
 
     // Single character plain text
-    tokens.push({ kind: "plain", text: remaining[0]! });
+    refs.push({ kind: "plain", start: pos, end: pos + 1 });
     pos += 1;
   }
 
-  return { tokens, state };
+  return { tokens: materializeTokens(line, refs), state };
+}
+
+/** Check if a charCode could be the start of an operator. */
+function isOperatorChar(cc: number): boolean {
+  // => ! = < > & | + - * / % ^ ~ ? :
+  return cc === 61 /* = */ || cc === 33 /* ! */ || cc === CC_LT || cc === CC_GT ||
+         cc === 38 /* & */ || cc === 124 /* | */ || cc === 43 /* + */ || cc === 45 /* - */ ||
+         cc === 42 /* * */ || cc === CC_SLASH || cc === 37 /* % */ || cc === 94 /* ^ */ ||
+         cc === 126 /* ~ */ || cc === 63 /* ? */ || cc === 58 /* : */;
 }
 
 /** Find end of a single-line string (handling backslash escapes). */
@@ -2076,45 +2200,46 @@ function tokenizeTemplateLiteralContinuation(
   startPos: number,
   langDef: InternalLanguageDef,
   braceDepth: number,
-): { tokens: Token[]; pos: number; state: MultilineState } {
-  const tokens: Token[] = [];
+): { refs: TokenRef[]; pos: number; state: MultilineState } {
+  const refs: TokenRef[] = [];
   let pos = startPos;
+  const len = line.length;
 
   if (braceDepth > 0) {
-    // We're inside a ${...} interpolation — tokenize normally until braces balance
-    const result = tokenizeInterpolation(line, pos, langDef, braceDepth);
-    tokens.push(...result.tokens);
+    const result = tokenizeInterpolationRefs(line, pos, langDef, braceDepth);
+    refs.push(...result.refs);
     pos = result.pos;
     if (result.stillInInterpolation) {
-      return { tokens, pos: line.length, state: { type: "template-literal", braceDepth: result.braceDepth } };
+      return { refs, pos: len, state: { type: "template-literal", braceDepth: result.braceDepth } };
     }
   }
 
   // Now we're in string part of template literal
   let strStart = pos;
-  while (pos < line.length) {
-    if (line[pos] === "\\") {
+
+  while (pos < len) {
+    const cc = line.charCodeAt(pos);
+
+    if (cc === CC_BACKSLASH) {
       pos += 2;
       continue;
     }
-    if (line[pos] === "`") {
-      // End of template literal
+    if (cc === CC_BACKTICK) {
       pos++;
-      tokens.push({ kind: "string", text: line.slice(strStart, pos) });
-      return { tokens, pos, state: { type: "none" } };
+      refs.push({ kind: "string", start: strStart, end: pos });
+      return { refs, pos, state: { type: "none" } };
     }
-    if (line[pos] === "$" && line[pos + 1] === "{") {
-      // Start of interpolation
+    if (cc === CC_DOLLAR && pos + 1 < len && line.charCodeAt(pos + 1) === CC_LBRACE) {
       if (pos > strStart) {
-        tokens.push({ kind: "string", text: line.slice(strStart, pos) });
+        refs.push({ kind: "string", start: strStart, end: pos });
       }
-      tokens.push({ kind: "string", text: "${" });
+      refs.push({ kind: "string", start: pos, end: pos + 2 });
       pos += 2;
-      const result = tokenizeInterpolation(line, pos, langDef, 1);
-      tokens.push(...result.tokens);
+      const result = tokenizeInterpolationRefs(line, pos, langDef, 1);
+      refs.push(...result.refs);
       pos = result.pos;
       if (result.stillInInterpolation) {
-        return { tokens, pos: line.length, state: { type: "template-literal", braceDepth: result.braceDepth } };
+        return { refs, pos: len, state: { type: "template-literal", braceDepth: result.braceDepth } };
       }
       strStart = pos;
       continue;
@@ -2122,11 +2247,10 @@ function tokenizeTemplateLiteralContinuation(
     pos++;
   }
 
-  // Line ended but template literal continues
   if (pos > strStart) {
-    tokens.push({ kind: "string", text: line.slice(strStart, pos) });
+    refs.push({ kind: "string", start: strStart, end: pos });
   }
-  return { tokens, pos, state: { type: "template-literal", braceDepth: 0 } };
+  return { refs, pos, state: { type: "template-literal", braceDepth: 0 } };
 }
 
 /** Tokenize a template literal starting at the backtick. */
@@ -2134,32 +2258,33 @@ function tokenizeTemplateLiteral(
   line: string,
   startPos: number,
   langDef: InternalLanguageDef,
-): { tokens: Token[]; pos: number; state: MultilineState } {
-  const tokens: Token[] = [];
+): { refs: TokenRef[]; pos: number; state: MultilineState } {
+  const refs: TokenRef[] = [];
   let pos = startPos + 1; // skip opening backtick
   let strStart = startPos;
+  const len = line.length;
 
-  while (pos < line.length) {
-    if (line[pos] === "\\") {
+  while (pos < len) {
+    const cc = line.charCodeAt(pos);
+
+    if (cc === CC_BACKSLASH) {
       pos += 2;
       continue;
     }
-    if (line[pos] === "`") {
-      // End of template literal on same line
+    if (cc === CC_BACKTICK) {
       pos++;
-      tokens.push({ kind: "string", text: line.slice(strStart, pos) });
-      return { tokens, pos, state: { type: "none" } };
+      refs.push({ kind: "string", start: strStart, end: pos });
+      return { refs, pos, state: { type: "none" } };
     }
-    if (line[pos] === "$" && line[pos + 1] === "{") {
-      // Interpolation
-      tokens.push({ kind: "string", text: line.slice(strStart, pos) });
-      tokens.push({ kind: "string", text: "${" });
+    if (cc === CC_DOLLAR && pos + 1 < len && line.charCodeAt(pos + 1) === CC_LBRACE) {
+      refs.push({ kind: "string", start: strStart, end: pos });
+      refs.push({ kind: "string", start: pos, end: pos + 2 });
       pos += 2;
-      const result = tokenizeInterpolation(line, pos, langDef, 1);
-      tokens.push(...result.tokens);
+      const result = tokenizeInterpolationRefs(line, pos, langDef, 1);
+      refs.push(...result.refs);
       pos = result.pos;
       if (result.stillInInterpolation) {
-        return { tokens, pos: line.length, state: { type: "template-literal", braceDepth: result.braceDepth } };
+        return { refs, pos: len, state: { type: "template-literal", braceDepth: result.braceDepth } };
       }
       strStart = pos;
       continue;
@@ -2167,94 +2292,105 @@ function tokenizeTemplateLiteral(
     pos++;
   }
 
-  // Template literal continues to next line
-  if (strStart < line.length) {
-    tokens.push({ kind: "string", text: line.slice(strStart) });
+  if (strStart < len) {
+    refs.push({ kind: "string", start: strStart, end: len });
   }
-  return { tokens, pos, state: { type: "template-literal", braceDepth: 0 } };
+  return { refs, pos, state: { type: "template-literal", braceDepth: 0 } };
 }
 
-/** Tokenize inside a ${...} interpolation. Returns normal-highlighted tokens. */
-function tokenizeInterpolation(
+/** Tokenize inside a ${...} interpolation. Returns index-based TokenRefs. */
+function tokenizeInterpolationRefs(
   line: string,
   startPos: number,
   langDef: InternalLanguageDef,
   initialDepth: number,
-): { tokens: Token[]; pos: number; stillInInterpolation: boolean; braceDepth: number } {
-  const tokens: Token[] = [];
+): { refs: TokenRef[]; pos: number; stillInInterpolation: boolean; braceDepth: number } {
+  const refs: TokenRef[] = [];
   let pos = startPos;
   let depth = initialDepth;
+  const len = line.length;
 
-  while (pos < line.length) {
-    const ch = line[pos]!;
+  while (pos < len) {
+    const cc = line.charCodeAt(pos);
 
-    if (ch === "{") {
+    if (cc === CC_LBRACE) {
       depth++;
-      tokens.push({ kind: "plain", text: "{" });
+      refs.push({ kind: "plain", start: pos, end: pos + 1 });
       pos++;
       continue;
     }
-    if (ch === "}") {
+    if (cc === CC_RBRACE) {
       depth--;
       if (depth === 0) {
-        tokens.push({ kind: "string", text: "}" });
+        refs.push({ kind: "string", start: pos, end: pos + 1 });
         pos++;
-        return { tokens, pos, stillInInterpolation: false, braceDepth: 0 };
+        return { refs, pos, stillInInterpolation: false, braceDepth: 0 };
       }
-      tokens.push({ kind: "plain", text: "}" });
+      refs.push({ kind: "plain", start: pos, end: pos + 1 });
       pos++;
       continue;
     }
 
-    // Inside interpolation, tokenize like normal code
-    const remaining = line.slice(pos);
-
     // Strings inside interpolation
-    if (ch === '"' || ch === "'") {
+    if (cc === CC_DQUOTE || cc === CC_SQUOTE) {
+      const ch = line[pos]!;
       const endIdx = findStringEnd(line, pos + 1, ch);
-      tokens.push({ kind: "string", text: line.slice(pos, endIdx) });
+      refs.push({ kind: "string", start: pos, end: endIdx });
       pos = endIdx;
       continue;
     }
 
-    // Numbers
-    const numMatch = remaining.match(/^(?:0[xXoObB])?[0-9][0-9a-fA-F_]*(?:\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?/);
-    if (numMatch && /\b/.test(line[pos - 1] ?? " ")) {
-      tokens.push({ kind: "number", text: numMatch[0] });
-      pos += numMatch[0].length;
-      continue;
-    }
-
-    // Words
-    const wordMatch = remaining.match(/^[A-Za-z_$][A-Za-z0-9_$]*/);
-    if (wordMatch) {
-      const word = wordMatch[0];
-      if (langDef.keywords.has(word)) {
-        tokens.push({ kind: "keyword", text: word });
-      } else if (langDef.typeKeywords.has(word)) {
-        tokens.push({ kind: "type", text: word });
-      } else if (/^[A-Z]/.test(word)) {
-        tokens.push({ kind: "type", text: word });
-      } else {
-        tokens.push({ kind: "plain", text: word });
+    // Numbers — fast charCode check first
+    if (isDigit(cc)) {
+      const remaining = line.slice(pos);
+      const numMatch = remaining.match(RE_NUMBER);
+      if (numMatch) {
+        const prevCC = pos > 0 ? line.charCodeAt(pos - 1) : 32;
+        if (!isIdentCont(prevCC)) {
+          refs.push({ kind: "number", start: pos, end: pos + numMatch[0].length });
+          pos += numMatch[0].length;
+          continue;
+        }
       }
-      pos += word.length;
-      continue;
     }
 
-    // Operators
-    const opMatch = remaining.match(/^(?:=>|!==|===|!=|==|<=|>=|&&|\|\||[+\-*/%=<>!&|^~?:])/);
-    if (opMatch) {
-      tokens.push({ kind: "operator", text: opMatch[0] });
-      pos += opMatch[0].length;
-      continue;
+    // Words — fast charCode check
+    if (isIdentStart(cc)) {
+      const wordEnd = readWord(line, pos);
+      if (wordEnd > pos) {
+        const word = line.slice(pos, wordEnd);
+        let kind: TokenKind;
+        if (langDef.keywords.has(word)) {
+          kind = "keyword";
+        } else if (langDef.typeKeywords.has(word)) {
+          kind = "type";
+        } else if (cc >= CC_A && cc <= CC_Z) {
+          kind = "type";
+        } else {
+          kind = "plain";
+        }
+        refs.push({ kind, start: pos, end: wordEnd });
+        pos = wordEnd;
+        continue;
+      }
     }
 
-    tokens.push({ kind: "plain", text: ch });
+    // Operators — fast charCode check
+    if (isOperatorChar(cc)) {
+      const remaining = line.slice(pos);
+      const opMatch = remaining.match(RE_OPERATOR);
+      if (opMatch) {
+        refs.push({ kind: "operator", start: pos, end: pos + opMatch[0].length });
+        pos += opMatch[0].length;
+        continue;
+      }
+    }
+
+    refs.push({ kind: "plain", start: pos, end: pos + 1 });
     pos++;
   }
 
-  return { tokens, pos, stillInInterpolation: true, braceDepth: depth };
+  return { refs, pos, stillInInterpolation: true, braceDepth: depth };
 }
 
 /** Tokenize a line as Markdown. */
@@ -2337,7 +2473,7 @@ function tokenizeJSON(line: string): Token[] {
     }
 
     // Numbers
-    const numMatch = remaining.match(/^-?[0-9][0-9_]*(?:\.[0-9_]+)?(?:[eE][+-]?[0-9_]+)?/);
+    const numMatch = remaining.match(RE_JSON_NUMBER);
     if (numMatch) {
       tokens.push({ kind: "number", text: numMatch[0] });
       pos += numMatch[0].length;
@@ -2345,7 +2481,7 @@ function tokenizeJSON(line: string): Token[] {
     }
 
     // Booleans/null
-    const boolMatch = remaining.match(/^(?:true|false|null)\b/);
+    const boolMatch = remaining.match(RE_JSON_BOOL);
     if (boolMatch) {
       tokens.push({ kind: "keyword", text: boolMatch[0] });
       pos += boolMatch[0].length;
@@ -2430,6 +2566,25 @@ function tokenize(code: string, language: string): Token[] {
   const tsResult = tokenizeWithTreeSitter(code, language);
   if (tsResult) return tsResult;
 
+  // Try WASM tokenizer — fast DFA-based, falls back silently
+  if (isWasmTokenizerAvailable()) {
+    const lang = language.toLowerCase();
+    const lines = code.split("\n");
+    const allTokens: Token[] = [];
+    let allWasm = true;
+    for (let i = 0; i < lines.length; i++) {
+      if (i > 0) allTokens.push({ kind: "plain", text: "\n" });
+      const wasmResult = wasmTokenizeLine(lines[i]!, lang);
+      if (wasmResult) {
+        allTokens.push(...wasmResult);
+      } else {
+        allWasm = false;
+        break;
+      }
+    }
+    if (allWasm) return allTokens;
+  }
+
   const lang = language.toLowerCase();
   const lines = code.split("\n");
   const allTokens: Token[] = [];
@@ -2507,7 +2662,7 @@ export const SyntaxHighlight = React.memo(function SyntaxHighlight(rawProps: Syn
   const colors = useColors();
   const personality = usePersonality();
   const props = usePluginProps("SyntaxHighlight", rawProps as unknown as Record<string, unknown>) as unknown as SyntaxHighlightProps;
-  const { code, language = "js", width } = props;
+  const { code, language = "js", width, height: visibleHeight } = props;
 
   const tokenCacheRef = useRef<{ code: string; lang: string; tokens: Token[] } | null>(null);
   let tokens: Token[];
@@ -2536,14 +2691,20 @@ export const SyntaxHighlight = React.memo(function SyntaxHighlight(rawProps: Syn
     }
   }
 
+  // Render all lines as Text elements
   const lineElements = lines.map((lt, i) =>
     lt.length > 0 ? renderLine(lt, i, colors) : React.createElement(Text, { key: i }, " "),
   );
 
   const boxProps: Record<string, unknown> = { flexDirection: "column" as const };
-  if (width !== undefined) {
-    boxProps["width"] = width;
+  if (width !== undefined) boxProps["width"] = width;
+
+  const content = React.createElement(Box, boxProps, ...lineElements);
+
+  // When height is set, wrap in ScrollView for native scrolling
+  if (visibleHeight !== undefined) {
+    return React.createElement(ScrollView, { height: visibleHeight }, content);
   }
 
-  return React.createElement(Box, boxProps, ...lineElements);
+  return content;
 });

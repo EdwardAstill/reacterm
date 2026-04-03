@@ -96,6 +96,14 @@ export class TestInputManager {
     for (const h of this.pasteHandlers) h(event);
   }
 
+  /** Release all handler references to prevent memory leaks. */
+  dispose(): void {
+    this.keyHandlers.clear();
+    this.prioritizedKeyHandlers.clear();
+    this.mouseHandlers.clear();
+    this.pasteHandlers.clear();
+  }
+
   get isAttached(): boolean { return true; }
   start(): void {}
   stop(): void {}

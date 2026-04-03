@@ -149,6 +149,11 @@ export {
   type MenuContextValue, MenuContext, useMenuContext,
   type MenuRootProps, type MenuCompoundItemProps, type MenuSeparatorProps, type MenuSubmenuProps,
 } from "./Menu.js";
+export {
+  OptionList, type OptionListProps, type OptionListItem,
+  type OptionListContextValue, OptionListContext, useOptionListContext,
+  type OptionListRootProps, type OptionListCompoundItemProps, type OptionListSeparatorProps,
+} from "./OptionList.js";
 
 // ── Feedback & status ───────────────────────────────────────────
 export { Spinner, type SpinnerProps } from "./Spinner.js";
@@ -162,6 +167,7 @@ export {
 export { Stopwatch, type StopwatchProps } from "./Stopwatch.js";
 export { Timer, type TimerProps } from "./Timer.js";
 export { GradientProgress, type GradientProgressProps } from "./GradientProgress.js";
+export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type LoadingSize } from "./LoadingIndicator.js";
 export { RevealTransition, type RevealTransitionProps } from "./RevealTransition.js";
 
 // ── Navigation ──────────────────────────────────────────────────
@@ -177,6 +183,7 @@ export {
   type StepperRootProps, type StepperStepProps,
 } from "./Stepper.js";
 export { KeyboardHelp, type KeyboardHelpProps } from "./KeyboardHelp.js";
+export { HelpPanel, type HelpPanelProps, type HelpBinding } from "./HelpPanel.js";
 export { Header, type HeaderProps } from "./Header.js";
 export { Footer, type FooterProps } from "./Footer.js";
 
@@ -218,6 +225,22 @@ export { LightningPulse, type LightningPulseProps } from "./LightningPulse.js";
 
 // ── Error Boundary ────────────────────────────────────────────
 export { ErrorBoundary, type ErrorBoundaryProps } from "./ErrorBoundary.js";
+
+// ── Command Palette ───────────────────────────────────────────
+export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./CommandPalette.js";
+
+// ── Text Area ─────────────────────────────────────────────────
+export { TextArea, type TextAreaProps, type HighlightSpan } from "./TextArea.js";
+
+// ── Markdown ──────────────────────────────────────────────────
+export { Markdown, type MarkdownProps } from "./Markdown.js";
+export { MarkdownViewer, type MarkdownViewerProps } from "./MarkdownViewer.js";
+
+// ── Date Picker ───────────────────────────────────────────────
+export { DatePicker, type DatePickerProps } from "./DatePicker.js";
+
+// ── Welcome ───────────────────────────────────────────────────
+export { Welcome, type WelcomeProps, type WelcomeAction, type WelcomeShortcut } from "./Welcome.js";
 
 // ── Animation ─────────────────────────────────────────────────
 export { Transition, type TransitionProps, type TransitionTimingConfig } from "./Transition.js";

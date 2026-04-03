@@ -205,6 +205,30 @@ export class RenderContext {
     this.layoutInvalidated = true;
   }
 
+  /**
+   * Release all internal state to prevent memory leaks.
+   * Call this when the render instance is being torn down (e.g., renderToString unmount).
+   */
+  dispose(): void {
+    this.animationScheduler.destroy();
+    this.measureMap.clear();
+    this.resizeObservers.clear();
+    this.links.length = 0;
+    for (const fn of this.cleanups.values()) {
+      try { fn(); } catch { /* swallow cleanup errors */ }
+    }
+    this.cleanups.clear();
+    this.asyncCleanups.clear();
+    this.scrollViewStates.clear();
+    this.prevScrollViewStates.clear();
+    this.pendingImageSequences.length = 0;
+    this.emittedImages.clear();
+    this._currentFrameImageKeys.clear();
+    this.imageRegions.clear();
+    this.dirtyRegions.length = 0;
+    this.buffer = null;
+  }
+
   // ── Dirty region API ─────────────────────────────────────────────
 
   /** Mark a rectangular region as needing repaint. */

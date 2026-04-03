@@ -191,7 +191,22 @@ export function renderToString(
   }
 
   function unmount(): void {
+    // Unmount React tree
     TuiReconciler.updateContainer(null, container, null, null);
+
+    // Release the root's children so the entire element tree can be GC'd
+    root.children.length = 0;
+    root.onCommit = () => {};
+
+    // Dispose render context (clears maps, timers, image caches, etc.)
+    renderCtx.dispose();
+
+    // Release all input handler references
+    testInput.dispose();
+
+    // Break closure references so nothing retains the container/root/context
+    currentElement = null!;
+    errors.length = 0;
   }
 
   return doRender(element);

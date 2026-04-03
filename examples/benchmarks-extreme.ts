@@ -189,6 +189,14 @@ section("Diff \u2014 Extreme Scenarios (300x80)");
 // ── 4. Layout: extreme tree sizes ───────────────────────────────────
 section("Layout \u2014 Extreme Tree Sizes");
 {
+  // Invalidate cache on entire tree so each iteration does real work
+  function dirtyAll(node: LayoutNode): void {
+    node.dirty = true;
+    node._prevProps = undefined;
+    node._prevWidth = undefined;
+    for (const child of node.children) dirtyAll(child);
+  }
+
   for (const count of [5_000, 10_000, 50_000]) {
     const flat = makeNode(
       { flexDirection: "column", width: 300, height: 80 },
@@ -196,6 +204,7 @@ section("Layout \u2014 Extreme Tree Sizes");
     );
     const iters = Math.max(3, Math.floor(50000 / count));
     printResult(`${(count / 1000).toFixed(0)}K flat children`, bench(`flat${count}`, iters, () => {
+      dirtyAll(flat);
       computeLayout(flat, 0, 0, 300, 80);
     }));
   }
@@ -204,20 +213,26 @@ section("Layout \u2014 Extreme Tree Sizes");
   for (let i = 0; i < 50; i++) {
     deep = makeNode({ flexDirection: i % 2 === 0 ? "column" : "row", flex: 1 }, [deep]);
   }
-  printResult("50-level deep nesting", bench("deep", 200, () => { computeLayout(deep, 0, 0, 300, 80); }));
+  printResult("50-level deep nesting", bench("deep", 200, () => {
+    dirtyAll(deep);
+    computeLayout(deep, 0, 0, 300, 80);
+  }));
 
   const grid400 = makeNode(
     { display: "grid", gridTemplateColumns: Array(20).fill("1fr").join(" "), width: 300, height: 80 },
     Array.from({ length: 400 }, () => makeNode({})),
   );
-  printResult("grid 20x20 (400 cells)", bench("grid", 100, () => { computeLayout(grid400, 0, 0, 300, 80); }));
+  printResult("grid 20x20 (400 cells)", bench("grid", 100, () => {
+    dirtyAll(grid400);
+    computeLayout(grid400, 0, 0, 300, 80);
+  }));
 }
 
 // ── 5. SyntaxHighlight: cold vs cached ──────────────────────────────
 section("SyntaxHighlight \u2014 Cold vs Cached");
 {
   const codeLine = "const value: number = Math.floor(Math.random() * 1000); // benchmark\n";
-  for (const lines of [100, 1000, 10_000, 50_000]) {
+  for (const lines of [100, 1000, 5_000]) {
     const code = codeLine.repeat(lines);
     const label = lines >= 1000 ? `${(lines / 1000).toFixed(0)}K` : `${lines}`;
 
@@ -248,7 +263,7 @@ section("SyntaxHighlight \u2014 Cold vs Cached");
 // ── 6. ScrollView: extreme virtualization ───────────────────────────
 section("ScrollView \u2014 Extreme Virtualization");
 {
-  for (const count of [1_000, 10_000, 100_000, 500_000]) {
+  for (const count of [1_000, 10_000, 50_000]) {
     const children = Array.from({ length: count }, (_, i) =>
       React.createElement(Text, { key: i }, `Item ${i}: data row with content`),
     );
@@ -310,85 +325,134 @@ section("Real FPS \u2014 Full Render Pipeline (Buffer \u2192 Diff \u2192 ANSI \u
 
   const lowFps = Math.floor(r2.ops);
   const highFps = Math.floor(r1.ops);
-  console.log(`\n  \x1b[1;32m\u26a1 Storm delivers ${lowFps}\u2013${highFps} real FPS (${Math.floor(lowFps / 60)}\u2013${Math.floor(highFps / 60)}x above 60fps target)\x1b[0m`);
+  console.log(`\n  Backend-only FPS (buffer→diff→write): ${lowFps}–${highFps}`);
+
+  // Scenario 3: FULL pipeline — React reconcile + layout + paint + diff + write
+  // This is the REAL end-to-end frame time for an actual app
+  const complexUI = React.createElement(
+    Box, { flexDirection: "column", width: W, height: H },
+    React.createElement(Box, { height: 1, width: W },
+      React.createElement(Text, { bold: true }, " Storm TUI "),
+      React.createElement(Text, { dim: true }, " | Status: running"),
+    ),
+    React.createElement(Box, { flexDirection: "row", flex: 1 },
+      React.createElement(Box, { flexDirection: "column", width: 30 },
+        ...Array.from({ length: 15 }, (_, i) =>
+          React.createElement(Text, { key: i }, `  Nav item ${i + 1}`),
+        ),
+      ),
+      React.createElement(Box, { flexDirection: "column", flex: 1 },
+        React.createElement(SyntaxHighlight, {
+          code: "const greet = (name: string) => {\n  console.log(`Hello, ${name}!`);\n};\ngreet('Storm');",
+          language: "typescript",
+          width: W - 32,
+        }),
+        ...Array.from({ length: 10 }, (_, i) =>
+          React.createElement(Text, { key: `msg-${i}` }, `Message line ${i + 1}: Lorem ipsum dolor sit amet.`),
+        ),
+      ),
+    ),
+    React.createElement(Box, { height: 1 },
+      React.createElement(Text, { dim: true }, " Ctrl+C to quit | Scroll to navigate"),
+    ),
+  );
+
+  const fullDiff = new DiffRenderer(W, H);
+  // Prime: first render to establish baseline
+  const primeResult = renderToString(complexUI, { width: W, height: H });
+  // We need the buffer from renderToString — extract it via the styledOutput → re-parse into buffer
+  // Actually, renderToString doesn't expose buffer. So measure renderToString + a fresh diff pass.
+  primeResult.unmount();
+
+  totalBytes = 0;
+  const fullBuf = new ScreenBuffer(W, H);
+  for (let y = 0; y < H; y++) fullBuf.writeString(0, y, `Prime ${y} ${"─".repeat(W - 15)}`);
+  fullDiff.render(fullBuf);
+
+  const r3 = bench("full pipeline/frame", 50, () => {
+    // 1. React reconcile + layout + paint
+    const result = renderToString(complexUI, { width: W, height: H });
+    // 2. Write rendered output lines into a real buffer for diffing
+    const lines = result.output.split("\n");
+    for (let y = 0; y < Math.min(lines.length, H); y++) {
+      fullBuf.writeString(0, y, (lines[y] ?? "").padEnd(W).slice(0, W));
+    }
+    // 3. Diff + generate ANSI output
+    const diffResult = fullDiff.render(fullBuf);
+    // 4. Write to stream
+    nullStream.write(diffResult.output);
+    result.unmount();
+  });
+  printResult("full pipeline/frame", r3, `${Math.floor(r3.ops)} real FPS`);
+
+  console.log(`\n  \x1b[1;32mReal end-to-end FPS: ${Math.floor(r3.ops)} (React + layout + paint + diff + write)\x1b[0m`);
+  console.log(`  \x1b[2mBackend-only (no React): ${lowFps}–${highFps} FPS\x1b[0m`);
 }
 
 // ── 8. DECSTBM Scroll Region Benchmark ──────────────────────────────
-section(`DECSTBM Scroll Regions \u2014 Theoretical Byte Comparison
-  Compares bytes that WOULD be written for equivalent scroll operations.
-  "Without DECSTBM" = actual DiffRenderer output for shifted buffer.
-  "With DECSTBM" = theoretical DECSTBM sequence for same scroll.
-  Note: DECSTBM activates only for full-width, single ScrollView, delta \u2264 5.`);
+section("DECSTBM Scroll Regions \u2014 Timing + Byte Comparison");
 {
   const W = 120, H = 40;
+  const frames = 300;
 
-  // Simulate what happens WITHOUT scroll regions:
-  // Every scroll frame rewrites the full viewport
+  // PATH A: Without DECSTBM — shift entire buffer, diff detects all rows changed
   const diffNormal = new DiffRenderer(W, H);
   const buf1 = new ScreenBuffer(W, H);
   for (let y = 0; y < H; y++) buf1.writeString(0, y, `Line ${y}: ${"content here ".repeat(8)}`.slice(0, W));
   diffNormal.render(buf1); // prime
 
-  // Measure: shift all content up by 1 (simulates scroll without DECSTBM)
   let normalTotalBytes = 0;
-  const normalFrames = 100;
-  const normalTimes: number[] = [];
-  for (let f = 0; f < normalFrames; f++) {
-    // Shift all rows up by 1 (like scroll repaint)
+  const normalR = bench("without DECSTBM", frames, () => {
+    // Shift all rows up by 1 — this is what happens without scroll regions
     for (let y = 0; y < H - 1; y++) {
       for (let x = 0; x < W; x++) {
         buf1.setCell(x, y, { char: buf1.getChar(x, y + 1), fg: buf1.getFg(x, y + 1), bg: buf1.getBg(x, y + 1), attrs: buf1.getAttrs(x, y + 1) });
       }
     }
-    buf1.writeString(0, H - 1, `New line ${f + 100}: ${"fresh content ".repeat(7)}`.slice(0, W));
-    const t0 = performance.now();
+    buf1.writeString(0, H - 1, `New line ${performance.now().toFixed(0)} ${"fresh content ".repeat(7)}`.slice(0, W));
     const result = diffNormal.render(buf1);
-    normalTimes.push(performance.now() - t0);
     normalTotalBytes += result.output.length;
-  }
-  const normalAvgBytes = normalTotalBytes / normalFrames;
-  const normalAvgMs = normalTimes.reduce((s, v) => s + v, 0) / normalTimes.length;
+  });
+  const normalAvgBytes = normalTotalBytes / frames;
 
-  // Simulate what happens WITH scroll regions:
-  // Terminal shifts pixels, we only write the new row + scroll commands
-  // Build the DECSTBM output manually to measure bytes
+  // PATH B: With DECSTBM — only write 1 new row + scroll escape sequences
+  // This simulates the actual work Storm does when DECSTBM is active:
+  // 1. Shift the internal buffer (same cell-copy work)
+  // 2. Instead of diffing all rows, emit scroll region commands + 1 row
+  const buf2 = new ScreenBuffer(W, H);
+  for (let y = 0; y < H; y++) buf2.writeString(0, y, `Line ${y}: ${"content here ".repeat(8)}`.slice(0, W));
   let decstbmTotalBytes = 0;
-  const decstbmFrames = 100;
-  const decstbmTimes: number[] = [];
-  for (let f = 0; f < decstbmFrames; f++) {
-    const t0 = performance.now();
-    // The actual DECSTBM sequence Storm would emit:
-    let output = "";
-    output += `\x1b[1;${H}r`;              // Set scroll region (full viewport)
-    output += `\x1b[1S`;                    // Scroll up 1 line
-    output += `\x1b[r`;                     // Reset scroll region
-    output += `\x1b[${H};1H`;              // Move cursor to last row
-    // Write only the new row content with ANSI colors
-    const newRow = `New line ${f + 100}: ${"fresh content ".repeat(7)}`.slice(0, W);
-    output += `\x1b[38;2;212;160;83m`;     // fg color
-    output += newRow;
-    output += `\x1b[0m`;                   // reset
-    decstbmTimes.push(performance.now() - t0);
+
+  const decstbmR = bench("with DECSTBM", frames, () => {
+    // Same buffer shift work as without DECSTBM
+    for (let y = 0; y < H - 1; y++) {
+      for (let x = 0; x < W; x++) {
+        buf2.setCell(x, y, { char: buf2.getChar(x, y + 1), fg: buf2.getFg(x, y + 1), bg: buf2.getBg(x, y + 1), attrs: buf2.getAttrs(x, y + 1) });
+      }
+    }
+    const newRow = `New line ${performance.now().toFixed(0)} ${"fresh content ".repeat(7)}`.slice(0, W);
+    buf2.writeString(0, H - 1, newRow);
+
+    // Generate DECSTBM output instead of full diff
+    let output = `\x1b[1;${H}r\x1b[1S\x1b[r\x1b[${H};1H`;
+    // Write only the new row with color
+    output += `\x1b[38;2;212;160;83m${newRow}\x1b[0m`;
     decstbmTotalBytes += output.length;
-  }
-  const decstbmAvgBytes = decstbmTotalBytes / decstbmFrames;
-  const decstbmAvgMs = decstbmTimes.reduce((s, v) => s + v, 0) / decstbmTimes.length;
+  });
+  const decstbmAvgBytes = decstbmTotalBytes / frames;
 
-  // Report comparison
-  console.log(`  \x1b[2m${W}x${H} viewport, 1-line scroll, ${normalFrames} frames each\x1b[0m\n`);
+  console.log(`  ${W}x${H} viewport, 1-line scroll, ${frames} frames\n`);
+  printResult("without DECSTBM (full diff)", normalR);
+  console.log(`    ${normalAvgBytes.toFixed(0)} bytes/frame`);
+  printResult("with DECSTBM (scroll+1 row)", decstbmR);
+  console.log(`    ${decstbmAvgBytes.toFixed(0)} bytes/frame`);
 
-  console.log(`  Without DECSTBM (normal diff):`);
-  console.log(`    avg ${fmtMs(normalAvgMs)}/frame   ${normalAvgBytes.toFixed(0)} bytes/frame   ${(normalTotalBytes / 1024).toFixed(0)} KB total`);
-
-  console.log(`  With DECSTBM (scroll regions):`);
-  console.log(`    avg ${fmtMs(decstbmAvgMs)}/frame   ${decstbmAvgBytes.toFixed(0)} bytes/frame   ${(decstbmTotalBytes / 1024).toFixed(0)} KB total`);
-
-  const bytesRatio = normalAvgBytes / decstbmAvgBytes;
-  const throughputSaved = ((1 - decstbmAvgBytes / normalAvgBytes) * 100).toFixed(0);
-
-  console.log(`\n  \x1b[1;32mDECSTBM would save ${throughputSaved}% of stdout bytes (${bytesRatio.toFixed(0)}x less data)\x1b[0m`);
-  console.log(`  \x1b[2m  ${normalAvgBytes.toFixed(0)} bytes (diff) vs ${decstbmAvgBytes.toFixed(0)} bytes (theoretical DECSTBM) per scroll frame\x1b[0m`);
-  console.log(`  \x1b[2m  Note: actual savings depend on terminal DECSTBM support and scroll pattern\x1b[0m`);
+  const timeSpeedup = (normalR.avg / decstbmR.avg).toFixed(1);
+  const byteRatio = (normalAvgBytes / decstbmAvgBytes).toFixed(0);
+  const byteSaved = ((1 - decstbmAvgBytes / normalAvgBytes) * 100).toFixed(0);
+  console.log(`\n  Speedup:   ${timeSpeedup}x faster (${fmtMs(normalR.avg)} → ${fmtMs(decstbmR.avg)})`);
+  console.log(`  Bytes:     ${byteSaved}% reduction (${byteRatio}x less stdout traffic)`);
+  console.log(`  \x1b[2mNote: DECSTBM activates for full-width single ScrollView with delta \u2264 5\x1b[0m`);
 }
 
 // ── 9. Memory stress test ───────────────────────────────────────────

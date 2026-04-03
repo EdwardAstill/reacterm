@@ -162,10 +162,29 @@ section("Diff Renderer (200x50)");
 // 4. Layout Engine
 section("Layout Engine");
 {
+  // Invalidate cache on entire tree so each iteration does real work
+  function dirtyAll(node: LayoutNode): void {
+    node.dirty = true;
+    node._prevProps = undefined;
+    node._prevWidth = undefined;
+    for (const child of node.children) dirtyAll(child);
+  }
+
   function layoutBench(label: string, nodeCount: number, buildTree: (n: number) => LayoutNode): void {
     const tree = buildTree(nodeCount);
-    const r = bench(label, 200, () => { computeLayout(tree, 0, 0, 200, 50); });
+    const r = bench(label, 200, () => {
+      dirtyAll(tree); // defeat incremental cache — measure real layout work
+      computeLayout(tree, 0, 0, 200, 50);
+    });
     printResult(label, r);
+  }
+
+  // Also benchmark cached (incremental) to show the difference
+  function layoutBenchCached(label: string, nodeCount: number, buildTree: (n: number) => LayoutNode): void {
+    const tree = buildTree(nodeCount);
+    computeLayout(tree, 0, 0, 200, 50); // prime cache
+    const r = bench(label, 200, () => { computeLayout(tree, 0, 0, 200, 50); });
+    printResult(label, r, `${fmtOps(r.ops)} (cached)`);
   }
 
   // Flat column children
@@ -176,6 +195,7 @@ section("Layout Engine");
   layoutBench("10 children", 10, flatColumn);
   layoutBench("100 children", 100, flatColumn);
   layoutBench("1000 children", 1000, flatColumn);
+  layoutBenchCached("1000 children (cached)", 1000, flatColumn);
 
   // Nested 10x10x10
   layoutBench("nested 10x10x10", 1000, () =>
@@ -207,7 +227,8 @@ section("SyntaxHighlight (renderToString)");
   const codeLine = "const x: number = Math.random() * 100; // comment\n";
   for (const lines of [10, 100, 1000]) {
     const code = codeLine.repeat(lines);
-    const r = bench(`${lines} lines TS`, 20, () => {
+    const iters = lines >= 1000 ? 5 : 20; // fewer iters for large inputs to avoid OOM
+    const r = bench(`${lines} lines TS`, iters, () => {
       const result = renderToString(
         React.createElement(SyntaxHighlight, { code, language: "typescript", width: 80 }),
         { width: 80, height: Math.min(lines + 2, 200) },
@@ -224,7 +245,8 @@ section("MarkdownText (renderToString)");
   const mdLine = "## Heading\n\nSome **bold** and *italic* text with `inline code`.\n\n- List item one\n- List item two\n\n";
   for (const lines of [10, 100, 1000]) {
     const md = mdLine.repeat(Math.ceil(lines / 6));
-    const r = bench(`~${lines} lines md`, 20, () => {
+    const iters = lines >= 1000 ? 5 : 20;
+    const r = bench(`~${lines} lines md`, iters, () => {
       const result = renderToString(
         React.createElement(MarkdownText, { width: 80, children: md }),
         { width: 80, height: Math.min(lines + 2, 200) },
@@ -246,7 +268,8 @@ section("ScrollView Virtualization");
       Box, { flexDirection: "column", width: 80, height: 24 },
       React.createElement(ScrollView, { flex: 1 }, ...children),
     );
-    const r = bench(`${count.toLocaleString()} children`, 10, () => {
+    const iters = count >= 10_000 ? 3 : 10;
+    const r = bench(`${count.toLocaleString()} children`, iters, () => {
       const result = renderToString(el, { width: 80, height: 24 });
       result.unmount();
     });
@@ -341,7 +364,6 @@ section("Full Frame (complex UI)");
   let diffTick = 0;
   const diffBench = bench("diff (3 rows changed)", 200, () => {
     diffTick++;
-    // Simulate scroll: 3 rows change per frame (realistic)
     buf1.writeString(0, 0, `Line 0: updated ${diffTick} ${"─".repeat(80)}`);
     buf1.writeString(0, 20, `Line 20: cursor ${diffTick} ${"─".repeat(80)}`);
     buf1.writeString(0, 39, `Status: frame ${diffTick} ${"─".repeat(80)}`);
@@ -353,12 +375,19 @@ section("Full Frame (complex UI)");
   const diffNoop = bench("diff (no changes)", 200, () => { diffR.render(buf1); });
   printResult("diff (no changes)", diffNoop);
 
-  // Total: paint + realistic diff
-  const totalMs = paintR.avg + diffBench.avg;
+  // Full pipeline: reconcile + layout + paint in a single pass via renderToString
+  // This is the real React frame cost — the dominant factor in total frame time
+  const fullFrameR = bench("full frame (reconcile+layout+paint)", 50, () => {
+    const result = renderToString(complexUI, { width: 120, height: 40 });
+    result.unmount();
+  });
+  printResult("full frame (reconcile+layout+paint)", fullFrameR);
+
+  // Realistic total: full render + diff with changes
+  const totalMs = fullFrameR.avg + diffBench.avg;
   const fps = 1000 / totalMs;
   const check = fps >= 60 ? "\u2713" : "\u2717";
-  console.log(`  total (paint + diff)    ${fmtMs(totalMs)} avg`);
-  console.log(`  internal FPS            ${fps.toFixed(0)} fps ${check} (target: 60fps)`);
+  console.log(`  render + diff total     ${fmtMs(totalMs)} avg → ${fps.toFixed(0)} internal fps ${check}`);
   console.log(`  \x1b[2mNote: excludes stdout write + terminal processing\x1b[0m`);
 }
 

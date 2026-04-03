@@ -220,6 +220,7 @@ export { Checkbox, type CheckboxProps } from "./components/Checkbox.js";
 export { RadioGroup, type RadioGroupProps, type RadioOption } from "./components/RadioGroup.js";
 export { Switch, type SwitchProps, type SwitchSize } from "./components/Switch.js";
 export { ChatInput, type ChatInputProps } from "./components/ChatInput.js";
+export { TextArea, type TextAreaProps, type HighlightSpan } from "./components/TextArea.js";
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from "./components/Button.js";
 export { ListView, type ListViewProps, type ListViewItem } from "./components/ListView.js";
 export { Collapsible, type CollapsibleProps } from "./components/Collapsible.js";
@@ -273,7 +274,9 @@ export { ConfirmDialog, type ConfirmDialogProps, type ConfirmDialogAction } from
 export { ContentSwitcher, type ContentSwitcherProps } from "./components/ContentSwitcher.js";
 export { DirectoryTree, type DirectoryTreeProps, type DirNode, type DirChildEntry } from "./components/DirectoryTree.js";
 export { KeyboardHelp, type KeyboardHelpProps } from "./components/KeyboardHelp.js";
+export { HelpPanel, type HelpPanelProps, type HelpBinding } from "./components/HelpPanel.js";
 export { Menu, type MenuProps, type MenuItem } from "./components/Menu.js";
+export { OptionList, type OptionListProps, type OptionListItem } from "./components/OptionList.js";
 export { Modal, type ModalProps, type ModalSize } from "./components/Modal.js";
 export { Select, type SelectProps, type SelectOption } from "./components/Select.js";
 export { SelectionList, type SelectionListProps, type SelectionListItem } from "./components/SelectionList.js";
@@ -290,6 +293,12 @@ export { LightningPulse, type LightningPulseProps } from "./components/Lightning
 export { ErrorBoundary, type ErrorBoundaryProps } from "./components/ErrorBoundary.js";
 export { Transition, type TransitionProps, type TransitionTimingConfig } from "./components/Transition.js";
 export { AnimatePresence, type AnimatePresenceProps } from "./components/AnimatePresence.js";
+export { Markdown, type MarkdownProps } from "./components/Markdown.js";
+export { MarkdownViewer, type MarkdownViewerProps } from "./components/MarkdownViewer.js";
+export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./components/CommandPalette.js";
+export { DatePicker, type DatePickerProps } from "./components/DatePicker.js";
+export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type LoadingSize } from "./components/LoadingIndicator.js";
+export { Welcome, type WelcomeProps, type WelcomeAction, type WelcomeShortcut } from "./components/Welcome.js";
 
 // ── Widgets (application-tier components for chat/agent UIs) ────────
 
