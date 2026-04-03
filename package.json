@@ -57,8 +57,6 @@
     "!dist/__tests__",
     "bin",
     "wasm/pkg",
-    "assets/*.svg",
-    "assets/*.png",
     "LICENSE",
     "README.md",
     "CHANGELOG.md"

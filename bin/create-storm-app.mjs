@@ -21,7 +21,7 @@ writeFileSync(join(dir, "package.json"), JSON.stringify({
     test: "vitest run"
   },
   dependencies: {
-    "@orchetron/storm-tui": "^0.1.0",
+    "@orchetron/storm": "^0.1.0",
     "react": "^19.0.0"
   },
   devDependencies: {
@@ -49,7 +49,7 @@ writeFileSync(join(dir, "tsconfig.json"), JSON.stringify({
 }, null, 2));
 
 // src/app.tsx — starter template
-writeFileSync(join(dir, "src/app.tsx"), `import { render, Box, Text, ScrollView, TextInput, useInput, useTui, useTerminal } from "@orchetron/storm-tui";
+writeFileSync(join(dir, "src/app.tsx"), `import { render, Box, Text, ScrollView, TextInput, useInput, useTui, useTerminal } from "@orchetron/storm";
 import { useState } from "react";
 
 function App() {
