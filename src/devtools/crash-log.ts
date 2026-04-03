@@ -139,7 +139,7 @@ export function enableCrashLog(
     const path = writeCrashLog(dir, data);
     if (path) {
       try {
-        process.stderr.write(`[storm-tui] Crash log written: ${path}\n`);
+        process.stderr.write(`[storm] Crash log written: ${path}\n`);
       } catch {
         // stderr may be closed
       }
@@ -161,7 +161,7 @@ export function enableCrashLog(
     const path = writeCrashLog(dir, data);
     if (path) {
       try {
-        process.stderr.write(`[storm-tui] Crash log written: ${path}\n`);
+        process.stderr.write(`[storm] Crash log written: ${path}\n`);
       } catch {
         // stderr may be closed
       }

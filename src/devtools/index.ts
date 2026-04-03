@@ -8,7 +8,7 @@
  *   createDevToolsOverlay,
  *   createEventLogger,
  *   createPerformanceMonitor,
- * } from "@orchetron/storm-tui";
+ * } from "@orchetron/storm";
  *
  * const perf = createPerformanceMonitor();
  * const logger = createEventLogger();

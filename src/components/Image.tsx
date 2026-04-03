@@ -190,7 +190,7 @@ function decodePNG(data: Buffer): { width: number; height: number; pixels: RGB[]
     if (width === 0 || height === 0) return null;
     if (bitDepth !== 8) {
       // Only 8-bit RGB/RGBA PNGs are supported
-      console.warn(`[storm-tui Image] Unsupported PNG bit depth: ${bitDepth} (only 8-bit is supported)`);
+      console.warn(`[storm Image] Unsupported PNG bit depth: ${bitDepth} (only 8-bit is supported)`);
       return null;
     }
 
@@ -201,7 +201,7 @@ function decodePNG(data: Buffer): { width: number; height: number; pixels: RGB[]
     const bpp = colorType === 2 ? 3 : colorType === 6 ? 4 : colorType === 0 ? 1 : 0;
     if (bpp === 0) {
       // Only RGB (type 2), RGBA (type 6), and grayscale (type 0) are supported
-      console.warn(`[storm-tui Image] Unsupported PNG color type: ${colorType} (only RGB/RGBA/grayscale supported)`);
+      console.warn(`[storm Image] Unsupported PNG color type: ${colorType} (only RGB/RGBA/grayscale supported)`);
       return null;
     }
 

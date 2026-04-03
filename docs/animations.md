@@ -38,7 +38,7 @@ interface UseAnimationResult {
 ### Example: spinner
 
 ```tsx
-import { useAnimation } from "@orchetron/storm-tui";
+import { useAnimation } from "@orchetron/storm";
 
 const FRAMES = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -89,7 +89,7 @@ interface UseTweenResult {
 ### Example: animated progress bar
 
 ```tsx
-import { useTween } from "@orchetron/storm-tui";
+import { useTween } from "@orchetron/storm";
 
 function ProgressBar({ progress }: { progress: number }) {
   const { value, animating } = useTween(progress, 200);
@@ -136,7 +136,7 @@ interface UseTransitionResult {
 ### Example: fade in on mount
 
 ```tsx
-import { useTransition } from "@orchetron/storm-tui";
+import { useTransition } from "@orchetron/storm";
 
 function FadeIn({ children }: { children: React.ReactNode }) {
   const { value } = useTransition({
@@ -218,7 +218,7 @@ Animation types:
 ### Example: dropdown menu
 
 ```tsx
-import { Transition } from "@orchetron/storm-tui";
+import { Transition } from "@orchetron/storm";
 
 function Dropdown({ isOpen }: { isOpen: boolean }) {
   return (
@@ -289,7 +289,7 @@ Children **must** have a unique `key` prop so AnimatePresence can track entering
 ### Example: animated list
 
 ```tsx
-import { AnimatePresence } from "@orchetron/storm-tui";
+import { AnimatePresence } from "@orchetron/storm";
 
 function NotificationList({ notifications }) {
   return (
@@ -339,7 +339,7 @@ The `spring` easing is available in `useTransition` but not in the `Transition` 
 For `useTween`, you pass the easing function directly from the `easings` object:
 
 ```ts
-import { useTween, easings } from "@orchetron/storm-tui";
+import { useTween, easings } from "@orchetron/storm";
 
 const { value } = useTween(target, 200, easings.easeInOut);
 ```

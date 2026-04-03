@@ -15,8 +15,8 @@ If you use TypeScript with JSX, make sure your test `tsconfig.json` has `"jsx": 
 ## Basic Testing
 
 ```tsx
-import { renderForTest } from "@orchetron/storm-tui/testing";
-import { Box, Text } from "@orchetron/storm-tui";
+import { renderForTest } from "@orchetron/storm/testing";
+import { Box, Text } from "@orchetron/storm";
 
 test("renders greeting", () => {
   const result = renderForTest(
@@ -143,7 +143,7 @@ test("updates on rerender", () => {
 Storm provides `expectOutput` for fluent assertions that throw descriptive errors on failure -- useful when you want clear diagnostics without framework-specific matchers:
 
 ```tsx
-import { renderForTest, expectOutput } from "@orchetron/storm-tui/testing";
+import { renderForTest, expectOutput } from "@orchetron/storm/testing";
 
 test("with fluent assertions", () => {
   const result = renderForTest(<App />);
@@ -174,7 +174,7 @@ test("with fluent assertions", () => {
 Register Storm's custom matchers for a more natural `expect()` syntax:
 
 ```tsx
-import { createStormMatchers, renderForTest } from "@orchetron/storm-tui/testing";
+import { createStormMatchers, renderForTest } from "@orchetron/storm/testing";
 
 expect.extend(createStormMatchers());
 
@@ -218,7 +218,7 @@ import {
   createSnapshot,
   compareSnapshot,
   clearSnapshots,
-} from "@orchetron/storm-tui/testing";
+} from "@orchetron/storm/testing";
 
 test("in-memory snapshot workflow", () => {
   const result = renderForTest(<App />);
@@ -245,7 +245,7 @@ import {
   renderForTest,
   saveSnapshot,
   compareFileSnapshot,
-} from "@orchetron/storm-tui/testing";
+} from "@orchetron/storm/testing";
 
 test("file-based snapshot", () => {
   const result = renderForTest(<App />, { width: 80, height: 24 });
@@ -274,7 +274,7 @@ import {
   saveSvgSnapshot,
   compareSvgSnapshot,
   renderToSvg,
-} from "@orchetron/storm-tui/testing";
+} from "@orchetron/storm/testing";
 
 test("SVG visual snapshot", () => {
   const result = renderForTest(<Dashboard />, { width: 80, height: 24 });
@@ -302,7 +302,7 @@ const svg = renderToSvg(result.lines, result.styledOutput, result.width, result.
 For advanced scenarios where you need to control input at a lower level, use `TestInputManager` (also exported as `MockInputManager`):
 
 ```tsx
-import { TestInputManager } from "@orchetron/storm-tui/testing";
+import { TestInputManager } from "@orchetron/storm/testing";
 
 test("low-level input simulation", () => {
   const input = new TestInputManager();

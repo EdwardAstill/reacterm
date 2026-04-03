@@ -12,7 +12,7 @@ Storm's styling system has four layers — from low-level colors to high-level i
 The default palette uses Electric Arc Blue as the brand color:
 
 ```typescript
-import { colors } from "@orchetron/storm-tui";
+import { colors } from "@orchetron/storm";
 
 colors.brand.primary   // "#82AAFF" -- Electric Arc Blue
 colors.brand.light     // "#A8C8FF" -- Lighter Arc (active states)
@@ -66,7 +66,7 @@ Storm ships 11 professionally curated themes: 7 branded palettes with distinct c
 Wrap your app with `ThemeProvider` to apply a theme:
 
 ```tsx
-import { render, ThemeProvider, midnightTheme } from "@orchetron/storm-tui";
+import { render, ThemeProvider, midnightTheme } from "@orchetron/storm";
 
 function App() {
   return (
@@ -86,7 +86,7 @@ Nest multiple providers to scope themes to subtrees.
 Access the active theme in any component:
 
 ```tsx
-import { useTheme, Text, Box } from "@orchetron/storm-tui";
+import { useTheme, Text, Box } from "@orchetron/storm";
 
 function StatusBar() {
   const { colors, shades } = useTheme();
@@ -107,7 +107,7 @@ function StatusBar() {
 For every semantic color, Storm generates six variants by mixing with white (lighten) or black (darken):
 
 ```typescript
-import { generateShades } from "@orchetron/storm-tui";
+import { generateShades } from "@orchetron/storm";
 
 const shades = generateShades("#82AAFF");
 // shades.base     -- "#82AAFF" (original)
@@ -135,7 +135,7 @@ const { shades } = useTheme();
 Override specific properties while keeping everything else:
 
 ```typescript
-import { extendTheme, colors } from "@orchetron/storm-tui";
+import { extendTheme, colors } from "@orchetron/storm";
 
 const myTheme = extendTheme(colors, {
   brand: {
@@ -152,7 +152,7 @@ const myTheme = extendTheme(colors, {
 Shorthand for extending the default palette:
 
 ```typescript
-import { createTheme } from "@orchetron/storm-tui";
+import { createTheme } from "@orchetron/storm";
 
 const myTheme = createTheme({
   brand: { primary: "#FF5F87" },
@@ -166,7 +166,7 @@ Pass a new `theme` prop to `<ThemeProvider>` from a parent component that owns t
 
 ```tsx
 import { useState } from "react";
-import { ThemeProvider, useTheme, arcticTheme, voltageTheme, colors } from "@orchetron/storm-tui";
+import { ThemeProvider, useTheme, arcticTheme, voltageTheme, colors } from "@orchetron/storm";
 
 function ThemePicker() {
   const [theme, setTheme] = useState(colors);
@@ -186,7 +186,7 @@ function ThemePicker() {
 ## Loading Themes from Files
 
 ```typescript
-import { loadTheme, saveTheme, parseTheme, serializeTheme } from "@orchetron/storm-tui";
+import { loadTheme, saveTheme, parseTheme, serializeTheme } from "@orchetron/storm";
 
 // Load from JSON file (partial — deep-merged with defaults)
 const theme = loadTheme("./my-theme.json");
@@ -201,7 +201,7 @@ saveTheme(myTheme, "./my-theme.json");
 ## Theme Validation
 
 ```typescript
-import { validateTheme, validateContrast } from "@orchetron/storm-tui";
+import { validateTheme, validateContrast } from "@orchetron/storm";
 
 // Check structure (valid hex, required fields)
 const result = validateTheme(myTheme);
@@ -222,7 +222,7 @@ const contrastResult = validateContrast(myTheme);
 A personality goes beyond theming — it defines the complete interaction identity: colors, borders, animation timing, typography, and component defaults in one coherent object.
 
 ```typescript
-import type { StormPersonality } from "@orchetron/storm-tui";
+import type { StormPersonality } from "@orchetron/storm";
 ```
 
 ### Structure
@@ -281,7 +281,7 @@ interface StormPersonality {
 Components read the active personality for defaults:
 
 ```tsx
-import { usePersonality } from "@orchetron/storm-tui";
+import { usePersonality } from "@orchetron/storm";
 
 function MyComponent() {
   const personality = usePersonality();
@@ -300,7 +300,7 @@ function MyComponent() {
 Storm supports CSS-like stylesheets with selector specificity:
 
 ```typescript
-import { createStyleSheet } from "@orchetron/storm-tui";
+import { createStyleSheet } from "@orchetron/storm";
 
 const styles = createStyleSheet({
   "Text.title": { bold: true, color: "#82AAFF" },
@@ -319,7 +319,7 @@ Specificity scoring: ID=100, pseudo-class/class=10, type=1.
 Load stylesheets from files with hot reload — edit the file and see changes instantly:
 
 ```tsx
-import { useStyleSheet } from "@orchetron/storm-tui";
+import { useStyleSheet } from "@orchetron/storm";
 
 function App() {
   useStyleSheet({ path: "./app.storm.css", watch: true });
@@ -487,7 +487,7 @@ Button:focus {
 Variables named `--storm-{group}-{key}` are automatically extracted and can be passed to `ThemeProvider`, bridging the gap between `.storm.css` files and the theme system:
 
 ```tsx
-import { useStyleSheet, extendTheme, ThemeProvider, colors } from "@orchetron/storm-tui";
+import { useStyleSheet, extendTheme, ThemeProvider, colors } from "@orchetron/storm";
 
 function App() {
   const { themeOverrides } = useStyleSheet({ path: "./app.storm.css", watch: true });
@@ -514,7 +514,7 @@ Valid group names: `brand`, `text`, `surface`, `system`, `user`, `assistant`, `t
 Consistent padding, margin, and gap values:
 
 ```typescript
-import { spacing } from "@orchetron/storm-tui";
+import { spacing } from "@orchetron/storm";
 
 spacing.none  // 0
 spacing.xs    // 1 — Tight: icon-to-label

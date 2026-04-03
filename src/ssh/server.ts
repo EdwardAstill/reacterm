@@ -25,7 +25,7 @@ async function loadSSH2(): Promise<SSH2Module> {
       ssh2Module = (m.default ?? m) as SSH2Module;
     } catch {
       throw new Error(
-        '[storm-tui] SSH serving requires the "ssh2" package. Install it: npm install ssh2',
+        '[storm] SSH serving requires the "ssh2" package. Install it: npm install ssh2',
       );
     }
   }

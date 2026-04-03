@@ -102,7 +102,7 @@ export function parseColor(input: string | number | undefined): number {
     if (!_warnedColors.has(input)) {
       _warnedColors.add(input);
       process.stderr.write(
-        `[storm-tui] Warning: Unknown color "${input}". ` +
+        `[storm] Warning: Unknown color "${input}". ` +
         "Supported formats: named colors, #RGB, #RRGGBB, rgb(r,g,b), or ANSI 0-255.\n",
       );
     }

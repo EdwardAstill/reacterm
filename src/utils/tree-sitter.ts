@@ -7,7 +7,7 @@
  * missing the call is a safe no-op.
  *
  * Usage:
- *   import { enableTreeSitter } from "@orchetron/storm-tui";
+ *   import { enableTreeSitter } from "@orchetron/storm";
  *   await enableTreeSitter(); // dynamically imports web-tree-sitter
  *   // Now SyntaxHighlight uses tree-sitter when available
  */

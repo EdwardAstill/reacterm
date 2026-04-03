@@ -36,7 +36,7 @@ export interface StatusBarPluginOptions {
  *
  * @example
  * ```ts
- * import { render, statusBarPlugin } from "@orchetron/storm-tui";
+ * import { render, statusBarPlugin } from "@orchetron/storm";
  *
  * const app = render(<App />, {
  *   plugins: [statusBarPlugin({

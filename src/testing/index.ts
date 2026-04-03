@@ -527,7 +527,7 @@ interface MatcherResult {
  *
  * Usage with vitest:
  * ```ts
- * import { createStormMatchers } from "@orchetron/storm-tui";
+ * import { createStormMatchers } from "@orchetron/storm";
  * expect.extend(createStormMatchers());
  * ```
  *

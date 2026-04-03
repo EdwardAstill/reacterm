@@ -135,7 +135,7 @@ export class FocusManager {
       if (this._lastFocusCycle === this._renderCycle && !this._warnedThisCycle) {
         this._warnedThisCycle = true;
         process.stderr.write(
-          `[storm-tui] Warning: Multiple elements have isFocused={true}. Only '${id}' will be focused. Set isFocused={false} on others.\n`,
+          `[storm] Warning: Multiple elements have isFocused={true}. Only '${id}' will be focused. Set isFocused={false} on others.\n`,
         );
       }
       this._lastFocusCycle = this._renderCycle;

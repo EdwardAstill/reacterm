@@ -137,7 +137,7 @@ export const ScrollView = React.memo(function ScrollView(rawProps: ScrollViewPro
     if (layoutProps.height === undefined && layoutProps.flex === undefined && layoutProps.flexGrow === undefined && layoutProps.minHeight === undefined) {
       _missingHeightConstraint = true;
       process.stderr.write(
-        "[storm-tui] Warning: <ScrollView> has no height constraint (height, flex, flexGrow, or minHeight). " +
+        "[storm] Warning: <ScrollView> has no height constraint (height, flex, flexGrow, or minHeight). " +
         "Content will not scroll. Add height={N} or flex={1} to enable scrolling.\n"
       );
     }
@@ -360,7 +360,7 @@ export const ScrollView = React.memo(function ScrollView(rawProps: ScrollViewPro
 
   // In dev mode, render a visible warning inside the ScrollView when height constraint is missing
   const devWarningElement = (_missingHeightConstraint && process.env.NODE_ENV !== "production")
-    ? React.createElement("tui-text", { color: "yellow" }, "[storm-tui] ScrollView needs height or flex constraint")
+    ? React.createElement("tui-text", { color: "yellow" }, "[storm] ScrollView needs height or flex constraint")
     : null;
 
   return React.createElement(

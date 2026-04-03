@@ -60,7 +60,7 @@ export class PluginBus {
         handler(data);
       } catch (err) {
         process.stderr.write(
-          `[storm-tui] PluginBus error on channel "${channel}": ${(err as Error).message}\n`,
+          `[storm] PluginBus error on channel "${channel}": ${(err as Error).message}\n`,
         );
       }
     }
@@ -206,7 +206,7 @@ export class PluginManager {
       return true;
     } catch (err) {
       process.stderr.write(
-        `[storm-tui] Plugin "${pluginName}" error in ${hookName}: ${(err as Error).message}\n`,
+        `[storm] Plugin "${pluginName}" error in ${hookName}: ${(err as Error).message}\n`,
       );
       return false;
     }
@@ -225,7 +225,7 @@ export class PluginManager {
         for (const dep of plugin.dependencies) {
           if (!names.has(dep)) {
             process.stderr.write(
-              `[storm-tui] Plugin "${plugin.name}" depends on "${dep}" which is not registered.\n`,
+              `[storm] Plugin "${plugin.name}" depends on "${dep}" which is not registered.\n`,
             );
           }
         }
@@ -240,12 +240,12 @@ export class PluginManager {
       // Circular dependency detected
       if (this.strictDependencies) {
         throw new Error(
-          `[storm-tui] Circular plugin dependency detected. Cannot resolve plugin ordering.`,
+          `[storm] Circular plugin dependency detected. Cannot resolve plugin ordering.`,
         );
       }
       // Non-strict: fall back to priority-only sort with registration order tiebreaker
       process.stderr.write(
-        `[storm-tui] Circular plugin dependency detected. Falling back to priority order.\n`,
+        `[storm] Circular plugin dependency detected. Falling back to priority order.\n`,
       );
       this.plugins.sort((a, b) => {
         const priDiff = (a.priority ?? DEFAULT_PRIORITY) - (b.priority ?? DEFAULT_PRIORITY);
@@ -399,7 +399,7 @@ export class PluginManager {
         if (result && typeof (result as Promise<void>).then === "function") {
           (result as Promise<void>).catch((err) => {
             process.stderr.write(
-              `[storm-tui] Plugin "${plugin.name}" async setup error: ${(err as Error).message}\n`,
+              `[storm] Plugin "${plugin.name}" async setup error: ${(err as Error).message}\n`,
             );
             this.failedPlugins.add(plugin.name);
           });
@@ -446,7 +446,7 @@ export class PluginManager {
         }
       } catch (err) {
         process.stderr.write(
-          `[storm-tui] Plugin "${plugin.name}" error in setup: ${(err as Error).message}\n`,
+          `[storm] Plugin "${plugin.name}" error in setup: ${(err as Error).message}\n`,
         );
         this.failedPlugins.add(plugin.name);
       }
@@ -534,7 +534,7 @@ export class PluginManager {
           current = plugin.onKey(current);
         } catch (err) {
           process.stderr.write(
-            `[storm-tui] Plugin "${plugin.name}" error in onKey: ${(err as Error).message}\n`,
+            `[storm] Plugin "${plugin.name}" error in onKey: ${(err as Error).message}\n`,
           );
           // Don't lose the event — continue with current value
         }
@@ -554,7 +554,7 @@ export class PluginManager {
           current = plugin.onMouse(current);
         } catch (err) {
           process.stderr.write(
-            `[storm-tui] Plugin "${plugin.name}" error in onMouse: ${(err as Error).message}\n`,
+            `[storm] Plugin "${plugin.name}" error in onMouse: ${(err as Error).message}\n`,
           );
           // Don't lose the event — continue with current value
         }
@@ -670,7 +670,7 @@ export class PluginManager {
           }
         } catch (err) {
           process.stderr.write(
-            `[storm-tui] Plugin "${plugin.name}" error in onComponentProps: ${(err as Error).message}\n`,
+            `[storm] Plugin "${plugin.name}" error in onComponentProps: ${(err as Error).message}\n`,
           );
         }
       }
@@ -690,7 +690,7 @@ export class PluginManager {
         handler.mount(element);
       } catch (err) {
         process.stderr.write(
-          `[storm-tui] Custom element "${tagName}" error in mount: ${(err as Error).message}\n`,
+          `[storm] Custom element "${tagName}" error in mount: ${(err as Error).message}\n`,
         );
       }
     }
@@ -708,7 +708,7 @@ export class PluginManager {
         handler.unmount(element);
       } catch (err) {
         process.stderr.write(
-          `[storm-tui] Custom element "${tagName}" error in unmount: ${(err as Error).message}\n`,
+          `[storm] Custom element "${tagName}" error in unmount: ${(err as Error).message}\n`,
         );
       }
     }
@@ -726,7 +726,7 @@ export class PluginManager {
         handler.update(element, props);
       } catch (err) {
         process.stderr.write(
-          `[storm-tui] Custom element "${tagName}" error in update: ${(err as Error).message}\n`,
+          `[storm] Custom element "${tagName}" error in update: ${(err as Error).message}\n`,
         );
       }
     }

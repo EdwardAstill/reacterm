@@ -83,7 +83,7 @@ function paneLabel(idx: number): string {
 
 export function CodeReview(props: CodeReviewProps): React.ReactElement {
   const colors = useColors();
-  const { repoName = "storm-tui" } = props;
+  const { repoName = "storm" } = props;
   const { exit, flushSync } = useTui();
   const { width, height } = useTerminal();
 

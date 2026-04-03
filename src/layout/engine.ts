@@ -243,7 +243,7 @@ function resolveSize(
   if (parentSize >= UNCONSTRAINED) {
     if (process.env.NODE_ENV !== "production" && !_warnedPercentInScroll) {
       _warnedPercentInScroll = true;
-      process.stderr.write("[storm-tui] Warning: Percentage width/height inside a ScrollView is not supported (parent size is unconstrained). Falling back to auto sizing. Use explicit numeric values instead.\n");
+      process.stderr.write("[storm] Warning: Percentage width/height inside a ScrollView is not supported (parent size is unconstrained). Falling back to auto sizing. Use explicit numeric values instead.\n");
     }
     return undefined;
   }

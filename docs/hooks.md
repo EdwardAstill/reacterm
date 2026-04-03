@@ -4,7 +4,7 @@
 
 Storm provides 26 hooks for input handling, focus management, animation, terminal info, accessibility, and more. All hooks use Storm's eager registration pattern -- handlers are registered immediately during render (not in `useEffect`) because `useEffect` cleanup does not fire reliably in the custom reconciler.
 
-All hooks import from `@orchetron/storm-tui`.
+All hooks import from `@orchetron/storm`.
 
 ---
 
@@ -17,7 +17,7 @@ Subscribe to keyboard events. The handler receives a `KeyEvent` with properties 
 The `isActive` option allows conditional listening -- when `false`, events are silently ignored without unsubscribing. This is cheaper than toggling subscriptions.
 
 ```tsx
-import { useInput } from "@orchetron/storm-tui";
+import { useInput } from "@orchetron/storm";
 
 function VimNavigator({ onMove }: { onMove: (dir: string) => void }) {
   useInput((event) => {
@@ -41,7 +41,7 @@ function VimNavigator({ onMove }: { onMove: (dir: string) => void }) {
 Subscribe to mouse events including clicks, scroll, and motion. The handler receives a `MouseEvent` with x/y coordinates, button type, and modifier keys. Mouse scroll events for ScrollView are handled via hit-testing in the renderer -- this hook is for custom mouse handling.
 
 ```tsx
-import { useMouse } from "@orchetron/storm-tui";
+import { useMouse } from "@orchetron/storm";
 
 function ClickTarget() {
   useMouse((event) => {
@@ -68,7 +68,7 @@ function ClickTarget() {
 Reactive terminal dimensions that update on resize, plus an `exit` function. Width and height reflect the current terminal size in columns and rows.
 
 ```tsx
-import { useTerminal, Box, Text } from "@orchetron/storm-tui";
+import { useTerminal, Box, Text } from "@orchetron/storm";
 
 function ResponsiveLayout() {
   const { width, height, exit } = useTerminal();
@@ -94,7 +94,7 @@ function ResponsiveLayout() {
 Access the full TUI context including screen, input manager, focus manager, exit, requestRender, flushSync, clear, and renderContext. This is the low-level escape hatch -- prefer the specific hooks (useTerminal, useInput, etc.) when possible.
 
 ```tsx
-import { useTui } from "@orchetron/storm-tui";
+import { useTui } from "@orchetron/storm";
 
 function ImmediateUpdate() {
   const { requestRender, flushSync, exit, clear } = useTui();
@@ -125,7 +125,7 @@ function ImmediateUpdate() {
 Access the active theme colors and auto-generated shades. Returns the theme from the nearest `ThemeProvider`, or the default teal palette if none is present.
 
 ```tsx
-import { useTheme, Box, Text } from "@orchetron/storm-tui";
+import { useTheme, Box, Text } from "@orchetron/storm";
 
 function ThemedStatus({ ok }: { ok: boolean }) {
   const { colors, shades } = useTheme();
@@ -154,7 +154,7 @@ function ThemedStatus({ ok }: { ok: boolean }) {
 Make a component focusable within the Tab-cycling focus ring. Returns whether the component is currently focused and a function to programmatically claim focus.
 
 ```tsx
-import { useFocus, Box, Text } from "@orchetron/storm-tui";
+import { useFocus, Box, Text } from "@orchetron/storm";
 
 function FocusablePanel({ label }: { label: string }) {
   const { isFocused, focus } = useFocus({ autoFocus: false });
@@ -181,7 +181,7 @@ function FocusablePanel({ label }: { label: string }) {
 Programmatic focus control -- cycle through focusable elements, jump to a specific ID, or enable/disable the focus system entirely.
 
 ```tsx
-import { useFocusManager, useInput, Box } from "@orchetron/storm-tui";
+import { useFocusManager, useInput, Box } from "@orchetron/storm";
 
 function FocusController() {
   const { focusNext, focusPrevious, focus } = useFocusManager();
@@ -208,7 +208,7 @@ function FocusController() {
 Declarative keyboard shortcut system. Define an array of shortcut definitions (key + modifiers + handler) and the hook matches incoming key events against them. Builds on `useInput` internally.
 
 ```tsx
-import { useKeyboardShortcuts } from "@orchetron/storm-tui";
+import { useKeyboardShortcuts } from "@orchetron/storm";
 
 function Editor() {
   useKeyboardShortcuts([
@@ -236,7 +236,7 @@ function Editor() {
 Register a cleanup function that runs when the app unmounts. This is the only reliable way to clean up timers, listeners, and subscriptions in Storm's reconciler, since `useEffect` cleanup does not fire.
 
 ```tsx
-import { useCleanup } from "@orchetron/storm-tui";
+import { useCleanup } from "@orchetron/storm";
 
 function WebSocketMonitor({ url }: { url: string }) {
   const wsRef = useRef<WebSocket | null>(null);
@@ -265,7 +265,7 @@ function WebSocketMonitor({ url }: { url: string }) {
 Frame-based animation hook. Registers with Storm's global AnimationScheduler so all animations share a single timer -- preventing timer thrashing. Returns the current frame count and a ref for imperative text node updates.
 
 ```tsx
-import { useAnimation } from "@orchetron/storm-tui";
+import { useAnimation } from "@orchetron/storm";
 
 const FRAMES = ["-", "\\", "|", "/"];
 
@@ -312,7 +312,7 @@ Returns: current tick count
 Repeating timer with automatic cleanup. The callback is stored in a ref so it always accesses the latest closure values. The `active` option pauses/resumes without destroying the timer.
 
 ```tsx
-import { useInterval } from "@orchetron/storm-tui";
+import { useInterval } from "@orchetron/storm";
 
 function Clock() {
   const timeRef = useRef(new Date());
@@ -336,7 +336,7 @@ function Clock() {
 One-shot timer with automatic cleanup. Fires the callback once after the specified delay. The callback ref is updated each render so the timeout always calls the latest version.
 
 ```tsx
-import { useTimeout } from "@orchetron/storm-tui";
+import { useTimeout } from "@orchetron/storm";
 
 function SplashScreen({ onDone }: { onDone: () => void }) {
   useTimeout(() => {
@@ -384,7 +384,7 @@ requestRender();
 Efficient rendering of large datasets by computing only the visible slice plus overscan. Returns the visible items with their offset positions and scroll control functions. Uses `requestRender()` instead of React state for instant scroll response.
 
 ```tsx
-import { useVirtualList, Box, Text } from "@orchetron/storm-tui";
+import { useVirtualList, Box, Text } from "@orchetron/storm";
 
 function BigList({ items }: { items: string[] }) {
   const { visibleItems, totalHeight, onScroll, scrollToTop } = useVirtualList({
@@ -420,7 +420,7 @@ function BigList({ items }: { items: string[] }) {
 Read and write the system clipboard via OSC 52 escape sequences. Works in terminals that support OSC 52 (most modern terminals including iTerm2, WezTerm, Kitty, and recent versions of Terminal.app).
 
 ```tsx
-import { useClipboard, Button, Text } from "@orchetron/storm-tui";
+import { useClipboard, Button, Text } from "@orchetron/storm";
 
 function CopyButton({ text }: { text: string }) {
   const { copy, content } = useClipboard();
@@ -443,7 +443,7 @@ function CopyButton({ text }: { text: string }) {
 Subscribe to bracketed paste events. Receives the pasted text as a string. Separate from `useInput` because paste events can contain newlines and special characters that would be ambiguous as key events.
 
 ```tsx
-import { usePaste } from "@orchetron/storm-tui";
+import { usePaste } from "@orchetron/storm";
 
 function PasteTarget() {
   const [pasted, setPasted] = useState("");
@@ -468,7 +468,7 @@ function PasteTarget() {
 Access all accessibility preferences detected from environment variables. Includes high contrast mode, reduced motion preference, and screen reader detection. Results are cached in a ref for zero-cost repeated access.
 
 ```tsx
-import { useAccessibility, Spinner, Text } from "@orchetron/storm-tui";
+import { useAccessibility, Spinner, Text } from "@orchetron/storm";
 
 function LoadingIndicator() {
   const a11y = useAccessibility();
@@ -490,7 +490,7 @@ function LoadingIndicator() {
 Convenience hook that returns `true` if the user prefers reduced motion. Components should check this before starting animations. Uses `useAccessibility` internally.
 
 ```tsx
-import { useReducedMotion } from "@orchetron/storm-tui";
+import { useReducedMotion } from "@orchetron/storm";
 
 function AnimatedBorder() {
   const reducedMotion = useReducedMotion();
@@ -512,7 +512,7 @@ function AnimatedBorder() {
 Detects whether a screen reader or accessibility tool is active by checking the `ACCESSIBILITY` and `SCREEN_READER` environment variables. Use this to provide alternative text-only representations of visual content.
 
 ```tsx
-import { useIsScreenReaderEnabled, Sparkline, Text } from "@orchetron/storm-tui";
+import { useIsScreenReaderEnabled, Sparkline, Text } from "@orchetron/storm";
 
 function DataViz({ data }: { data: number[] }) {
   const screenReader = useIsScreenReaderEnabled();
@@ -537,7 +537,7 @@ function DataViz({ data }: { data: number[] }) {
 Imperative scroll state management with mouse and keyboard handlers pre-wired. Returns the current scroll position and functions to scroll absolutely, relatively, or to the bottom. Handles PgUp/PgDown, Shift+Up/Down, and mouse scroll out of the box.
 
 ```tsx
-import { useScroll, Box, Text } from "@orchetron/storm-tui";
+import { useScroll, Box, Text } from "@orchetron/storm";
 
 function CustomScrollArea({ lines, viewportHeight }: { lines: string[]; viewportHeight: number }) {
   const { scrollTop, scrollTo, scrollToBottom, isAtBottom } = useScroll({
@@ -570,7 +570,7 @@ function CustomScrollArea({ lines, viewportHeight }: { lines: string[]; viewport
 Reserved hook for creating scoped style sheets. Allows defining reusable style objects that map to Storm's style system.
 
 ```tsx
-import { useTheme } from "@orchetron/storm-tui";
+import { useTheme } from "@orchetron/storm";
 
 function StyledComponent() {
   const { colors } = useTheme();
@@ -600,7 +600,7 @@ function StyledComponent() {
 Read the computed layout measurements (x, y, width, height) for an element identified by its `_measureId` prop. Measurements are populated after each paint pass, so the returned value reflects the previous frame's layout.
 
 ```tsx
-import { useMeasure, Box, Text } from "@orchetron/storm-tui";
+import { useMeasure, Box, Text } from "@orchetron/storm";
 
 function MeasuredBox() {
   const layout = useMeasure("my-box");
@@ -628,7 +628,7 @@ function MeasuredBox() {
 Access the shared PluginManager instance for registering plugins, querying custom elements, or accessing plugin-provided shortcuts. Returns a stable instance that persists across renders.
 
 ```tsx
-import { usePluginManager } from "@orchetron/storm-tui";
+import { usePluginManager } from "@orchetron/storm";
 
 function PluginLoader() {
   const plugins = usePluginManager();
@@ -655,7 +655,7 @@ function PluginLoader() {
 Detect terminal capabilities including image protocol support, color depth, and Unicode support. Results are computed once on first call and cached. Use this to adapt rendering based on what the terminal can display.
 
 ```tsx
-import { useAdaptive, Image, Text } from "@orchetron/storm-tui";
+import { useAdaptive, Image, Text } from "@orchetron/storm";
 
 function SmartImage({ src }: { src: string }) {
   const adaptive = useAdaptive();
@@ -679,7 +679,7 @@ function SmartImage({ src }: { src: string }) {
 Announce dynamic content changes to screen readers via OSC 99 escape sequences. Provides both polite announcements (wait for idle) and urgent/assertive announcements (interrupt current speech).
 
 ```tsx
-import { useAnnounce, Button } from "@orchetron/storm-tui";
+import { useAnnounce, Button } from "@orchetron/storm";
 
 function SaveButton({ onSave }: { onSave: () => Promise<void> }) {
   const { announce, announceUrgent } = useAnnounce();
@@ -708,7 +708,7 @@ function SaveButton({ onSave }: { onSave: () => Promise<void> }) {
 App-level controls for exiting, requesting re-renders, and clearing the screen. This is a convenience wrapper around `useTui` that exposes the three most common app-level operations.
 
 ```tsx
-import { useApp, useInput, Text } from "@orchetron/storm-tui";
+import { useApp, useInput, Text } from "@orchetron/storm";
 
 function App() {
   const { exit, rerender, clear } = useApp();

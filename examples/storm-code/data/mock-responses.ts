@@ -457,7 +457,7 @@ export const RESPONSE_TEMPLATES: ResponseTemplate[] = [
       },
       {
         kind: "function_return",
-        content: "packages/core/\npackages/storm-tui/\npackages/cli/\ndocs/\nscripts/",
+        content: "packages/core/\npackages/storm/\npackages/cli/\ndocs/\nscripts/",
       },
       {
         kind: "response",
@@ -467,7 +467,7 @@ export const RESPONSE_TEMPLATES: ResponseTemplate[] = [
           "| Package | Purpose | Stats |\n" +
           "|---------|---------|-------|\n" +
           "| `core` | 11 swappable planes, governance algebra | 5,499 tests |\n" +
-          "| `storm-tui` | Terminal UI framework (cell-diff rendering) | 18K FPS |\n" +
+          "| `storm` | Terminal UI framework (cell-diff rendering) | 18K FPS |\n" +
           "| `cli` | AI coding agent CLI | In progress |\n\n" +
           "**Architecture**: 11 planes with governance algebra (23+ combinators), " +
           "31 branded types, Result<T, E> monads with 40+ operations.\n\n" +

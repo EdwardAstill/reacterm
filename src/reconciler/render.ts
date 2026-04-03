@@ -57,13 +57,13 @@ function patchUseEffect(): void {
           _useEffectWarnCount++;
           if (_useEffectWarnCount <= _USE_EFFECT_MAX_PROD_WARNINGS) {
             process.stderr.write(
-              "[storm-tui] Warning: useEffect cleanup function detected. " +
+              "[storm] Warning: useEffect cleanup function detected. " +
               "Use useCleanup() instead. See docs/pitfalls.md#4\n",
             );
           }
           if (_useEffectWarnCount === _USE_EFFECT_MAX_PROD_WARNINGS) {
             process.stderr.write(
-              "[storm-tui] ... suppressing further useEffect cleanup warnings.\n",
+              "[storm] ... suppressing further useEffect cleanup warnings.\n",
             );
           }
           return result;
@@ -83,7 +83,7 @@ function patchUseEffect(): void {
         if (!_warnedCallSites.has(callSiteKey)) {
           _warnedCallSites.add(callSiteKey);
           process.stderr.write(
-            "[storm-tui] Warning: useEffect cleanup function detected. " +
+            "[storm] Warning: useEffect cleanup function detected. " +
             "In Storm's reconciler, useEffect cleanup may not fire reliably. " +
             "Use useCleanup() instead for timers, listeners, and subscriptions. " +
             "See docs/pitfalls.md#4\n",
@@ -240,7 +240,7 @@ export function render(
   if (!stdout.isTTY && !_nonTtyWarned) {
     _nonTtyWarned = true;
     process.stderr.write(
-      "[storm-tui] Warning: stdout is not a TTY. Running in headless mode — " +
+      "[storm] Warning: stdout is not a TTY. Running in headless mode — " +
       "some features (mouse, alt-screen, colors) are disabled.\n",
     );
   }
@@ -251,7 +251,7 @@ export function render(
     // syncContainerUpdate is a private API we depend on
     if (typeof (TuiReconciler as any).updateContainerSync !== "function") {
       process.stderr.write(
-        `[storm-tui] Warning: React reconciler ${reconcilerVersion} may not support syncContainerUpdate. ` +
+        `[storm] Warning: React reconciler ${reconcilerVersion} may not support syncContainerUpdate. ` +
         `Storm requires react-reconciler@0.31+. State updates may not flush synchronously.\n`,
       );
     }
@@ -340,7 +340,7 @@ export function render(
     if (framesThisSecond > MAX_FRAMES_PER_SECOND) {
       // Render loop detected — skip this frame
       process.stderr.write(
-        `\x1b[33m[storm-tui] Warning: render loop detected (>${MAX_FRAMES_PER_SECOND} frames/s). Skipping frame. Check for setState calls in useInput handlers or requestRender() in a tight loop.\x1b[0m\n`,
+        `\x1b[33m[storm] Warning: render loop detected (>${MAX_FRAMES_PER_SECOND} frames/s). Skipping frame. Check for setState calls in useInput handlers or requestRender() in a tight loop.\x1b[0m\n`,
       );
       return;
     }
@@ -498,7 +498,7 @@ export function render(
             if (isProduction) stateWarnProdCount++;
             lastStateWarnTime = warnNow;
             process.stderr.write(
-              "[storm-tui] Performance: " + fullPaintCount + " state updates/sec detected. " +
+              "[storm] Performance: " + fullPaintCount + " state updates/sec detected. " +
               "If this is animation or scroll, use useRef + requestRender() instead of useState. " +
               "See docs/getting-started.md — The Golden Rules.\n",
             );
@@ -763,7 +763,7 @@ export function render(
         }
         // Show any suppressed warnings after TUI exits
         if (suppressedWarnings.length > 0 && process.env.NODE_ENV !== "production") {
-          origConsoleWarn(`[storm-tui] ${suppressedWarnings.length} console warnings were suppressed during TUI session.`);
+          origConsoleWarn(`[storm] ${suppressedWarnings.length} console warnings were suppressed during TUI session.`);
         }
         if (exitError) {
           exitReject?.(exitError);

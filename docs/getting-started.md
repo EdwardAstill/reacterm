@@ -5,14 +5,14 @@ Storm is a terminal UI framework built on React. It renders to a cell-based buff
 ## Installation
 
 ```bash
-npm install @orchetron/storm-tui react
+npm install @orchetron/storm react
 ```
 
 Requires Node.js 20+ and React 18 or 19. TypeScript is recommended but not required.
 
 ```bash
 # With TypeScript (recommended)
-npm install @orchetron/storm-tui react typescript @types/react @types/node
+npm install @orchetron/storm react typescript @types/react @types/node
 ```
 
 Your `tsconfig.json` should target ESM:
@@ -54,7 +54,7 @@ Your `tsconfig.json` should target ESM:
 Create `app.tsx`:
 
 ```tsx
-import { render, Box, Text, Spinner, useInput, useTui } from "@orchetron/storm-tui";
+import { render, Box, Text, Spinner, useInput, useTui } from "@orchetron/storm";
 
 function App() {
   const { exit } = useTui();
@@ -206,7 +206,7 @@ Use the `useInput` hook to listen for keyboard events:
 
 ```tsx
 import { useState } from "react";
-import { render, Box, Text, useInput, useTui } from "@orchetron/storm-tui";
+import { render, Box, Text, useInput, useTui } from "@orchetron/storm";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -253,7 +253,7 @@ For editable text fields, use the `TextInput` component:
 
 ```tsx
 import { useState } from "react";
-import { render, Box, Text, TextInput } from "@orchetron/storm-tui";
+import { render, Box, Text, TextInput } from "@orchetron/storm";
 
 function App() {
   const [name, setName] = useState("");
@@ -281,7 +281,7 @@ render(<App />);
 ### Mouse Input
 
 ```tsx
-import { useMouse } from "@orchetron/storm-tui";
+import { useMouse } from "@orchetron/storm";
 
 function MyComponent() {
   useMouse((event) => {
@@ -301,7 +301,7 @@ Mouse scroll events are automatically routed to the `ScrollView` under the curso
 Use `ScrollView` for content that overflows its container:
 
 ```tsx
-import { render, Box, Text, ScrollView, useTerminal } from "@orchetron/storm-tui";
+import { render, Box, Text, ScrollView, useTerminal } from "@orchetron/storm";
 
 function App() {
   const { width, height } = useTerminal();
@@ -340,7 +340,7 @@ Scroll is hit-tested: only the `ScrollView` under the mouse cursor receives scro
 Storm ships with a default color palette and four presets. Use `ThemeProvider` to apply a theme:
 
 ```tsx
-import { render, Box, Text, ThemeProvider, neonTheme, useTheme } from "@orchetron/storm-tui";
+import { render, Box, Text, ThemeProvider, neonTheme, useTheme } from "@orchetron/storm";
 
 function ThemedContent() {
   const { colors } = useTheme();
@@ -400,7 +400,7 @@ Storm uses a three-tiered style customization system. Every component accepts st
 For CSS-like styling across your app, use the `StyleSheet` system:
 
 ```tsx
-import { createStyleSheet, StyleProvider, useStyles, Box, Text } from "@orchetron/storm-tui";
+import { createStyleSheet, StyleProvider, useStyles, Box, Text } from "@orchetron/storm";
 
 const sheet = createStyleSheet({
   "Box":             { padding: 1 },
@@ -431,7 +431,7 @@ Selectors support type selectors (`"Box"`), class selectors (`".title"`), state 
 Every component reads visual defaults from a centralized `DEFAULTS` object. You can import and inspect these:
 
 ```tsx
-import { DEFAULTS } from "@orchetron/storm-tui";
+import { DEFAULTS } from "@orchetron/storm";
 
 // DEFAULTS.card.borderStyle === "round"
 // DEFAULTS.card.paddingLeft === 2
@@ -450,7 +450,7 @@ import { useState } from "react";
 import {
   render, Box, Text, ScrollView, TextInput,
   useInput, useTerminal, useTui,
-} from "@orchetron/storm-tui";
+} from "@orchetron/storm";
 
 function App() {
   const { width, height } = useTerminal();
@@ -549,7 +549,7 @@ The returned `TuiApp` object provides:
 Storm includes testing utilities for rendering components without a terminal:
 
 ```tsx
-import { renderForTest } from "@orchetron/storm-tui/testing";
+import { renderForTest } from "@orchetron/storm/testing";
 
 const result = renderForTest(<MyComponent />);
 expect(result.hasText("Hello")).toBe(true);
@@ -566,7 +566,7 @@ expect(result.getLine(0)).toContain("Expected text");
 For headless rendering in CI or non-interactive contexts, use `renderToString()`:
 
 ```tsx
-import { renderToString, Box, Text } from "@orchetron/storm-tui";
+import { renderToString, Box, Text } from "@orchetron/storm";
 
 const { output, cleanup } = renderToString(
   <Box padding={1}>
@@ -589,7 +589,7 @@ ssh-keygen -t ed25519 -f host_key -N ""
 ```
 
 ```tsx
-import { StormSSHServer } from "@orchetron/storm-tui/ssh";
+import { StormSSHServer } from "@orchetron/storm/ssh";
 import { readFileSync } from "node:fs";
 
 const server = new StormSSHServer({

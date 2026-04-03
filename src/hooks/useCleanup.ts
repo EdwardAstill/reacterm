@@ -28,7 +28,7 @@ export function useCleanup(fn: () => void): void {
   if (!_cleanupLeakWarned && renderContext.cleanups.size > MAX_CLEANUPS) {
     _cleanupLeakWarned = true;
     process.stderr.write(
-      `[storm-tui] Warning: cleanup map has ${renderContext.cleanups.size} entries, possible leak\n`,
+      `[storm] Warning: cleanup map has ${renderContext.cleanups.size} entries, possible leak\n`,
     );
   }
 }

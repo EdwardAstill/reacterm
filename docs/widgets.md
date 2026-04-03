@@ -48,7 +48,7 @@ Renders an 8-frame rotation of Storm's angular shield with a lightning bolt, sim
 ### Usage
 
 ```tsx
-import { AnimatedLogo } from "@orchetron/storm-tui";
+import { AnimatedLogo } from "@orchetron/storm";
 
 // Basic animated logo
 <AnimatedLogo />
@@ -103,7 +103,7 @@ Renders a bordered prompt showing a tool name, risk level badge (colored by seve
 ### Usage
 
 ```tsx
-import { ApprovalPrompt } from "@orchetron/storm-tui";
+import { ApprovalPrompt } from "@orchetron/storm";
 
 // Basic approval prompt
 <ApprovalPrompt
@@ -174,7 +174,7 @@ Renders a colored dot (`●`) whose behavior changes by state: blinks when `runn
 ### Usage
 
 ```tsx
-import { BlinkDot } from "@orchetron/storm-tui";
+import { BlinkDot } from "@orchetron/storm";
 
 // Running operation -- dot blinks
 <BlinkDot state="running" />
@@ -218,7 +218,7 @@ Renders a bordered block showing a command string (bold, with collapse toggle in
 ### Usage
 
 ```tsx
-import { CommandBlock } from "@orchetron/storm-tui";
+import { CommandBlock } from "@orchetron/storm";
 
 // Basic command block
 <CommandBlock
@@ -283,7 +283,7 @@ Renders a vertical list of items with a highlighted selection indicator. Feature
 ### Usage
 
 ```tsx
-import { CommandDropdown } from "@orchetron/storm-tui";
+import { CommandDropdown } from "@orchetron/storm";
 
 const commands = [
   { name: "/help", description: "Show available commands" },
@@ -336,7 +336,7 @@ A full-screen widget that catalogs every Storm component organized by category (
 ### Usage
 
 ```tsx
-import { ComponentGallery } from "@orchetron/storm-tui";
+import { ComponentGallery } from "@orchetron/storm";
 
 // Full gallery
 <ComponentGallery width={100} height={40} />
@@ -383,7 +383,7 @@ The bar color changes based on fill level:
 ### Usage
 
 ```tsx
-import { ContextWindow } from "@orchetron/storm-tui";
+import { ContextWindow } from "@orchetron/storm";
 
 // Simple usage bar
 <ContextWindow used={6000} limit={8192} />
@@ -444,7 +444,7 @@ Calculates and displays running cost based on input/output token counts and per-
 ### Usage
 
 ```tsx
-import { CostTracker } from "@orchetron/storm-tui";
+import { CostTracker } from "@orchetron/storm";
 
 // Expanded breakdown
 <CostTracker inputTokens={50000} outputTokens={12000} />
@@ -509,7 +509,7 @@ Pure regex-based parser with zero external dependencies. Renders markdown conten
 ### Usage
 
 ```tsx
-import { MarkdownText } from "@orchetron/storm-tui";
+import { MarkdownText } from "@orchetron/storm";
 
 <MarkdownText width={80}>{`
 # Welcome
@@ -580,7 +580,7 @@ Renders a message with a role-appropriate symbol on the left (auto-resolved from
 ### Usage
 
 ```tsx
-import { MessageBubble } from "@orchetron/storm-tui";
+import { MessageBubble } from "@orchetron/storm";
 
 // User message
 <MessageBubble role="user">What files changed?</MessageBubble>
@@ -648,7 +648,7 @@ Renders a diamond icon colored by provider, the model name in bold, optional cap
 ### Usage
 
 ```tsx
-import { ModelBadge } from "@orchetron/storm-tui";
+import { ModelBadge } from "@orchetron/storm";
 
 // Basic badge
 <ModelBadge model="qwen-2.5-72b" />
@@ -713,7 +713,7 @@ Renders a tree of operations where each node has a status icon, label, optional 
 ### Usage
 
 ```tsx
-import { OperationTree } from "@orchetron/storm-tui";
+import { OperationTree } from "@orchetron/storm";
 
 <OperationTree
   nodes={[
@@ -780,7 +780,7 @@ Developer tool that renders a compact bordered box showing real-time rendering m
 ### Usage
 
 ```tsx
-import { PerformanceHUD } from "@orchetron/storm-tui";
+import { PerformanceHUD } from "@orchetron/storm";
 
 <PerformanceHUD
   fps={58}
@@ -831,7 +831,7 @@ Renders text with a 3-character bright shimmer window that continuously sweeps f
 ### Usage
 
 ```tsx
-import { ShimmerText } from "@orchetron/storm-tui";
+import { ShimmerText } from "@orchetron/storm";
 
 // Basic thinking indicator
 <ShimmerText text="Thinking..." />
@@ -891,7 +891,7 @@ Supports three modes: (1) **Custom layout** with arbitrary `left`/`right` React 
 ### Usage
 
 ```tsx
-import { StatusLine } from "@orchetron/storm-tui";
+import { StatusLine } from "@orchetron/storm";
 
 // Built-in layout
 <StatusLine
@@ -947,7 +947,7 @@ Renders text with an optional animated blinking cursor (`▊`) at the end when s
 ### Usage
 
 ```tsx
-import { StreamingText } from "@orchetron/storm-tui";
+import { StreamingText } from "@orchetron/storm";
 
 // Live streaming with cursor
 <StreamingText text={partialResponse} streaming={true} />
@@ -1027,7 +1027,7 @@ Regex-based syntax highlighter with zero external dependencies. Handles keywords
 ### Usage
 
 ```tsx
-import { SyntaxHighlight } from "@orchetron/storm-tui";
+import { SyntaxHighlight } from "@orchetron/storm";
 
 <SyntaxHighlight
   code={`function greet(name: string): string {
@@ -1046,7 +1046,7 @@ import { SyntaxHighlight } from "@orchetron/storm-tui";
 ### Extending with Custom Languages
 
 ```typescript
-import { registerLanguage } from "@orchetron/storm-tui";
+import { registerLanguage } from "@orchetron/storm";
 
 registerLanguage("mylang", {
   keywords: new Set(["fn", "let", "mut", "if", "else", "return"]),
@@ -1102,7 +1102,7 @@ A compact single-row widget showing model name, token counts (total, input, outp
 ### Usage
 
 ```tsx
-import { TokenStream } from "@orchetron/storm-tui";
+import { TokenStream } from "@orchetron/storm";
 
 // Basic streaming display
 <TokenStream
@@ -1158,7 +1158,7 @@ Renders a branded welcome screen with Storm's signature heavy-dash separator and
 ### Usage
 
 ```tsx
-import { WelcomeBanner } from "@orchetron/storm-tui";
+import { WelcomeBanner } from "@orchetron/storm";
 
 // Compact single-line (default)
 <WelcomeBanner />
@@ -1203,7 +1203,7 @@ The first thing users see when launching your AI agent TUI. The compact mode wor
 
 ## Import Summary
 
-All widgets are exported from the main entry point `@orchetron/storm-tui`:
+All widgets are exported from the main entry point `@orchetron/storm`:
 
 ```typescript
 import {
@@ -1226,7 +1226,7 @@ import {
   SyntaxHighlight,
   TokenStream,
   WelcomeBanner,
-} from "@orchetron/storm-tui";
+} from "@orchetron/storm";
 ```
 
 ## Architecture Notes

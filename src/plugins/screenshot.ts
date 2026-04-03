@@ -35,7 +35,7 @@ export interface ScreenshotPluginOptions {
  *
  * @example
  * ```ts
- * import { render, screenshotPlugin } from "@orchetron/storm-tui";
+ * import { render, screenshotPlugin } from "@orchetron/storm";
  *
  * const app = render(<App />, {
  *   plugins: [screenshotPlugin({ outputDir: "./screenshots" })],
@@ -78,7 +78,7 @@ export function screenshotPlugin(options: ScreenshotPluginOptions = {}): StormPl
 
     const buffer = renderContext.buffer;
     if (!buffer) {
-      process.stderr.write("[storm-tui/screenshot] No buffer available — skipping capture.\n");
+      process.stderr.write("[storm/screenshot] No buffer available — skipping capture.\n");
       return;
     }
 
@@ -96,7 +96,7 @@ export function screenshotPlugin(options: ScreenshotPluginOptions = {}): StormPl
     if (options.onCapture) {
       options.onCapture(filePath);
     } else {
-      process.stderr.write(`[storm-tui/screenshot] Saved: ${filePath}\n`);
+      process.stderr.write(`[storm/screenshot] Saved: ${filePath}\n`);
     }
   }
 

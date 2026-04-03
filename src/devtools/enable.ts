@@ -359,8 +359,8 @@ function exportProfilerData(profiler: Profiler): void {
   try {
     const filename = `storm-profiler-${Date.now()}.json`;
     writeFileSync(filename, profiler.exportJSON(), "utf-8");
-    process.stderr.write(`[storm-tui] Profiler data exported: ${filename}\n`);
+    process.stderr.write(`[storm] Profiler data exported: ${filename}\n`);
   } catch (err) {
-    process.stderr.write(`[storm-tui] Failed to export profiler data: ${err}\n`);
+    process.stderr.write(`[storm] Failed to export profiler data: ${err}\n`);
   }
 }

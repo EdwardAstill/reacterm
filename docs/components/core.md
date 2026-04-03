@@ -71,7 +71,7 @@ Flexbox container -- the primary layout primitive. Arranges children vertically 
 **Basic: Two-column layout**
 
 ```tsx
-import { Box, Text } from "@orchetron/storm-tui";
+import { Box, Text } from "@orchetron/storm";
 
 <Box flexDirection="row" gap={2} padding={1} borderStyle="round" borderColor="#82AAFF">
   <Box width={20}>
@@ -146,7 +146,7 @@ Styled text with color, weight, and formatting. Supports inline nesting for mixe
 **Basic: Styled inline text**
 
 ```tsx
-import { Text } from "@orchetron/storm-tui";
+import { Text } from "@orchetron/storm";
 
 <Text color="#82AAFF" bold>
   Hello <Text underline>world</Text>
@@ -194,7 +194,7 @@ Scrollable container with hit-tested mouse scroll, keyboard navigation, optional
 **Basic: Chat log with stick-to-bottom**
 
 ```tsx
-import { ScrollView, Text } from "@orchetron/storm-tui";
+import { ScrollView, Text } from "@orchetron/storm";
 
 <ScrollView flex={1} stickToBottom scrollbarThumbColor="#82AAFF">
   {messages.map((msg) => (
@@ -206,9 +206,9 @@ import { ScrollView, Text } from "@orchetron/storm-tui";
 **Advanced: Controlled scroll with imperative access**
 
 ```tsx
-import { ScrollView, Box, Text, Button } from "@orchetron/storm-tui";
+import { ScrollView, Box, Text, Button } from "@orchetron/storm";
 import { useRef } from "react";
-import type { ScrollState } from "@orchetron/storm-tui";
+import type { ScrollState } from "@orchetron/storm";
 
 function LogViewer({ entries }: { entries: string[] }) {
   const scrollState = useRef<ScrollState | null>(null);
@@ -267,7 +267,7 @@ Positioned overlay rendered on top of all other content. Overlays are painted in
 **Basic: Centered notification**
 
 ```tsx
-import { Overlay, Text } from "@orchetron/storm-tui";
+import { Overlay, Text } from "@orchetron/storm";
 
 <Overlay visible={showNotification} position="center" borderStyle="round" borderColor="#82AAFF" padding={2}>
   <Text bold>Operation complete!</Text>
@@ -296,7 +296,7 @@ Flexible space that expands to fill available room. Equivalent to a Box with `fl
 **Basic: Push items apart**
 
 ```tsx
-import { Box, Text, Spacer } from "@orchetron/storm-tui";
+import { Box, Text, Spacer } from "@orchetron/storm";
 
 <Box flexDirection="row">
   <Text bold>Left</Text>

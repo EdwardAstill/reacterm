@@ -338,7 +338,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm-tui] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
         }
         return; // Keep the old stylesheet
       }
@@ -353,7 +353,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm-tui] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
         }
         return; // Keep the old stylesheet
       }
@@ -385,7 +385,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm-tui] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
         }
       });
     } catch (err) {
@@ -396,7 +396,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
       if (options.onError) {
         options.onError(error);
       } else {
-        process.stderr.write(`\x1b[33m[storm-tui] ${error.message}\x1b[0m\n`);
+        process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
       }
     }
   }

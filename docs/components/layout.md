@@ -19,7 +19,7 @@ Centered dialog overlay with title bar, divider, and Escape-to-close. Renders in
 **Basic: Confirmation dialog**
 
 ```tsx
-import { Modal, Text, Button } from "@orchetron/storm-tui";
+import { Modal, Text, Button } from "@orchetron/storm";
 
 <Modal visible={showModal} title="Confirm" onClose={() => setShowModal(false)}>
   <Text>Are you sure you want to delete this item?</Text>
@@ -75,7 +75,7 @@ Horizontal tab bar with keyboard navigation. Active tab is bold and colored, oth
 **Basic: Simple tab bar**
 
 ```tsx
-import { Tabs } from "@orchetron/storm-tui";
+import { Tabs } from "@orchetron/storm";
 
 <Tabs
   tabs={[
@@ -135,7 +135,7 @@ Combined tab bar and content panels. Renders tabs at the top with automatic cont
 **Basic: Tabbed panels**
 
 ```tsx
-import { TabbedContent, Text } from "@orchetron/storm-tui";
+import { TabbedContent, Text } from "@orchetron/storm";
 
 <TabbedContent
   tabs={[
@@ -199,11 +199,11 @@ Collapsible sections with keyboard navigation. Up/Down arrows navigate between h
 **Basic: FAQ accordion**
 
 ```tsx
-import { Accordion, Text } from "@orchetron/storm-tui";
+import { Accordion, Text } from "@orchetron/storm";
 
 <Accordion
   sections={[
-    { key: "install", title: "Installation", content: <Text>npm install @orchetron/storm-tui</Text> },
+    { key: "install", title: "Installation", content: <Text>npm install @orchetron/storm</Text> },
     { key: "usage", title: "Basic Usage", content: <Text>Import components and render with storm.</Text> },
   ]}
   activeKeys={openSections}

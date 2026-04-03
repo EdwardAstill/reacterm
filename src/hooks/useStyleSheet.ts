@@ -8,7 +8,7 @@
  *
  * @example
  * ```tsx
- * import { useStyleSheet, Box, Text } from "@orchetron/storm-tui";
+ * import { useStyleSheet, Box, Text } from "@orchetron/storm";
  *
  * function App() {
  *   useStyleSheet({ path: "./app.storm.css", watch: true });
@@ -124,7 +124,7 @@ export function useStyleSheet(options: StyleSheetLoaderOptions): UseStyleSheetRe
       // Replace the StyleContext value imperatively. The StyleContext.Provider
       // is owned by a parent component (or the framework's render wrapper).
       // We mutate the context's _currentValue directly — same pattern used
-      // throughout storm-tui for imperative updates that bypass React state.
+      // throughout storm for imperative updates that bypass React state.
       (StyleContext as any)._currentValue = newSheet;
       (StyleContext as any)._currentValue2 = newSheet;
 

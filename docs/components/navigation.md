@@ -24,7 +24,7 @@ Navigation breadcrumb trail with separator, keyboard navigation, and collapsible
 Compound API: `Breadcrumb.Root`, `Breadcrumb.Item`, `Breadcrumb.Separator`.
 
 ```tsx
-<Breadcrumb items={["Home", "Projects", "storm-tui", "src"]} onNavigate={goTo} isFocused />
+<Breadcrumb items={["Home", "Projects", "storm", "src"]} onNavigate={goTo} isFocused />
 ```
 
 ---

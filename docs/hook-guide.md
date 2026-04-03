@@ -2,7 +2,7 @@
 
 > For a full API reference of all hooks with signatures, see [Hooks Reference](hooks.md).
 
-All hooks are imported from `@orchetron/storm-tui`. They follow React conventions but are adapted for the custom reconciler -- notably, `useEffect` cleanup does not fire, so cleanup is handled by `useCleanup`.
+All hooks are imported from `@orchetron/storm`. They follow React conventions but are adapted for the custom reconciler -- notably, `useEffect` cleanup does not fire, so cleanup is handled by `useCleanup`.
 
 ---
 
@@ -15,7 +15,7 @@ Learn these first. Every Storm TUI app uses them.
 Convenience wrapper over `useTui()` that exposes app-level controls: exit, rerender, and clear.
 
 ```ts
-import { useApp } from "@orchetron/storm-tui";
+import { useApp } from "@orchetron/storm";
 
 function MyComponent() {
   const { exit, rerender, clear } = useApp();
@@ -43,7 +43,7 @@ If you need the full context (screen, input, focus, flushSync, commitText), use 
 Access the core context: render control, input manager, focus manager, and exit.
 
 ```ts
-import { useTui } from "@orchetron/storm-tui";
+import { useTui } from "@orchetron/storm";
 
 function MyComponent() {
   const { requestRender, exit, input, flushSync, clear, commitText } = useTui();
@@ -75,7 +75,7 @@ function MyComponent() {
 Subscribe to keyboard events.
 
 ```ts
-import { useInput } from "@orchetron/storm-tui";
+import { useInput } from "@orchetron/storm";
 
 function MyComponent() {
   useInput((event) => {
@@ -103,7 +103,7 @@ function MyComponent() {
 Reactive terminal dimensions. Updates automatically on resize.
 
 ```tsx
-import { useTerminal, Text } from "@orchetron/storm-tui";
+import { useTerminal, Text } from "@orchetron/storm";
 
 function StatusBar() {
   const { width, height, exit } = useTerminal();
@@ -117,7 +117,7 @@ Register a cleanup function that runs on unmount. Required because `useEffect` c
 
 ```ts
 import { useRef } from "react";
-import { useCleanup } from "@orchetron/storm-tui";
+import { useCleanup } from "@orchetron/storm";
 
 function MyComponent() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -164,7 +164,7 @@ For most apps that need focus, shortcuts, timers, or animation.
 Make a component focusable. Tab cycling is handled globally by the renderer.
 
 ```tsx
-import { useFocus, Box, Text } from "@orchetron/storm-tui";
+import { useFocus, Box, Text } from "@orchetron/storm";
 
 function Button({ label }: { label: string }) {
   const { isFocused, focus } = useFocus({
@@ -186,7 +186,7 @@ function Button({ label }: { label: string }) {
 Declarative shortcut definitions. Matches key + modifiers and calls the handler.
 
 ```ts
-import { useKeyboardShortcuts } from "@orchetron/storm-tui";
+import { useKeyboardShortcuts } from "@orchetron/storm";
 
 function App() {
   useKeyboardShortcuts([
@@ -202,7 +202,7 @@ function App() {
 Timers with automatic cleanup on unmount.
 
 ```ts
-import { useInterval, useTimeout } from "@orchetron/storm-tui";
+import { useInterval, useTimeout } from "@orchetron/storm";
 
 function Clock() {
   useInterval(() => {
@@ -224,7 +224,7 @@ function SplashScreen() {
 Frame-based animation using the global AnimationScheduler. All animations share one timer to prevent thrashing.
 
 ```tsx
-import { useAnimation, Text } from "@orchetron/storm-tui";
+import { useAnimation, Text } from "@orchetron/storm";
 
 const SPINNER = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -254,7 +254,7 @@ For complex UIs with scrolling, lists, prompts, and notifications.
 Imperative scroll control using `requestRender()` for instant response (not React state).
 
 ```tsx
-import { useScroll, Box } from "@orchetron/storm-tui";
+import { useScroll, Box } from "@orchetron/storm";
 
 function LogView({ lines }: { lines: string[] }) {
   const { scrollTop, maxScroll, isAtBottom, scrollBy, scrollToBottom } = useScroll({
@@ -279,7 +279,7 @@ function LogView({ lines }: { lines: string[] }) {
 Large list virtualization. Only computes the visible slice plus overscan.
 
 ```tsx
-import { useVirtualList, useInput, Box, Text } from "@orchetron/storm-tui";
+import { useVirtualList, useInput, Box, Text } from "@orchetron/storm";
 
 function BigList({ items }: { items: string[] }) {
   const { visibleItems, scrollTop, scrollTo, onScroll } = useVirtualList({
@@ -309,7 +309,7 @@ function BigList({ items }: { items: string[] }) {
 Fuzzy command search with keyboard navigation (up/down/enter/escape).
 
 ```ts
-import { useCommandPalette } from "@orchetron/storm-tui";
+import { useCommandPalette } from "@orchetron/storm";
 
 function App() {
   const palette = useCommandPalette({
@@ -332,7 +332,7 @@ function App() {
 Inline yes/no prompts with optional timeout.
 
 ```tsx
-import { useInlinePrompt, Text } from "@orchetron/storm-tui";
+import { useInlinePrompt, Text } from "@orchetron/storm";
 
 function DeleteConfirm() {
   const { selected, countdown, reset } = useInlinePrompt({
@@ -352,7 +352,7 @@ function DeleteConfirm() {
 Toast notification queue with auto-removal.
 
 ```tsx
-import { useNotification, Box, Text } from "@orchetron/storm-tui";
+import { useNotification, Box, Text } from "@orchetron/storm";
 
 function App() {
   const { notifications, add, remove, clear } = useNotification({
@@ -400,7 +400,7 @@ requestRender();
 Read layout dimensions of a rendered element by ID.
 
 ```ts
-import { useMeasure } from "@orchetron/storm-tui";
+import { useMeasure } from "@orchetron/storm";
 
 function Sidebar() {
   const layout = useMeasure("sidebar");
@@ -419,7 +419,7 @@ Renderless hooks for building custom interactive components. They manage state a
 Single-select dropdown/picker behavior.
 
 ```ts
-import { useSelectBehavior } from "@orchetron/storm-tui";
+import { useSelectBehavior } from "@orchetron/storm";
 
 const select = useSelectBehavior({
   items: ["apple", "banana", "cherry"],
@@ -433,7 +433,7 @@ const select = useSelectBehavior({
 Navigable list with cursor tracking.
 
 ```ts
-import { useListBehavior } from "@orchetron/storm-tui";
+import { useListBehavior } from "@orchetron/storm";
 
 const list = useListBehavior({
   items: myItems,
@@ -447,7 +447,7 @@ const list = useListBehavior({
 Menu with nested submenus, keyboard navigation, and activation.
 
 ```ts
-import { useMenuBehavior } from "@orchetron/storm-tui";
+import { useMenuBehavior } from "@orchetron/storm";
 
 const menu = useMenuBehavior({
   items: [
@@ -463,7 +463,7 @@ const menu = useMenuBehavior({
 Collapsible tree navigation with expand/collapse and cursor tracking.
 
 ```ts
-import { useTreeBehavior } from "@orchetron/storm-tui";
+import { useTreeBehavior } from "@orchetron/storm";
 
 const tree = useTreeBehavior({
   root: fileSystemTree,
@@ -479,7 +479,7 @@ const tree = useTreeBehavior({
 Tab panel management with keyboard cycling.
 
 ```ts
-import { useTabsBehavior } from "@orchetron/storm-tui";
+import { useTabsBehavior } from "@orchetron/storm";
 
 const tabs = useTabsBehavior({
   tabs: ["Overview", "Details", "Settings"],
@@ -494,7 +494,7 @@ const tabs = useTabsBehavior({
 Expandable section management (single or multi-expand).
 
 ```ts
-import { useAccordionBehavior } from "@orchetron/storm-tui";
+import { useAccordionBehavior } from "@orchetron/storm";
 
 const accordion = useAccordionBehavior({
   sections: ["General", "Advanced", "Debug"],
@@ -508,7 +508,7 @@ const accordion = useAccordionBehavior({
 Multi-field form state, validation, and submission.
 
 ```ts
-import { useFormBehavior } from "@orchetron/storm-tui";
+import { useFormBehavior } from "@orchetron/storm";
 
 const form = useFormBehavior({
   fields: [
@@ -525,7 +525,7 @@ const form = useFormBehavior({
 Modal dialog lifecycle: open, close, confirm, cancel.
 
 ```ts
-import { useDialogBehavior } from "@orchetron/storm-tui";
+import { useDialogBehavior } from "@orchetron/storm";
 
 const dialog = useDialogBehavior({
   onConfirm: () => deleteItem(),
@@ -539,7 +539,7 @@ const dialog = useDialogBehavior({
 Toast queue management (similar to useNotification but headless -- no rendering opinions).
 
 ```ts
-import { useToastBehavior } from "@orchetron/storm-tui";
+import { useToastBehavior } from "@orchetron/storm";
 
 const toasts = useToastBehavior({ maxToasts: 5, defaultDuration: 3000 });
 // toasts.items, toasts.add("Saved!"), toasts.dismiss(id)
@@ -550,7 +550,7 @@ const toasts = useToastBehavior({ maxToasts: 5, defaultDuration: 3000 });
 Date navigation and selection (month grid, cursor movement).
 
 ```ts
-import { useCalendarBehavior } from "@orchetron/storm-tui";
+import { useCalendarBehavior } from "@orchetron/storm";
 
 const calendar = useCalendarBehavior({
   initialDate: new Date(),
@@ -667,7 +667,7 @@ useCleanup(() => { if (timerRef.current) clearInterval(timerRef.current); });
 For cleanup that needs to `await` (database flushes, file writes):
 
 ```tsx
-import { useAsyncCleanup } from "@orchetron/storm-tui";
+import { useAsyncCleanup } from "@orchetron/storm";
 
 useAsyncCleanup(async () => {
   await db.flush();

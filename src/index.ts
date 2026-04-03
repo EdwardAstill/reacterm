@@ -3,7 +3,7 @@
  * Arc-lit. Precise. Terminal-native.
  *
  * @packageDocumentation
- * @module @orchetron/storm-tui
+ * @module @orchetron/storm
  *
  * Architecture: React → Layout → Cell Buffer → Compositor → Diff → Terminal
  *
@@ -27,7 +27,7 @@
  *
  * @example
  * ```tsx
- * import { render, Box, Text, ScrollView, TextInput } from "@orchetron/storm-tui";
+ * import { render, Box, Text, ScrollView, TextInput } from "@orchetron/storm";
  *
  * function App() {
  *   const [input, setInput] = useState("");

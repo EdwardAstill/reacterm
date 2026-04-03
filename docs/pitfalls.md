@@ -162,7 +162,7 @@ function Poller({ url }: { url: string }) {
 ### Right: useCleanup
 
 ```tsx
-import { useCleanup } from "@orchetron/storm-tui";
+import { useCleanup } from "@orchetron/storm";
 
 function Poller({ url }: { url: string }) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -241,7 +241,7 @@ Storm provides three input hooks at different abstraction levels.
 The lowest level. You get every key press and handle matching yourself.
 
 ```tsx
-import { useInput } from "@orchetron/storm-tui";
+import { useInput } from "@orchetron/storm";
 
 useInput((event) => {
   if (event.key === "escape") handleClose();
@@ -257,7 +257,7 @@ Good for: simple components with 1-3 key bindings, custom key processing logic.
 Define shortcuts as data. Handles modifier matching for you.
 
 ```tsx
-import { useKeyboardShortcuts } from "@orchetron/storm-tui";
+import { useKeyboardShortcuts } from "@orchetron/storm";
 
 useKeyboardShortcuts([
   { key: "q", handler: handleQuit },
@@ -275,7 +275,7 @@ Good for: apps with 5+ shortcuts, when you want a clean declarative style.
 Like `useKeyboardShortcuts` but returns a `bindings` array you can render into a help bar.
 
 ```tsx
-import { useHotkey } from "@orchetron/storm-tui";
+import { useHotkey } from "@orchetron/storm";
 
 const { bindings } = useHotkey({
   hotkeys: [
@@ -308,7 +308,7 @@ Start with `useInput`. When you reach 5+ shortcuts, switch to `useKeyboardShortc
 Storm has a built-in focus system. Components opt in with `useFocus()`.
 
 ```tsx
-import { useFocus } from "@orchetron/storm-tui";
+import { useFocus } from "@orchetron/storm";
 
 function MyButton({ label }: { label: string }) {
   const { isFocused, focus } = useFocus();
@@ -361,7 +361,7 @@ Storm provides animation primitives that sync to a global scheduler. Using them 
 Registers with the global `AnimationScheduler`. All animations tick on a single timer.
 
 ```tsx
-import { useAnimation } from "@orchetron/storm-tui";
+import { useAnimation } from "@orchetron/storm";
 
 const FRAMES = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -376,7 +376,7 @@ function MySpinner() {
 Smoothly interpolates a number toward a target over time, with easing.
 
 ```tsx
-import { useTween } from "@orchetron/storm-tui";
+import { useTween } from "@orchetron/storm";
 
 function AnimatedBar({ progress }: { progress: number }) {
   const { value, animating } = useTween(progress, 200);
@@ -390,7 +390,7 @@ function AnimatedBar({ progress }: { progress: number }) {
 Wraps children with animated visibility transitions.
 
 ```tsx
-import { Transition } from "@orchetron/storm-tui";
+import { Transition } from "@orchetron/storm";
 
 <Transition show={isVisible} type="fade" enter={{ duration: 200 }}>
   <Text>I fade in and out</Text>
@@ -404,7 +404,7 @@ Supports `"fade"`, `"slide-down"`, and `"collapse"` types.
 Raw `setInterval` won't be cleaned up when your component unmounts (because `useEffect` cleanup is unreliable). Use `useInterval` instead:
 
 ```tsx
-import { useInterval } from "@orchetron/storm-tui";
+import { useInterval } from "@orchetron/storm";
 
 // Automatically cleaned up via useCleanup
 useInterval(() => {
@@ -422,7 +422,7 @@ useInterval(() => {
 ## 9. DevTools: one line to enable
 
 ```tsx
-import { render, enableDevTools } from "@orchetron/storm-tui";
+import { render, enableDevTools } from "@orchetron/storm";
 
 const app = render(<App />);
 enableDevTools(app);
@@ -471,7 +471,7 @@ app.pluginManager.register(myPlugin);
 Access the plugin manager from inside your component tree, where registration happens before the first paint:
 
 ```tsx
-import { usePluginManager } from "@orchetron/storm-tui";
+import { usePluginManager } from "@orchetron/storm";
 
 function App() {
   const pm = usePluginManager();

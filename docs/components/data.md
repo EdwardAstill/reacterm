@@ -31,7 +31,7 @@ Bordered table with headers, auto-sized columns, optional zebra striping, and ro
 **Basic: Simple data table**
 
 ```tsx
-import { Table } from "@orchetron/storm-tui";
+import { Table } from "@orchetron/storm";
 
 <Table
   columns={[
@@ -94,7 +94,7 @@ Interactive data grid with keyboard navigation, sorting, row selection, and virt
 **Basic: Sortable grid**
 
 ```tsx
-import { DataGrid } from "@orchetron/storm-tui";
+import { DataGrid } from "@orchetron/storm";
 
 <DataGrid
   columns={[
@@ -157,7 +157,7 @@ Hierarchical tree with expand/collapse indicators. Renders nodes with indentatio
 **Basic: Simple tree**
 
 ```tsx
-import { Tree } from "@orchetron/storm-tui";
+import { Tree } from "@orchetron/storm";
 
 <Tree
   nodes={[
@@ -240,7 +240,7 @@ Scrollable list with highlight cursor, selectable items, virtual scrolling, and 
 **Basic: Simple selectable list**
 
 ```tsx
-import { ListView } from "@orchetron/storm-tui";
+import { ListView } from "@orchetron/storm";
 
 <ListView
   items={[

@@ -5,8 +5,8 @@ Contributions that make Storm faster, more accessible, or more useful are welcom
 ## Setup
 
 ```bash
-git clone https://github.com/orchetron/storm-tui.git
-cd storm-tui
+git clone https://github.com/orchetron/storm.git
+cd storm
 npm install
 ```
 
@@ -22,7 +22,7 @@ npx tsx examples/benchmarks.ts                  # performance baseline
 Enable DevTools while developing:
 
 ```tsx
-import { enableDevTools } from "@orchetron/storm-tui";
+import { enableDevTools } from "@orchetron/storm";
 const app = render(<App />);
 enableDevTools(app);  // render heatmap, a11y audit, time-travel, inspector
 ```
@@ -218,7 +218,7 @@ Contributions welcome! See `src/__tests__/` for existing test patterns.
 For headless component testing:
 
 ```typescript
-import { renderForTest } from "@orchetron/storm-tui/testing";
+import { renderForTest } from "@orchetron/storm/testing";
 
 const result = renderForTest(<MyComponent label="test" />);
 expect(result.hasText("test")).toBe(true);

@@ -33,8 +33,8 @@ The **most powerful** terminal UI framework ever built.
 Install the package:
 
 \`\`\`typescript
-import { render } from "@orchetron/storm-tui";
-import { Box, Text } from "@orchetron/storm-tui/components";
+import { render } from "@orchetron/storm";
+import { Box, Text } from "@orchetron/storm/components";
 
 render(
   React.createElement(Box, { borderStyle: "round" },
@@ -50,8 +50,8 @@ render(
 Built with love by **Orchetron**.`;
 
 const TS_CODE = `import React, { useState } from "react";
-import { render } from "@orchetron/storm-tui";
-import { Box, Text, TextInput, ScrollView } from "@orchetron/storm-tui/components";
+import { render } from "@orchetron/storm";
+import { Box, Text, TextInput, ScrollView } from "@orchetron/storm/components";
 
 interface Message {
   role: "user" | "assistant";

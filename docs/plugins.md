@@ -71,7 +71,7 @@ interface PluginContext {
 Here is a complete plugin that adds a Ctrl+R keyboard shortcut to reload data:
 
 ```ts
-import type { StormPlugin } from "@orchetron/storm-tui";
+import type { StormPlugin } from "@orchetron/storm";
 
 let reloadCallback: (() => void) | null = null;
 
@@ -214,7 +214,7 @@ This is a declarative alternative to `onComponentProps` -- no function needed, j
 Pass plugins when creating the app:
 
 ```ts
-import { render } from "@orchetron/storm-tui";
+import { render } from "@orchetron/storm";
 import { reloadPlugin } from "./plugins/reload.js";
 
 const app = render(<App />, {
@@ -247,7 +247,7 @@ const all = app.pluginManager.getAll();
 Storm TUI ships with a `vimModePlugin` that adds j/k navigation to list-style components:
 
 ```ts
-import { vimModePlugin } from "@orchetron/storm-tui";
+import { vimModePlugin } from "@orchetron/storm";
 
 const app = render(<App />, {
   plugins: [vimModePlugin],
