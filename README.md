@@ -1,11 +1,10 @@
-<h1 align="center">
+<p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-white.png">
-    <source media="(prefers-color-scheme: light)" srcset="assets/logo-black.png">
-    <img src="assets/logo-black.png" width="40" alt="Storm" valign="middle">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-text-white.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/logo-text-black.svg">
+    <img src="assets/logo-text-black.svg" height="60" alt="STORM">
   </picture>
-  &nbsp;storm
-</h1>
+</p>
 
 <p align="center">
   The terminal deserves a real UI framework.<br>
