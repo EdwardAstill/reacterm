@@ -48,6 +48,7 @@ npm install @orchetron/storm-tui react
 ```
 
 ```tsx
+import React from "react";
 import { render, Box, Text, Spinner, useInput, useTui } from "@orchetron/storm-tui";
 
 function App() {
@@ -72,6 +73,7 @@ That's 10 lines. You have a running TUI with animated spinner and keyboard input
 ## Build an AI agent terminal in 30 seconds
 
 ```tsx
+import React from "react";
 import { render, Box, MessageBubble, OperationTree, ApprovalPrompt,
          useTerminal, useTui, useInput } from "@orchetron/storm-tui";
 
