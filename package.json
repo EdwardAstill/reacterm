@@ -1,5 +1,5 @@
 {
-  "name": "@orchetron/storm-tui",
+  "name": "@orchetron/storm",
   "version": "0.1.0",
   "description": "Storm — Compositor-based terminal UI framework. Fast. Layered. Unstoppable.",
   "type": "module",
@@ -79,14 +79,11 @@
   "author": "Orchetron",
   "repository": {
     "type": "git",
-    "url": "https://github.com/orchetron/storm-tui"
+    "url": "https://github.com/orchetron/storm"
   },
-  "homepage": "https://github.com/orchetron/storm-tui",
+  "homepage": "https://github.com/orchetron/storm",
   "bugs": {
-    "url": "https://github.com/orchetron/storm-tui/issues"
-  },
-  "bin": {
-    "create-storm-app": "./bin/create-storm-app.mjs"
+    "url": "https://github.com/orchetron/storm/issues"
   },
   "license": "MIT",
   "engines": {
