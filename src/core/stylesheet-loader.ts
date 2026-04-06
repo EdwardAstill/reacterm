@@ -42,8 +42,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// ── Types ──────────────────────────────────────────────────────────────
-
 export interface StyleSheetLoaderOptions {
   /** Path to .storm.css or .storm.json stylesheet file. */
   path: string;
@@ -65,8 +63,6 @@ export interface StyleRule {
   selector: string;
   properties: Record<string, unknown>;
 }
-
-// ── Value parsing ──────────────────────────────────────────────────────
 
 /**
  * Auto-parse a property value string into its typed representation.
@@ -102,15 +98,13 @@ function parseValue(raw: string): unknown {
   return trimmed;
 }
 
-// ── CSS Variable resolution ───────────────────────────────────────────
-
 /**
  * Resolve `var(--name)` and `var(--name, fallback)` references in a value string.
  * Supports nested var() in fallbacks.
  */
 function resolveVar(value: string, variables: Map<string, string>): string {
   // Iteratively resolve var() from the inside out
-  const VAR_RE = /var\(--([a-zA-Z0-9_-]+)\s*(?:,\s*((?:[^()]*|\((?:[^()]*|\([^()]*\))*\))*))?\)/;
+  const VAR_RE = /var\(--([a-zA-Z0-9_-]+)(?:\s*,\s*([^)]*))?\)/;
   let result = value;
   let maxIterations = 50; // guard against infinite loops
   while (VAR_RE.test(result) && maxIterations-- > 0) {
@@ -123,8 +117,6 @@ function resolveVar(value: string, variables: Map<string, string>): string {
   }
   return result;
 }
-
-// ── Parser ─────────────────────────────────────────────────────────────
 
 /**
  * Parse raw block declarations from CSS source (shared between rule and :root parsing).
@@ -175,7 +167,14 @@ export function parseStormCSS(source: string): ParsedStyleSheet {
   const blocks: RawBlock[] = [];
 
   // Strip block comments
-  let cleaned = source.replace(/\/\*[\s\S]*?\*\//g, "");
+  // Strip block comments without backtracking — find /* then scan for */
+  let cleaned = source;
+  let commentStart: number;
+  while ((commentStart = cleaned.indexOf("/*")) !== -1) {
+    const commentEnd = cleaned.indexOf("*/", commentStart + 2);
+    if (commentEnd === -1) { cleaned = cleaned.slice(0, commentStart); break; }
+    cleaned = cleaned.slice(0, commentStart) + cleaned.slice(commentEnd + 2);
+  }
   // Strip line comments (only at start of line or after whitespace/semicolons)
   cleaned = cleaned.replace(/\/\/[^\n]*/g, "");
 
@@ -184,11 +183,9 @@ export function parseStormCSS(source: string): ParsedStyleSheet {
   const len = cleaned.length;
 
   while (i < len) {
-    // Skip whitespace
     while (i < len && /\s/.test(cleaned[i]!)) i++;
     if (i >= len) break;
 
-    // Read selector (everything up to '{')
     const braceIdx = cleaned.indexOf("{", i);
     if (braceIdx === -1) break; // No more blocks
 
@@ -275,8 +272,6 @@ function parseFile(filePath: string, source: string): ParsedStyleSheet {
   // Default: treat as .storm.css
   return parseStormCSS(source);
 }
-
-// ── Loader ─────────────────────────────────────────────────────────────
 
 /** Determine whether watch mode should be enabled by default. */
 function defaultWatch(): boolean {
