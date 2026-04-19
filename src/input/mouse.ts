@@ -114,10 +114,21 @@ const SGR_MOUSE_MAX_LENGTH = 32;
 /**
  * Check if the buffer starts with an incomplete mouse sequence.
  * Used to hold the buffer and wait for more data.
+ *
+ * A bare `\x1b` alone is NOT considered incomplete here — it's ambiguous
+ * (could be a bare Escape keypress, an Alt+char, an arrow key, or the
+ * start of a mouse sequence). Buffering it in the mouse extractor would
+ * hold it forever with no timeout, starving the keyboard path. The
+ * keyboard parser has its own 50ms ESC-hold timer that handles bare ESC
+ * and split escape sequences correctly.
+ *
+ * `\x1b[` (CSI prefix) is kept as "maybe mouse" because any mouse
+ * sequence starts with it, and the keyboard parser's hold timer covers
+ * the same window if it turns out to be a non-mouse CSI.
  */
 export function isIncompleteMouseSequence(buffer: string): boolean {
-  // SGR prefix: \x1b[< — could be start of SGR mouse event
-  if (buffer === "\x1b" || buffer === "\x1b[" || buffer === "\x1b[<") return true;
+  // SGR prefix forms: waiting for `<` or for the full sequence to finish
+  if (buffer === "\x1b[" || buffer === "\x1b[<") return true;
   if (buffer.startsWith("\x1b[<")) {
     // We have the prefix but no terminating m or M yet. Only a small
     // bounded read-ahead is needed — real sequences are <20 bytes.

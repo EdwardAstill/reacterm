@@ -137,22 +137,30 @@ export class InputManager {
   }
 
   private processInput(data: string): void {
-    // Phase 2: Extract and consume mouse sequences
-    let remaining = this.extractMouse(data);
-
-    // Phase 3: Filter focus events (use replaceAll for multiple occurrences)
-    remaining = remaining.replaceAll(FOCUS_IN, "").replaceAll(FOCUS_OUT, "");
-
-    // Phase 4: Handle ESC split across stdin chunks.
-    // If we have a held ESC from a previous chunk, prepend it.
-    if (this.escBuffer.length > 0 && remaining.length > 0) {
-      if (this.escTimer) { clearTimeout(this.escTimer); this.escTimer = null; }
-      remaining = this.escBuffer + remaining;
+    // Phase 1: If the previous chunk ended with a bare ESC we were
+    // holding, merge it back in now — so the mouse extractor sees the
+    // full sequence (e.g. a `\x1b` from the previous chunk plus `[<...M`
+    // from this one = a valid SGR mouse event).
+    let incoming = data;
+    if (this.escBuffer.length > 0 && incoming.length > 0) {
+      if (this.escTimer) {
+        clearTimeout(this.escTimer);
+        this.escTimer = null;
+      }
+      incoming = this.escBuffer + incoming;
       this.escBuffer = "";
     }
 
-    // If remaining ends with a bare ESC, hold it — it might be the
-    // start of an escape sequence split across chunks.
+    // Phase 2: Extract and consume mouse sequences.
+    let remaining = this.extractMouse(incoming);
+
+    // Phase 3: Filter focus events.
+    remaining = remaining.replaceAll(FOCUS_IN, "").replaceAll(FOCUS_OUT, "");
+
+    // Phase 4: If the keyboard remainder ends with a bare ESC, hold it —
+    // it might be a bare Escape keypress OR the start of an escape
+    // sequence split across stdin chunks. The keyboard parser's 50ms
+    // timeout fires if no more data arrives, emitting it as `escape`.
     if (remaining.endsWith("\x1b")) {
       this.escBuffer = "\x1b";
       remaining = remaining.slice(0, -1);

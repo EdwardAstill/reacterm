@@ -102,3 +102,37 @@ describe("InputManager mouse parsing", () => {
     expect(digitChars).toEqual([]);
   });
 });
+
+describe("InputManager bare Escape", () => {
+  let stdin: ReturnType<typeof makeFakeStdin>;
+  let im: InputManager;
+
+  beforeEach(() => {
+    stdin = makeFakeStdin();
+    im = new InputManager(stdin);
+    im.start();
+  });
+
+  it("emits an escape key event when a bare ESC byte is received", async () => {
+    const { keys } = attach(im);
+    stdin.push("\x1b");
+    // The mouse extractor was previously holding bare \x1b as a possible
+    // mouse prefix and never releasing it. The keyboard ESC-hold timer
+    // fires after 50ms; wait a bit longer and confirm we got an escape.
+    await new Promise((r) => setTimeout(r, 80));
+    const escapes = keys.filter((k) => k.key === "escape");
+    expect(escapes.length).toBe(1);
+  });
+
+  it("still buffers \\x1b[ as a potentially-mouse-starting CSI", async () => {
+    const { mouse } = attach(im);
+    // Split a valid SGR mouse event across two chunks with the prefix
+    // `\x1b[` in the first and the rest in the second.
+    stdin.push("\x1b[");
+    stdin.push("<64;10;5M");
+    // Give the keyboard ESC-hold timer plenty of time too.
+    await new Promise((r) => setTimeout(r, 80));
+    expect(mouse.length).toBe(1);
+    expect(mouse[0]!.button).toBe("scroll-up");
+  });
+});
