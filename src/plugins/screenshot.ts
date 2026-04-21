@@ -35,7 +35,7 @@ export interface ScreenshotPluginOptions {
  *
  * @example
  * ```ts
- * import { render, screenshotPlugin } from "@orchetron/storm";
+ * import { render, screenshotPlugin } from "reacterm";
  *
  * const app = render(<App />, {
  *   plugins: [screenshotPlugin({ outputDir: "./screenshots" })],

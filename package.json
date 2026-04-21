@@ -1,7 +1,7 @@
 {
-  "name": "@orchetron/storm",
-  "version": "0.2.0",
-  "description": "Storm — Compositor-based terminal UI framework. Fast. Layered. Unstoppable.",
+  "name": "reacterm",
+  "version": "0.1.0",
+  "description": "reacterm — compositor-based terminal UI framework for React",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -52,36 +52,14 @@
       "default": "./dist/ssh/index.js"
     }
   },
-  "files": [
-    "dist",
-    "!dist/__tests__",
-    "bin",
-    "wasm/pkg",
-    "LICENSE",
-    "README.md",
-    "CHANGELOG.md"
-  ],
-  "keywords": [
-    "tui",
-    "terminal",
-    "cli",
-    "react",
-    "ui",
-    "components",
-    "hooks",
-    "devtools",
-    "ai",
-    "agent",
-    "typescript"
-  ],
-  "author": "Orchetron",
+  "author": "Edward Astill",
   "repository": {
     "type": "git",
-    "url": "https://github.com/orchetron/storm"
+    "url": "https://github.com/EdwardAstill/reacterm"
   },
-  "homepage": "https://github.com/orchetron/storm",
+  "homepage": "https://github.com/EdwardAstill/reacterm",
   "bugs": {
-    "url": "https://github.com/orchetron/storm/issues"
+    "url": "https://github.com/EdwardAstill/reacterm/issues"
   },
   "license": "MIT",
   "engines": {
@@ -94,7 +72,6 @@
     "test:watch": "vitest",
     "test:bench": "vitest run --config vitest.config.ts src/__tests__/benchmarks.test.ts",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build",
     "playground": "cd playground && npm install --silent 2>/dev/null && node server.mjs"
   },
   "dependencies": {
@@ -118,8 +95,5 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.2"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

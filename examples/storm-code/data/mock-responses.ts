@@ -463,7 +463,7 @@ export const RESPONSE_TEMPLATES: ResponseTemplate[] = [
         kind: "response",
         content:
           "Here's the project at a glance:\n\n" +
-          "**Orchetron Fabric** — Monorepo with three packages:\n\n" +
+          "**reacterm** — Monorepo with three packages:\n\n" +
           "| Package | Purpose | Stats |\n" +
           "|---------|---------|-------|\n" +
           "| `core` | 11 swappable planes, governance algebra | 5,499 tests |\n" +

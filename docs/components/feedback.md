@@ -22,7 +22,7 @@ Animated loading indicator with 6 built-in styles. Uses imperative mutation and 
 **Basic: Loading spinner**
 
 ```tsx
-import { Spinner } from "@orchetron/storm";
+import { Spinner } from "reacterm";
 
 <Spinner type="dots" label="Loading..." color="#82AAFF" />
 ```
@@ -56,7 +56,7 @@ Horizontal progress bar with block fill characters, track color, optional percen
 **Basic: Simple progress**
 
 ```tsx
-import { ProgressBar } from "@orchetron/storm";
+import { ProgressBar } from "reacterm";
 
 <ProgressBar value={65} width={30} showPercent />
 ```
@@ -88,7 +88,7 @@ Colored status label rendered as `[label]`. Color is determined by variant or ex
 **Basic: Status badges**
 
 ```tsx
-import { Badge } from "@orchetron/storm";
+import { Badge } from "reacterm";
 
 <Badge label="OK" variant="success" />
 <Badge label="FAIL" variant="error" />
@@ -126,7 +126,7 @@ Temporary notification message with type-based icon and color. Supports auto-hid
 **Basic: Success toast**
 
 ```tsx
-import { Toast } from "@orchetron/storm";
+import { Toast } from "reacterm";
 
 <Toast message="File saved successfully" type="success" />
 ```
@@ -190,7 +190,7 @@ Bordered attention box with type-based border coloring and optional title. Suita
 **Basic: Info alert**
 
 ```tsx
-import { Alert, Text } from "@orchetron/storm";
+import { Alert, Text } from "reacterm";
 
 <Alert type="info" title="Note">
   <Text>Configuration will take effect after restart.</Text>

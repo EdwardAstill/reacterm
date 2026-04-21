@@ -8,7 +8,7 @@
  *
  * @example
  * ```tsx
- * import { useStyleSheet, Box, Text } from "@orchetron/storm";
+ * import { useStyleSheet, Box, Text } from "reacterm";
  *
  * function App() {
  *   useStyleSheet({ path: "./app.storm.css", watch: true });

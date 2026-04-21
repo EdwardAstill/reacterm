@@ -1,6 +1,6 @@
 # Storm TUI Hook Guide
 
-All hooks are imported from `@orchetron/storm`. They follow React conventions but are adapted for the custom reconciler -- notably, `useEffect` cleanup does not fire, so cleanup is handled by `useCleanup`.
+All hooks are imported from `reacterm`. They follow React conventions but are adapted for the custom reconciler -- notably, `useEffect` cleanup does not fire, so cleanup is handled by `useCleanup`.
 
 ---
 
@@ -13,7 +13,7 @@ Learn these first. Every Storm TUI app uses them.
 Convenience wrapper over `useTui()` that exposes app-level controls: exit, rerender, and clear.
 
 ```ts
-import { useApp } from "@orchetron/storm";
+import { useApp } from "reacterm";
 
 function MyComponent() {
   const { exit, rerender, clear } = useApp();
@@ -41,7 +41,7 @@ If you need the full context (screen, input, focus, flushSync, commitText), use 
 Access the core context: render control, input manager, focus manager, and exit.
 
 ```ts
-import { useTui } from "@orchetron/storm";
+import { useTui } from "reacterm";
 
 function MyComponent() {
   const { requestRender, exit, input, flushSync, clear, commitText } = useTui();
@@ -73,7 +73,7 @@ function MyComponent() {
 Subscribe to keyboard events.
 
 ```ts
-import { useInput } from "@orchetron/storm";
+import { useInput } from "reacterm";
 
 function MyComponent() {
   useInput((event) => {
@@ -101,7 +101,7 @@ function MyComponent() {
 Reactive terminal dimensions. Updates automatically on resize.
 
 ```tsx
-import { useTerminal, Text } from "@orchetron/storm";
+import { useTerminal, Text } from "reacterm";
 
 function StatusBar() {
   const { width, height, exit } = useTerminal();
@@ -115,7 +115,7 @@ Register a cleanup function that runs on unmount. Required because `useEffect` c
 
 ```ts
 import { useRef } from "react";
-import { useCleanup } from "@orchetron/storm";
+import { useCleanup } from "reacterm";
 
 function MyComponent() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -175,7 +175,7 @@ useHotkey({
 Make a component focusable. Tab cycling is handled globally by the renderer.
 
 ```tsx
-import { useFocus, Box, Text } from "@orchetron/storm";
+import { useFocus, Box, Text } from "reacterm";
 
 function Button({ label }: { label: string }) {
   const { isFocused, focus } = useFocus({
@@ -197,7 +197,7 @@ function Button({ label }: { label: string }) {
 Subscribe to mouse events including clicks, scroll, and motion.
 
 ```ts
-import { useMouse } from "@orchetron/storm";
+import { useMouse } from "reacterm";
 
 useMouse((event) => {
   if (event.button === "left") console.log(`Clicked at ${event.x}, ${event.y}`);
@@ -212,7 +212,7 @@ useMouse((event) => {
 Programmatic focus control -- cycle through focusable elements, jump to a specific ID, or enable/disable the focus system.
 
 ```ts
-import { useFocusManager, useInput } from "@orchetron/storm";
+import { useFocusManager, useInput } from "reacterm";
 
 const { focusNext, focusPrevious, focus } = useFocusManager();
 
@@ -230,7 +230,7 @@ useInput((event) => {
 Access the active theme colors and auto-generated shades from the nearest `ThemeProvider`.
 
 ```ts
-import { useTheme } from "@orchetron/storm";
+import { useTheme } from "reacterm";
 
 const { colors, shades } = useTheme();
 // colors.brand.primary, colors.success, colors.error, etc.
@@ -244,7 +244,7 @@ const { colors, shades } = useTheme();
 Timers with automatic cleanup on unmount.
 
 ```ts
-import { useInterval, useTimeout } from "@orchetron/storm";
+import { useInterval, useTimeout } from "reacterm";
 
 function Clock() {
   useInterval(() => {
@@ -266,7 +266,7 @@ function SplashScreen() {
 Frame-based animation using the global AnimationScheduler. All animations share one timer to prevent thrashing.
 
 ```tsx
-import { useAnimation, Text } from "@orchetron/storm";
+import { useAnimation, Text } from "reacterm";
 
 const SPINNER = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -296,7 +296,7 @@ For complex UIs with scrolling, lists, prompts, and notifications.
 Imperative scroll control using `requestRender()` for instant response (not React state).
 
 ```tsx
-import { useScroll, Box } from "@orchetron/storm";
+import { useScroll, Box } from "reacterm";
 
 function LogView({ lines }: { lines: string[] }) {
   const { scrollTop, maxScroll, isAtBottom, scrollBy, scrollToBottom } = useScroll({
@@ -321,7 +321,7 @@ function LogView({ lines }: { lines: string[] }) {
 Large list virtualization. Only computes the visible slice plus overscan.
 
 ```tsx
-import { useVirtualList, useInput, Box, Text } from "@orchetron/storm";
+import { useVirtualList, useInput, Box, Text } from "reacterm";
 
 function BigList({ items }: { items: string[] }) {
   const { visibleItems, scrollTop, scrollTo, onScroll } = useVirtualList({
@@ -351,7 +351,7 @@ function BigList({ items }: { items: string[] }) {
 Fuzzy command search with keyboard navigation (up/down/enter/escape).
 
 ```ts
-import { useCommandPalette } from "@orchetron/storm";
+import { useCommandPalette } from "reacterm";
 
 function App() {
   const palette = useCommandPalette({
@@ -374,7 +374,7 @@ function App() {
 Inline yes/no prompts with optional timeout.
 
 ```tsx
-import { useInlinePrompt, Text } from "@orchetron/storm";
+import { useInlinePrompt, Text } from "reacterm";
 
 function DeleteConfirm() {
   const { selected, countdown, reset } = useInlinePrompt({
@@ -394,7 +394,7 @@ function DeleteConfirm() {
 Toast notification queue with auto-removal.
 
 ```tsx
-import { useNotification, Box, Text } from "@orchetron/storm";
+import { useNotification, Box, Text } from "reacterm";
 
 function App() {
   const { notifications, add, remove, clear } = useNotification({
@@ -442,7 +442,7 @@ requestRender();
 Read and write the system clipboard via OSC 52 escape sequences.
 
 ```ts
-import { useClipboard } from "@orchetron/storm";
+import { useClipboard } from "reacterm";
 
 const { copy, read, content } = useClipboard();
 copy("text to copy");
@@ -455,7 +455,7 @@ copy("text to copy");
 Subscribe to bracketed paste events. Separate from `useInput` because paste events can contain newlines and special characters.
 
 ```ts
-import { usePaste } from "@orchetron/storm";
+import { usePaste } from "reacterm";
 
 usePaste((text) => {
   console.log("Pasted:", text.length, "characters");
@@ -469,7 +469,7 @@ usePaste((text) => {
 Access accessibility preferences: high contrast, reduced motion, screen reader detection. Results are cached.
 
 ```ts
-import { useAccessibility } from "@orchetron/storm";
+import { useAccessibility } from "reacterm";
 
 const { highContrast, reducedMotion, screenReader } = useAccessibility();
 ```
@@ -481,7 +481,7 @@ const { highContrast, reducedMotion, screenReader } = useAccessibility();
 Convenience hook returning `true` if the user prefers reduced motion. Uses `useAccessibility` internally.
 
 ```ts
-import { useReducedMotion } from "@orchetron/storm";
+import { useReducedMotion } from "reacterm";
 
 const reducedMotion = useReducedMotion(); // boolean
 ```
@@ -493,7 +493,7 @@ const reducedMotion = useReducedMotion(); // boolean
 Detect terminal capabilities: image protocol, color depth, Unicode support. Computed once and cached.
 
 ```ts
-import { useAdaptive } from "@orchetron/storm";
+import { useAdaptive } from "reacterm";
 
 const { imageProtocol, colorDepth, unicode } = useAdaptive();
 ```
@@ -505,7 +505,7 @@ const { imageProtocol, colorDepth, unicode } = useAdaptive();
 Announce dynamic content changes to screen readers via OSC 99 escape sequences.
 
 ```ts
-import { useAnnounce } from "@orchetron/storm";
+import { useAnnounce } from "reacterm";
 
 const { announce, announceUrgent } = useAnnounce();
 announce("File saved successfully");
@@ -519,7 +519,7 @@ announceUrgent("Save failed!");
 Access the shared `PluginManager` instance for registering plugins, querying custom elements, or accessing plugin-provided shortcuts.
 
 ```ts
-import { usePluginManager } from "@orchetron/storm";
+import { usePluginManager } from "reacterm";
 
 const plugins = usePluginManager();
 plugins.hasPlugin("vim-mode"); // boolean
@@ -532,7 +532,7 @@ plugins.hasPlugin("vim-mode"); // boolean
 Read layout dimensions of a rendered element by ID.
 
 ```ts
-import { useMeasure } from "@orchetron/storm";
+import { useMeasure } from "reacterm";
 
 function Sidebar() {
   const layout = useMeasure("sidebar");
@@ -551,7 +551,7 @@ Renderless hooks for building custom interactive components. They manage state a
 Single-select dropdown/picker behavior.
 
 ```ts
-import { useSelectBehavior } from "@orchetron/storm";
+import { useSelectBehavior } from "reacterm";
 
 const select = useSelectBehavior({
   items: ["apple", "banana", "cherry"],
@@ -565,7 +565,7 @@ const select = useSelectBehavior({
 Navigable list with cursor tracking.
 
 ```ts
-import { useListBehavior } from "@orchetron/storm";
+import { useListBehavior } from "reacterm";
 
 const list = useListBehavior({
   items: myItems,
@@ -579,7 +579,7 @@ const list = useListBehavior({
 Menu with nested submenus, keyboard navigation, and activation.
 
 ```ts
-import { useMenuBehavior } from "@orchetron/storm";
+import { useMenuBehavior } from "reacterm";
 
 const menu = useMenuBehavior({
   items: [
@@ -595,7 +595,7 @@ const menu = useMenuBehavior({
 Collapsible tree navigation with expand/collapse and cursor tracking.
 
 ```ts
-import { useTreeBehavior } from "@orchetron/storm";
+import { useTreeBehavior } from "reacterm";
 
 const tree = useTreeBehavior({
   root: fileSystemTree,
@@ -611,7 +611,7 @@ const tree = useTreeBehavior({
 Tab panel management with keyboard cycling.
 
 ```ts
-import { useTabsBehavior } from "@orchetron/storm";
+import { useTabsBehavior } from "reacterm";
 
 const tabs = useTabsBehavior({
   tabs: ["Overview", "Details", "Settings"],
@@ -626,7 +626,7 @@ const tabs = useTabsBehavior({
 Expandable section management (single or multi-expand).
 
 ```ts
-import { useAccordionBehavior } from "@orchetron/storm";
+import { useAccordionBehavior } from "reacterm";
 
 const accordion = useAccordionBehavior({
   sections: ["General", "Advanced", "Debug"],
@@ -640,7 +640,7 @@ const accordion = useAccordionBehavior({
 Multi-field form state, validation, and submission.
 
 ```ts
-import { useFormBehavior } from "@orchetron/storm";
+import { useFormBehavior } from "reacterm";
 
 const form = useFormBehavior({
   fields: [
@@ -657,7 +657,7 @@ const form = useFormBehavior({
 Modal dialog lifecycle: open, close, confirm, cancel.
 
 ```ts
-import { useDialogBehavior } from "@orchetron/storm";
+import { useDialogBehavior } from "reacterm";
 
 const dialog = useDialogBehavior({
   onConfirm: () => deleteItem(),
@@ -671,7 +671,7 @@ const dialog = useDialogBehavior({
 Toast queue management (similar to useNotification but headless -- no rendering opinions).
 
 ```ts
-import { useToastBehavior } from "@orchetron/storm";
+import { useToastBehavior } from "reacterm";
 
 const toasts = useToastBehavior({ maxToasts: 5, defaultDuration: 3000 });
 // toasts.items, toasts.add("Saved!"), toasts.dismiss(id)
@@ -682,7 +682,7 @@ const toasts = useToastBehavior({ maxToasts: 5, defaultDuration: 3000 });
 Date navigation and selection (month grid, cursor movement).
 
 ```ts
-import { useCalendarBehavior } from "@orchetron/storm";
+import { useCalendarBehavior } from "reacterm";
 
 const calendar = useCalendarBehavior({
   initialDate: new Date(),
@@ -797,7 +797,7 @@ useCleanup(() => { if (timerRef.current) clearInterval(timerRef.current); });
 For cleanup that needs to `await` (database flushes, file writes):
 
 ```tsx
-import { useAsyncCleanup } from "@orchetron/storm";
+import { useAsyncCleanup } from "reacterm";
 
 useAsyncCleanup(async () => {
   await db.flush();
