@@ -35,7 +35,7 @@ export const TuiContext = createContext<TuiContextValue | null>(null);
 export function useTui(): TuiContextValue {
   const ctx = useContext(TuiContext);
   if (!ctx) {
-    throw new Error("useTui() must be used inside a <TuiProvider> (did you use render() from @orchetron/tui?)");
+    throw new Error("useTui() must be used inside a <TuiProvider> (did you use render() from reacterm?)");
   }
   return ctx;
 }

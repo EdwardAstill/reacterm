@@ -4,7 +4,7 @@
  *
  * @example
  * ```tsx
- * import { createStyleSheet, StyleProvider, useStyles } from "@orchetron/storm";
+ * import { createStyleSheet, StyleProvider, useStyles } from "reacterm";
  *
  * const sheet = createStyleSheet({
  *   "Text":         { color: "white" },

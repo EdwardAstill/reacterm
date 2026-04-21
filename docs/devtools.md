@@ -5,8 +5,8 @@ Built-in development tools for debugging rendering, accessibility, performance, 
 ## Quick Start
 
 ```ts
-import { render } from "@orchetron/storm";
-import { enableDevTools } from "@orchetron/storm/devtools";
+import { render } from "reacterm";
+import { enableDevTools } from "reacterm/devtools";
 
 const app = render(<App />);
 enableDevTools(app);
@@ -128,7 +128,7 @@ Each DevTools feature is a standalone factory function. Use them individually fo
 ### Time-Travel
 
 ```ts
-import { createTimeTravel } from "@orchetron/storm/devtools";
+import { createTimeTravel } from "reacterm/devtools";
 
 const tt = createTimeTravel({ maxFrames: 240 });
 
@@ -148,7 +148,7 @@ tt.exit();                     // Resume live rendering
 ### Render Heatmap
 
 ```ts
-import { createRenderHeatmap } from "@orchetron/storm/devtools";
+import { createRenderHeatmap } from "reacterm/devtools";
 
 const heatmap = createRenderHeatmap({
   cooldownFrames: 15,  // Frames before a cell is "cold"
@@ -166,7 +166,7 @@ heatmap.reset();               // Clear all tracking data
 ### Accessibility Audit
 
 ```ts
-import { createAccessibilityAudit } from "@orchetron/storm/devtools";
+import { createAccessibilityAudit } from "reacterm/devtools";
 
 const audit = createAccessibilityAudit({
   minContrast: 4.5,    // WCAG AA threshold
@@ -193,7 +193,7 @@ import {
   createDevToolsOverlay,
   createPerformanceMonitor,
   createEventLogger,
-} from "@orchetron/storm/devtools";
+} from "reacterm/devtools";
 
 const perf = createPerformanceMonitor();
 const logger = createEventLogger(50);  // Keep last 50 events
@@ -234,7 +234,7 @@ devtools.selectPrevPanel();        // Cycle panel tabs backward
 ## Exported Types
 
 ```ts
-// From "@orchetron/storm/devtools"
+// From "reacterm/devtools"
 import type {
   EnableDevToolsOptions,
   DevToolsHandle,
@@ -249,5 +249,5 @@ import type {
   RenderMetrics,
   LoggedEvent,
   InspectorState,
-} from "@orchetron/storm/devtools";
+} from "reacterm/devtools";
 ```

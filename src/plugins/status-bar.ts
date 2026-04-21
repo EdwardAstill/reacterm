@@ -34,7 +34,7 @@ export interface StatusBarPluginOptions {
  *
  * @example
  * ```ts
- * import { render, statusBarPlugin } from "@orchetron/storm";
+ * import { render, statusBarPlugin } from "reacterm";
  *
  * const app = render(<App />, {
  *   plugins: [statusBarPlugin({

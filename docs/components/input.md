@@ -26,7 +26,7 @@ Single-line text input with cursor movement, undo/redo (Ctrl+Z/Y), command histo
 **Basic: Simple input**
 
 ```tsx
-import { TextInput } from "@orchetron/storm";
+import { TextInput } from "reacterm";
 import { useState } from "react";
 
 function NameInput() {
@@ -121,7 +121,7 @@ Pressable button rendered as `[ Label ]`. Enter or Space triggers the `onPress` 
 **Basic: Submit button**
 
 ```tsx
-import { Button } from "@orchetron/storm";
+import { Button } from "reacterm";
 
 <Button label="Submit" onPress={() => handleSubmit()} />
 ```
@@ -172,7 +172,7 @@ Toggleable checkbox rendered as `[✓]` or `[ ]` with an optional label. Space o
 **Basic: Single checkbox**
 
 ```tsx
-import { Checkbox } from "@orchetron/storm";
+import { Checkbox } from "reacterm";
 
 <Checkbox checked={agreed} onChange={setAgreed} label="I agree to the terms" />
 ```
@@ -210,7 +210,7 @@ On/off toggle switch with a visual track indicator. Space or Enter toggles the s
 **Basic: Simple toggle**
 
 ```tsx
-import { Switch } from "@orchetron/storm";
+import { Switch } from "reacterm";
 
 <Switch checked={darkMode} onChange={setDarkMode} label="Dark mode" />
 ```
@@ -245,7 +245,7 @@ Single-selection radio button list. Renders filled/empty circle indicators. Up/D
 **Basic: Vertical radio group**
 
 ```tsx
-import { RadioGroup } from "@orchetron/storm";
+import { RadioGroup } from "reacterm";
 
 <RadioGroup
   options={[
@@ -300,7 +300,7 @@ Dropdown select with inline search filtering. When closed, shows selected label.
 **Basic: Simple dropdown**
 
 ```tsx
-import { Select } from "@orchetron/storm";
+import { Select } from "reacterm";
 
 <Select
   options={[
@@ -365,7 +365,7 @@ Text input with a magnifying glass icon prefix. Wraps TextInput with search-orie
 **Basic: Search field**
 
 ```tsx
-import { SearchInput } from "@orchetron/storm";
+import { SearchInput } from "reacterm";
 
 <SearchInput value={query} onChange={setQuery} onSubmit={runSearch} />
 ```
@@ -417,7 +417,7 @@ Multi-field form container with Tab/Enter navigation, built-in validation, and a
 **Basic: Login form**
 
 ```tsx
-import { Form } from "@orchetron/storm";
+import { Form } from "reacterm";
 
 <Form
   fields={[

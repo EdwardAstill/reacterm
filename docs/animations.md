@@ -38,7 +38,7 @@ interface UseAnimationResult {
 ### Example: spinner
 
 ```tsx
-import { useAnimation } from "@orchetron/storm";
+import { useAnimation } from "reacterm";
 
 const FRAMES = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -93,7 +93,7 @@ interface UseTransitionResult {
 ### Example: fade in on mount
 
 ```tsx
-import { useTransition } from "@orchetron/storm";
+import { useTransition } from "reacterm";
 
 function FadeIn({ children }: { children: React.ReactNode }) {
   const { value } = useTransition({
@@ -175,7 +175,7 @@ Animation types:
 ### Example: dropdown menu
 
 ```tsx
-import { Transition } from "@orchetron/storm";
+import { Transition } from "reacterm";
 
 function Dropdown({ isOpen }: { isOpen: boolean }) {
   return (
@@ -246,7 +246,7 @@ Children **must** have a unique `key` prop so AnimatePresence can track entering
 ### Example: animated list
 
 ```tsx
-import { AnimatePresence } from "@orchetron/storm";
+import { AnimatePresence } from "reacterm";
 
 function NotificationList({ notifications }) {
   return (
