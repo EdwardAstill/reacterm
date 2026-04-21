@@ -1,4 +1,5 @@
 export { Box, type BoxProps } from "./core/Box.js";
+export { Panes, type PanesProps, Pane, type PaneProps } from "./core/Panes.js";
 export { Text, type TextProps } from "./core/Text.js";
 export { Newline, type NewlineProps } from "./core/Newline.js";
 export { Spacer } from "./core/Spacer.js";

@@ -129,6 +129,7 @@ export {
 } from "./reconciler/render-to-string.js";
 export type { BackgroundPreset, BackgroundPattern, BackgroundProp, HostTextNode } from "./reconciler/types.js";
 export { Box, type BoxProps } from "./components/core/Box.js";
+export { Panes, type PanesProps, Pane, type PaneProps } from "./components/core/Panes.js";
 export { Text, type TextProps } from "./components/core/Text.js";
 export { ScrollView, type ScrollViewProps, type ScrollState } from "./components/core/ScrollView.js";
 export { TextInput, type TextInputProps } from "./components/core/TextInput.js";
