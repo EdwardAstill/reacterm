@@ -20,7 +20,7 @@ Content container with rounded border, optional title, icon, and variant colorin
 **Basic: Simple card**
 
 ```tsx
-import { Card, Text } from "@orchetron/storm";
+import { Card, Text } from "reacterm";
 
 <Card title="Server Status" variant="success">
   <Text>All systems operational</Text>
@@ -66,7 +66,7 @@ Level styles: **H1** = BOLD UPPERCASE + brand color + underline decoration. **H2
 **Basic: Page title**
 
 ```tsx
-import { Heading } from "@orchetron/storm";
+import { Heading } from "reacterm";
 
 <Heading level={1}>Server Status</Heading>
 ```
@@ -97,7 +97,7 @@ Block of wrapped text with consistent bottom spacing for readable document-like 
 **Basic: Simple paragraph**
 
 ```tsx
-import { Paragraph } from "@orchetron/storm";
+import { Paragraph } from "reacterm";
 
 <Paragraph>
   Storm is a high-performance terminal UI framework built on a custom React reconciler.

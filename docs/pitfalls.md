@@ -162,7 +162,7 @@ function Poller({ url }: { url: string }) {
 ### Right: useCleanup
 
 ```tsx
-import { useCleanup } from "@orchetron/storm";
+import { useCleanup } from "reacterm";
 
 function Poller({ url }: { url: string }) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -241,7 +241,7 @@ Storm provides three input hooks at different abstraction levels.
 The lowest level. You get every key press and handle matching yourself.
 
 ```tsx
-import { useInput } from "@orchetron/storm";
+import { useInput } from "reacterm";
 
 useInput((event) => {
   if (event.key === "escape") handleClose();
@@ -257,7 +257,7 @@ Good for: simple components with 1-3 key bindings, custom key processing logic.
 Returns a `bindings` array you can render into a help bar.
 
 ```tsx
-import { useHotkey } from "@orchetron/storm";
+import { useHotkey } from "reacterm";
 
 const { bindings } = useHotkey({
   hotkeys: [
@@ -290,7 +290,7 @@ Start with `useInput`. If you want to render a help bar from the shortcut defini
 Storm has a built-in focus system. Components opt in with `useFocus()`.
 
 ```tsx
-import { useFocus } from "@orchetron/storm";
+import { useFocus } from "reacterm";
 
 function MyButton({ label }: { label: string }) {
   const { isFocused, focus } = useFocus();
@@ -343,7 +343,7 @@ Storm provides animation primitives that sync to a global scheduler. Using them 
 Registers with the global `AnimationScheduler`. All animations tick on a single timer.
 
 ```tsx
-import { useAnimation } from "@orchetron/storm";
+import { useAnimation } from "reacterm";
 
 const FRAMES = ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"];
 
@@ -358,7 +358,7 @@ function MySpinner() {
 Wraps children with animated visibility transitions.
 
 ```tsx
-import { Transition } from "@orchetron/storm";
+import { Transition } from "reacterm";
 
 <Transition show={isVisible} type="fade" enter={{ duration: 200 }}>
   <Text>I fade in and out</Text>
@@ -372,7 +372,7 @@ Supports `"fade"`, `"slide-down"`, `"slide-up"`, `"slide-right"`, and `"collapse
 Raw `setInterval` won't be cleaned up when your component unmounts (because `useEffect` cleanup is unreliable). Use `useInterval` instead:
 
 ```tsx
-import { useInterval } from "@orchetron/storm";
+import { useInterval } from "reacterm";
 
 // Automatically cleaned up via useCleanup
 useInterval(() => {
@@ -390,7 +390,7 @@ useInterval(() => {
 ## 9. DevTools: one line to enable
 
 ```tsx
-import { render, enableDevTools } from "@orchetron/storm";
+import { render, enableDevTools } from "reacterm";
 
 const app = render(<App />);
 enableDevTools(app);
@@ -439,7 +439,7 @@ app.pluginManager.register(myPlugin);
 Access the plugin manager from inside your component tree, where registration happens before the first paint:
 
 ```tsx
-import { usePluginManager } from "@orchetron/storm";
+import { usePluginManager } from "reacterm";
 
 function App() {
   const pm = usePluginManager();

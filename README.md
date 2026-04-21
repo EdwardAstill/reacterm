@@ -48,12 +48,12 @@ Most terminal frameworks treat your terminal like a string printer. Storm treats
 ## Quick start
 
 ```bash
-npm install @orchetron/storm react
+npm install reacterm react
 ```
 
 ```tsx
 import React from "react";
-import { render, Box, Text, Spinner, useInput, useTui } from "@orchetron/storm";
+import { render, Box, Text, Spinner, useInput, useTui } from "reacterm";
 
 function App() {
   const { exit } = useTui();
@@ -79,7 +79,7 @@ That's 10 lines. You have a running TUI with animated spinner and keyboard input
 ```tsx
 import React from "react";
 import { render, Box, MessageBubble, OperationTree, ApprovalPrompt,
-         useTerminal, useTui, useInput } from "@orchetron/storm";
+         useTerminal, useTui, useInput } from "reacterm";
 
 function App() {
   const { width, height } = useTerminal();
@@ -198,5 +198,5 @@ npx tsx examples/storm-website.tsx       # This README's demo
     <img src="assets/logo-black.png" width="24" alt="">
   </picture>
   <br>
-  <sub>Built by <b>Orchetron</b> · <a href="./CONTRIBUTING.md">Contributing</a> · MIT License</sub>
+  <sub>Built by <b>Edward Astill</b> · <a href="./CONTRIBUTING.md">Contributing</a> · MIT License</sub>
 </p>

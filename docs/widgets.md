@@ -56,7 +56,7 @@ Renders a bordered prompt showing a tool name, risk level badge (colored by seve
 ### Usage
 
 ```tsx
-import { ApprovalPrompt } from "@orchetron/storm";
+import { ApprovalPrompt } from "reacterm";
 
 // Basic approval prompt
 <ApprovalPrompt
@@ -127,7 +127,7 @@ Renders a colored dot (`●`) whose behavior changes by state: blinks when `runn
 ### Usage
 
 ```tsx
-import { BlinkDot } from "@orchetron/storm";
+import { BlinkDot } from "reacterm";
 
 // Running operation -- dot blinks
 <BlinkDot state="running" />
@@ -171,7 +171,7 @@ Renders a bordered block showing a command string (bold, with collapse toggle in
 ### Usage
 
 ```tsx
-import { CommandBlock } from "@orchetron/storm";
+import { CommandBlock } from "reacterm";
 
 // Basic command block
 <CommandBlock
@@ -236,7 +236,7 @@ Renders a vertical list of items with a highlighted selection indicator. Feature
 ### Usage
 
 ```tsx
-import { CommandDropdown } from "@orchetron/storm";
+import { CommandDropdown } from "reacterm";
 
 const commands = [
   { name: "/help", description: "Show available commands" },
@@ -290,7 +290,7 @@ The bar color changes based on fill level:
 ### Usage
 
 ```tsx
-import { ContextWindow } from "@orchetron/storm";
+import { ContextWindow } from "reacterm";
 
 // Simple usage bar
 <ContextWindow used={6000} limit={8192} />
@@ -351,7 +351,7 @@ Calculates and displays running cost based on input/output token counts and per-
 ### Usage
 
 ```tsx
-import { CostTracker } from "@orchetron/storm";
+import { CostTracker } from "reacterm";
 
 // Expanded breakdown
 <CostTracker inputTokens={50000} outputTokens={12000} />
@@ -421,7 +421,7 @@ Renders a message with a role-appropriate symbol on the left (auto-resolved from
 ### Usage
 
 ```tsx
-import { MessageBubble } from "@orchetron/storm";
+import { MessageBubble } from "reacterm";
 
 // User message
 <MessageBubble role="user">What files changed?</MessageBubble>
@@ -489,7 +489,7 @@ Renders a diamond icon colored by provider, the model name in bold, optional cap
 ### Usage
 
 ```tsx
-import { ModelBadge } from "@orchetron/storm";
+import { ModelBadge } from "reacterm";
 
 // Basic badge
 <ModelBadge model="demo-model" />
@@ -554,7 +554,7 @@ Renders a tree of operations where each node has a status icon, label, optional 
 ### Usage
 
 ```tsx
-import { OperationTree } from "@orchetron/storm";
+import { OperationTree } from "reacterm";
 
 <OperationTree
   nodes={[
@@ -621,7 +621,7 @@ Developer tool that renders a compact bordered box showing real-time rendering m
 ### Usage
 
 ```tsx
-import { PerformanceHUD } from "@orchetron/storm";
+import { PerformanceHUD } from "reacterm";
 
 <PerformanceHUD
   fps={58}
@@ -672,7 +672,7 @@ Renders text with a 3-character bright shimmer window that continuously sweeps f
 ### Usage
 
 ```tsx
-import { ShimmerText } from "@orchetron/storm";
+import { ShimmerText } from "reacterm";
 
 // Basic thinking indicator
 <ShimmerText text="Thinking..." />
@@ -732,7 +732,7 @@ Supports three modes: (1) **Custom layout** with arbitrary `left`/`right` React 
 ### Usage
 
 ```tsx
-import { StatusLine } from "@orchetron/storm";
+import { StatusLine } from "reacterm";
 
 // Built-in layout
 <StatusLine
@@ -788,7 +788,7 @@ Renders text with an optional animated blinking cursor (`▊`) at the end when s
 ### Usage
 
 ```tsx
-import { StreamingText } from "@orchetron/storm";
+import { StreamingText } from "reacterm";
 
 // Live streaming with cursor
 <StreamingText text={partialResponse} streaming={true} />
@@ -868,7 +868,7 @@ Regex-based syntax highlighter with zero external dependencies. Handles keywords
 ### Usage
 
 ```tsx
-import { SyntaxHighlight } from "@orchetron/storm";
+import { SyntaxHighlight } from "reacterm";
 
 <SyntaxHighlight
   code={`function greet(name: string): string {
@@ -887,7 +887,7 @@ import { SyntaxHighlight } from "@orchetron/storm";
 ### Extending with Custom Languages
 
 ```typescript
-import { registerLanguage } from "@orchetron/storm";
+import { registerLanguage } from "reacterm";
 
 registerLanguage("mylang", {
   keywords: new Set(["fn", "let", "mut", "if", "else", "return"]),
@@ -943,7 +943,7 @@ A compact single-row widget showing model name, token counts (total, input, outp
 ### Usage
 
 ```tsx
-import { TokenStream } from "@orchetron/storm";
+import { TokenStream } from "reacterm";
 
 // Basic streaming display
 <TokenStream
@@ -979,7 +979,7 @@ Real-time streaming status displays during LLM inference. Place in a status bar 
 
 ## Import Summary
 
-All widgets are exported from the main entry point `@orchetron/storm`:
+All widgets are exported from the main entry point `reacterm`:
 
 ```typescript
 import {
@@ -998,7 +998,7 @@ import {
   StreamingText,
   SyntaxHighlight,
   TokenStream,
-} from "@orchetron/storm";
+} from "reacterm";
 ```
 
 ## Architecture Notes

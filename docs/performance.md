@@ -120,7 +120,7 @@ The WASM module is located in `wasm/` and built from Rust using `wasm-pack`. It 
 Check if WASM is active:
 
 ```typescript
-import { isWasmAccelerated } from "@orchetron/storm";
+import { isWasmAccelerated } from "reacterm";
 console.log(isWasmAccelerated()); // true if WASM loaded
 ```
 
@@ -207,7 +207,7 @@ Use the `PerformanceHUD` widget or the `onRender` callback to monitor frame perf
 
 ```tsx
 // PerformanceHUD widget (renders as an overlay)
-import { PerformanceHUD } from "@orchetron/storm";
+import { PerformanceHUD } from "reacterm";
 <PerformanceHUD />
 
 // onRender callback

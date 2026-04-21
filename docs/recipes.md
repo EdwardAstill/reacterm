@@ -14,7 +14,7 @@ ScrollView with `stickToBottom` keeps new messages visible. TextInput captures u
 import { useState, useRef } from "react";
 import {
   render, Box, Text, ScrollView, TextInput, useInput, useApp,
-} from "@orchetron/storm";
+} from "reacterm";
 
 interface Message {
   id: number;
@@ -82,7 +82,7 @@ import { useState } from "react";
 import {
   render, Box, Text, Tabs, StatusLine, useHotkey, useApp,
   type Tab,
-} from "@orchetron/storm";
+} from "reacterm";
 
 const tabs: Tab[] = [
   { key: "overview", label: "Overview" },
@@ -130,7 +130,7 @@ DirectoryTree reads the filesystem and renders a navigable tree. Wrap it in a Sc
 import { useState } from "react";
 import {
   render, Box, Text, ScrollView, DirectoryTree, useApp, useInput,
-} from "@orchetron/storm";
+} from "reacterm";
 
 function FileBrowser() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -176,7 +176,7 @@ Spinner for indeterminate waits, ProgressBar for known progress, StreamingText f
 import { useState } from "react";
 import {
   render, Box, Text, Spinner, ProgressBar, StreamingText, useInterval,
-} from "@orchetron/storm";
+} from "reacterm";
 
 function LoadingDemo() {
   const [progress, setProgress] = useState(0);
@@ -235,7 +235,7 @@ import { useState, useRef } from "react";
 import {
   render, Box, Text, TextInput, Checkbox, Select, Button,
   ToastContainer, useApp, useInput, type ToastItem, type SelectOption,
-} from "@orchetron/storm";
+} from "reacterm";
 
 const roleOptions: SelectOption[] = [
   { label: "Developer", value: "dev" },
@@ -315,7 +315,7 @@ import {
   MessageBubble, OperationTree, ApprovalPrompt, BlinkDot, ModelBadge,
   StatusLine,
   type OpNode,
-} from "@orchetron/storm";
+} from "reacterm";
 
 function AgentUI() {
   const { exit } = useApp();
@@ -376,7 +376,7 @@ function AgentUI() {
         )}
       </ScrollView>
 
-      <StatusLine brand="orchetron" model="demo-model" tokens={12400} />
+      <StatusLine brand="reacterm" model="demo-model" tokens={12400} />
     </Box>
   );
 }
@@ -396,7 +396,7 @@ import { useState } from "react";
 import {
   render, Box, Text, TextInput,
   useCommandPalette, CommandDropdown, type CommandDef,
-} from "@orchetron/storm";
+} from "reacterm";
 
 const commands: CommandDef[] = [
   { name: "new-file", description: "Create a new file" },
@@ -447,7 +447,7 @@ Box with `flexDirection="row"` creates columns. Fixed-width sidebars on each sid
 ```tsx
 import {
   render, Box, Text, useTerminal,
-} from "@orchetron/storm";
+} from "reacterm";
 
 function MultiPanel() {
   const { width, height } = useTerminal();
@@ -495,7 +495,7 @@ Sparkline shows history, Gauge shows current value, ContextWindow tracks token u
 import { useState, useRef } from "react";
 import {
   render, Box, Text, Sparkline, Gauge, ContextWindow, useInterval,
-} from "@orchetron/storm";
+} from "reacterm";
 
 function MetricsDashboard() {
   const [cpuHistory, setCpuHistory] = useState<number[]>([20, 35, 28, 42, 55, 60, 45]);
@@ -555,7 +555,7 @@ import { useState, useMemo } from "react";
 import {
   render, Box, Text, DataGrid, useSortable, useHotkey, useApp,
   type DataGridColumn,
-} from "@orchetron/storm";
+} from "reacterm";
 
 const columns: DataGridColumn[] = [
   { key: "name", label: "Name", width: 20 },
@@ -630,7 +630,7 @@ Show scrolling log output above a fixed progress bar -- like `npm install`:
 
 ```tsx
 import { useState, useRef } from "react";
-import { render, Box, Text, ProgressBar, useTui, useInterval } from "@orchetron/storm";
+import { render, Box, Text, ProgressBar, useTui, useInterval } from "reacterm";
 
 function DownloadProgress() {
   const { commitText } = useTui();

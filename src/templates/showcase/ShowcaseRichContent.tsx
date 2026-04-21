@@ -29,8 +29,8 @@ A terminal UI framework for building rich applications.
 Install the package:
 
 \`\`\`typescript
-import { render } from "@orchetron/storm";
-import { Box, Text } from "@orchetron/storm/components";
+import { render } from "reacterm";
+import { Box, Text } from "reacterm/components";
 
 render(
   React.createElement(Box, { borderStyle: "round" },
@@ -46,8 +46,8 @@ render(
 Built with Storm.`;
 
 const TS_CODE = `import React, { useState } from "react";
-import { render } from "@orchetron/storm";
-import { Box, Text, TextInput, ScrollView } from "@orchetron/storm/components";
+import { render } from "reacterm";
+import { Box, Text, TextInput, ScrollView } from "reacterm/components";
 
 interface Message {
   role: "user" | "assistant";

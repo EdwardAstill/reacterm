@@ -32,7 +32,7 @@ Multi-series line chart rendered with Unicode braille characters for 2x4 sub-pix
 **Basic: Single series**
 
 ```tsx
-import { LineChart } from "@orchetron/storm";
+import { LineChart } from "reacterm";
 
 <LineChart
   series={[{ data: [10, 25, 18, 40, 35, 50, 45], name: "Requests" }]}
@@ -228,7 +228,7 @@ Inline data visualization using Unicode block characters. Supports single-row or
 **Basic: Inline sparkline**
 
 ```tsx
-import { Sparkline } from "@orchetron/storm";
+import { Sparkline } from "reacterm";
 
 <Sparkline data={[4, 8, 15, 16, 23, 42, 38, 30, 25, 20]} color="#82AAFF" />
 ```
