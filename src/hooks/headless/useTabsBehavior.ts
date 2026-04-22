@@ -17,6 +17,12 @@ export interface UseTabsBehaviorOptions {
   onClose?: (key: string) => void;
   isActive?: boolean;
   orientation?: "horizontal" | "vertical";
+  /** Enable arrow-key navigation. Default: true */
+  enableArrows?: boolean;
+  /** Enable numeric 1-9 tab selection. Default: true */
+  enableNumbers?: boolean;
+  /** Enable Delete/Backspace to close active closable tab. Default: true */
+  enableCloseKeys?: boolean;
 }
 
 export interface UseTabsBehaviorResult {
@@ -52,6 +58,9 @@ export function useTabsBehavior(options: UseTabsBehaviorOptions): UseTabsBehavio
     onClose,
     isActive = true,
     orientation = "horizontal",
+    enableArrows = true,
+    enableNumbers = true,
+    enableCloseKeys = true,
   } = options;
 
   const onChangeRef = useRef(onChange);
@@ -78,24 +87,24 @@ export function useTabsBehavior(options: UseTabsBehaviorOptions): UseTabsBehavio
     const prevKey = orientation === "vertical" ? "up" : "left";
     const nextKey = orientation === "vertical" ? "down" : "right";
 
-    if (event.key === prevKey) {
+    if (enableArrows && event.key === prevKey) {
       const next = findNextTab(currentTabs, idx, -1);
       if (next >= 0) cb(currentTabs[next]!.key);
-    } else if (event.key === nextKey) {
+    } else if (enableArrows && event.key === nextKey) {
       const next = findNextTab(currentTabs, idx, 1);
       if (next >= 0) cb(currentTabs[next]!.key);
-    } else if (event.char && /^[1-9]$/.test(event.char)) {
+    } else if (enableNumbers && event.char && /^[1-9]$/.test(event.char)) {
       const numIdx = parseInt(event.char, 10) - 1;
       if (numIdx < currentTabs.length && !currentTabs[numIdx]!.disabled) {
         cb(currentTabs[numIdx]!.key);
       }
-    } else if ((event.key === "delete" || event.key === "backspace") && onCloseRef.current) {
+    } else if (enableCloseKeys && (event.key === "delete" || event.key === "backspace") && onCloseRef.current) {
       const activeTab = currentTabs[idx];
       if (activeTab && activeTab.closable) {
         onCloseRef.current(activeTab.key);
       }
     }
-  }, [orientation]);
+  }, [enableArrows, enableCloseKeys, enableNumbers, orientation]);
 
   useInput(handleInput, { isActive });
 

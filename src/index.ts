@@ -251,6 +251,7 @@ export { useAsyncCleanup } from "./hooks/useAsyncCleanup.js";
 export { useForceUpdate } from "./hooks/useForceUpdate.js";
 export { useInput, type UseInputOptions } from "./hooks/useInput.js";
 export { useMouse, type UseMouseOptions } from "./hooks/useMouse.js";
+export { useMouseTarget, type UseMouseTargetOptions, type UseMouseTargetResult } from "./hooks/useMouseTarget.js";
 export { useTerminal, type TerminalInfo } from "./hooks/useTerminal.js";
 export { useFocus, type UseFocusOptions, type UseFocusResult } from "./hooks/useFocus.js";
 export { useScroll, type UseScrollOptions, type UseScrollResult } from "./hooks/useScroll.js";

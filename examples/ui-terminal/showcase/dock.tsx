@@ -24,8 +24,8 @@ import {
   Panes,
   Pane,
   useInput,
-  useMouse,
-  useMeasure,
+  useTabsBehavior,
+  useMouseTarget,
   useApp,
   useTerminal,
 } from "../../../src/index.js";
@@ -324,6 +324,39 @@ function EditableText({ value, cursorIdx, focused }: {
   );
 }
 
+function DockPillTab({
+  label,
+  active,
+  disabled,
+  onSelect,
+}: {
+  label: string;
+  active: boolean;
+  disabled?: boolean;
+  onSelect: () => void;
+}) {
+  const mouseTarget = useMouseTarget({
+    disabled: disabled === true,
+    onMouse: (event) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      onSelect();
+    },
+  });
+
+  return (
+    <Box _focusId={mouseTarget.focusId} flexDirection="row">
+      <Text
+        color={disabled ? C.dim : active ? C.tabActive : C.dim}
+        bold={active && !disabled}
+        dim={disabled}
+        backgroundColor={active ? C.headerBg : undefined}
+      >
+        {label}
+      </Text>
+    </Box>
+  );
+}
+
 // --------------------------- App ---------------------------
 type MainTab = "calculation" | "files" | "images";
 type SubTab = "io" | "json" | "guide" | "script";
@@ -498,26 +531,38 @@ function App() {
     setResizing(next);
   }, []);
 
-  // --------------------------- Mouse ---------------------------
-  const subTabMeasures = {
-    io:     useMeasure("subtab-io"),
-    json:   useMeasure("subtab-json"),
-    guide:  useMeasure("subtab-guide"),
-    script: useMeasure("subtab-script"),
-  };
+  const inputEnabled = modalMode === "none" && !editingCellKey && !resizing;
 
-  useMouse((e) => {
-    if (e.action !== "press" || e.button !== "left") return;
-    const tabs = ["io", "json", "guide", "script"] as SubTab[];
-    for (const tab of tabs) {
-      const m = subTabMeasures[tab];
-      if (!m) continue;
-      if (e.x >= m.x && e.x < m.x + m.width && e.y >= m.y && e.y < m.y + m.height) {
-        setSubTab(tab);
-        setActivePane("detail");
-        return;
-      }
-    }
+  const mainTabsBehavior = useTabsBehavior({
+    tabs: [
+      { key: "calculation", label: "Calcs" },
+      { key: "files", label: "Files" },
+      { key: "images", label: "Images" },
+    ],
+    activeKey: mainTab,
+    onChange: (key) => {
+      setMainTab(key as MainTab);
+      setActivePane("calcs");
+    },
+    isActive: inputEnabled && activePane === "calcs",
+    orientation: "horizontal",
+  });
+
+  const subTabsBehavior = useTabsBehavior({
+    tabs: [
+      { key: "io", label: "I/O" },
+      { key: "json", label: "JSON" },
+      { key: "guide", label: "Guide" },
+      { key: "script", label: "Script" },
+    ],
+    activeKey: subTab,
+    onChange: (key) => {
+      setSubTab(key as SubTab);
+      setActivePane("detail");
+    },
+    isActive: inputEnabled && activePane === "detail",
+    enableArrows: subTab !== "io",
+    orientation: "horizontal",
   });
 
   // --------------------------- Input ---------------------------
@@ -668,21 +713,11 @@ function App() {
       else if (e.key === "h" || e.key === "left") navigateTree("left");
       else if (e.key === "l" || e.key === "right") navigateTree("right");
     } else if (activePane === "calcs") {
-      if (e.char && /[1-3]/.test(e.char)) {
-        const tabs: MainTab[] = ["calculation", "files", "images"];
-        setMainTab(tabs[parseInt(e.char) - 1]!);
-        return;
-      }
       if (mainTab === "calculation") {
         if (e.key === "j" || e.key === "down") setFocusedCalcIdx(i => Math.min(calcList.length - 1, i + 1));
         else if (e.key === "k" || e.key === "up") setFocusedCalcIdx(i => Math.max(0, i - 1));
       }
     } else if (activePane === "detail") {
-      if (e.char && /[1-4]/.test(e.char)) {
-        const tabs: SubTab[] = ["io", "json", "guide", "script"];
-        setSubTab(tabs[parseInt(e.char) - 1]!);
-        return;
-      }
       if (subTab === "io") {
         const COLS = ["field", "value", "unit", "format"] as const;
         if (e.key === "tab" && e.shift) {
@@ -722,13 +757,13 @@ function App() {
           if (Object.keys(editedCells).length > 0) mockRun();
         }
       } else {
-        // non-IO sub-tabs: h/l cycles between them
-        if (e.key === "h" || e.key === "left") {
+        // non-IO sub-tabs: keep h/l for Dock vibe (arrows handled by useTabsBehavior)
+        if (e.key === "h") {
           const tabs: SubTab[] = ["io", "json", "guide", "script"];
           setSubTab(t => tabs[(tabs.indexOf(t) - 1 + tabs.length) % tabs.length]!);
           return;
         }
-        if (e.key === "l" || e.key === "right") {
+        if (e.key === "l") {
           const tabs: SubTab[] = ["io", "json", "guide", "script"];
           setSubTab(t => tabs[(tabs.indexOf(t) + 1) % tabs.length]!);
           return;
@@ -822,15 +857,18 @@ function App() {
 
           {/* Calcs/files/images pane */}
           <Pane height={calcPaneHeight} flexGrow={0} flexShrink={0} flexDirection="column" paddingX={1}>
-            <Box flexDirection="row" gap={2}>
+            <Box role="tablist" flexDirection="row" gap={2}>
               {(["calculation", "files", "images"] as MainTab[]).map((t, i) => {
-                const active = mainTab === t;
                 const label = t === "calculation" ? "Calcs" : t === "files" ? "Files" : "Images";
+                const trigger = mainTabsBehavior.getTriggerProps(t);
                 return (
-                  <Text key={t} color={active ? C.tabActive : C.dim}
-                    backgroundColor={active ? C.headerBg : undefined} bold={active}>
-                    {`${i + 1} ${label}`}
-                  </Text>
+                  <DockPillTab
+                    key={t}
+                    label={`${i + 1} ${label}`}
+                    active={trigger.isActive}
+                    disabled={trigger.isDisabled}
+                    onSelect={trigger.onSelect}
+                  />
                 );
               })}
             </Box>
@@ -908,17 +946,18 @@ function App() {
           flexDirection="column"
           paddingX={1}
         >
-            <Box flexDirection="row" gap={2} alignItems="center">
+            <Box role="tablist" flexDirection="row" gap={2} alignItems="center">
               {(["io", "json", "guide", "script"] as SubTab[]).map((k, i) => {
                 const labels: Record<SubTab, string> = { io: "I/O", json: "JSON", guide: "Guide", script: "Script" };
-                const active = subTab === k;
+                const trigger = subTabsBehavior.getTriggerProps(k);
                 return (
-                  <Box key={k} _measureId={`subtab-${k}`}>
-                    <Text color={active ? C.tabActive : C.dim} bold={active}
-                      backgroundColor={active ? C.headerBg : undefined}>
-                      {` ${i + 1} ${labels[k]} `}
-                    </Text>
-                  </Box>
+                  <DockPillTab
+                    key={k}
+                    label={` ${i + 1} ${labels[k]} `}
+                    active={trigger.isActive}
+                    disabled={trigger.isDisabled}
+                    onSelect={trigger.onSelect}
+                  />
                 );
               })}
               <Box flex={1} />
