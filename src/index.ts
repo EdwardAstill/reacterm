@@ -141,7 +141,7 @@ export { Static, type StaticProps } from "./components/core/Static.js";
 export { SelectInput, type SelectInputItem, type SelectInputProps } from "./components/core/SelectInput.js";
 export { Overlay, type OverlayProps } from "./components/core/Overlay.js";
 export { Divider, type DividerProps } from "./components/core/Divider.js";
-export { Table, type TableProps, type TableColumn } from "./components/data/Table.js";
+export { Table, type TableProps, type TableColumn } from "./components/table/Table.js";
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";
 export { Tabs, type TabsProps, type Tab } from "./components/core/Tabs.js";
 export { Tree, type TreeProps, type TreeNode } from "./components/data/Tree.js";

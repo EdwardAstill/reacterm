@@ -94,6 +94,7 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
       id: idRef.current,
       type: "input",
       bounds: { x: 0, y: 0, width: 0, height: 0 },
+      clickFocus: true,
     });
     if (focusProp) focus.focus(idRef.current);
   }

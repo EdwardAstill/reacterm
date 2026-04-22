@@ -524,6 +524,20 @@ describe("Tabs", () => {
     expect(result.hasText("[ Only ]")).toBe(true);
   });
 
+  it("changes tab on mouse click", () => {
+    const changes: string[] = [];
+    const result = renderForTest(
+      React.createElement(Tabs, {
+        tabs: [{ key: "a", label: "Alpha" }, { key: "b", label: "Beta" }],
+        activeKey: "a",
+        onChange: (key) => { changes.push(key); },
+      }),
+      { width: 40, height: 3 },
+    );
+    result.click(12, 0);
+    expect(changes).toEqual(["b"]);
+  });
+
   it("renders empty tabs array without crashing", () => {
     const result = renderForTest(
       React.createElement(Tabs, { tabs: [], activeKey: "" }),
@@ -624,6 +638,16 @@ describe("Button", () => {
       { width: 30, height: 3 },
     );
     expect(result.hasText("Blur")).toBe(true);
+  });
+
+  it("handles mouse click", () => {
+    let pressed = 0;
+    const result = renderForTest(
+      React.createElement(Button, { label: "Press", onPress: () => { pressed += 1; } }),
+      { width: 30, height: 3 },
+    );
+    result.click(1, 0);
+    expect(pressed).toBe(1);
   });
 });
 

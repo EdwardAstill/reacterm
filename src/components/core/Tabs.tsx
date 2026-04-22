@@ -8,6 +8,7 @@ import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { findNextNavigable as findNextNav } from "../../utils/navigation.js";
+import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 
 export interface Tab {
   key: string;
@@ -175,6 +176,35 @@ const TabsBase = React.memo(function Tabs(rawProps: TabsProps): React.ReactEleme
 
   useInput(handleInput, { isActive: isFocused !== false });
 
+  const selectTabAt = useCallback((localX: number, localY: number) => {
+    if (tabs.length === 0) return;
+    if (orientation === "vertical") {
+      const index = Math.max(0, Math.min(tabs.length - 1, localY));
+      const tab = tabs[index];
+      if (tab && !tab.disabled) onChangeRef.current?.(tab.key);
+      return;
+    }
+
+    let cursor = 0;
+    for (const tab of tabs) {
+      const labelText = tab.closable ? `[ ${tab.label} \u00D7 ]` : `[ ${tab.label} ]`;
+      const width = labelText.length;
+      if (localX >= cursor && localX < cursor + width) {
+        if (!tab.disabled) onChangeRef.current?.(tab.key);
+        return;
+      }
+      cursor += width + 1;
+    }
+  }, [orientation, tabs]);
+
+  const mouseTarget = useMouseTarget({
+    disabled: tabs.length === 0,
+    onMouse: (event, localX, localY) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      selectTabAt(localX, localY);
+    },
+  });
+
   const tabElements = tabs.map((tab) => {
     const isActive = tab.key === activeKey;
     const isDisabled = tab.disabled === true;
@@ -228,6 +258,7 @@ const TabsBase = React.memo(function Tabs(rawProps: TabsProps): React.ReactEleme
   const outerBoxProps: Record<string, unknown> = {
     role: "tablist",
     flexDirection: orientation === "vertical" ? "column" : "row",
+    _focusId: mouseTarget.focusId,
     "aria-label": props["aria-label"],
     ...layoutProps,
   };

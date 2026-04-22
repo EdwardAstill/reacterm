@@ -758,6 +758,10 @@ function paintBox(
   const x = layout.x - scrollOffsetX;
   const y = layout.y - scrollOffsetY;
   const props = element.props;
+  const focusId = props["_focusId"] as string | undefined;
+  if (focusId) {
+    ctx.focus.updateBounds(focusId, x, y, layout.width, layout.height);
+  }
 
   // Opaque: fill entire box area with spaces before painting anything.
   // If backgroundColor is also set, use it for the fill so the entire

@@ -1170,7 +1170,10 @@ export function computeLayout(
     const remainingSpace = spaceForChildren - lineTotalNatural;
 
     if (remainingSpace >= 0 && lineTotalFlexGrow > 0) {
+      const flexEntries = lineEntries.filter(entry => entry.flexGrow > 0);
+      let distributed = 0;
       for (const entry of lineEntries) {
+        const before = entry.natural;
         if (entry.flexGrow > 0 && entry.natural === 0) {
           entry.natural = Math.floor((entry.flexGrow / lineTotalFlexGrow) * remainingSpace);
         } else if (entry.flexGrow > 0) {
@@ -1180,6 +1183,22 @@ export function computeLayout(
         const min = isColumn ? cp.minHeight : cp.minWidth;
         const max = isColumn ? cp.maxHeight : cp.maxWidth;
         entry.natural = clampSize(entry.natural, min, max);
+        distributed += Math.max(0, entry.natural - before);
+      }
+
+      let leftover = remainingSpace - distributed;
+      while (leftover > 0 && flexEntries.length > 0) {
+        let changed = false;
+        for (const entry of flexEntries) {
+          const cp = entry.node.props;
+          const max = isColumn ? cp.maxHeight : cp.maxWidth;
+          if (max !== undefined && entry.natural >= max) continue;
+          entry.natural += 1;
+          leftover -= 1;
+          changed = true;
+          if (leftover === 0) break;
+        }
+        if (!changed) break;
       }
     } else if (remainingSpace < 0) {
       let totalShrinkWeighted = 0;

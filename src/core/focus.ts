@@ -28,6 +28,10 @@ export interface FocusableEntry {
   type: "input" | "scroll";
   /** Screen bounds from last paint — mutable, renderer writes here */
   bounds: { x: number; y: number; width: number; height: number };
+  /** Whether mouse press should also move keyboard focus here. */
+  clickFocus?: boolean;
+  /** Optional mouse callback with event-local coordinates. */
+  onMouse?: (event: import("../input/types.js").MouseEvent, localX: number, localY: number) => void;
   /** For scroll views: imperative vertical scroll callback */
   onScroll?: (delta: number) => void;
   /** For scroll views: imperative horizontal scroll callback */
@@ -361,6 +365,18 @@ export class FocusManager {
       const entry = this.entries.get(id);
       if (entry?.type === "scroll") {
         this._activeScrollId = entry.id;
+        return entry;
+      }
+    }
+    return undefined;
+  }
+
+  hitTestInput(x: number, y: number): FocusableEntry | undefined {
+    for (let i = this.order.length - 1; i >= 0; i--) {
+      const entry = this.entries.get(this.order[i]!);
+      if (!entry || entry.type !== "input") continue;
+      const b = entry.bounds;
+      if (x >= b.x && x < b.x + b.width && y >= b.y && y < b.y + b.height) {
         return entry;
       }
     }

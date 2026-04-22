@@ -87,6 +87,18 @@ export class TestInputManager {
     for (const h of this.mouseHandlers) h(event);
   }
 
+  /** Simulate mouse click/press */
+  click(x = 0, y = 0, button: MouseEvent["button"] = "left"): void {
+    const event: MouseEvent = {
+      button,
+      action: "press",
+      x, y,
+      shift: false, ctrl: false, meta: false,
+      raw: "",
+    };
+    for (const h of this.mouseHandlers) h(event);
+  }
+
   /** Simulate paste event */
   paste(text: string): void {
     const event: PasteEvent = { text };
@@ -136,6 +148,8 @@ export interface RenderResult {
   pressRight: () => void;
   /** Fire mouse scroll */
   scroll: (direction: "up" | "down", x?: number, y?: number) => void;
+  /** Fire mouse click */
+  click: (x?: number, y?: number, button?: MouseEvent["button"]) => void;
   /** Fire paste event */
   paste: (text: string) => void;
   /** Re-render with new props */
@@ -223,6 +237,10 @@ export function renderForTest(
 
     scroll(direction: "up" | "down", x?: number, y?: number): void {
       inner.input.scroll(direction, x, y);
+    },
+
+    click(x?: number, y?: number, button?: MouseEvent["button"]): void {
+      inner.input.click(x, y, button);
     },
 
     paste(text: string): void {

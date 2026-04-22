@@ -5,6 +5,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
+import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 
 const MAX_TREE_DEPTH = 100;
 
@@ -17,15 +18,25 @@ export interface TreeNode {
   icon?: string;
 }
 
+export interface TreeRenderState {
+  isExpanded: boolean;
+  isHighlighted: boolean;
+  isSelected: boolean;
+  depth: number;
+}
+
 export interface TreeProps {
   nodes: TreeNode[];
   onToggle?: (key: string) => void;
+  onSelect?: (key: string, node: TreeNode) => void;
+  selectedKey?: string;
+  onHighlightChange?: (key: string, node: TreeNode) => void;
   color?: string | number;
   isFocused?: boolean;
   /** Maximum visible nodes for virtual scrolling (default: all visible). */
   maxVisible?: number;
   /** Custom renderer for each tree node. */
-  renderNode?: (node: TreeNode, state: { isExpanded: boolean; isHighlighted: boolean; depth: number }) => React.ReactNode;
+  renderNode?: (node: TreeNode, state: TreeRenderState) => React.ReactNode;
 }
 
 interface FlatNode {
@@ -65,6 +76,23 @@ function buildNodeMap(flatNodes: FlatNode[]): Map<string, TreeNode> {
   return map;
 }
 
+function buildPrefix(entry: FlatNode): string {
+  let prefix = "";
+  for (let d = 0; d < entry.depth; d++) {
+    if (entry.parentIsLast[d]) {
+      prefix += "   ";
+    } else {
+      prefix += "\u2502  "; // │
+    }
+  }
+  if (entry.depth > 0) {
+    prefix =
+      prefix.slice(0, -3) +
+      (entry.isLast ? "\u2514\u2500\u2500" : "\u251C\u2500\u2500"); // └── or ├──
+  }
+  return prefix;
+}
+
 export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactElement {
   const colors = useColors();
   const personality = usePersonality();
@@ -72,6 +100,9 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   const {
     nodes,
     onToggle,
+    onSelect,
+    selectedKey,
+    onHighlightChange,
     color = colors.brand.primary,
     isFocused = false,
     maxVisible,
@@ -92,10 +123,20 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   const flatNodes = flattenVisible(nodes, 0, []);
   const visibleKeys = collectVisibleKeysFromFlat(flatNodes);
   const nodeMap = buildNodeMap(flatNodes);
+  const selectedIndex = selectedKey !== undefined
+    ? flatNodes.findIndex((entry) => entry.node.key === selectedKey)
+    : -1;
+
+  if (selectedIndex >= 0) {
+    highlightRef.current = selectedIndex;
+  }
 
   // Clamp highlight index
   if (highlightRef.current >= flatNodes.length) {
     highlightRef.current = Math.max(0, flatNodes.length - 1);
+  }
+  if (highlightRef.current < 0) {
+    highlightRef.current = 0;
   }
 
   // Virtual scrolling
@@ -115,19 +156,33 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
     scrollOffsetRef.current = 0;
   }
 
+  const setHighlight = useCallback((index: number, shouldRender: boolean = true) => {
+    if (index < 0 || index >= flatNodes.length) return;
+    highlightRef.current = index;
+    const node = flatNodes[index]?.node;
+    if (node) {
+      onHighlightChange?.(node.key, node);
+    }
+    if (shouldRender) requestRender();
+  }, [flatNodes, onHighlightChange, requestRender]);
+
+  const triggerSelect = useCallback((index: number) => {
+    const node = flatNodes[index]?.node;
+    if (!node) return;
+    onSelect?.(node.key, node);
+  }, [flatNodes, onSelect]);
+
   const handleInput = useCallback(
     (event: KeyEvent) => {
       if (visibleKeys.length === 0) return;
 
       if (event.key === "up") {
         if (highlightRef.current > 0) {
-          highlightRef.current -= 1;
-          requestRender();
+          setHighlight(highlightRef.current - 1);
         }
       } else if (event.key === "down") {
         if (highlightRef.current < visibleKeys.length - 1) {
-          highlightRef.current += 1;
-          requestRender();
+          setHighlight(highlightRef.current + 1);
         }
       } else if (event.key === "left") {
         // Collapse current node
@@ -136,6 +191,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
           const node = nodeMap.get(key);
           if (node && node.expanded && node.children && node.children.length > 0) {
             onToggle?.(key);
+            requestRender();
           }
         }
       } else if (event.key === "right") {
@@ -145,16 +201,22 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
           const node = nodeMap.get(key);
           if (node && !node.expanded && node.children && node.children.length > 0) {
             onToggle?.(key);
+            requestRender();
           }
         }
       } else if (event.key === "return" || event.key === "space") {
-        const key = visibleKeys[highlightRef.current];
-        if (key) {
-          onToggle?.(key);
+        if (onSelect) {
+          triggerSelect(highlightRef.current);
+        } else {
+          const key = visibleKeys[highlightRef.current];
+          if (key) {
+            onToggle?.(key);
+            requestRender();
+          }
         }
       }
     },
-    [visibleKeys, nodeMap, onToggle, requestRender],
+    [visibleKeys, nodeMap, onToggle, onSelect, requestRender, setHighlight, triggerSelect],
   );
 
   useInput(handleInput, { isActive: isFocused });
@@ -163,6 +225,46 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   const visibleEnd = useVirtualScroll
     ? Math.min(scrollOffsetRef.current + maxVisible, flatNodes.length)
     : flatNodes.length;
+  const topOverflowRows = useVirtualScroll && visibleStart > 0 ? 1 : 0;
+
+  const mouseTarget = useMouseTarget({
+    disabled: flatNodes.length === 0,
+    onMouse: (event, localX, localY) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      let rowOffset = localY;
+      if (topOverflowRows === 1) {
+        if (rowOffset === 0) return;
+        rowOffset -= 1;
+      }
+      if (rowOffset < 0) return;
+      const visibleCount = visibleEnd - visibleStart;
+      if (rowOffset >= visibleCount) return;
+
+      const index = visibleStart + rowOffset;
+      const entry = flatNodes[index];
+      if (!entry) return;
+
+      setHighlight(index, false);
+
+      const hasChildren = !!entry.node.children?.length;
+      if (!props.renderNode && hasChildren) {
+        const prefix = buildPrefix(entry);
+        const markerStart = prefix.length;
+        if (localX >= markerStart && localX < markerStart + 2) {
+          onToggle?.(entry.node.key);
+          requestRender();
+          return;
+        }
+      }
+
+      if (onSelect) {
+        triggerSelect(index);
+      } else if (!props.renderNode && hasChildren) {
+        onToggle?.(entry.node.key);
+      }
+      requestRender();
+    },
+  });
 
   const allElements: React.ReactElement[] = [];
 
@@ -179,22 +281,11 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
 
   for (let i = visibleStart; i < visibleEnd; i++) {
     const entry = flatNodes[i]!;
-    const isHighlighted = isFocused && i === highlightRef.current;
+    const isActive = i === highlightRef.current;
+    const isHighlighted = isFocused && isActive;
+    const isSelected = selectedIndex >= 0 && i === selectedIndex;
     const hasChildren = entry.node.children !== undefined && entry.node.children.length > 0;
-
-    let prefix = "";
-    for (let d = 0; d < entry.depth; d++) {
-      if (entry.parentIsLast[d]) {
-        prefix += "   ";
-      } else {
-        prefix += "\u2502  "; // │
-      }
-    }
-    if (entry.depth > 0) {
-      prefix =
-        prefix.slice(0, -3) +
-        (entry.isLast ? "\u2514\u2500\u2500" : "\u251C\u2500\u2500"); // └── or ├──
-    }
+    const prefix = buildPrefix(entry);
 
     // Expand/collapse marker
     const marker = hasChildren
@@ -244,6 +335,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
           props.renderNode(entry.node, {
             isExpanded: !!entry.node.expanded,
             isHighlighted,
+            isSelected,
             depth: entry.depth,
           }),
         ),
@@ -253,7 +345,14 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       parts.push(
         React.createElement(
           "tui-text",
-          { key: "label", ...(isHighlighted ? { bold: true, inverse: personality.interaction.focusIndicator === "highlight", color: isHighlighted ? color : undefined } : {}) },
+          {
+            key: "label",
+            ...(isHighlighted
+              ? { bold: true, inverse: personality.interaction.focusIndicator === "highlight", color }
+              : isSelected
+                ? { bold: true, color: colors.text.primary }
+                : {}),
+          },
           entry.node.label,
         ),
       );
@@ -281,7 +380,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
 
   return React.createElement(
     "tui-box",
-    { role: "tree", flexDirection: "column" },
+    { role: "tree", flexDirection: "column", _focusId: mouseTarget.focusId },
     ...allElements,
   );
 });

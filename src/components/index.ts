@@ -63,11 +63,12 @@ export {
 export { Tag, type TagProps } from "./extras/Tag.js";
 
 export {
-  Table, type TableProps, type TableColumn,
+  Table, type TableProps, type TableColumn, type TableFocusMode, type TableCellRef,
+  type TableCellStyle, type TableStateStyles, type TableRenderState,
   type TableContextValue, TableContext, useTableContext,
   type TableRootProps, type TableCompoundHeaderProps, type TableCompoundBodyProps,
   type TableCompoundRowProps, type TableCompoundCellProps,
-} from "./data/Table.js";
+} from "./table/Table.js";
 export {
   DataGrid, type DataGridProps, type DataGridColumn,
   type DataGridContextValue, DataGridContext, useDataGridContext,

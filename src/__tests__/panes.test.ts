@@ -84,6 +84,56 @@ describe("Panes", () => {
     expect(result.hasText("Solo")).toBe(true);
   });
 
+  it("row with nested column renders a connected three-pane split", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "row", borderStyle: "single", width: 42, height: 10 },
+        React.createElement(
+          Panes,
+          { direction: "column", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "Sections")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "Calcs")),
+        ),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "Detail")),
+      ),
+      { width: 42, height: 10 },
+    );
+
+    expect(result.hasText("Sections")).toBe(true);
+    expect(result.hasText("Calcs")).toBe(true);
+    expect(result.hasText("Detail")).toBe(true);
+    expect(result.output).toContain("├");
+    expect(result.output).toContain("┤");
+    expect(result.output.includes("││")).toBe(false);
+    const lastLine = result.lines[result.lines.length - 1]!;
+    expect(lastLine).toContain("└");
+    expect(lastLine).toContain("┘");
+  });
+
+  it("column with nested row renders a connected three-pane split", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "column", borderStyle: "single", width: 42, height: 12 },
+        React.createElement(
+          Panes,
+          { direction: "row", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "TopLeft")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "TopRight")),
+        ),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "Bottom")),
+      ),
+      { width: 42, height: 12 },
+    );
+
+    expect(result.hasText("TopLeft")).toBe(true);
+    expect(result.hasText("TopRight")).toBe(true);
+    expect(result.hasText("Bottom")).toBe(true);
+    expect(result.output).toContain("├");
+    expect(result.output).toContain("┤");
+  });
+
   it("prints output for visual inspection", () => {
     const row = renderForTest(
       React.createElement(

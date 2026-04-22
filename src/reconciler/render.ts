@@ -151,6 +151,7 @@ export function render(
   function forceReactFlush(): void {
     if (scheduler.unmounted) return;
     stableElement = buildTree(element);
+    renderCtx.focus.tickRenderCycle();
     syncContainerUpdate(stableElement, container);
   }
 
@@ -173,11 +174,13 @@ export function render(
   });
 
   // Initial render — synchronous
+  renderCtx.focus.tickRenderCycle();
   syncContainerUpdate(stableElement, container);
 
   function rerender(newElement: React.ReactElement): void {
     element = newElement;
     stableElement = buildTree(newElement);
+    renderCtx.focus.tickRenderCycle();
     syncContainerUpdate(stableElement, container);
   }
 

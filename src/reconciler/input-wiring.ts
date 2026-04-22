@@ -25,6 +25,17 @@ export class InputWiring {
     this.unsubScroll = input.onMouse((event) => {
       const processed = pluginManager.processMouse(event);
       if (!processed) return;
+      if (processed.action === "press" && (processed.button === "left" || processed.button === "middle" || processed.button === "right")) {
+        const target = renderCtx.focus.hitTestInput(processed.x, processed.y);
+        if (target) {
+          if (target.clickFocus) {
+            renderCtx.focus.focus(target.id);
+          }
+          const localX = processed.x - target.bounds.x;
+          const localY = processed.y - target.bounds.y;
+          target.onMouse?.(processed, localX, localY);
+        }
+      }
       if (processed.button === "scroll-up" || processed.button === "scroll-down") {
         const target = renderCtx.focus.hitTestScroll(processed.x, processed.y);
         const delta = processed.button === "scroll-up" ? -1 : 1;

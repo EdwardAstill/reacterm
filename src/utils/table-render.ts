@@ -38,6 +38,64 @@ export function computeColumnWidths<C extends { key: string; width?: number }>(
   });
 }
 
+/**
+ * Shrink auto-sized columns so the full table fits inside the available width.
+ *
+ * Fixed-width columns (`column.width`) are preserved. Auto-sized columns are
+ * reduced one character at a time, widest-first, until the table fits or every
+ * auto-sized column is already at the minimum width.
+ */
+export function fitColumnWidthsToAvailableWidth<C extends { width?: number }>(
+  columns: ReadonlyArray<C>,
+  widths: ReadonlyArray<number>,
+  availableWidth: number,
+  minColumnWidth: number = 1,
+): number[] {
+  if (columns.length === 0 || widths.length === 0 || availableWidth <= 0) {
+    return [...widths];
+  }
+
+  const separatorWidth = Math.max(0, columns.length - 1);
+  const paddingWidth = columns.length * 2;
+  const maxContentWidth = Math.max(
+    minColumnWidth * columns.length,
+    availableWidth - separatorWidth - paddingWidth,
+  );
+
+  const next = [...widths];
+  let currentContentWidth = next.reduce((sum, width) => sum + width, 0);
+  if (currentContentWidth <= maxContentWidth) {
+    return next;
+  }
+
+  const shrinkableIndices = columns
+    .map((column, index) => (column.width === undefined ? index : -1))
+    .filter((index) => index >= 0);
+
+  if (shrinkableIndices.length === 0) {
+    return next;
+  }
+
+  while (currentContentWidth > maxContentWidth) {
+    let widestShrinkable = -1;
+    for (const index of shrinkableIndices) {
+      if (next[index]! <= minColumnWidth) continue;
+      if (widestShrinkable === -1 || next[index]! > next[widestShrinkable]!) {
+        widestShrinkable = index;
+      }
+    }
+
+    if (widestShrinkable === -1) {
+      break;
+    }
+
+    next[widestShrinkable] = next[widestShrinkable]! - 1;
+    currentContentWidth -= 1;
+  }
+
+  return next;
+}
+
 // ─── Separator / divider line ───────────────────────────────────────────
 
 /**

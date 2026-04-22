@@ -8,6 +8,8 @@ Components for displaying structured data, tables, trees, and lists.
 
 Bordered table with headers, auto-sized columns, optional zebra striping, and row virtualization for large datasets.
 
+Auto-sized columns now fit the available table width by default. If the table has an explicit `width` or lives inside a constrained layout pane, wide columns shrink with ellipsis instead of pushing the whole table wider. Use `visibleWidth` when you want a custom horizontal scroll window.
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `columns` | `TableColumn[]` | -- | Column definitions (required) |
@@ -17,6 +19,7 @@ Bordered table with headers, auto-sized columns, optional zebra striping, and ro
 | `maxVisibleRows` | `number` | `100` | Max rows before virtualization |
 | `scrollOffset` | `number` | `0` | Current scroll position |
 | `onScrollChange` | `(offset: number) => void` | -- | Called when scroll offset changes |
+| `visibleWidth` | `number` | Auto | Override the visible width used for horizontal scrolling |
 | _Plus container props_ | | | `borderStyle`, `borderColor`, `padding*`, `width`, `margin*` |
 
 **TableColumn type:**
@@ -67,6 +70,26 @@ import { Table } from "reacterm";
   onScrollChange={setScrollPos}
 />
 ```
+
+**Pattern: Table inside a narrow pane**
+
+```tsx
+<Table
+  width={40}
+  borderStyle="none"
+  columns={[
+    { key: "field", header: "Field" },
+    { key: "value", header: "Value", align: "right" },
+    { key: "unit", header: "Unit" },
+    { key: "format", header: "Format" },
+  ]}
+  data={[
+    { field: "Live load element factor", value: 4, unit: "-", format: "0.00" },
+  ]}
+/>
+```
+
+The first column truncates with an ellipsis so the other columns stay visible in the pane.
 
 ---
 
@@ -143,7 +166,22 @@ Hierarchical tree with expand/collapse indicators. Renders nodes with indentatio
 |---|---|---|---|
 | `nodes` | `TreeNode[]` | -- | Tree node array (required) |
 | `onToggle` | `(key: string) => void` | -- | Called when a node is toggled |
+| `onSelect` | `(key: string, node: TreeNode) => void` | -- | Called when a node row is selected by click or Enter |
+| `selectedKey` | `string` | -- | Controlled selected node key |
+| `onHighlightChange` | `(key: string, node: TreeNode) => void` | -- | Called when keyboard/mouse navigation changes the highlighted row |
 | `color` | `string \| number` | -- | Indicator color |
+| `isFocused` | `boolean` | `false` | Enables keyboard navigation styling and input |
+| `maxVisible` | `number` | -- | Maximum visible nodes before virtual scrolling |
+| `renderNode` | `(node, state) => ReactNode` | -- | Custom row renderer |
+
+**renderNode state:**
+
+| Field | Type | Description |
+|---|---|---|
+| `isExpanded` | `boolean` | Whether the node is currently expanded |
+| `isHighlighted` | `boolean` | Whether the row is the active keyboard/mouse highlight |
+| `isSelected` | `boolean` | Whether the row matches `selectedKey` |
+| `depth` | `number` | Visible nesting depth |
 
 **TreeNode type:**
 
@@ -153,6 +191,16 @@ Hierarchical tree with expand/collapse indicators. Renders nodes with indentatio
 | `label` | `string` | -- | Display label |
 | `children` | `TreeNode[]` | -- | Child nodes |
 | `expanded` | `boolean` | -- | Whether children are visible |
+| `icon` | `string` | -- | Optional icon before the label |
+
+Keyboard:
+- `Up` / `Down` move highlight
+- `Left` / `Right` collapse and expand
+- `Enter` / `Space` toggles by default, or selects when `onSelect` is provided
+
+Mouse:
+- click row selects it
+- click disclosure marker toggles expand/collapse
 
 **Basic: Simple tree**
 
@@ -188,6 +236,24 @@ function FileTree({ rootNodes }: { rootNodes: TreeNode[] }) {
   );
 }
 ```
+
+**Pattern: Controlled selection in a sidebar**
+
+```tsx
+<Tree
+  nodes={nodes}
+  selectedKey={selectedKey}
+  isFocused
+  onToggle={toggleNode}
+  onHighlightChange={(key) => setSelectedKey(key)}
+  onSelect={(key, node) => {
+    setSelectedKey(key);
+    if (!node.children?.length) openDocument(key);
+  }}
+/>
+```
+
+This is the right shape for a dock/sidebar sections panel: `Tree` handles hierarchy, selection, and click/keyboard navigation. Your app code decides what selection means.
 
 ---
 

@@ -4,6 +4,7 @@ import { useCleanup } from "../../hooks/useCleanup.js";
 import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
+import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { useStyles } from "../../core/style-provider.js";
 import { usePersonality } from "../../core/personality.js";
@@ -112,6 +113,13 @@ export const Button = React.memo(function Button(rawProps: ButtonProps): React.R
 
   const hasHandler = onPress !== undefined;
   useInput(handleInput, { isActive: hasHandler && isFocused && !disabled && !loading });
+  const mouseTarget = useMouseTarget({
+    disabled: disabled || loading || !hasHandler,
+    onMouse: (event) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      onPressRef.current?.();
+    },
+  });
 
   const VARIANT_STYLES: Record<ButtonVariant, { focused: Record<string, unknown>; unfocused: Record<string, unknown> }> = {
     primary:   { focused: { color, bold: true, inverse: true }, unfocused: { dim: true } },
@@ -153,6 +161,7 @@ export const Button = React.memo(function Button(rawProps: ButtonProps): React.R
   const boxProps: Record<string, unknown> = {
     role: "button",
     flexDirection: "row",
+    _focusId: mouseTarget.focusId,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

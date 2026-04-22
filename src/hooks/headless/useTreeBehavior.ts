@@ -24,6 +24,9 @@ export interface FlatTreeNode {
 export interface UseTreeBehaviorOptions {
   nodes: TreeBehaviorNode[];
   onToggle?: (key: string) => void;
+  onSelect?: (key: string, node: TreeBehaviorNode) => void;
+  selectedKey?: string;
+  onHighlightChange?: (key: string, node: TreeBehaviorNode) => void;
   isActive?: boolean;
   maxVisible?: number;
 }
@@ -35,8 +38,12 @@ export interface UseTreeBehaviorResult {
   highlightIndex: number;
   /** Set of expanded node keys */
   expandedKeys: Set<string>;
+  /** Controlled selected key passthrough, if provided. */
+  selectedKey: string | undefined;
   /** Toggle expand/collapse of a node */
   toggle: (key: string) => void;
+  /** Select the currently highlighted node or a specific key. */
+  select: (key?: string) => void;
   /** Visible range start index (for virtual scrolling) */
   visibleStart: number;
   /** Visible range end index */
@@ -117,6 +124,9 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
   const {
     nodes,
     onToggle,
+    onSelect,
+    selectedKey,
+    onHighlightChange,
     isActive = false,
     maxVisible,
   } = options;
@@ -127,8 +137,19 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
 
   const onToggleRef = useRef(onToggle);
   onToggleRef.current = onToggle;
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+  const onHighlightChangeRef = useRef(onHighlightChange);
+  onHighlightChangeRef.current = onHighlightChange;
 
   const flatNodes = flattenVisible(nodes, 0, []);
+  const selectedIndex = selectedKey !== undefined
+    ? flatNodes.findIndex((entry) => entry.node.key === selectedKey)
+    : -1;
+
+  if (selectedIndex >= 0) {
+    highlightRef.current = selectedIndex;
+  }
 
   // Clamp highlight index
   if (highlightRef.current >= flatNodes.length) {
@@ -154,6 +175,23 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
     onToggleRef.current?.(key);
   }, []);
 
+  const setHighlight = useCallback((index: number) => {
+    if (index < 0 || index >= flatNodes.length) return;
+    highlightRef.current = index;
+    const node = flatNodes[index]?.node;
+    if (node) {
+      onHighlightChangeRef.current?.(node.key, node);
+    }
+  }, [flatNodes]);
+
+  const select = useCallback((key?: string) => {
+    const resolvedKey = key ?? flatNodes[highlightRef.current]?.node.key;
+    if (!resolvedKey) return;
+    const node = findNode(nodes, resolvedKey, 0);
+    if (!node) return;
+    onSelectRef.current?.(resolvedKey, node);
+  }, [flatNodes, nodes]);
+
   const handleInput = useCallback(
     (event: KeyEvent) => {
       const keys = collectVisibleKeys(nodes, 0);
@@ -161,12 +199,12 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
 
       if (event.key === "up") {
         if (highlightRef.current > 0) {
-          highlightRef.current -= 1;
+          setHighlight(highlightRef.current - 1);
           forceUpdate();
         }
       } else if (event.key === "down") {
         if (highlightRef.current < keys.length - 1) {
-          highlightRef.current += 1;
+          setHighlight(highlightRef.current + 1);
           forceUpdate();
         }
       } else if (event.key === "left") {
@@ -186,13 +224,17 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
           }
         }
       } else if (event.key === "return" || event.key === "space") {
-        const key = keys[highlightRef.current];
-        if (key) {
-          onToggleRef.current?.(key);
+        if (onSelectRef.current) {
+          select();
+        } else {
+          const key = keys[highlightRef.current];
+          if (key) {
+            onToggleRef.current?.(key);
+          }
         }
       }
     },
-    [nodes, forceUpdate],
+    [nodes, forceUpdate, select, setHighlight],
   );
 
   useInput(handleInput, { isActive });
@@ -230,7 +272,9 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
     visibleNodes: flatNodes.slice(visibleStart, visibleEnd),
     highlightIndex: highlightRef.current,
     expandedKeys,
+    selectedKey,
     toggle,
+    select,
     visibleStart,
     visibleEnd,
     hiddenAbove,

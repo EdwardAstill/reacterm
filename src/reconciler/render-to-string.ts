@@ -9,6 +9,8 @@ import { DEFAULT_COLOR, Attr } from "../core/types.js";
 import { fullSgr, RESET } from "../core/ansi.js";
 import { TuiProvider, type TuiContextValue } from "../context/TuiContext.js";
 import { TestInputManager } from "../testing/index.js";
+import { PluginManager } from "../core/plugin.js";
+import { InputWiring } from "./input-wiring.js";
 
 export const TuiReconciler: ReturnType<typeof Reconciler> = Reconciler(hostConfig);
 
@@ -78,26 +80,29 @@ export function renderToString(
   const height = options?.rows ?? options?.height ?? 24;
   const renderCtx = new RenderContext();
   const testInput = new TestInputManager();
+  const pluginManager = new PluginManager();
+
+  const screen = {
+    width,
+    height,
+    stdout: process.stdout,
+    stdin: process.stdin,
+    write: () => {},
+    start: () => {},
+    stop: () => {},
+    flush: () => {},
+    getBuffer: () => new ScreenBuffer(width, height),
+    createBuffer: () => new ScreenBuffer(width, height),
+    invalidate: () => {},
+    setDebugRainbow: () => {},
+    setCursor: () => {},
+    setCursorVisible: () => {},
+    onResizeEvent: () => () => {},
+    isActive: false,
+  } as unknown as TuiContextValue["screen"];
 
   const mockContext: TuiContextValue = {
-    screen: {
-      width,
-      height,
-      stdout: process.stdout,
-      stdin: process.stdin,
-      write: () => {},
-      start: () => {},
-      stop: () => {},
-      flush: () => {},
-      getBuffer: () => new ScreenBuffer(width, height),
-      createBuffer: () => new ScreenBuffer(width, height),
-      invalidate: () => {},
-      setDebugRainbow: () => {},
-      setCursor: () => {},
-      setCursorVisible: () => {},
-      onResizeEvent: () => () => {},
-      isActive: false,
-    } as unknown as TuiContextValue["screen"],
+    screen,
     input: testInput as unknown as TuiContextValue["input"],
     focus: renderCtx.focus,
     renderContext: renderCtx,
@@ -110,6 +115,12 @@ export function renderToString(
 
   let currentElement = element;
   const errors: Error[] = [];
+  const inputWiring = new InputWiring(
+    testInput as unknown as ConstructorParameters<typeof InputWiring>[0],
+    screen as unknown as ConstructorParameters<typeof InputWiring>[1],
+    renderCtx,
+    pluginManager,
+  );
 
   // Create root — onCommit is a no-op since we paint synchronously
   const root: TuiRoot = createRoot(() => {
@@ -132,6 +143,7 @@ export function renderToString(
     // Synchronously update the React tree — must use updateContainerSync +
     // flushSyncWork to ensure React processes ALL state updates before returning.
     // Plain updateContainer queues the update async, causing paint to see an empty tree.
+    renderCtx.focus.tickRenderCycle();
     syncContainerUpdate(wrapped, container);
 
     // Throw if any errors were collected during rendering
@@ -171,6 +183,7 @@ export function renderToString(
     root.onCommit = () => {};
 
     renderCtx.dispose();
+    inputWiring.dispose();
 
     // Release all input handler references
     testInput.dispose();

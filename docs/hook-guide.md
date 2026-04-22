@@ -592,18 +592,19 @@ const menu = useMenuBehavior({
 
 ### useTreeBehavior
 
-Collapsible tree navigation with expand/collapse and cursor tracking.
+Collapsible tree navigation with expand/collapse, selection, and cursor tracking.
 
 ```ts
 import { useTreeBehavior } from "reacterm";
 
 const tree = useTreeBehavior({
-  root: fileSystemTree,
-  getChildren: (node) => node.children,
-  getLabel: (node) => node.name,
-  onActivate: (node) => openFile(node),
+  nodes: fileTree,
+  onToggle: (key) => toggleNode(key),
+  onSelect: (key, node) => openNode(node),
+  selectedKey,
+  isActive: true,
 });
-// tree.visibleNodes, tree.activeIndex, tree.toggle(node)
+// tree.visibleNodes, tree.highlightIndex, tree.toggle(key), tree.select(key?)
 ```
 
 ### useTabsBehavior

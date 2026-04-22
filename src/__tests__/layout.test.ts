@@ -81,6 +81,17 @@ describe("computeLayout", () => {
     expect(child2.layout.height).toBe(30);
   });
 
+  it("distributes leftover flex cells instead of dropping them", () => {
+    const child1 = makeNode({ flexGrow: 1 });
+    const child2 = makeNode({ flexGrow: 1 });
+    const root = makeNode({ flexDirection: "column", height: 10 }, [child1, child2]);
+    computeLayout(root, 0, 0, 80, 10);
+
+    expect(child1.layout.height + child2.layout.height).toBe(10);
+    expect(child1.layout.height).toBeGreaterThan(0);
+    expect(child2.layout.height).toBeGreaterThan(0);
+  });
+
   it("applies padding to inner dimensions", () => {
     const child = makeNode({});
     const root = makeNode({ padding: 2 }, [child]);

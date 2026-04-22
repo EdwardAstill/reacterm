@@ -6,6 +6,7 @@ import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { FOCUS_CHARS } from "../../utils/focus-chars.js";
@@ -60,23 +61,26 @@ export const Switch = React.memo(function Switch(rawProps: SwitchProps): React.R
   const animatingRef = useRef(false);
   const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleInput = useCallback((event: KeyEvent) => {
+  const triggerToggle = useCallback(() => {
     if (disabledRef.current) return;
     if (animatingRef.current) return;
     const cb = onChangeRef.current;
     if (!cb) return;
-    if (event.key === "return" || event.char === " ") {
-      // Start animation: show intermediate state for 50ms
-      animatingRef.current = true;
+    animatingRef.current = true;
+    requestRender();
+    animTimerRef.current = setTimeout(() => {
+      animatingRef.current = false;
+      animTimerRef.current = null;
+      cb(!checkedRef.current);
       requestRender();
-      animTimerRef.current = setTimeout(() => {
-        animatingRef.current = false;
-        animTimerRef.current = null;
-        cb(!checkedRef.current);
-        requestRender();
-      }, 50);
-    }
+    }, 50);
   }, [requestRender]);
+
+  const handleInput = useCallback((event: KeyEvent) => {
+    if (event.key === "return" || event.char === " ") {
+      triggerToggle();
+    }
+  }, [triggerToggle]);
 
   useCleanup(() => {
     if (animTimerRef.current !== null) {
@@ -87,6 +91,13 @@ export const Switch = React.memo(function Switch(rawProps: SwitchProps): React.R
 
   const hasHandler = onChange !== undefined;
   useInput(handleInput, { isActive: hasHandler && isFocused && !disabled });
+  const mouseTarget = useMouseTarget({
+    disabled: disabled || !hasHandler,
+    onMouse: (event) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      triggerToggle();
+    },
+  });
 
   const trackLen = size === "sm" ? 1 : size === "lg" ? 5 : 3;
   const padLen = size === "sm" ? 1 : size === "lg" ? 3 : 2;
@@ -163,6 +174,7 @@ export const Switch = React.memo(function Switch(rawProps: SwitchProps): React.R
   const outerBoxProps: Record<string, unknown> = {
     role: "switch",
     flexDirection: "row",
+    _focusId: mouseTarget.focusId,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

@@ -351,13 +351,24 @@ function LanguagePicker() {
 
 Text input with a magnifying glass icon prefix. Wraps TextInput with search-oriented defaults.
 
+`SearchInput` is a controlled input only. It does not filter your data for you. The normal pattern is:
+1. keep the query in state
+2. pass `value` and `onChange` to `SearchInput`
+3. derive filtered rows/items/tree nodes from that query
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `value` | `string` | -- | Current search value (required, controlled) |
 | `onChange` | `(value: string) => void` | -- | Called on every keystroke (required) |
 | `onSubmit` | `(value: string) => void` | -- | Called on Enter |
+| `onClear` | `() => void` | -- | Called when Escape clears the input |
 | `placeholder` | `string` | `"Search..."` | Placeholder text |
-| `focus` | `boolean` | `true` | Whether input captures keyboard |
+| `focus` | `boolean` | `true` | Deprecated. Use `isFocused` |
+| `isFocused` | `boolean` | `focus ?? true` | Whether input captures keyboard |
+| `loading` | `boolean` | `false` | Show spinner in the icon slot |
+| `debounceMs` | `number` | `0` | Delay before `onChange` fires |
+| `resultCount` | `number \| string` | -- | Results text shown on the right |
+| `renderIcon` | `({ loading }) => ReactNode` | -- | Custom icon renderer |
 | `color` | `string \| number` | -- | Text color |
 | `aria-label` | `string` | -- | Accessibility label |
 | _Plus layout props_ | | | `width`, `height`, `margin*`, `minWidth`, `maxWidth` |
@@ -383,6 +394,34 @@ import { SearchInput } from "reacterm";
   <Text dim>{filteredItems.length} results</Text>
 </Box>
 ```
+
+**Pattern: Search drives filtering**
+
+```tsx
+const [query, setQuery] = useState("");
+
+const filtered = items.filter((item) =>
+  item.label.toLowerCase().includes(query.toLowerCase())
+);
+
+return (
+  <Box flexDirection="column" gap={1}>
+    <SearchInput
+      value={query}
+      onChange={setQuery}
+      resultCount={`${filtered.length} of ${items.length}`}
+      placeholder="Filter items..."
+      width={40}
+    />
+    <OptionList items={filtered} />
+  </Box>
+);
+```
+
+Common matching strategies in Storm apps:
+- simple substring match: `label.toLowerCase().includes(query.toLowerCase())`
+- fuzzy matching for command palettes and pickers
+- debounced remote search with `debounceMs`
 
 ---
 

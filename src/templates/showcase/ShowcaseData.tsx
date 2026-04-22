@@ -3,7 +3,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useInput } from "../../hooks/useInput.js";
 import { ScrollView } from "../../components/core/ScrollView.js";
-import { Table } from "../../components/data/Table.js";
+import { Table } from "../../components/table/Table.js";
 import { DataGrid } from "../../components/data/DataGrid.js";
 import { Tree } from "../../components/data/Tree.js";
 import { ListView } from "../../components/core/ListView.js";

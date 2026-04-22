@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import { useColors } from "../../hooks/useColors.js";
+import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import type { KeyEvent } from "../../input/types.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
@@ -60,6 +61,13 @@ export const Checkbox = React.memo(function Checkbox(rawProps: CheckboxProps): R
 
   const hasHandler = onChange !== undefined;
   useInput(handleInput, { isActive: hasHandler && isFocused && !disabled });
+  const mouseTarget = useMouseTarget({
+    disabled: disabled || !hasHandler,
+    onMouse: (event) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      onChangeRef.current?.(!checkedRef.current);
+    },
+  });
 
   const checkMark = indeterminate ? "-" : checked ? "\u2713" : " "; // [-] or [✓] or [ ]
   const boxColor = disabled ? colors.text.disabled : color;
@@ -104,6 +112,7 @@ export const Checkbox = React.memo(function Checkbox(rawProps: CheckboxProps): R
   const outerBoxProps: Record<string, unknown> = {
     role: "checkbox",
     flexDirection: "column",
+    _focusId: mouseTarget.focusId,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

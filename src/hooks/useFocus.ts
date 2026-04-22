@@ -53,6 +53,7 @@ export function useFocus(options: UseFocusOptions = {}): UseFocusResult {
       id,
       type: "input",
       bounds: { x: 0, y: 0, width: 0, height: 0 },
+      clickFocus: true,
       ...(options.tabIndex !== undefined ? { tabIndex: options.tabIndex } : {}),
       ...(options.group ? { groupId: options.group } : {}),
       ...(options.disabled ? { disabled: options.disabled } : {}),

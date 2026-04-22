@@ -440,6 +440,149 @@ await app.waitUntilExit();
 
 ---
 
+## 8. Dock-Style Browser
+
+Use `Tree` for the left navigation, `SearchInput` for filtering, and `Table` for the detail pane. This matches the master/detail dock pattern used in the showcase.
+
+```tsx
+import { useMemo, useState } from "react";
+import {
+  render, Box, Text, Panes, Pane, Tree, SearchInput, Table, useApp,
+} from "reacterm";
+
+type SectionNode = {
+  key: string;
+  label: string;
+  expanded?: boolean;
+  children?: SectionNode[];
+  tableId?: string;
+};
+
+const allNodes: SectionNode[] = [
+  {
+    key: "loads",
+    label: "Loads",
+    expanded: true,
+    children: [
+      { key: "wind", label: "Wind Loads", tableId: "wind" },
+      { key: "seismic", label: "Seismic", tableId: "seismic" },
+    ],
+  },
+  {
+    key: "structure",
+    label: "Structure",
+    children: [
+      { key: "beam", label: "Beam Sizing", tableId: "beam" },
+    ],
+  },
+];
+
+const rowsById = {
+  wind: [
+    { field: "Basic wind speed", value: "115", unit: "mph" },
+    { field: "Directionality factor", value: "0.85", unit: "-" },
+  ],
+  seismic: [
+    { field: "SDS", value: "0.45", unit: "g" },
+  ],
+  beam: [
+    { field: "Yield stress", value: "50", unit: "ksi" },
+  ],
+};
+
+function filterTree(nodes: SectionNode[], query: string): SectionNode[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return nodes;
+
+  return nodes.flatMap((node) => {
+    const children = node.children ? filterTree(node.children, query) : undefined;
+    const selfMatch = node.label.toLowerCase().includes(q);
+    if (selfMatch || (children && children.length > 0)) {
+      return [{ ...node, expanded: true, children }];
+    }
+    return [];
+  });
+}
+
+function DockRecipe() {
+  const { exit } = useApp();
+  const [query, setQuery] = useState("");
+  const [selectedKey, setSelectedKey] = useState("wind");
+  const [nodes, setNodes] = useState(allNodes);
+
+  const visibleNodes = useMemo(() => filterTree(nodes, query), [nodes, query]);
+  const selectedRows = rowsById[selectedKey as keyof typeof rowsById] ?? [];
+
+  const toggleNode = (key: string) => {
+    const toggle = (list: SectionNode[]): SectionNode[] =>
+      list.map((node) =>
+        node.key === key
+          ? { ...node, expanded: !node.expanded }
+          : node.children
+            ? { ...node, children: toggle(node.children) }
+            : node,
+      );
+    setNodes((prev) => toggle(prev));
+  };
+
+  return (
+    <Panes direction="row" height="100%">
+      <Pane width={34} flexDirection="column" padding={1}>
+        <Text bold>Sections</Text>
+        <Box height={1} />
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          resultCount={query ? "filtered" : undefined}
+          placeholder="Filter sections..."
+          isFocused={false}
+        />
+        <Box height={1} />
+        <Tree
+          nodes={visibleNodes}
+          selectedKey={selectedKey}
+          isFocused
+          onToggle={toggleNode}
+          onHighlightChange={(key) => setSelectedKey(key)}
+          onSelect={(key, node) => {
+            setSelectedKey(key);
+            if (node.children?.length) toggleNode(key);
+          }}
+        />
+      </Pane>
+
+      <Pane flex={1} flexDirection="column" padding={1}>
+        <Text bold>Inputs</Text>
+        <Box height={1} />
+        <Table
+          width={44}
+          borderStyle="none"
+          columns={[
+            { key: "field", header: "Field" },
+            { key: "value", header: "Value", align: "right" },
+            { key: "unit", header: "Unit" },
+          ]}
+          data={selectedRows}
+        />
+        <Box height={1} />
+        <Text dim>Press q to quit</Text>
+      </Pane>
+    </Panes>
+  );
+}
+
+const app = render(<DockRecipe />);
+await app.waitUntilExit();
+```
+
+Why this pattern works:
+- `Tree` owns hierarchy, keyboard navigation, row clicks, and disclosure clicks
+- `SearchInput` only owns the query string
+- your app owns filtering and selection semantics
+- `Table` can live inside a narrow pane without one long column blowing out the layout
+
+---
+
 ## 8. Multi-Panel Layout
 
 Box with `flexDirection="row"` creates columns. Fixed-width sidebars on each side, flex={1} for the main content area. `useTerminal` provides reactive terminal dimensions.

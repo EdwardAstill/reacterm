@@ -188,6 +188,7 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
       id: idRef.current,
       type: "input",
       bounds: { x: 0, y: 0, width: 0, height: 0 },
+      clickFocus: true,
     });
     if (isFocusedProp) focus.focus(idRef.current);
   }
