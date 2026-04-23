@@ -1,0 +1,1 @@
+{"version":3,"file":"Gradient.d.ts","sourceRoot":"","sources":["../../../src/components/effects/Gradient.tsx"],"names":[],"mappings":"AACA,OAAO,KAAiB,MAAM,OAAO,CAAC;AAGtC,MAAM,WAAW,aAAa;IAC5B,QAAQ,EAAE,MAAM,CAAC;IACjB,MAAM,EAAE,MAAM,EAAE,CAAC;IACjB,gEAAgE;IAChE,SAAS,CAAC,EAAE,YAAY,GAAG,UAAU,CAAC;CACvC;AAgDD,eAAO,MAAM,QAAQ,2CA6BnB,CAAC"}

@@ -1,0 +1,150 @@
+import { useRef, useCallback } from "react";
+import { useInput } from "../useInput.js";
+import { useForceUpdate } from "../useForceUpdate.js";
+export function useListBehavior(options) {
+    const { items, selectedKey, onSelect, onHighlight, isActive = true, maxVisible = 10, initialIndex = 0, } = options;
+    const forceUpdate = useForceUpdate();
+    const highlightIndexRef = useRef(initialIndex);
+    const filterTextRef = useRef("");
+    // Refs for latest prop values
+    const itemsRef = useRef(items);
+    itemsRef.current = items;
+    const onSelectRef = useRef(onSelect);
+    onSelectRef.current = onSelect;
+    const onHighlightRef = useRef(onHighlight);
+    onHighlightRef.current = onHighlight;
+    const filter = filterTextRef.current.toLowerCase();
+    const filteredItems = filter
+        ? items.filter((it) => it.label.toLowerCase().includes(filter))
+        : items;
+    // Clamp highlight
+    if (highlightIndexRef.current >= filteredItems.length) {
+        highlightIndexRef.current = Math.max(0, filteredItems.length - 1);
+    }
+    const effectiveIndex = filteredItems.length > 0
+        ? Math.min(highlightIndexRef.current, Math.max(0, filteredItems.length - 1))
+        : 0;
+    const prevIndexRef = useRef(effectiveIndex);
+    if (onHighlight && effectiveIndex !== prevIndexRef.current && filteredItems.length > 0) {
+        const item = filteredItems[effectiveIndex];
+        if (item) {
+            onHighlight(item.key);
+        }
+    }
+    prevIndexRef.current = effectiveIndex;
+    const handleInput = useCallback((event) => {
+        const allItems = itemsRef.current;
+        if (allItems.length === 0)
+            return;
+        const getFiltered = () => {
+            if (!filterTextRef.current)
+                return allItems;
+            const lower = filterTextRef.current.toLowerCase();
+            return allItems.filter((it) => it.label.toLowerCase().includes(lower));
+        };
+        if (event.key === "up") {
+            const filtered = getFiltered();
+            if (filtered.length === 0)
+                return;
+            highlightIndexRef.current = highlightIndexRef.current > 0
+                ? highlightIndexRef.current - 1
+                : filtered.length - 1;
+            forceUpdate();
+            const item = filtered[highlightIndexRef.current];
+            if (item)
+                onHighlightRef.current?.(item.key);
+        }
+        else if (event.key === "down") {
+            const filtered = getFiltered();
+            if (filtered.length === 0)
+                return;
+            highlightIndexRef.current = highlightIndexRef.current < filtered.length - 1
+                ? highlightIndexRef.current + 1
+                : 0;
+            forceUpdate();
+            const item = filtered[highlightIndexRef.current];
+            if (item)
+                onHighlightRef.current?.(item.key);
+        }
+        else if (event.key === "home") {
+            highlightIndexRef.current = 0;
+            forceUpdate();
+            const filtered = getFiltered();
+            const item = filtered[0];
+            if (item)
+                onHighlightRef.current?.(item.key);
+        }
+        else if (event.key === "end") {
+            const filtered = getFiltered();
+            highlightIndexRef.current = Math.max(0, filtered.length - 1);
+            forceUpdate();
+            const item = filtered[highlightIndexRef.current];
+            if (item)
+                onHighlightRef.current?.(item.key);
+        }
+        else if (event.key === "return") {
+            const filtered = getFiltered();
+            const idx = Math.min(highlightIndexRef.current, Math.max(0, filtered.length - 1));
+            const item = filtered[idx];
+            if (item && onSelectRef.current) {
+                onSelectRef.current(item.key);
+            }
+        }
+        else if (event.key === "escape") {
+            if (filterTextRef.current) {
+                filterTextRef.current = "";
+                highlightIndexRef.current = 0;
+                forceUpdate();
+            }
+        }
+        else if (event.key === "backspace") {
+            if (filterTextRef.current.length > 0) {
+                filterTextRef.current = filterTextRef.current.slice(0, -1);
+                highlightIndexRef.current = 0;
+                forceUpdate();
+            }
+        }
+        else if (event.char && event.char.length === 1 && !event.ctrl && !event.meta) {
+            filterTextRef.current += event.char;
+            highlightIndexRef.current = 0;
+            forceUpdate();
+        }
+    }, [forceUpdate]);
+    useInput(handleInput, { isActive });
+    const totalFiltered = filteredItems.length;
+    const visibleCount = Math.min(maxVisible, totalFiltered);
+    let scrollStart = 0;
+    if (totalFiltered > visibleCount) {
+        const half = Math.floor(visibleCount / 2);
+        scrollStart = Math.max(0, effectiveIndex - half);
+        scrollStart = Math.min(scrollStart, totalFiltered - visibleCount);
+    }
+    const visibleItems = filteredItems.slice(scrollStart, scrollStart + visibleCount);
+    const hasOverflowTop = scrollStart > 0;
+    const hasOverflowBottom = scrollStart + visibleCount < totalFiltered;
+    const highlightedItem = filteredItems[effectiveIndex];
+    const getItemProps = useCallback((visibleIndex) => {
+        const globalIndex = scrollStart + visibleIndex;
+        return {
+            isHighlighted: globalIndex === effectiveIndex,
+            item: visibleItems[visibleIndex],
+            globalIndex,
+        };
+    }, [visibleItems, scrollStart, effectiveIndex]);
+    return {
+        highlightIndex: effectiveIndex,
+        filterText: filterTextRef.current,
+        filteredItems,
+        visibleItems,
+        visibleOffset: scrollStart,
+        hasOverflowTop,
+        hasOverflowBottom,
+        totalCount: items.length,
+        highlightProps: {
+            index: effectiveIndex,
+            key: highlightedItem?.key,
+        },
+        getItemProps,
+    };
+}
+//# sourceMappingURL=useListBehavior.js.map

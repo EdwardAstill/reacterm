@@ -1,0 +1,56 @@
+import React from "react";
+import { useColors } from "../../hooks/useColors.js";
+import { fmtNum } from "../../utils/format.js";
+import { usePluginProps } from "../../hooks/usePluginProps.js";
+function buildProgressBar(ratio, width) {
+    const clamped = Math.max(0, Math.min(1, ratio));
+    const filled = Math.round(clamped * width);
+    const empty = width - filled;
+    return "\u2588".repeat(filled) + "\u2591".repeat(empty);
+}
+export const TokenStream = React.memo(function TokenStream(rawProps) {
+    const colors = useColors();
+    const props = usePluginProps("TokenStream", rawProps);
+    const { tokens, inputTokens, outputTokens, tokensPerSecond, maxTokens, model, streaming, color, } = props;
+    const parts = [];
+    // Model name (dim)
+    if (model !== undefined) {
+        if (props.renderMetric) {
+            parts.push(React.createElement(React.Fragment, { key: "model" }, props.renderMetric("model", model)));
+        }
+        else {
+            parts.push(React.createElement("tui-text", { key: "model", dim: true, color: color ?? colors.text.dim }, model));
+        }
+        parts.push(React.createElement("tui-text", { key: "sep1", dim: true }, " \u00B7 "));
+    }
+    // Token counts (primary color)
+    let countStr = `${fmtNum(tokens)} tokens`;
+    if (inputTokens !== undefined && outputTokens !== undefined) {
+        countStr += ` (${fmtNum(inputTokens)} in / ${fmtNum(outputTokens)} out)`;
+    }
+    else if (inputTokens !== undefined) {
+        countStr += ` (${fmtNum(inputTokens)} in)`;
+    }
+    else if (outputTokens !== undefined) {
+        countStr += ` (${fmtNum(outputTokens)} out)`;
+    }
+    parts.push(React.createElement("tui-text", { key: "counts", color: color ?? colors.text.primary }, countStr));
+    // Speed (only when streaming)
+    if (streaming && tokensPerSecond !== undefined) {
+        const speedColor = tokensPerSecond >= 30 ? colors.success : colors.warning;
+        parts.push(React.createElement("tui-text", { key: "sep2", dim: true }, " \u00B7 "));
+        parts.push(React.createElement("tui-text", { key: "speed", color: speedColor }, `${Math.round(tokensPerSecond)} tok/s`));
+    }
+    // Progress bar (when maxTokens provided)
+    if (maxTokens !== undefined && maxTokens > 0) {
+        const ratio = tokens / maxTokens;
+        const pct = Math.min(100, Math.round(ratio * 100));
+        const bar = buildProgressBar(ratio, 8);
+        const barColor = ratio > 0.9 ? colors.error : ratio > 0.7 ? colors.warning : colors.success;
+        parts.push(React.createElement("tui-text", { key: "sep3", dim: true }, " \u00B7 "));
+        parts.push(React.createElement("tui-text", { key: "bar", color: barColor }, bar));
+        parts.push(React.createElement("tui-text", { key: "pct", dim: true }, ` ${pct}%`));
+    }
+    return React.createElement("tui-box", { flexDirection: "row" }, ...parts);
+});
+//# sourceMappingURL=TokenStream.js.map

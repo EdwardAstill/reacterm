@@ -1,0 +1,1 @@
+{"version":3,"file":"profiler-registry.js","sourceRoot":"","sources":["../../src/devtools/profiler-registry.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AAIH,IAAI,eAAe,GAAoB,IAAI,CAAC;AAE5C,MAAM,UAAU,iBAAiB,CAAC,QAAyB;IACzD,eAAe,GAAG,QAAQ,CAAC;AAC7B,CAAC;AAED,MAAM,UAAU,iBAAiB;IAC/B,OAAO,eAAe,CAAC;AACzB,CAAC"}

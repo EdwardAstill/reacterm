@@ -1,0 +1,1 @@
+{"version":3,"file":"useAnnounce.d.ts","sourceRoot":"","sources":["../../src/hooks/useAnnounce.ts"],"names":[],"mappings":"AAIA,MAAM,WAAW,iBAAiB;IAChC,mDAAmD;IACnD,QAAQ,EAAE,CAAC,OAAO,EAAE,MAAM,KAAK,IAAI,CAAC;IACpC,iDAAiD;IACjD,cAAc,EAAE,CAAC,OAAO,EAAE,MAAM,KAAK,IAAI,CAAC;CAC3C;AAED;;;;;;;;;;;;;;;;GAgBG;AACH,wBAAgB,WAAW,IAAI,iBAAiB,CAgB/C"}

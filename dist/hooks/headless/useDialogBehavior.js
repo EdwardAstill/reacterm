@@ -1,0 +1,78 @@
+import { useRef, useCallback } from "react";
+import { useTui } from "../../context/TuiContext.js";
+import { useInput } from "../useInput.js";
+import { useForceUpdate } from "../useForceUpdate.js";
+const SIZE_WIDTHS = {
+    sm: 30,
+    md: 50,
+    lg: 70,
+};
+export function useDialogBehavior(options) {
+    const { visible: visibleProp, onClose, size = "md", trapPriority = 1000, } = options;
+    const { screen, focus } = useTui();
+    const forceUpdate = useForceUpdate();
+    // Support both controlled (visible prop) and uncontrolled modes
+    const internalVisibleRef = useRef(false);
+    const isControlled = visibleProp !== undefined;
+    const effectiveVisible = isControlled ? visibleProp : internalVisibleRef.current;
+    const onCloseRef = useRef(onClose);
+    onCloseRef.current = onClose;
+    const isControlledRef = useRef(isControlled);
+    isControlledRef.current = isControlled;
+    const show = useCallback(() => {
+        if (!isControlledRef.current) {
+            internalVisibleRef.current = true;
+            forceUpdate();
+        }
+    }, [forceUpdate]);
+    const hide = useCallback(() => {
+        if (!isControlledRef.current) {
+            internalVisibleRef.current = false;
+            forceUpdate();
+        }
+        onCloseRef.current?.();
+    }, [forceUpdate]);
+    // Focus trap handler: only consumes Escape and Tab.
+    // All other keys pass through to child components (ScrollView, TextInput, Select, etc.)
+    const handleInput = useCallback((event) => {
+        if (event.key === "escape") {
+            event.consumed = true;
+            if (!isControlledRef.current) {
+                internalVisibleRef.current = false;
+                forceUpdate();
+            }
+            onCloseRef.current?.();
+            return;
+        }
+        if (event.key === "tab") {
+            event.consumed = true;
+            if (event.shift) {
+                focus.cyclePrev();
+            }
+            else {
+                focus.cycleNext();
+            }
+            return;
+        }
+        // All other keys: do NOT set event.consumed — they propagate to normal
+        // handlers (ScrollView keyboard scroll, TextInput, Select, etc.)
+    }, [forceUpdate, focus]);
+    useInput(handleInput, { isActive: effectiveVisible, priority: trapPriority });
+    const resolvedWidth = size === "full"
+        ? Math.max(1, screen.width - 4)
+        : (SIZE_WIDTHS[size] ?? 50);
+    return {
+        isVisible: effectiveVisible,
+        show,
+        hide,
+        resolvedWidth,
+        dialogProps: {
+            visible: effectiveVisible,
+            role: "dialog",
+        },
+        contentProps: {
+            role: "document",
+        },
+    };
+}
+//# sourceMappingURL=useDialogBehavior.js.map

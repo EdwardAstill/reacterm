@@ -1,0 +1,1 @@
+{"version":3,"file":"useApp.d.ts","sourceRoot":"","sources":["../../src/hooks/useApp.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,YAAY;IAC3B,IAAI,EAAE,CAAC,KAAK,CAAC,EAAE,KAAK,KAAK,IAAI,CAAC;IAC9B,QAAQ,EAAE,MAAM,IAAI,CAAC;IACrB,KAAK,EAAE,MAAM,IAAI,CAAC;CACnB;AAED,wBAAgB,MAAM,IAAI,YAAY,CAcrC"}

@@ -1,0 +1,64 @@
+import { useRef, useCallback } from "react";
+import { useTui } from "../context/TuiContext.js";
+import { useCleanup } from "./useCleanup.js";
+export function useScroll(options) {
+    const { speed = 3, contentHeight, viewportHeight } = options;
+    const { input, requestRender } = useTui();
+    const maxScroll = Math.max(0, contentHeight - viewportHeight);
+    const scrollTopRef = useRef(0);
+    const scrollTo = useCallback((offset) => {
+        scrollTopRef.current = Math.max(0, Math.min(maxScroll, offset));
+        requestRender();
+    }, [maxScroll, requestRender]);
+    const scrollBy = useCallback((delta) => {
+        scrollTopRef.current = Math.max(0, Math.min(maxScroll, scrollTopRef.current + delta));
+        requestRender();
+    }, [maxScroll, requestRender]);
+    const scrollToBottom = useCallback(() => {
+        scrollTopRef.current = maxScroll;
+        requestRender();
+    }, [maxScroll, requestRender]);
+    // Store callback refs so the eagerly-registered handlers always use current values
+    const scrollByRef = useRef(scrollBy);
+    scrollByRef.current = scrollBy;
+    const speedRef = useRef(speed);
+    speedRef.current = speed;
+    const viewportHeightRef = useRef(viewportHeight);
+    viewportHeightRef.current = viewportHeight;
+    // Register mouse and key handlers eagerly — not in useEffect
+    const registeredRef = useRef(false);
+    const unsubMouseRef = useRef(null);
+    const unsubKeyRef = useRef(null);
+    if (!registeredRef.current) {
+        registeredRef.current = true;
+        unsubMouseRef.current = input.onMouse((event) => {
+            if (event.button === "scroll-up")
+                scrollByRef.current(-speedRef.current);
+            else if (event.button === "scroll-down")
+                scrollByRef.current(speedRef.current);
+        });
+        unsubKeyRef.current = input.onKey((event) => {
+            if (event.key === "pageup")
+                scrollByRef.current(-viewportHeightRef.current);
+            else if (event.key === "pagedown")
+                scrollByRef.current(viewportHeightRef.current);
+            else if (event.key === "up" && event.shift)
+                scrollByRef.current(-speedRef.current);
+            else if (event.key === "down" && event.shift)
+                scrollByRef.current(speedRef.current);
+        });
+    }
+    useCleanup(() => {
+        unsubMouseRef.current?.();
+        unsubKeyRef.current?.();
+    });
+    return {
+        scrollTop: scrollTopRef.current,
+        maxScroll,
+        isAtBottom: scrollTopRef.current >= maxScroll - 1,
+        scrollTo,
+        scrollBy,
+        scrollToBottom,
+    };
+}
+//# sourceMappingURL=useScroll.js.map

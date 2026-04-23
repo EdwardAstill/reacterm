@@ -1,0 +1,213 @@
+/**
+ * Core types for the TUI cell-based rendering engine.
+ *
+ * Colors are encoded as numbers:
+ *   -1          = default (terminal default)
+ *   0–255       = ANSI 256-color palette
+ *   ≥ 0x1000000 = True color RGB (0x1_RR_GG_BB)
+ */
+export const DEFAULT_COLOR = -1;
+export function rgb(r, g, b) {
+    return 0x1000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+}
+export function isRgbColor(c) {
+    return c >= 0x1000000;
+}
+export function rgbR(c) {
+    return (c >> 16) & 0xff;
+}
+export function rgbG(c) {
+    return (c >> 8) & 0xff;
+}
+export function rgbB(c) {
+    return c & 0xff;
+}
+const NAMED_COLORS = {
+    // ANSI 16 colors
+    black: 0,
+    red: 1,
+    green: 2,
+    yellow: 3,
+    blue: 4,
+    magenta: 5,
+    cyan: 6,
+    white: 7,
+    blackBright: 8,
+    gray: 8,
+    grey: 8,
+    redBright: 9,
+    greenBright: 10,
+    yellowBright: 11,
+    blueBright: 12,
+    magentaBright: 13,
+    cyanBright: 14,
+    whiteBright: 15,
+    // CSS named colors (true-color RGB)
+    orange: 0x1000000 | (0xFF << 16) | (0xA5 << 8) | 0x00,
+    purple: 0x1000000 | (0x80 << 16) | (0x00 << 8) | 0x80,
+    teal: 0x1000000 | (0x00 << 16) | (0x80 << 8) | 0x80,
+    pink: 0x1000000 | (0xFF << 16) | (0xC0 << 8) | 0xCB,
+    brown: 0x1000000 | (0xA5 << 16) | (0x2A << 8) | 0x2A,
+    gold: 0x1000000 | (0xFF << 16) | (0xD7 << 8) | 0x00,
+    navy: 0x1000000 | (0x00 << 16) | (0x00 << 8) | 0x80,
+    olive: 0x1000000 | (0x80 << 16) | (0x80 << 8) | 0x00,
+    coral: 0x1000000 | (0xFF << 16) | (0x7F << 8) | 0x50,
+    salmon: 0x1000000 | (0xFA << 16) | (0x80 << 8) | 0x72,
+    lime: 0x1000000 | (0x00 << 16) | (0xFF << 8) | 0x00,
+    indigo: 0x1000000 | (0x4B << 16) | (0x00 << 8) | 0x82,
+    violet: 0x1000000 | (0xEE << 16) | (0x82 << 8) | 0xEE,
+    turquoise: 0x1000000 | (0x40 << 16) | (0xE0 << 8) | 0xD0,
+    maroon: 0x1000000 | (0x80 << 16) | (0x00 << 8) | 0x00,
+    aqua: 0x1000000 | (0x00 << 16) | (0xFF << 8) | 0xFF,
+    silver: 0x1000000 | (0xC0 << 16) | (0xC0 << 8) | 0xC0,
+};
+const _warnedColors = new Set();
+const _parseColorCache = new Map();
+function _cacheColor(key, val) {
+    _parseColorCache.set(key, val);
+    if (_parseColorCache.size > 512) {
+        const first = _parseColorCache.keys().next().value;
+        if (first !== undefined)
+            _parseColorCache.delete(first);
+    }
+    return val;
+}
+export function parseColor(input) {
+    if (input === undefined)
+        return DEFAULT_COLOR;
+    if (typeof input === "number")
+        return input;
+    const cached = _parseColorCache.get(input);
+    if (cached !== undefined)
+        return cached;
+    const named = NAMED_COLORS[input];
+    if (named !== undefined)
+        return _cacheColor(input, named);
+    if (input.startsWith("#")) {
+        const hex = input.slice(1);
+        if (hex.length === 3) {
+            return _cacheColor(input, rgb(parseInt(hex[0] + hex[0], 16), parseInt(hex[1] + hex[1], 16), parseInt(hex[2] + hex[2], 16)));
+        }
+        if (hex.length === 6) {
+            return _cacheColor(input, rgb(parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)));
+        }
+        if (hex.length === 8) {
+            // #RRGGBBAA — strip alpha, terminals don't support it
+            return _cacheColor(input, rgb(parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)));
+        }
+    }
+    if (input.startsWith("rgb(")) {
+        const m = input.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
+        if (m)
+            return _cacheColor(input, rgb(Number(m[1]), Number(m[2]), Number(m[3])));
+    }
+    // Dev-mode warning for truly unknown color strings
+    if (process.env.NODE_ENV !== "production" && input.length > 0) {
+        if (!_warnedColors.has(input)) {
+            _warnedColors.add(input);
+            process.stderr.write(`[storm] Warning: Unknown color "${input}". ` +
+                "Supported formats: named colors, #RGB, #RRGGBB, rgb(r,g,b), or ANSI 0-255.\n");
+        }
+    }
+    return DEFAULT_COLOR;
+}
+export const Attr = {
+    NONE: 0,
+    BOLD: 1 << 0,
+    DIM: 1 << 1,
+    ITALIC: 1 << 2,
+    UNDERLINE: 1 << 3,
+    BLINK: 1 << 4,
+    INVERSE: 1 << 5,
+    HIDDEN: 1 << 6,
+    STRIKETHROUGH: 1 << 7,
+};
+export const EMPTY_CELL = {
+    char: " ",
+    fg: DEFAULT_COLOR,
+    bg: DEFAULT_COLOR,
+    attrs: Attr.NONE,
+    ulColor: DEFAULT_COLOR,
+};
+export function cellEquals(a, b) {
+    return a.char === b.char && a.fg === b.fg && a.bg === b.bg && a.attrs === b.attrs && a.ulColor === b.ulColor;
+}
+export function makeCell(char, fg = DEFAULT_COLOR, bg = DEFAULT_COLOR, attrs = Attr.NONE, ulColor = DEFAULT_COLOR) {
+    return { char, fg, bg, attrs, ulColor };
+}
+export function styleToAttrs(s) {
+    let attrs = Attr.NONE;
+    if (s.bold)
+        attrs |= Attr.BOLD;
+    if (s.dim)
+        attrs |= Attr.DIM;
+    if (s.italic)
+        attrs |= Attr.ITALIC;
+    if (s.underline)
+        attrs |= Attr.UNDERLINE;
+    if (s.strikethrough)
+        attrs |= Attr.STRIKETHROUGH;
+    if (s.inverse)
+        attrs |= Attr.INVERSE;
+    if (s.hidden)
+        attrs |= Attr.HIDDEN;
+    return attrs;
+}
+export function styleToCellProps(s) {
+    return {
+        fg: parseColor(s.color),
+        bg: parseColor(s.bgColor),
+        attrs: styleToAttrs(s),
+    };
+}
+export const BORDER_CHARS = {
+    single: {
+        topLeft: "┌",
+        topRight: "┐",
+        bottomLeft: "└",
+        bottomRight: "┘",
+        horizontal: "─",
+        vertical: "│",
+    },
+    double: {
+        topLeft: "╔",
+        topRight: "╗",
+        bottomLeft: "╚",
+        bottomRight: "╝",
+        horizontal: "═",
+        vertical: "║",
+    },
+    heavy: {
+        topLeft: "┏",
+        topRight: "┓",
+        bottomLeft: "┗",
+        bottomRight: "┛",
+        horizontal: "━",
+        vertical: "┃",
+    },
+    round: {
+        topLeft: "╭",
+        topRight: "╮",
+        bottomLeft: "╰",
+        bottomRight: "╯",
+        horizontal: "─",
+        vertical: "│",
+    },
+    ascii: {
+        topLeft: "+",
+        topRight: "+",
+        bottomLeft: "+",
+        bottomRight: "+",
+        horizontal: "-",
+        vertical: "|",
+    },
+    storm: {
+        topLeft: "╺",
+        topRight: "╸",
+        bottomLeft: "╺",
+        bottomRight: "╸",
+        horizontal: "━",
+        vertical: "│",
+    },
+};
+//# sourceMappingURL=types.js.map

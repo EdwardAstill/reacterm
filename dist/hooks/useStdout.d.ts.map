@@ -1,0 +1,1 @@
+{"version":3,"file":"useStdout.d.ts","sourceRoot":"","sources":["../../src/hooks/useStdout.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,eAAe;IAC9B,MAAM,EAAE,MAAM,CAAC,WAAW,CAAC;IAC3B,KAAK,EAAE,CAAC,IAAI,EAAE,MAAM,KAAK,IAAI,CAAC;CAC/B;AAED,wBAAgB,SAAS,IAAI,eAAe,CAU3C"}

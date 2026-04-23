@@ -1,0 +1,212 @@
+import { useRef, useCallback } from "react";
+import { useInput } from "../useInput.js";
+import { useForceUpdate } from "../useForceUpdate.js";
+const MAX_TREE_DEPTH = 100;
+/** Collect visible nodes in display order, flattened with depth/position info. */
+function flattenVisible(nodes, depth, parentIsLast) {
+    if (depth >= MAX_TREE_DEPTH)
+        return [];
+    const result = [];
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const isLast = i === nodes.length - 1;
+        const hasChildren = node.children !== undefined && node.children.length > 0;
+        result.push({ node, depth, isLast, parentIsLast: [...parentIsLast], hasChildren });
+        if (hasChildren && node.expanded) {
+            result.push(...flattenVisible(node.children, depth + 1, [...parentIsLast, isLast]));
+        }
+    }
+    return result;
+}
+/** Collect visible keys in display order for keyboard navigation. */
+function collectVisibleKeys(nodes, depth) {
+    if (depth >= MAX_TREE_DEPTH)
+        return [];
+    const keys = [];
+    for (const node of nodes) {
+        keys.push(node.key);
+        const hasChildren = node.children !== undefined && node.children.length > 0;
+        if (hasChildren && node.expanded) {
+            keys.push(...collectVisibleKeys(node.children, depth + 1));
+        }
+    }
+    return keys;
+}
+/** Find a node by key in the tree. */
+function findNode(nodes, key, depth) {
+    if (depth >= MAX_TREE_DEPTH)
+        return undefined;
+    for (const node of nodes) {
+        if (node.key === key)
+            return node;
+        if (node.children) {
+            const found = findNode(node.children, key, depth + 1);
+            if (found)
+                return found;
+        }
+    }
+    return undefined;
+}
+/** Collect all expanded keys in the tree. */
+function collectExpandedKeys(nodes, depth) {
+    if (depth >= MAX_TREE_DEPTH)
+        return new Set();
+    const keys = new Set();
+    for (const node of nodes) {
+        if (node.expanded)
+            keys.add(node.key);
+        if (node.children) {
+            for (const k of collectExpandedKeys(node.children, depth + 1)) {
+                keys.add(k);
+            }
+        }
+    }
+    return keys;
+}
+export function useTreeBehavior(options) {
+    const { nodes, onToggle, onSelect, selectedKey, onHighlightChange, isActive = false, maxVisible, } = options;
+    const forceUpdate = useForceUpdate();
+    const highlightRef = useRef(0);
+    const scrollOffsetRef = useRef(0);
+    const onToggleRef = useRef(onToggle);
+    onToggleRef.current = onToggle;
+    const onSelectRef = useRef(onSelect);
+    onSelectRef.current = onSelect;
+    const onHighlightChangeRef = useRef(onHighlightChange);
+    onHighlightChangeRef.current = onHighlightChange;
+    const flatNodes = flattenVisible(nodes, 0, []);
+    const selectedIndex = selectedKey !== undefined
+        ? flatNodes.findIndex((entry) => entry.node.key === selectedKey)
+        : -1;
+    if (selectedIndex >= 0) {
+        highlightRef.current = selectedIndex;
+    }
+    // Clamp highlight index
+    if (highlightRef.current >= flatNodes.length) {
+        highlightRef.current = Math.max(0, flatNodes.length - 1);
+    }
+    // Virtual scrolling
+    const useVirtualScroll = maxVisible !== undefined && flatNodes.length > maxVisible;
+    if (useVirtualScroll) {
+        if (highlightRef.current < scrollOffsetRef.current) {
+            scrollOffsetRef.current = highlightRef.current;
+        }
+        else if (highlightRef.current >= scrollOffsetRef.current + maxVisible) {
+            scrollOffsetRef.current = highlightRef.current - maxVisible + 1;
+        }
+        const maxOffset = Math.max(0, flatNodes.length - maxVisible);
+        if (scrollOffsetRef.current > maxOffset)
+            scrollOffsetRef.current = maxOffset;
+        if (scrollOffsetRef.current < 0)
+            scrollOffsetRef.current = 0;
+    }
+    else {
+        scrollOffsetRef.current = 0;
+    }
+    const toggle = useCallback((key) => {
+        onToggleRef.current?.(key);
+    }, []);
+    const setHighlight = useCallback((index) => {
+        if (index < 0 || index >= flatNodes.length)
+            return;
+        highlightRef.current = index;
+        const node = flatNodes[index]?.node;
+        if (node) {
+            onHighlightChangeRef.current?.(node.key, node);
+        }
+    }, [flatNodes]);
+    const select = useCallback((key) => {
+        const resolvedKey = key ?? flatNodes[highlightRef.current]?.node.key;
+        if (!resolvedKey)
+            return;
+        const node = findNode(nodes, resolvedKey, 0);
+        if (!node)
+            return;
+        onSelectRef.current?.(resolvedKey, node);
+    }, [flatNodes, nodes]);
+    const handleInput = useCallback((event) => {
+        const keys = collectVisibleKeys(nodes, 0);
+        if (keys.length === 0)
+            return;
+        if (event.key === "up") {
+            if (highlightRef.current > 0) {
+                setHighlight(highlightRef.current - 1);
+                forceUpdate();
+            }
+        }
+        else if (event.key === "down") {
+            if (highlightRef.current < keys.length - 1) {
+                setHighlight(highlightRef.current + 1);
+                forceUpdate();
+            }
+        }
+        else if (event.key === "left") {
+            const key = keys[highlightRef.current];
+            if (key) {
+                const node = findNode(nodes, key, 0);
+                if (node && node.expanded && node.children && node.children.length > 0) {
+                    onToggleRef.current?.(key);
+                }
+            }
+        }
+        else if (event.key === "right") {
+            const key = keys[highlightRef.current];
+            if (key) {
+                const node = findNode(nodes, key, 0);
+                if (node && !node.expanded && node.children && node.children.length > 0) {
+                    onToggleRef.current?.(key);
+                }
+            }
+        }
+        else if (event.key === "return" || event.key === "space") {
+            if (onSelectRef.current) {
+                select();
+            }
+            else {
+                const key = keys[highlightRef.current];
+                if (key) {
+                    onToggleRef.current?.(key);
+                }
+            }
+        }
+    }, [nodes, forceUpdate, select, setHighlight]);
+    useInput(handleInput, { isActive });
+    const visibleStart = scrollOffsetRef.current;
+    const visibleEnd = useVirtualScroll
+        ? Math.min(scrollOffsetRef.current + maxVisible, flatNodes.length)
+        : flatNodes.length;
+    const hiddenAbove = visibleStart;
+    const hiddenBelow = flatNodes.length - visibleEnd;
+    const expandedKeys = collectExpandedKeys(nodes, 0);
+    const keyToIndex = new Map();
+    for (let i = 0; i < flatNodes.length; i++) {
+        keyToIndex.set(flatNodes[i].node.key, i);
+    }
+    const getNodeProps = useCallback((key) => {
+        const idx = keyToIndex.get(key);
+        const flatNode = idx !== undefined ? flatNodes[idx] : undefined;
+        const node = flatNode?.node ?? findNode(nodes, key, 0);
+        const hasChildren = node?.children !== undefined && (node?.children.length ?? 0) > 0;
+        return {
+            isHighlighted: idx === highlightRef.current,
+            isExpanded: !!node?.expanded,
+            hasChildren,
+            depth: flatNode?.depth ?? 0,
+            node: node,
+        };
+    }, [flatNodes, nodes, keyToIndex]);
+    return {
+        visibleNodes: flatNodes.slice(visibleStart, visibleEnd),
+        highlightIndex: highlightRef.current,
+        expandedKeys,
+        selectedKey,
+        toggle,
+        select,
+        visibleStart,
+        visibleEnd,
+        hiddenAbove,
+        hiddenBelow,
+        getNodeProps,
+    };
+}
+//# sourceMappingURL=useTreeBehavior.js.map

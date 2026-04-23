@@ -1,0 +1,1 @@
+{"version":3,"file":"ContentSwitcher.d.ts","sourceRoot":"","sources":["../../../src/components/extras/ContentSwitcher.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAiB,MAAM,OAAO,CAAC;AAOtC,MAAM,WAAW,oBAAoB;IACnC,WAAW,EAAE,MAAM,CAAC;IACpB,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAC;IAC1B,gDAAgD;IAChD,UAAU,CAAC,EAAE,MAAM,GAAG,MAAM,GAAG,OAAO,CAAC;CACxC;AAED,eAAO,MAAM,eAAe,kDAyF1B,CAAC"}

@@ -1,0 +1,47 @@
+export type AriaRole = "button" | "textbox" | "checkbox" | "radio" | "switch" | "listbox" | "option" | "menu" | "menuitem" | "tab" | "tabpanel" | "dialog" | "alert" | "alertdialog" | "status" | "progressbar" | "tree" | "treeitem" | "grid" | "gridcell" | "row" | "columnheader" | "form" | "search" | "navigation" | "banner" | "contentinfo" | "complementary" | "main" | "region" | "separator" | "toolbar" | "spinbutton" | "slider" | "scrollbar" | "tooltip" | "timer" | "log" | "marquee" | "img" | "link" | "heading" | "group";
+export type AriaLive = "off" | "polite" | "assertive";
+export interface AriaProps {
+    role?: AriaRole;
+    "aria-label"?: string;
+    "aria-description"?: string;
+    "aria-live"?: AriaLive;
+    "aria-expanded"?: boolean;
+    "aria-selected"?: boolean;
+    "aria-checked"?: boolean | "mixed";
+    "aria-disabled"?: boolean;
+    "aria-hidden"?: boolean;
+    "aria-pressed"?: boolean;
+    "aria-valuenow"?: number;
+    "aria-valuemin"?: number;
+    "aria-valuemax"?: number;
+    "aria-valuetext"?: string;
+    "aria-level"?: number;
+    "aria-setsize"?: number;
+    "aria-posinset"?: number;
+    "aria-multiselectable"?: boolean;
+    "aria-required"?: boolean;
+    "aria-invalid"?: boolean;
+    "aria-errormessage"?: string;
+    "aria-placeholder"?: string;
+    "aria-roledescription"?: string;
+    "aria-keyshortcuts"?: string;
+    "aria-sort"?: "none" | "ascending" | "descending";
+    "aria-colcount"?: number;
+    "aria-colindex"?: number;
+    "aria-colspan"?: number;
+    "aria-rowcount"?: number;
+    "aria-rowindex"?: number;
+    "aria-rowspan"?: number;
+}
+export declare function ariaToAnnouncement(props: AriaProps): string;
+export declare function describeButton(label: string, disabled?: boolean, pressed?: boolean): AriaProps;
+export declare function describeCheckbox(label: string, checked: boolean, disabled?: boolean): AriaProps;
+export declare function describeTextInput(label: string, value: string, placeholder?: string): AriaProps;
+export declare function describeProgressBar(value: number, max: number, label?: string): AriaProps;
+export declare function describeTab(label: string, selected: boolean, index: number, total: number): AriaProps;
+export declare function describeMenuItem(label: string, disabled?: boolean, shortcut?: string): AriaProps;
+export declare function describeTreeItem(label: string, expanded: boolean, level: number): AriaProps;
+export declare function describeListItem(label: string, selected: boolean, index: number, total: number): AriaProps;
+export declare function describeDialog(title: string): AriaProps;
+export declare function describeAlert(message: string, type: string): AriaProps;
+//# sourceMappingURL=aria.d.ts.map

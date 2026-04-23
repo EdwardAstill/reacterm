@@ -1,0 +1,1 @@
+{"version":3,"file":"useStderr.d.ts","sourceRoot":"","sources":["../../src/hooks/useStderr.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,eAAe;IAC9B,MAAM,EAAE,MAAM,CAAC,WAAW,CAAC;IAC3B,KAAK,EAAE,CAAC,IAAI,EAAE,MAAM,KAAK,IAAI,CAAC;CAC/B;AAED,wBAAgB,SAAS,IAAI,eAAe,CAW3C"}
