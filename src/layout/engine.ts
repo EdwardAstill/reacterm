@@ -54,6 +54,7 @@ export interface LayoutProps {
   overflow?: Overflow;
   overflowX?: Overflow;
   overflowY?: Overflow;
+  scrollbarGutter?: number;
   display?: Display;
   position?: Position;
   top?: number;
@@ -179,6 +180,13 @@ function resolveMarginAuto(p: LayoutProps): MarginAuto {
     left: resolveMarginValue(p.marginLeft, mx).isAuto,
     right: resolveMarginValue(p.marginRight, mx).isAuto,
   };
+}
+
+function resolveScrollbarGutter(value: unknown): number {
+  if (value === undefined || value === null) return 1;
+  const gutter = Number(value);
+  if (!Number.isFinite(gutter)) return 1;
+  return Math.max(0, Math.floor(gutter));
 }
 
 function resolveSize(
@@ -1379,7 +1387,14 @@ export function computeLayout(
       const parentIsScroll = props.overflow === "scroll";
       const childAvailH = parentIsScroll && isColumn ? UNCONSTRAINED : childH;
       const childAvailW = parentIsScroll && !isColumn ? UNCONSTRAINED : childW;
-      const scrollbarReserve = parentIsScroll && isColumn ? 1 : 0;
+      const scrollbarGutter = parentIsScroll && isColumn ? resolveScrollbarGutter(props.scrollbarGutter) : 0;
+      const estimatedMainTotal = wrapLines.reduce(
+        (sum, line, idx) => sum + line.mainTotal + (idx > 0 ? crossAxisGap : 0),
+        0,
+      );
+      const scrollbarReserve = parentIsScroll && isColumn && estimatedMainTotal > mainSize
+        ? scrollbarGutter + 1
+        : 0;
       computeLayout(child, childX, childY,
         isColumn ? Math.max(0, childW - scrollbarReserve) : childAvailW,
         isColumn ? childAvailH : childH);

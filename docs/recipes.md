@@ -120,6 +120,23 @@ const app = render(<Dashboard />);
 await app.waitUntilExit();
 ```
 
+For dock-style headers, keep the same state flow and switch the tab bar styling:
+
+```tsx
+<Tabs
+  tabs={[
+    { key: "overview", label: "1 Overview" },
+    { key: "logs", label: "2 Logs" },
+    { key: "settings", label: "3 Settings" },
+  ]}
+  activeKey={active}
+  onChange={setActive}
+  variant="pill"
+  activeBackgroundColor="#18181B"
+  inactiveColor="#71717A"
+/>
+```
+
 ---
 
 ## 3. File Browser

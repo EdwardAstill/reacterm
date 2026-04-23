@@ -10,7 +10,7 @@ import React from "react";
 import { renderForTest, expectOutput } from "../testing/index.js";
 import {
   Card, Alert, Heading, Paragraph, ProgressBar, Divider, Badge, Tabs, Tag,
-  Spacer, Newline, Button, Spinner, Switch, Breadcrumb, Link, Footer,
+  Spacer, Newline, Button, Spinner, Switch, Breadcrumb, Link, Footer, Editor,
   GradientProgress, DefinitionList, Tooltip, Avatar, Sparkline, Table,
 } from "../components/index.js";
 
@@ -524,6 +524,24 @@ describe("Tabs", () => {
     expect(result.hasText("[ Only ]")).toBe(true);
   });
 
+  it("renders plain variant without brackets", () => {
+    const result = renderForTest(
+      React.createElement(Tabs, { tabs, activeKey: "a", variant: "plain" }),
+      { width: 60, height: 3 },
+    );
+    expect(result.hasText("Alpha")).toBe(true);
+    expect(result.hasText("[ Alpha ]")).toBe(false);
+  });
+
+  it("renders pill variant labels", () => {
+    const result = renderForTest(
+      React.createElement(Tabs, { tabs, activeKey: "a", variant: "pill" }),
+      { width: 60, height: 3 },
+    );
+    expect(result.hasText(" Alpha ")).toBe(true);
+    expect(result.hasText(" Beta ")).toBe(true);
+  });
+
   it("changes tab on mouse click", () => {
     const changes: string[] = [];
     const result = renderForTest(
@@ -544,6 +562,64 @@ describe("Tabs", () => {
       { width: 40, height: 3 },
     );
     expect(result).toBeDefined();
+  });
+});
+
+// ── Editor ────────────────────────────────────────────────────────────
+
+describe("Editor", () => {
+  it("renders header and default footer metadata", () => {
+    const result = renderForTest(
+      React.createElement(Editor, {
+        title: "main.ts",
+        language: "ts",
+        value: "const answer = 42;",
+        onChange: () => {},
+        rows: 4,
+      }),
+      { width: 60, height: 12 },
+    );
+
+    expect(result.hasText("main.ts")).toBe(true);
+    expect(result.hasText("TS")).toBe(true);
+    expect(result.hasText("1 line")).toBe(true);
+    expect(result.hasText("editable")).toBe(true);
+  });
+
+  it("passes editing through to the underlying textarea", () => {
+    let value = "";
+    const renderEditor = (): React.ReactElement => React.createElement(Editor, {
+      title: "Scratch",
+      value,
+      onChange: (next) => { value = next; },
+      rows: 4,
+    });
+
+    const result = renderForTest(
+      renderEditor(),
+      { width: 60, height: 12 },
+    );
+
+    result.type("abc");
+    result.rerender(renderEditor());
+    expect(result.hasText("abc")).toBe(true);
+  });
+
+  it("can hide header and footer chrome", () => {
+    const result = renderForTest(
+      React.createElement(Editor, {
+        value: "plain body",
+        onChange: () => {},
+        rows: 3,
+        showHeader: false,
+        showFooter: false,
+      }),
+      { width: 40, height: 8 },
+    );
+
+    expect(result.hasText("plain body")).toBe(true);
+    expect(result.hasText("Editor")).toBe(false);
+    expect(result.hasText("editable")).toBe(false);
   });
 });
 

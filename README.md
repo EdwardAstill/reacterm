@@ -165,7 +165,7 @@ All four run as render middleware — non-blocking, the app keeps running.
 
 ## What's inside
 
-**97 components** — Box, Text, ScrollView, Tabs, Modal, Table, DataGrid, Tree, Form, Select, CommandPalette, TextArea, Markdown, DatePicker, Spinner (14 types), DiffView, Calendar, and more. [Browse all →](docs/components.md)<br>
+**98 components** — Box, Text, ScrollView, Tabs, Modal, Table, DataGrid, Tree, Form, Select, CommandPalette, TextArea, Editor, Markdown, DatePicker, Spinner (14 types), DiffView, Calendar, and more. [Browse all →](docs/components.md)<br>
 **15 AI widgets** — OperationTree, MessageBubble, ApprovalPrompt, StreamingText, SyntaxHighlight, TokenStream, ContextWindow, CostTracker. [Browse all →](docs/widgets.md)<br>
 **83 hooks** — 4 tiers: Essential, Common, Interactive, and 20 headless behavior hooks. [Decision matrix →](docs/hook-guide.md)<br>
 **12 themes** — Arctic, Midnight, Ember, Voltage, Neon, High Contrast + live `.storm.css` hot-reload. [Guide →](docs/theming.md)<br>

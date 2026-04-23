@@ -18,6 +18,9 @@ export interface ScrollViewProps extends StormContainerStyleProps {
   scrollbarTrackColor?: string | number;
   scrollbarChar?: string;
   scrollbarTrackChar?: string;
+  /** Gutter columns between bordered content and the vertical scrollbar.
+   *  Default: 1. Set to 0 for legacy compact behavior. */
+  scrollbarGutter?: number;
   // Sticky children support
   sticky?: boolean;
   stickyChildren?: boolean;

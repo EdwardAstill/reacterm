@@ -7,7 +7,7 @@
  * with block cursor, working modal overlays (new/open/add), help.
  *
  * Visual style: Pyseas-Dock — no box borders on panes, colored 1-char-wide
- * left strip marks the focused pane, HLine strips separate stacked regions,
+ * left strip marks the focused pane, divider strips separate stacked regions,
  * single-line borders only on floating modals + inline text inputs.
  */
 
@@ -16,16 +16,20 @@ import {
   render,
   Box,
   Text,
+  Divider,
+  Editor,
   Footer,
   Kbd,
+  Modal,
+  OptionList,
   ScrollView,
+  SearchInput,
   Table,
+  Tabs,
   Tree,
   Panes,
   Pane,
   useInput,
-  useTabsBehavior,
-  useMouseTarget,
   useApp,
   useTerminal,
 } from "../../../src/index.js";
@@ -47,10 +51,6 @@ const C = {
   tabActive: "#FAFAFA",
   headerBg: "#18181B",
 };
-
-function HLine({ color = C.border }: { color?: string }) {
-  return <Box height={1} backgroundColor={color} />;
-}
 
 // --------------------------- Mock data ---------------------------
 type Section = {
@@ -324,39 +324,6 @@ function EditableText({ value, cursorIdx, focused }: {
   );
 }
 
-function DockPillTab({
-  label,
-  active,
-  disabled,
-  onSelect,
-}: {
-  label: string;
-  active: boolean;
-  disabled?: boolean;
-  onSelect: () => void;
-}) {
-  const mouseTarget = useMouseTarget({
-    disabled: disabled === true,
-    onMouse: (event) => {
-      if (event.button !== "left" || event.action !== "press") return;
-      onSelect();
-    },
-  });
-
-  return (
-    <Box _focusId={mouseTarget.focusId} flexDirection="row">
-      <Text
-        color={disabled ? C.dim : active ? C.tabActive : C.dim}
-        bold={active && !disabled}
-        dim={disabled}
-        backgroundColor={active ? C.headerBg : undefined}
-      >
-        {label}
-      </Text>
-    </Box>
-  );
-}
-
 // --------------------------- App ---------------------------
 type MainTab = "calculation" | "files" | "images";
 type SubTab = "io" | "json" | "guide" | "script";
@@ -404,7 +371,6 @@ function App() {
   const [modalCursor, setModalCursor] = useState(0);
   const [modalFocusIdx, setModalFocusIdx] = useState(0);
   const [addCalcSearch, setAddCalcSearch] = useState("");
-  const [addCalcCursor, setAddCalcCursor] = useState(0);
 
   // Projects (mock)
   const [projectName, setProjectName] = useState("Tower 404 Frame");
@@ -531,39 +497,17 @@ function App() {
     setResizing(next);
   }, []);
 
-  const inputEnabled = modalMode === "none" && !editingCellKey && !resizing;
+  const closeAddCalcModal = useCallback(() => {
+    setModalMode("none");
+    setAddCalcSearch("");
+    setModalFocusIdx(0);
+  }, []);
 
-  const mainTabsBehavior = useTabsBehavior({
-    tabs: [
-      { key: "calculation", label: "Calcs" },
-      { key: "files", label: "Files" },
-      { key: "images", label: "Images" },
-    ],
-    activeKey: mainTab,
-    onChange: (key) => {
-      setMainTab(key as MainTab);
-      setActivePane("calcs");
-    },
-    isActive: inputEnabled && activePane === "calcs",
-    orientation: "horizontal",
-  });
-
-  const subTabsBehavior = useTabsBehavior({
-    tabs: [
-      { key: "io", label: "I/O" },
-      { key: "json", label: "JSON" },
-      { key: "guide", label: "Guide" },
-      { key: "script", label: "Script" },
-    ],
-    activeKey: subTab,
-    onChange: (key) => {
-      setSubTab(key as SubTab);
-      setActivePane("detail");
-    },
-    isActive: inputEnabled && activePane === "detail",
-    enableArrows: subTab !== "io",
-    orientation: "horizontal",
-  });
+  const addCalculationById = useCallback((calcId: string) => {
+    if (activeProjectCalcs.includes(calcId) || !CALCS.find(c => c.calc_name === calcId)) return;
+    setActiveProjectCalcs(list => [...list, calcId]);
+    closeAddCalcModal();
+  }, [activeProjectCalcs, closeAddCalcModal]);
 
   // --------------------------- Input ---------------------------
   useInput((e) => {
@@ -630,34 +574,6 @@ function App() {
         return;
       }
       if (modalMode === "add-calc") {
-        if (e.key === "escape") { setModalMode("none"); setAddCalcSearch(""); setAddCalcCursor(0); return; }
-        if (e.key === "j" || e.key === "down") { setModalFocusIdx(i => Math.min(filteredLibrary.length - 1, i + 1)); return; }
-        if (e.key === "k" || e.key === "up") { setModalFocusIdx(i => Math.max(0, i - 1)); return; }
-        if (e.key === "return") {
-          const pick = filteredLibrary[modalFocusIdx];
-          if (pick && !activeProjectCalcs.includes(pick.id) && CALCS.find(c => c.calc_name === pick.id)) {
-            setActiveProjectCalcs(list => [...list, pick.id]);
-          }
-          setModalMode("none"); setAddCalcSearch(""); setAddCalcCursor(0); setModalFocusIdx(0);
-          return;
-        }
-        if (e.key === "left") { setAddCalcCursor(i => Math.max(0, i - 1)); return; }
-        if (e.key === "right") { setAddCalcCursor(i => Math.min(addCalcSearch.length, i + 1)); return; }
-        if (e.key === "home") { setAddCalcCursor(0); return; }
-        if (e.key === "end") { setAddCalcCursor(addCalcSearch.length); return; }
-        if (e.key === "backspace") {
-          if (addCalcCursor > 0) {
-            setAddCalcSearch(s => s.slice(0, addCalcCursor - 1) + s.slice(addCalcCursor));
-            setAddCalcCursor(i => i - 1);
-            setModalFocusIdx(0);
-          }
-          return;
-        }
-        if (e.char && e.char.length === 1 && !e.ctrl && !e.meta && e.char !== "/") {
-          setAddCalcSearch(s => s.slice(0, addCalcCursor) + e.char + s.slice(addCalcCursor));
-          setAddCalcCursor(i => i + 1);
-          setModalFocusIdx(0);
-        }
         return;
       }
     }
@@ -757,7 +673,7 @@ function App() {
           if (Object.keys(editedCells).length > 0) mockRun();
         }
       } else {
-        // non-IO sub-tabs: keep h/l for Dock vibe (arrows handled by useTabsBehavior)
+        // non-IO sub-tabs: keep h/l for Dock vibe while Tabs handles arrows
         if (e.key === "h") {
           const tabs: SubTab[] = ["io", "json", "guide", "script"];
           setSubTab(t => tabs[(tabs.indexOf(t) - 1 + tabs.length) % tabs.length]!);
@@ -784,7 +700,7 @@ function App() {
         <Box flex={1} />
         <Text dim color={C.dim}>{calcList.length} calcs</Text>
       </Box>
-      <HLine />
+      <Divider color={C.border} width={width} />
 
       {/* Body — sections over library, detail on the right */}
       <Panes direction="row" flex={1} borderStyle="single" borderColor={C.border}>
@@ -857,21 +773,24 @@ function App() {
 
           {/* Calcs/files/images pane */}
           <Pane height={calcPaneHeight} flexGrow={0} flexShrink={0} flexDirection="column" paddingX={1}>
-            <Box role="tablist" flexDirection="row" gap={2}>
-              {(["calculation", "files", "images"] as MainTab[]).map((t, i) => {
-                const label = t === "calculation" ? "Calcs" : t === "files" ? "Files" : "Images";
-                const trigger = mainTabsBehavior.getTriggerProps(t);
-                return (
-                  <DockPillTab
-                    key={t}
-                    label={`${i + 1} ${label}`}
-                    active={trigger.isActive}
-                    disabled={trigger.isDisabled}
-                    onSelect={trigger.onSelect}
-                  />
-                );
-              })}
-            </Box>
+            <Tabs
+              tabs={[
+                { key: "calculation", label: "1 Calcs" },
+                { key: "files", label: "2 Files" },
+                { key: "images", label: "3 Images" },
+              ]}
+              activeKey={mainTab}
+              onChange={(key) => {
+                setMainTab(key as MainTab);
+                setActivePane("calcs");
+              }}
+              isFocused={modalMode === "none" && !editingCellKey && !resizing && activePane === "calcs"}
+              variant="pill"
+              color={C.tabActive}
+              inactiveColor={C.dim}
+              activeBackgroundColor={C.headerBg}
+              gap={1}
+            />
             <Box height={1} />
             {mainTab === "calculation" ? (
               calcList.length === 0 ? (
@@ -946,20 +865,27 @@ function App() {
           flexDirection="column"
           paddingX={1}
         >
-            <Box role="tablist" flexDirection="row" gap={2} alignItems="center">
-              {(["io", "json", "guide", "script"] as SubTab[]).map((k, i) => {
-                const labels: Record<SubTab, string> = { io: "I/O", json: "JSON", guide: "Guide", script: "Script" };
-                const trigger = subTabsBehavior.getTriggerProps(k);
-                return (
-                  <DockPillTab
-                    key={k}
-                    label={` ${i + 1} ${labels[k]} `}
-                    active={trigger.isActive}
-                    disabled={trigger.isDisabled}
-                    onSelect={trigger.onSelect}
-                  />
-                );
-              })}
+            <Box flexDirection="row" alignItems="center">
+              <Tabs
+                tabs={[
+                  { key: "io", label: "1 I/O" },
+                  { key: "json", label: "2 JSON" },
+                  { key: "guide", label: "3 Guide" },
+                  { key: "script", label: "4 Script" },
+                ]}
+                activeKey={subTab}
+                onChange={(key) => {
+                  setSubTab(key as SubTab);
+                  setActivePane("detail");
+                }}
+                isFocused={modalMode === "none" && !editingCellKey && !resizing && activePane === "detail"}
+                enableArrows={subTab !== "io"}
+                variant="pill"
+                color={C.tabActive}
+                inactiveColor={C.dim}
+                activeBackgroundColor={C.headerBg}
+                gap={1}
+              />
               <Box flex={1} />
               {runState === "running" ? <Text color={C.warn}>⟳ running…</Text> :
                runState === "done" ? <Text color={C.accent}>✓ saved + run</Text> :
@@ -1010,20 +936,26 @@ function App() {
                 ))}
               </ScrollView>
             ) : (
-              <ScrollView flex={1}>
-                {focusedCalc.script.split("\n").map((line, i) => (
-                  <Box key={i} flexDirection="row">
-                    <Text dim color={C.dim}>{String(i + 1).padStart(3, " ")}</Text>
-                    <Text>  </Text>
-                    <Text color={C.fg}>{line}</Text>
-                  </Box>
-                ))}
-              </ScrollView>
+              <Editor
+                value={focusedCalc.script}
+                onChange={() => {}}
+                title={focusedCalc.display_name}
+                rows={Math.max(8, height - 18)}
+                readOnly
+                lineNumbers
+                showHeader={false}
+                showFooter
+                footer={`${focusedCalc.script.split("\n").length} lines • read only`}
+                borderColor={C.border}
+                backgroundColor={C.headerBg}
+                color={C.fg}
+                lineNumberColor={C.dim}
+              />
             )}
         </Pane>
       </Panes>
 
-      <HLine />
+      <Divider color={C.border} width={width} />
 
       {/* Status bar */}
       <Box paddingX={1} flexDirection="row">
@@ -1060,7 +992,7 @@ function App() {
               ]
             : modalMode !== "none"
             ? [
-                { key: "j/k", label: "navigate" },
+                { key: modalMode === "add-calc" ? "↑/↓" : "j/k", label: "navigate" },
                 { key: "Enter", label: "confirm" },
                 { key: "Esc", label: "cancel" },
               ]
@@ -1122,41 +1054,57 @@ function App() {
       )}
 
       {modalMode === "add-calc" && (
-        <ModalBox width={64} top={Math.max(2, Math.floor(height / 2) - 12)} left={Math.max(2, Math.floor(width / 2) - 32)}>
-          <Text bold color={C.borderFocused}>Add Calculation</Text>
-          <Box height={1} />
-          <Box flexDirection="row" borderStyle="single" borderColor={C.borderFocused} paddingX={1}>
-            <EditableText value={addCalcSearch} cursorIdx={addCalcCursor} focused />
-          </Box>
+        <Modal
+          visible
+          title="Add Calculation"
+          width={64}
+          onClose={closeAddCalcModal}
+          borderStyle="double"
+          borderColor={C.borderFocused}
+          backgroundColor={C.bg}
+          opaque
+          paddingX={2}
+          paddingY={1}
+        >
+          <SearchInput
+            value={addCalcSearch}
+            onChange={(value) => {
+              setAddCalcSearch(value);
+              setModalFocusIdx(0);
+            }}
+            placeholder="Filter calculations..."
+            resultCount={`${filteredLibrary.length} of ${LIBRARY_CALCS.length}`}
+            isFocused
+          />
           <Box height={1} />
           {filteredLibrary.length === 0 ? (
             <Text dim color={C.dim}>no matches</Text>
           ) : (
-            <ScrollView height={10}>
-              {filteredLibrary.map((item, i) => {
-                const focused = i === modalFocusIdx;
-                const alreadyAdded = activeProjectCalcs.includes(item.id);
+            <OptionList
+              items={filteredLibrary.map((item) => ({ label: item.name, value: item.id }))}
+              onSelect={addCalculationById}
+              isFocused
+              maxVisible={10}
+              renderItem={(item, state) => {
+                const match = filteredLibrary.find((entry) => entry.id === item.value);
+                if (!match) return null;
+                const alreadyAdded = activeProjectCalcs.includes(match.id);
                 return (
-                  <Box key={item.id} flexDirection="row" gap={1}
-                    backgroundColor={focused ? C.selectedBg : undefined}>
-                    <Text color={focused ? C.borderFocused : C.bg}>{focused ? "❯" : " "}</Text>
-                    <Text color={focused ? C.tabActive : C.fg} bold={focused}>
-                      {` ${item.name.padEnd(22)} `}
+                  <Box flexDirection="row" gap={1} backgroundColor={state.isActive ? C.selectedBg : undefined}>
+                    <Text color={state.isActive ? C.borderFocused : C.bg}>{state.isActive ? "❯" : " "}</Text>
+                    <Text color={state.isActive ? C.tabActive : C.fg} bold={state.isActive}>
+                      {` ${match.name.padEnd(22)} `}
                     </Text>
-                    <Text dim color={C.dim}>{item.category.padEnd(14)}</Text>
-                    {alreadyAdded && <Text color={C.accent}>✓</Text>}
+                    <Text dim color={C.dim}>{match.category.padEnd(14)}</Text>
+                    {alreadyAdded ? <Text color={C.accent}>✓</Text> : null}
                   </Box>
                 );
-              })}
-            </ScrollView>
+              }}
+            />
           )}
           <Box height={1} />
-          {filteredLibrary[modalFocusIdx]?.description && (
-            <Text dim color={C.dim}>{filteredLibrary[modalFocusIdx]!.description}</Text>
-          )}
-          <Box height={1} />
-          <Text dim color={C.dim}>type to filter · j/k navigate · Enter add · Esc cancel</Text>
-        </ModalBox>
+          <Text dim color={C.dim}>type to filter · ↑/↓ navigate · Enter add · Esc cancel</Text>
+        </Modal>
       )}
 
       {showHelp && (

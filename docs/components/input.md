@@ -418,6 +418,44 @@ return (
 );
 ```
 
+**Pattern: Search picker modal**
+
+```tsx
+const [query, setQuery] = useState("");
+const [active, setActive] = useState("wind");
+
+const filtered = library.filter((item) =>
+  item.label.toLowerCase().includes(query.toLowerCase())
+);
+
+<Modal visible={showAdd} title="Add Calculation" onClose={() => setShowAdd(false)} width={64}>
+  <SearchInput
+    value={query}
+    onChange={(value) => {
+      const nextFiltered = library.filter((item) =>
+        item.label.toLowerCase().includes(value.toLowerCase())
+      );
+      setQuery(value);
+      if (nextFiltered[0]) setActive(nextFiltered[0].value);
+    }}
+    placeholder="Filter calculations..."
+    resultCount={`${filtered.length} of ${library.length}`}
+    isFocused
+  />
+  <Box height={1} />
+  <OptionList
+    items={filtered}
+    onChange={setActive}
+    onSelect={(value) => {
+      addCalculation(value);
+      setShowAdd(false);
+    }}
+    maxVisible={10}
+    isFocused
+  />
+</Modal>
+```
+
 Common matching strategies in Storm apps:
 - simple substring match: `label.toLowerCase().includes(query.toLowerCase())`
 - fuzzy matching for command palettes and pickers
@@ -622,12 +660,53 @@ Multi-line text editor with line numbers, word wrap, and scroll support.
 |---|---|---|---|
 | `value` | `string` | -- | Current text content |
 | `onChange` | `(value: string) => void` | -- | Called on change |
-| `height` | `number` | `10` | Visible rows |
+| `maxLines` | `number` | -- | Maximum visible rows before internal scrolling |
 | `placeholder` | `string` | -- | Placeholder text |
+| `lineNumbers` | `boolean` | `false` | Show a gutter with line numbers |
+| `wordWrap` | `boolean` | `false` | Soft-wrap long lines |
+| `highlight` | `(line, lineIndex) => HighlightSpan[]` | -- | Custom per-line syntax highlighting |
 
 ```tsx
-<TextArea value={text} onChange={setText} height={8} placeholder="Enter description..." />
+<TextArea
+  value={text}
+  onChange={setText}
+  maxLines={8}
+  lineNumbers
+  placeholder="Enter description..."
+/>
 ```
+
+---
+
+### Editor
+
+Code- and document-oriented editor shell built on top of `TextArea`. Adds a bordered panel, optional header/footer chrome, sensible defaults for line numbers, and built-in syntax highlighting when `language` is provided.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string` | -- | Current editor contents |
+| `onChange` | `(value: string) => void` | -- | Called on every edit |
+| `title` | `string` | `"Editor"` | Header title |
+| `language` | `string` | -- | Enables built-in syntax highlighting and language badge |
+| `rows` | `number` | `12` | Visible editor rows |
+| `lineNumbers` | `boolean` | `true` | Show line numbers in the gutter |
+| `showHeader` | `boolean` | `true` | Show the title/status header |
+| `showFooter` | `boolean` | `true` | Show the default footer/status line |
+| `footer` | `ReactNode` | -- | Custom footer content |
+| `highlight` | `(line, lineIndex) => HighlightSpan[]` | -- | Custom highlighter override; takes precedence over `language` |
+
+```tsx
+<Editor
+  title="main.ts"
+  language="typescript"
+  value={source}
+  onChange={setSource}
+  rows={14}
+  wordWrap={false}
+/>
+```
+
+Use `TextArea` when you just need raw multiline input. Use `Editor` when examples or apps need an opinionated editing surface without hand-rolling borders, metadata, and syntax coloring.
 
 ---
 

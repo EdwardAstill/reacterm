@@ -167,7 +167,7 @@ export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type L
 export { RevealTransition, type RevealTransitionProps } from "./effects/RevealTransition.js";
 
 export {
-  Tabs, type TabsProps, type Tab,
+  Tabs, type TabsProps, type Tab, type TabsVariant,
   type TabsContextValue, TabsContext, useTabsContext,
   type TabsRootProps, type TabsTriggerProps, type TabsPanelProps,
 } from "./core/Tabs.js";
@@ -214,6 +214,7 @@ export { ErrorBoundary, type ErrorBoundaryProps } from "./core/ErrorBoundary.js"
 export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./extras/CommandPalette.js";
 
 export { TextArea, type TextAreaProps, type HighlightSpan } from "./core/TextArea.js";
+export { Editor, type EditorProps } from "./extras/Editor.js";
 
 export { Markdown, type MarkdownProps } from "./extras/Markdown.js";
 export { MarkdownViewer, type MarkdownViewerProps } from "./extras/MarkdownViewer.js";

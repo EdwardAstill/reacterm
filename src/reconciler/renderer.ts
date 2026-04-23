@@ -50,6 +50,13 @@ function isClipEmpty(c: ClipRect): boolean {
   return c.x1 >= c.x2 || c.y1 >= c.y2;
 }
 
+function resolveScrollbarGutter(value: unknown): number {
+  if (value === undefined || value === null) return 1;
+  const gutter = Number(value);
+  if (!Number.isFinite(gutter)) return 1;
+  return Math.max(0, Math.floor(gutter));
+}
+
 /** Strip ANSI escape sequences from text to prevent injection into cell buffer. */
 function stripAnsi(text: string): string {
   if (text.indexOf('\x1b') < 0) return text;
@@ -249,6 +256,13 @@ export function buildLayoutTree(element: TuiElement): void {
   const node = element.layoutNode;
   const oldChildCount = node._prevChildCount ?? -1;
   node.children = [];
+
+  if (element.type === TUI_SCROLL_VIEW) {
+    const scrollbarGutter = resolveScrollbarGutter(element.props["scrollbarGutter"]);
+    if (node.props.scrollbarGutter !== scrollbarGutter) {
+      node.props = { ...node.props, scrollbarGutter };
+    }
+  }
 
   if (element.type === TUI_TEXT) {
     const text = collectText(element);
@@ -1112,13 +1126,17 @@ function paintScrollView(
   // padding by extractLayoutProps), so we must NOT add borderOffset again here.
   const contentHeight = layout.contentHeight;
   const willHaveVBar = contentHeight > layout.innerHeight && layout.innerHeight > 0;
-  const scrollbarReserve = willHaveVBar ? 1 : 0;
+  const scrollbarGutter = resolveScrollbarGutter(props["scrollbarGutter"]);
+  const scrollbarReserve = willHaveVBar ? scrollbarGutter + 1 : 0;
+  const viewportX = x + layout.innerX - layout.x;
+  const viewportY = y + layout.innerY - layout.y;
+  const viewportWidth = Math.max(0, layout.innerWidth - scrollbarReserve);
 
   const viewportClip = intersectClip(clip, {
-    x1: overflowX === "visible" ? clip.x1 : x + layout.innerX - layout.x,
-    y1: overflowY === "visible" ? clip.y1 : y + layout.innerY - layout.y,
-    x2: overflowX === "visible" ? clip.x2 : x + layout.innerX - layout.x + layout.innerWidth - scrollbarReserve,
-    y2: overflowY === "visible" ? clip.y2 : y + layout.innerY - layout.y + layout.innerHeight,
+    x1: overflowX === "visible" ? clip.x1 : viewportX,
+    y1: overflowY === "visible" ? clip.y1 : viewportY,
+    x2: overflowX === "visible" ? clip.x2 : viewportX + viewportWidth,
+    y2: overflowY === "visible" ? clip.y2 : viewportY + layout.innerHeight,
   });
 
   if (isClipEmpty(viewportClip)) return;
@@ -1133,8 +1151,7 @@ function paintScrollView(
   const wasAtBottom = rawScrollTop >= prevMaxScroll;
   const scrollTop = wasAtBottom ? maxScroll : Math.max(0, Math.min(maxScroll, rawScrollTop));
 
-  const contentWidth = layout.contentWidth;
-  const viewportWidth = layout.innerWidth;
+  const contentWidth = Math.max(0, layout.contentWidth - scrollbarReserve);
   const maxHScroll = Math.max(0, contentWidth - viewportWidth);
   const rawScrollLeft = (props["scrollLeft"] as number | undefined) ?? 0;
   const scrollLeft = Math.max(0, Math.min(maxHScroll, rawScrollLeft));
@@ -1197,9 +1214,8 @@ function paintScrollView(
 
   // Paint horizontal scrollbar at bottom of viewport
   if (hasHBar) {
-    const hasVBar = contentHeight > viewportHeight && viewportHeight > 0;
     paintHScrollbar(buffer, x + borderOffset, y + layout.height - 1 - borderOffset,
-      viewportWidth - (hasVBar ? 1 : 0), scrollLeft, contentWidth, clip,
+      viewportWidth, scrollLeft, contentWidth, clip,
       parseColor(props["scrollbarThumbColor"] as string | number | undefined),
       parseColor(props["scrollbarTrackColor"] as string | number | undefined),
       ctx, childBg);

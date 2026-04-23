@@ -56,6 +56,9 @@ export interface TuiScrollViewProps extends LayoutProps {
   borderStyle?: BorderStyle;
   borderColor?: string | number;
   backgroundColor?: string | number;
+  /** Gutter columns between bordered content and the vertical scrollbar.
+   *  Default: 1. Set to 0 for legacy compact behavior. */
+  scrollbarGutter?: number;
   opaque?: boolean;
   sticky?: boolean;
   stickyChildren?: boolean;

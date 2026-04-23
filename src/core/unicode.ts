@@ -141,15 +141,14 @@ function hasZWJ(str: string): boolean {
  * - Emoji with variation selectors (☺️)
  */
 function isMultiCodepointEmoji(segment: string): boolean {
-  if (segment.length <= 2) return false; // single codepoint (possibly surrogate pair)
+  if (segment.length <= 1) return false;
   if (hasZWJ(segment)) return true;
 
   const cp = segment.codePointAt(0)!;
+  const offset = cp > 0xffff ? 2 : 1;
 
   // Regional indicator pairs — flags
-  if (cp >= 0x1f1e6 && cp <= 0x1f1ff) return true;
-
-  const offset = cp > 0xffff ? 2 : 1;
+  if (cp >= 0x1f1e6 && cp <= 0x1f1ff && offset < segment.length) return true;
   if (offset < segment.length) {
     const cp2 = segment.codePointAt(offset)!;
     // Skin tone modifiers (Fitzpatrick)

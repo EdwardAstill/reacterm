@@ -6,7 +6,6 @@ import type { KeyEvent } from "../../input/types.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
-import { usePersonality } from "../../core/personality.js";
 import { findNextNavigable as findNextNav } from "../../utils/navigation.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 
@@ -19,6 +18,8 @@ export interface Tab {
   disabled?: boolean;
 }
 
+export type TabsVariant = "bracket" | "plain" | "pill";
+
 export interface TabsProps extends StormLayoutStyleProps {
   tabs: Tab[];
   activeKey: string;
@@ -29,6 +30,20 @@ export interface TabsProps extends StormLayoutStyleProps {
   "aria-label"?: string;
   /** Layout orientation: "horizontal" (default) or "vertical". */
   orientation?: "horizontal" | "vertical";
+  /** Visual style for the tab labels. */
+  variant?: TabsVariant;
+  /** Color used for inactive, non-disabled tabs. */
+  inactiveColor?: string | number;
+  /** Background color applied to active tabs. */
+  activeBackgroundColor?: string | number;
+  /** Background color applied to inactive tabs. */
+  inactiveBackgroundColor?: string | number;
+  /** Enable Left/Right or Up/Down navigation. Default: true. */
+  enableArrows?: boolean;
+  /** Enable number-key selection (1-9). Default: true. */
+  enableNumbers?: boolean;
+  /** Enable Delete/Backspace closable-tab handling. Default: true. */
+  enableCloseKeys?: boolean;
   /** Custom renderer for each tab. */
   renderTab?: (tab: Tab, state: { isActive: boolean; isDisabled: boolean }) => React.ReactNode;
 }
@@ -83,7 +98,7 @@ export interface TabsTriggerProps {
 
 function TabsTrigger({ tabKey, disabled = false, closable = false, children, color: triggerColor }: TabsTriggerProps): React.ReactElement {
   const colors = useColors();
-  const { activeKey, setActiveKey } = useTabsContext();
+  const { activeKey } = useTabsContext();
   const isActive = activeKey === tabKey;
   const effectiveColor = triggerColor ?? colors.brand.primary;
 
@@ -118,9 +133,76 @@ function TabsPanel({ tabKey, children }: TabsPanelProps): React.ReactElement | n
   return React.createElement("tui-box", { flexDirection: "column" }, children);
 }
 
+function getTabLabelText(tab: Tab, variant: TabsVariant): string {
+  const closableSuffix = tab.closable ? " \u00D7" : "";
+  switch (variant) {
+    case "plain":
+      return `${tab.label}${closableSuffix}`;
+    case "pill":
+      return ` ${tab.label}${closableSuffix} `;
+    case "bracket":
+    default:
+      return tab.closable ? `[ ${tab.label} \u00D7 ]` : `[ ${tab.label} ]`;
+  }
+}
+
+interface TabsItemProps {
+  tab: Tab;
+  isActive: boolean;
+  isDisabled: boolean;
+  onSelect: () => void;
+  color: string | number;
+  inactiveColor: string | number;
+  activeBackgroundColor: string | number | undefined;
+  inactiveBackgroundColor: string | number | undefined;
+  variant: TabsVariant;
+  renderTab: ((tab: Tab, state: { isActive: boolean; isDisabled: boolean }) => React.ReactNode) | undefined;
+}
+
+const TabsItem = React.memo(function TabsItem({
+  tab,
+  isActive,
+  isDisabled,
+  onSelect,
+  color,
+  inactiveColor,
+  activeBackgroundColor,
+  inactiveBackgroundColor,
+  variant,
+  renderTab,
+}: TabsItemProps): React.ReactElement {
+  const colors = useColors();
+  const mouseTarget = useMouseTarget({
+    disabled: isDisabled,
+    onMouse: (event) => {
+      if (event.button !== "left" || event.action !== "press") return;
+      onSelect();
+    },
+  });
+
+  const child = renderTab
+    ? renderTab(tab, { isActive, isDisabled })
+    : React.createElement(
+      "tui-text",
+      {
+        color: isDisabled ? colors.text.disabled : isActive ? color : inactiveColor,
+        bold: isActive && !isDisabled,
+        dim: !isActive || isDisabled,
+        ...(isActive && activeBackgroundColor !== undefined ? { backgroundColor: activeBackgroundColor } : {}),
+        ...(!isActive && !isDisabled && inactiveBackgroundColor !== undefined ? { backgroundColor: inactiveBackgroundColor } : {}),
+      },
+      getTabLabelText(tab, variant),
+    );
+
+  return React.createElement(
+    "tui-box",
+    { key: tab.key, _focusId: mouseTarget.focusId, flexDirection: "row" },
+    child,
+  );
+});
+
 const TabsBase = React.memo(function Tabs(rawProps: TabsProps): React.ReactElement {
   const colors = useColors();
-  const personality = usePersonality();
   const props = usePluginProps("Tabs", rawProps);
   const {
     tabs,
@@ -128,8 +210,15 @@ const TabsBase = React.memo(function Tabs(rawProps: TabsProps): React.ReactEleme
     onChange,
     onClose,
     color = colors.brand.primary,
+    inactiveColor = colors.text.dim,
+    activeBackgroundColor,
+    inactiveBackgroundColor,
     isFocused = true,
     orientation = "horizontal",
+    variant = "bracket",
+    enableArrows = true,
+    enableNumbers = true,
+    enableCloseKeys = true,
   } = props;
 
   const layoutProps = pickStyleProps(props);
@@ -155,110 +244,63 @@ const TabsBase = React.memo(function Tabs(rawProps: TabsProps): React.ReactEleme
     const prevKey = orientation === "vertical" ? "up" : "left";
     const nextKey = orientation === "vertical" ? "down" : "right";
 
-    if (event.key === prevKey) {
+    if (enableArrows && event.key === prevKey) {
       const next = findNextTab(currentTabs, idx, -1);
       if (next >= 0) cb(currentTabs[next]!.key);
-    } else if (event.key === nextKey) {
+    } else if (enableArrows && event.key === nextKey) {
       const next = findNextTab(currentTabs, idx, 1);
       if (next >= 0) cb(currentTabs[next]!.key);
-    } else if (event.char && /^[1-9]$/.test(event.char)) {
+    } else if (enableNumbers && event.char && /^[1-9]$/.test(event.char)) {
       const numIdx = parseInt(event.char, 10) - 1;
       if (numIdx < currentTabs.length && !currentTabs[numIdx]!.disabled) {
         cb(currentTabs[numIdx]!.key);
       }
-    } else if ((event.key === "delete" || event.key === "backspace") && onCloseRef.current) {
+    } else if (enableCloseKeys && (event.key === "delete" || event.key === "backspace") && onCloseRef.current) {
       const activeTab = currentTabs[idx];
       if (activeTab && activeTab.closable) {
         onCloseRef.current(activeTab.key);
       }
     }
-  }, [orientation]);
+  }, [enableArrows, enableCloseKeys, enableNumbers, orientation]);
 
   useInput(handleInput, { isActive: isFocused !== false });
-
-  const selectTabAt = useCallback((localX: number, localY: number) => {
-    if (tabs.length === 0) return;
-    if (orientation === "vertical") {
-      const index = Math.max(0, Math.min(tabs.length - 1, localY));
-      const tab = tabs[index];
-      if (tab && !tab.disabled) onChangeRef.current?.(tab.key);
-      return;
-    }
-
-    let cursor = 0;
-    for (const tab of tabs) {
-      const labelText = tab.closable ? `[ ${tab.label} \u00D7 ]` : `[ ${tab.label} ]`;
-      const width = labelText.length;
-      if (localX >= cursor && localX < cursor + width) {
-        if (!tab.disabled) onChangeRef.current?.(tab.key);
-        return;
-      }
-      cursor += width + 1;
-    }
-  }, [orientation, tabs]);
-
-  const mouseTarget = useMouseTarget({
-    disabled: tabs.length === 0,
-    onMouse: (event, localX, localY) => {
-      if (event.button !== "left" || event.action !== "press") return;
-      selectTabAt(localX, localY);
-    },
-  });
 
   const tabElements = tabs.map((tab) => {
     const isActive = tab.key === activeKey;
     const isDisabled = tab.disabled === true;
-
-    if (props.renderTab) {
-      return React.createElement(
-        "tui-box",
-        { key: tab.key, flexDirection: "row" },
-        props.renderTab(tab, { isActive, isDisabled }),
-      );
-    }
-
-    const tabProps: Record<string, unknown> = { key: tab.key };
-
-    if (isDisabled) {
-      tabProps["dim"] = true;
-      tabProps["color"] = colors.text.disabled;
-    } else if (isActive) {
-      tabProps["bold"] = true;
-      tabProps["color"] = color;
-    } else {
-      tabProps["dim"] = true;
-    }
-
-    const labelText = tab.closable
-      ? `[ ${tab.label} \u00D7 ]`
-      : `[ ${tab.label} ]`;
-
-    return React.createElement(
-      "tui-text",
-      tabProps,
-      labelText,
-    );
+    return React.createElement(TabsItem, {
+      key: tab.key,
+      tab,
+      isActive,
+      isDisabled,
+      onSelect: () => {
+        if (!isDisabled) onChangeRef.current?.(tab.key);
+      },
+      color,
+      inactiveColor,
+      activeBackgroundColor,
+      inactiveBackgroundColor,
+      variant,
+      renderTab: props.renderTab,
+    });
   });
 
   // Add separators between tabs
   const children: React.ReactElement[] = [];
+  const useSeparators = orientation !== "vertical"
+    && (((layoutProps as Record<string, unknown>)["gap"] as number | undefined) ?? 0) === 0;
   for (let i = 0; i < tabElements.length; i++) {
     children.push(tabElements[i]!);
-    if (i < tabElements.length - 1) {
-      if (orientation === "vertical") {
-        // No explicit separator needed in vertical — each tab is on its own row
-      } else {
-        children.push(
-          React.createElement("tui-text", { key: `sep-${i}` }, " "),
-        );
-      }
+    if (useSeparators && i < tabElements.length - 1) {
+      children.push(
+        React.createElement("tui-text", { key: `sep-${i}` }, " "),
+      );
     }
   }
 
   const outerBoxProps: Record<string, unknown> = {
     role: "tablist",
     flexDirection: orientation === "vertical" ? "column" : "row",
-    _focusId: mouseTarget.focusId,
     "aria-label": props["aria-label"],
     ...layoutProps,
   };

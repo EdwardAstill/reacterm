@@ -143,7 +143,7 @@ export { Overlay, type OverlayProps } from "./components/core/Overlay.js";
 export { Divider, type DividerProps } from "./components/core/Divider.js";
 export { Table, type TableProps, type TableColumn } from "./components/table/Table.js";
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";
-export { Tabs, type TabsProps, type Tab } from "./components/core/Tabs.js";
+export { Tabs, type TabsProps, type Tab, type TabsVariant } from "./components/core/Tabs.js";
 export { Tree, type TreeProps, type TreeNode } from "./components/data/Tree.js";
 export { Toast, ToastContainer, type ToastProps, type ToastContainerProps, type ToastItem } from "./components/extras/Toast.js";
 export { Checkbox, type CheckboxProps } from "./components/core/Checkbox.js";
@@ -155,6 +155,7 @@ export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from ".
 export { ListView, type ListViewProps, type ListViewItem } from "./components/core/ListView.js";
 export { Collapsible, type CollapsibleProps } from "./components/extras/Collapsible.js";
 export { Sparkline, type SparklineProps } from "./components/data/Sparkline.js";
+export { Editor, type EditorProps } from "./components/extras/Editor.js";
 export { Header, type HeaderProps } from "./components/extras/Header.js";
 export { Footer, type FooterProps, type FooterBinding } from "./components/extras/Footer.js";
 export { RichLog, type RichLogProps, type LogEntry, type LogLevel } from "./components/data/RichLog.js";

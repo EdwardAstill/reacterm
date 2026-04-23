@@ -60,7 +60,7 @@ Modal automatically traps focus. See [Common Pitfalls](../pitfalls.md#7-focus-ma
 
 ### Tabs
 
-Horizontal tab bar with keyboard navigation. Active tab is bold and colored, others are dim. Left/Right arrows and number keys navigate.
+Horizontal or vertical tab bar with keyboard navigation. The default variant renders bracketed labels; `plain` and `pill` variants are available for example-style headers and dock-style chrome.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -68,7 +68,14 @@ Horizontal tab bar with keyboard navigation. Active tab is bold and colored, oth
 | `activeKey` | `string` | -- | Currently active tab key (required) |
 | `onChange` | `(key: string) => void` | -- | Called on tab switch |
 | `isFocused` | `boolean` | `true` | Whether tabs capture input |
+| `variant` | `"bracket" \| "plain" \| "pill"` | `"bracket"` | Label style for each tab |
 | `color` | `string \| number` | `colors.brand.primary` | Active tab color |
+| `inactiveColor` | `string \| number` | `colors.text.dim` | Inactive tab color |
+| `activeBackgroundColor` | `string \| number` | -- | Active tab background, useful with `variant="pill"` |
+| `inactiveBackgroundColor` | `string \| number` | -- | Inactive tab background |
+| `enableArrows` | `boolean` | `true` | Enable Left/Right or Up/Down switching |
+| `enableNumbers` | `boolean` | `true` | Enable `1`-`9` direct tab selection |
+| `enableCloseKeys` | `boolean` | `true` | Enable Delete/Backspace closable-tab handling |
 | `aria-label` | `string` | -- | Accessibility label |
 | _Plus layout props_ | | | `width`, `height`, `margin*`, `minWidth`, `maxWidth` |
 
@@ -114,6 +121,25 @@ function Dashboard() {
     </Box>
   );
 }
+```
+
+**Pattern: Dock-style pill tabs**
+
+```tsx
+<Tabs
+  tabs={[
+    { key: "overview", label: "1 Overview" },
+    { key: "logs", label: "2 Logs" },
+    { key: "assets", label: "3 Assets" },
+  ]}
+  activeKey={tab}
+  onChange={setTab}
+  variant="pill"
+  color="#FAFAFA"
+  inactiveColor="#71717A"
+  activeBackgroundColor="#18181B"
+  gap={1}
+/>
 ```
 
 ---

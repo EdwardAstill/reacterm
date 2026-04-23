@@ -9,6 +9,7 @@ import { usePersonality } from "../../core/personality.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import type { StormColors } from "../../theme/colors.js";
+import type { HighlightSpan } from "../../components/core/TextArea.js";
 import {
   EMPTY_SET,
   getLanguageDef,
@@ -835,6 +836,33 @@ function renderToken(token: Token, idx: number, colors: StormColors): React.Reac
 function renderLine(lineTokens: Token[], lineIdx: number, colors: StormColors): React.ReactElement {
   const children = lineTokens.map((t, i) => renderToken(t, i, colors));
   return React.createElement(Text, { key: lineIdx }, ...children);
+}
+
+export function createSyntaxHighlightLines(
+  code: string,
+  language: string,
+  colors: StormColors,
+): HighlightSpan[][] {
+  const tokens = tokenize(code, language);
+  const lines: HighlightSpan[][] = [[]];
+
+  for (const token of tokens) {
+    const style = TOKEN_STYLES[token.kind];
+    const parts = token.text.split("\n");
+    for (let i = 0; i < parts.length; i++) {
+      if (i > 0) lines.push([]);
+      const text = parts[i];
+      if (text === undefined || text.length === 0) continue;
+      lines[lines.length - 1]!.push({
+        text,
+        ...(style.color ? { color: style.color(colors.syntax) } : {}),
+        ...(style.bold ? { bold: true } : {}),
+        ...(style.dim ? { dim: true } : {}),
+      });
+    }
+  }
+
+  return lines;
 }
 
 export const SyntaxHighlight = React.memo(function SyntaxHighlight(rawProps: SyntaxHighlightProps): React.ReactElement {
