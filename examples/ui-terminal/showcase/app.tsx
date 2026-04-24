@@ -134,10 +134,9 @@ function Picker() {
       <Footer
         bindings={[
           { key: "↑/↓ j/k", label: "move" },
-          { key: "1–7", label: "pick" },
+          { key: "1–8", label: "pick" },
           { key: "Enter", label: "open" },
-          { key: "q/Esc/b", label: "back" },
-          { key: "^C", label: "quit" },
+          { key: "q/Esc", label: "quit" },
         ]}
       />
     </Box>

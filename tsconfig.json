@@ -16,7 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "isolatedModules": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "noEmitOnError": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "src/__tests__"]

@@ -119,6 +119,12 @@ export function extractLayoutProps(type, props) {
     set("left", props["left"]);
     set("right", props["right"]);
     set("bottom", props["bottom"]);
+    // Overlays are painted in a second pass at screen-absolute coordinates and
+    // must never contribute to parent flex flow. Force absolute regardless of
+    // any user-provided `position` prop (which on overlays is read by the
+    // renderer as a visual anchor: "center" | "top" | "bottom" | ...).
+    if (type === TUI_OVERLAY)
+        result.position = "absolute";
     return result;
 }
 //# sourceMappingURL=types.js.map

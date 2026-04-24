@@ -40,27 +40,19 @@ function runShowcasePicker() {
   const demos = ["feature", "logbook", "bios95", "brutalist", "flightdeck", "posting", "oxide", "dock"];
   const demo = demos[rc - 30];
   if (demo) { runDemo(demo); return; }
-  if (rc === BACK) { runTopMenu(); return; }
+  // BACK or any other exit code: no parent menu, just exit.
 }
 
 function runStyle() {
-  const rc = run("style/app.tsx");
-  if (rc === BACK) runTopMenu();
-}
-
-function runTopMenu() {
-  const rc = run("menu.tsx");
-  if (rc === 10) { runShowcasePicker(); return; }
-  if (rc === 11) { runStyle(); return; }
-  if (rc === 20 || rc === 21) { process.stderr.write("web views not supported in reacterm CLI\n"); return; }
+  run("style/app.tsx");
 }
 
 function usage() {
   process.stdout.write(
     "Usage: reacterm demo [command]\n\n" +
     "Commands:\n" +
-    "  demo                       top menu\n" +
-    "  demo showcase              showcase picker\n" +
+    "  demo                       showcase picker (8 demos, dock is #8)\n" +
+    "  demo showcase              alias for demo\n" +
     "  demo showcase <name>       open demo directly\n" +
     "                             names: feature logbook bios95\n" +
     "                                    brutalist flightdeck posting oxide dock\n" +
@@ -77,7 +69,7 @@ if (cmd !== "demo") { process.stderr.write(`unknown command: ${cmd}\n`); usage()
 const sub = args[1];
 const sub2 = args[2];
 
-if (!sub) { runTopMenu(); process.exit(0); }
+if (!sub) { runShowcasePicker(); process.exit(0); }
 if (sub === "showcase") {
   if (!sub2) { runShowcasePicker(); process.exit(0); }
   runDemo(sub2); process.exit(0);

@@ -328,7 +328,9 @@ function EditableText({ value, cursorIdx, focused }: {
 type MainTab = "calculation" | "files" | "images";
 type SubTab = "io" | "json" | "guide" | "script";
 type Pane = "tree" | "calcs" | "detail";
-type ModalMode = "none" | "new-project" | "open-project" | "add-calc";
+type ModalMode = "none" | "new-project" | "open-project" | "add-calc" | "name-calc";
+
+const CUSTOM_FOLDER_ID = "root-custom";
 
 const PANE_CYCLE: Pane[] = ["tree", "calcs", "detail"];
 
@@ -371,15 +373,19 @@ function App() {
   const [modalCursor, setModalCursor] = useState(0);
   const [modalFocusIdx, setModalFocusIdx] = useState(0);
   const [addCalcSearch, setAddCalcSearch] = useState("");
+  // Two-step add flow: library pick → name → commit. Holds the library calc
+  // id while the user types a section label in the name-calc modal.
+  const [pendingCalcId, setPendingCalcId] = useState<string | null>(null);
 
   // Projects (mock)
   const [projectName, setProjectName] = useState("Tower 404 Frame");
   const [activeProjectCalcs, setActiveProjectCalcs] = useState<string[]>(
     CALCS.map(c => c.calc_name),
   );
+  const [sections, setSections] = useState<Section[]>(SECTIONS);
 
   // Derived
-  const flatTree = useMemo(() => flattenVisible(SECTIONS, expandedIds), [expandedIds]);
+  const flatTree = useMemo(() => flattenVisible(sections, expandedIds), [expandedIds, sections]);
   const treeNodes = useMemo(() => {
     const mapNodes = (nodes: Section[]): Array<{ key: string; label: string; expanded?: boolean; icon?: string; children?: ReturnType<typeof mapNodes> }> =>
       nodes.map((node) => ({
@@ -389,8 +395,8 @@ function App() {
         icon: node.kind === "folder" ? "▤" : "▢",
         children: node.children ? mapNodes(node.children) : undefined,
       }));
-    return mapNodes(SECTIONS);
-  }, [expandedIds]);
+    return mapNodes(sections);
+  }, [expandedIds, sections]);
   const sectionById = useMemo(() => {
     const out = new Map<string, Section>();
     const walk = (nodes: Section[]) => {
@@ -399,9 +405,9 @@ function App() {
         if (node.children) walk(node.children);
       }
     };
-    walk(SECTIONS);
+    walk(sections);
     return out;
-  }, []);
+  }, [sections]);
   const calcList = useMemo(
     () => CALCS.filter(c => activeProjectCalcs.includes(c.calc_name)),
     [activeProjectCalcs],
@@ -503,11 +509,66 @@ function App() {
     setModalFocusIdx(0);
   }, []);
 
-  const addCalculationById = useCallback((calcId: string) => {
-    if (activeProjectCalcs.includes(calcId) || !CALCS.find(c => c.calc_name === calcId)) return;
-    setActiveProjectCalcs(list => [...list, calcId]);
-    closeAddCalcModal();
-  }, [activeProjectCalcs, closeAddCalcModal]);
+  const closeNameCalcModal = useCallback(() => {
+    setModalMode("none");
+    setPendingCalcId(null);
+    setModalInput("");
+    setModalCursor(0);
+  }, []);
+
+  // Step 1: user picked a calc from the library list. Stash the id and
+  // transition to the naming modal. Default the input to the library label
+  // so a single Enter keeps the suggested name.
+  const startNamingCalc = useCallback((calcId: string) => {
+    if (!CALCS.find(c => c.calc_name === calcId)) return;
+    const lib = LIBRARY_CALCS.find(c => c.id === calcId);
+    const defaultName = lib?.name ?? calcId;
+    setPendingCalcId(calcId);
+    setModalInput(defaultName);
+    setModalCursor(defaultName.length);
+    setModalMode("name-calc");
+    setAddCalcSearch("");
+  }, []);
+
+  // Step 2: user typed a section label and hit Enter. Append the calc to
+  // the active project's calc list (if not already there) and create a new
+  // section under an auto-managed "Custom" root folder so the typed name
+  // shows up in the SECTIONS tree.
+  const commitNamedCalc = useCallback(() => {
+    const calcId = pendingCalcId;
+    const label = modalInput.trim();
+    if (!calcId || !label) return;
+    if (!activeProjectCalcs.includes(calcId)) {
+      setActiveProjectCalcs(list => [...list, calcId]);
+    }
+    const newSectionId = `custom-${calcId}-${Date.now().toString(36)}`;
+    setSections(prev => {
+      const customIdx = prev.findIndex(s => s.id === CUSTOM_FOLDER_ID);
+      const newNode: Section = { id: newSectionId, label, kind: "file", calcRef: calcId };
+      if (customIdx === -1) {
+        return [
+          ...prev,
+          { id: CUSTOM_FOLDER_ID, label: "Custom", kind: "folder", children: [newNode] },
+        ];
+      }
+      const next = prev.slice();
+      const folder = next[customIdx]!;
+      next[customIdx] = { ...folder, children: [...(folder.children ?? []), newNode] };
+      return next;
+    });
+    setExpandedIds(prev => new Set([...prev, CUSTOM_FOLDER_ID]));
+    setFocusedSectionId(newSectionId);
+    const ci = CALCS.findIndex(c => c.calc_name === calcId);
+    if (ci >= 0) {
+      // Re-derive index against the post-add list (calc may not have been
+      // there before this call). Use length-based approximation: if we just
+      // appended, focus the last entry.
+      setFocusedCalcIdx(activeProjectCalcs.includes(calcId)
+        ? Math.max(0, activeProjectCalcs.indexOf(calcId))
+        : activeProjectCalcs.length);
+    }
+    closeNameCalcModal();
+  }, [pendingCalcId, modalInput, activeProjectCalcs, closeNameCalcModal]);
 
   // --------------------------- Input ---------------------------
   useInput((e) => {
@@ -574,6 +635,26 @@ function App() {
         return;
       }
       if (modalMode === "add-calc") {
+        return;
+      }
+      if (modalMode === "name-calc") {
+        if (e.key === "escape") { closeNameCalcModal(); return; }
+        if (e.key === "return") { commitNamedCalc(); return; }
+        if (e.key === "backspace") {
+          if (modalCursor > 0) {
+            setModalInput(v => v.slice(0, modalCursor - 1) + v.slice(modalCursor));
+            setModalCursor(i => i - 1);
+          }
+          return;
+        }
+        if (e.key === "left") { setModalCursor(i => Math.max(0, i - 1)); return; }
+        if (e.key === "right") { setModalCursor(i => Math.min(modalInput.length, i + 1)); return; }
+        if (e.key === "home") { setModalCursor(0); return; }
+        if (e.key === "end") { setModalCursor(modalInput.length); return; }
+        if (e.char && e.char.length === 1 && !e.ctrl && !e.meta) {
+          setModalInput(v => v.slice(0, modalCursor) + e.char + v.slice(modalCursor));
+          setModalCursor(i => i + 1);
+        }
         return;
       }
     }
@@ -990,6 +1071,12 @@ function App() {
                 { key: "Enter", label: "save" },
                 { key: "Esc", label: "cancel" },
               ]
+            : modalMode === "name-calc" || modalMode === "new-project"
+            ? [
+                { key: "←/→", label: "cursor" },
+                { key: "Enter", label: "confirm" },
+                { key: "Esc", label: "cancel" },
+              ]
             : modalMode !== "none"
             ? [
                 { key: modalMode === "add-calc" ? "↑/↓" : "j/k", label: "navigate" },
@@ -1082,7 +1169,7 @@ function App() {
           ) : (
             <OptionList
               items={filteredLibrary.map((item) => ({ label: item.name, value: item.id }))}
-              onSelect={addCalculationById}
+              onSelect={startNamingCalc}
               isFocused
               maxVisible={10}
               renderItem={(item, state) => {
@@ -1105,6 +1192,19 @@ function App() {
           <Box height={1} />
           <Text dim color={C.dim}>type to filter · ↑/↓ navigate · Enter add · Esc cancel</Text>
         </Modal>
+      )}
+
+      {modalMode === "name-calc" && (
+        <ModalBox width={56} top={Math.max(2, Math.floor(height / 2) - 6)} left={Math.max(2, Math.floor(width / 2) - 28)}>
+          <Text bold color={C.borderFocused}>Name Calculation</Text>
+          <Box height={1} />
+          <Text dim color={C.dim}>Section name:</Text>
+          <Box flexDirection="row" borderStyle="single" borderColor={C.borderFocused} paddingX={1} marginTop={1}>
+            <EditableText value={modalInput} cursorIdx={modalCursor} focused />
+          </Box>
+          <Box height={1} />
+          <Text dim color={C.dim}>Enter add · Esc cancel</Text>
+        </ModalBox>
       )}
 
       {showHelp && (

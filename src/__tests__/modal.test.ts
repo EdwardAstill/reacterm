@@ -49,6 +49,37 @@ describe("Modal", () => {
     expect(result.hasText("[Esc to close]")).toBe(true);
   });
 
+  it("does not displace siblings in normal flow when toggled visible", () => {
+    // Regression: tui-overlay must be out-of-flow. Previously the layout
+    // engine treated it as a regular flex child, so opening a modal inside
+    // a column-flow root shrank the body region (the modal stole rows from
+    // the flex spacer above it). Use a screen wider than the default modal
+    // so TOP/BOTTOM remain visible at the screen edges either side.
+    const layout = (modalVisible: boolean) =>
+      React.createElement(
+        "tui-box",
+        { flexDirection: "column", width: 80, height: 12 },
+        React.createElement("tui-text", { key: "top" }, "TOP_MARKER"),
+        React.createElement("tui-box", { key: "spacer", flex: 1 }),
+        React.createElement("tui-text", { key: "bottom" }, "BOTTOM_MARKER"),
+        React.createElement(Modal, { visible: modalVisible, key: "modal", size: "sm" },
+          React.createElement("tui-text", null, "ModalContent"),
+        ),
+      );
+
+    const without = renderForTest(layout(false), { width: 80, height: 12 });
+    const with_ = renderForTest(layout(true), { width: 80, height: 12 });
+
+    const lineOf = (r: { lines: string[] }, needle: string) =>
+      r.lines.findIndex((l) => l.includes(needle));
+
+    expect(lineOf(without, "TOP_MARKER")).toBe(0);
+    expect(lineOf(without, "BOTTOM_MARKER")).toBe(11);
+    expect(lineOf(with_, "TOP_MARKER")).toBe(0);
+    expect(lineOf(with_, "BOTTOM_MARKER")).toBe(11);
+    expect(with_.hasText("ModalContent")).toBe(true);
+  });
+
   it("renders compound API with Root/Title/Body/Footer", () => {
     const result = renderForTest(
       React.createElement(Modal.Root, { visible: true },
