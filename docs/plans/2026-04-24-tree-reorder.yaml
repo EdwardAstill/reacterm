@@ -1,0 +1,109 @@
+version: 1
+plan:
+  slug: tree-reorder
+  prose: docs/plans/2026-04-24-tree-reorder.md
+  goal: Add reorder feature to Tree component (live + stash modes) via imperative controller.
+
+nodes:
+  - id: types
+    type: implement
+    description: Public type surface for reorder feature.
+    files:
+      create:
+        - src/components/data/Tree.types.ts
+    verify:
+      - bun x tsc --noEmit
+
+  - id: reducer_lifecycle
+    type: implement
+    depends_on: [types]
+    description: Reducer — idle/marking/grab lifecycle with tests.
+    files:
+      create:
+        - src/components/data/treeReorderReducer.ts
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test src/__tests__/tree-reorder.test.ts
+      - bun x tsc --noEmit
+
+  - id: reducer_motion
+    type: implement
+    depends_on: [reducer_lifecycle]
+    description: Reducer — live motion (moveUp/Down/indent/outdent) + canMove gate + ephemeral expand.
+    files:
+      modify:
+        - src/components/data/treeReorderReducer.ts
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test src/__tests__/tree-reorder.test.ts
+
+  - id: reducer_commit_stash
+    type: implement
+    depends_on: [reducer_motion]
+    description: Reducer — commit payload + stash splice + ancestor-swallows-descendant.
+    files:
+      modify:
+        - src/components/data/treeReorderReducer.ts
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test src/__tests__/tree-reorder.test.ts
+
+  - id: tree_wiring
+    type: implement
+    depends_on: [reducer_commit_stash]
+    description: Wire reducer into Tree.tsx — controller ref, renderNode flags, default-key gate, mouse gate.
+    files:
+      modify:
+        - src/components/data/Tree.tsx
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test src/__tests__/tree-reorder.test.ts src/__tests__/tree.test.ts
+      - bun x tsc --noEmit
+
+  - id: default_rendering
+    type: implement
+    depends_on: [tree_wiring]
+    description: Default rendering for marked + grabbed states (no custom renderNode).
+    files:
+      modify:
+        - src/components/data/Tree.tsx
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test src/__tests__/tree-reorder.test.ts
+
+  - id: edge_cases
+    type: implement
+    depends_on: [tree_wiring]
+    description: nodes-prop abort, canMove gate, wrong-phase no-ops, mouse swallow.
+    files:
+      modify:
+        - src/components/data/Tree.tsx
+        - src/__tests__/tree-reorder.test.ts
+    verify:
+      - bun test
+
+  - id: dock_wiring
+    type: implement
+    depends_on: [default_rendering, edge_cases]
+    description: Dock showcase — controller ref, keymap, onReorder + expandedKeys persistence.
+    files:
+      modify:
+        - examples/ui-terminal/showcase/dock.tsx
+    verify:
+      - bun x tsc --noEmit
+
+  - id: docs
+    type: implement
+    depends_on: [dock_wiring]
+    description: docs/components.md — Reorder section with API + wiring example.
+    files:
+      modify:
+        - docs/components.md
+
+  - id: final_verify
+    type: verify
+    depends_on: [docs]
+    description: Full test + typecheck + manual smoke.
+    verify:
+      - bun test
+      - bun x tsc --noEmit
