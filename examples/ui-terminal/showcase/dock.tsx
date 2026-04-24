@@ -32,6 +32,7 @@ import {
   useInput,
   useApp,
   useTerminal,
+  type TreeController,
 } from "../../../src/index.js";
 
 let chosenCode = 0;
@@ -349,6 +350,8 @@ function App() {
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["root-loads", "root-structure"]));
   const [focusedSectionId, setFocusedSectionId] = useState("wind");
+  const treeCtrl = useRef<TreeController | null>(null);
+  const [reorderPhase, setReorderPhase] = useState<"idle" | "marking" | "grabbed">("idle");
 
   const [focusedCalcIdx, setFocusedCalcIdx] = useState(0);
 
@@ -705,6 +708,23 @@ function App() {
 
     // 6. Pane-specific
     if (activePane === "tree") {
+      // Reorder controller keys — must fire before default tree nav.
+      const ctrl = treeCtrl.current;
+      if (ctrl) {
+        if (reorderPhase === "grabbed") {
+          if (e.key === "return") { ctrl.commit(); return; }
+          if (e.key === "escape") { ctrl.cancel(); return; }
+          if (e.char === "J") { ctrl.moveDown(); return; }
+          if (e.char === "K") { ctrl.moveUp(); return; }
+          if (e.char === ">") { ctrl.indent(); return; }
+          if (e.char === "<") { ctrl.outdent(); return; }
+          // While grabbed, swallow other keys so they don't navigate the tree.
+          return;
+        }
+        if (e.char === "m" && !e.ctrl && !e.meta) { ctrl.toggleMark(focusedSectionId); return; }
+        if (e.char === "g" && !e.ctrl && !e.meta) { ctrl.grabLive(); return; }
+        if (e.char === "G" && !e.ctrl && !e.meta) { ctrl.grabStash(); return; }
+      }
       if (e.key === "j" || e.key === "down")  navigateTree("down");
       else if (e.key === "k" || e.key === "up") navigateTree("up");
       else if (e.key === "h" || e.key === "left") navigateTree("left");
@@ -798,6 +818,15 @@ function App() {
                 selectedKey={focusedSectionId}
                 isFocused={activePane === "tree"}
                 maxVisible={Math.max(1, treeSplit - 2)}
+                controller={treeCtrl}
+                reorderable
+                onReorder={(change) => {
+                  setSections(change.nextNodes as Section[]);
+                  if (change.expandedKeys.length > 0) {
+                    setExpandedIds((prev) => new Set([...prev, ...change.expandedKeys]));
+                  }
+                }}
+                onStateChange={(s) => setReorderPhase(s.phase)}
                 onToggle={(key) => {
                   setExpandedIds((prev) => {
                     const next = new Set(prev);
@@ -1083,12 +1112,27 @@ function App() {
                 { key: "Enter", label: "confirm" },
                 { key: "Esc", label: "cancel" },
               ]
+            : activePane === "tree" && reorderPhase === "grabbed"
+            ? [
+                { key: "J/K", label: "move" },
+                { key: "</>", label: "outdent/indent" },
+                { key: "Enter", label: "commit" },
+                { key: "Esc", label: "cancel" },
+              ]
+            : activePane === "tree" && reorderPhase === "marking"
+            ? [
+                { key: "m", label: "toggle mark" },
+                { key: "g/G", label: "grab live/stash" },
+                { key: "Tab", label: `pane (${activePane})` },
+                { key: "?", label: "help" },
+              ]
             : [
                 { key: "Tab", label: `pane (${activePane})` },
                 { key: "j/k", label: "nav" },
                 { key: "r", label: "resize" },
                 { key: "↑/↓", label: "tree split" },
                 { key: "Enter", label: activePane === "detail" && subTab === "io" ? "edit" : "—" },
+                ...(activePane === "tree" ? [{ key: "m/g", label: "mark/grab" }] : []),
                 { key: "n/o", label: "new/open" },
                 { key: "a", label: "add calc" },
                 { key: "?", label: "help" },

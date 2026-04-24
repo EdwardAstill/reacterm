@@ -145,6 +145,7 @@ export { Table, type TableProps, type TableColumn } from "./components/table/Tab
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";
 export { Tabs, type TabsProps, type Tab, type TabsVariant } from "./components/core/Tabs.js";
 export { Tree, type TreeProps, type TreeNode } from "./components/data/Tree.js";
+export type { TreeController, ReorderState, ReorderChange, MoveContext } from "./components/data/Tree.types.js";
 export { Toast, ToastContainer, type ToastProps, type ToastContainerProps, type ToastItem } from "./components/extras/Toast.js";
 export { Checkbox, type CheckboxProps } from "./components/core/Checkbox.js";
 export { RadioGroup, type RadioGroupProps, type RadioOption } from "./components/core/RadioGroup.js";
