@@ -158,7 +158,6 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   const nodesRef = useRef<TreeNode[]>(nodes);
 
   const onStateChangeRef = useRef(onStateChange);
-  onStateChangeRef.current = onStateChange;
 
   const setReorderState = useCallback((next: ReorderState) => {
     const prev = stateRef.current;
@@ -188,6 +187,12 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
     }
     nodesRef.current = nodes;
   }, [nodes, reorderable, reorderState.phase]);
+
+  // Refresh onStateChange handler ref AFTER the nodes-change effect runs, so
+  // abort-grab on rerender surfaces via the handler that was active when grab began.
+  useEffect(() => {
+    onStateChangeRef.current = onStateChange;
+  }, [onStateChange]);
 
   // Effective nodes: scratch when grabbed (and present), else prop nodes.
   const effectiveNodes =
@@ -568,21 +573,34 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
         ),
       );
     } else {
-      // Label
-      parts.push(
-        React.createElement(
-          "tui-text",
-          {
-            key: "label",
-            ...(isHighlighted
-              ? { bold: true, inverse: personality.interaction.focusIndicator === "highlight", color }
-              : isSelected
-                ? { bold: true, color: colors.text.primary }
-                : {}),
-          },
-          entry.node.label,
-        ),
-      );
+      // Reorder-aware label rendering.
+      const grabbedMode = reorderState.phase === "grabbed" ? reorderState.mode : null;
+      const isLiveGrabbed = isGrabbed && grabbedMode === "live";
+      const isStashGrabbed = isGrabbed && grabbedMode === "stash";
+
+      let labelText = entry.node.label;
+      let labelProps: Record<string, unknown> = { key: "label" };
+
+      if (isLiveGrabbed) {
+        labelProps = { ...labelProps, bold: true, inverse: true };
+      } else if (isStashGrabbed) {
+        labelText = `⋯ ${entry.node.label}`;
+        labelProps = { ...labelProps, dim: true, color: colors.text.dim };
+      } else if (isMarked) {
+        labelText = `* ${entry.node.label}`;
+        labelProps = { ...labelProps, color: colors.warning };
+      } else if (isHighlighted) {
+        labelProps = {
+          ...labelProps,
+          bold: true,
+          inverse: personality.interaction.focusIndicator === "highlight",
+          color,
+        };
+      } else if (isSelected) {
+        labelProps = { ...labelProps, bold: true, color: colors.text.primary };
+      }
+
+      parts.push(React.createElement("tui-text", labelProps, labelText));
 
       allElements.push(
         React.createElement(

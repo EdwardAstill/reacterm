@@ -357,3 +357,103 @@ describe("Tree integration — controller + renderNode flags", () => {
     expect(change!.movedKeys).toEqual(["a", "c"]);
   });
 });
+
+describe("Tree edge cases", () => {
+  it("external nodes-prop change while grabbed aborts grab", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const states: string[] = [];
+    const result = renderForTest(
+      React.createElement(Tree, {
+        nodes, reorderable: true, controller: ctrl,
+        onStateChange: (s: ReorderState) => states.push(s.phase),
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.grabLive("a");
+    result.rerender(React.createElement(Tree, {
+      nodes: [...nodes, { key: "d", label: "D" }],
+      reorderable: true, controller: ctrl,
+    }));
+    expect(states.at(-1)).toBe("idle");
+  });
+
+  it("self-initiated nodes update (app responding to onReorder) does NOT re-abort", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    let capturedChange: ReorderChange | null = null;
+    const Harness: React.FC = () => {
+      const [n, setN] = React.useState<TreeNode[]>(nodes);
+      return React.createElement(Tree, {
+        nodes: n, reorderable: true, controller: ctrl,
+        onReorder: (c: ReorderChange) => { capturedChange = c; setN(c.nextNodes); },
+      });
+    };
+    renderForTest(React.createElement(Harness), { width: 40, height: 10 });
+    ctrl.current!.grabLive("b1");
+    ctrl.current!.moveDown();
+    ctrl.current!.commit();
+    expect(capturedChange).not.toBeNull();
+    // After commit app updated nodes; controller should be idle and accept a fresh grab.
+    expect(ctrl.current!.grabLive("a")).toBe(true);
+  });
+
+  it("canMove=false blocks motion but commit still fires at starting position", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    let change: ReorderChange | null = null;
+    renderForTest(
+      React.createElement(Tree, {
+        nodes, reorderable: true, controller: ctrl,
+        canMove: () => false,
+        onReorder: (c: ReorderChange) => { change = c; },
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.grabLive("b1");
+    ctrl.current!.moveDown();
+    ctrl.current!.commit();
+    expect(change).not.toBeNull();
+    // b1 remained in original position
+    expect(change!.nextNodes[1]!.children!.map((n) => n.key)).toEqual(["b1", "b2"]);
+  });
+
+  it("wrong-phase controller calls are no-ops (no throw)", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    renderForTest(
+      React.createElement(Tree, { nodes, reorderable: true, controller: ctrl }),
+      { width: 40, height: 10 },
+    );
+    expect(() => ctrl.current!.moveUp()).not.toThrow();
+    expect(() => ctrl.current!.commit()).not.toThrow();
+    expect(() => ctrl.current!.indent()).not.toThrow();
+  });
+
+  it("toggleMark during grabbed is silently ignored", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    renderForTest(
+      React.createElement(Tree, { nodes, reorderable: true, controller: ctrl }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.grabLive("a");
+    ctrl.current!.toggleMark("b");
+    // marks not surfaced via getMarked in grabbed state
+    expect(ctrl.current!.getMarked()).toEqual([]);
+  });
+
+  it("renders * prefix on marked node by default", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const element = React.createElement(Tree, { nodes, reorderable: true, controller: ctrl });
+    const result = renderForTest(element, { width: 40, height: 10 });
+    ctrl.current!.toggleMark("a");
+    result.rerender(element);
+    expect(result.hasText("* A")).toBe(true);
+  });
+
+  it("renders ⋯ prefix on stash-grabbed origin", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const element = React.createElement(Tree, { nodes, reorderable: true, controller: ctrl });
+    const result = renderForTest(element, { width: 40, height: 10 });
+    ctrl.current!.toggleMark("a");
+    ctrl.current!.grabStash();
+    result.rerender(element);
+    expect(result.hasText("⋯ A")).toBe(true);
+  });
+});
