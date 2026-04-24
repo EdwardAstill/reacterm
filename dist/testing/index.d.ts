@@ -17,6 +17,12 @@ export declare class TestInputManager {
     private prioritizedKeyHandlers;
     private mouseHandlers;
     private pasteHandlers;
+    /**
+     * Count of prioritized handlers that ran for the most recent pressKey call
+     * without anyone consuming. Mirrors the production manager's warning logic
+     * so tests can assert the "multiple isFocused" warning would or would not fire.
+     */
+    lastUnconsumedCountAtMax: number;
     onKey(handler: (e: KeyEvent) => void): () => void;
     /** Register a key handler with priority (mirrors InputManager). */
     onKeyPrioritized(handler: (e: KeyEvent) => void, priority: number): () => void;

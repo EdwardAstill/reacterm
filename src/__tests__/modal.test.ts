@@ -97,4 +97,58 @@ describe("Modal", () => {
     expect(result.hasText("Body content")).toBe(true);
     expect(result.hasText("Save")).toBe(true);
   });
+
+  it("survives visible → hidden → visible toggle without hook-order errors", () => {
+    const modal = (visible: boolean) =>
+      React.createElement(Modal, { visible, onClose: () => {} },
+        React.createElement("tui-text", null, "ToggleBody"),
+      );
+    const result = renderForTest(modal(true), { width: 60, height: 20 });
+    expect(result.hasText("ToggleBody")).toBe(true);
+    result.rerender(modal(false));
+    expect(result.hasText("ToggleBody")).toBe(false);
+    result.rerender(modal(true));
+    expect(result.hasText("ToggleBody")).toBe(true);
+  });
+
+  it("size=full expands to screen width minus margin", () => {
+    const narrow = renderForTest(
+      React.createElement(Modal, { visible: true, size: "sm" },
+        React.createElement("tui-text", null, "X"),
+      ),
+      { width: 80, height: 20 },
+    );
+    const full = renderForTest(
+      React.createElement(Modal, { visible: true, size: "full" },
+        React.createElement("tui-text", null, "X"),
+      ),
+      { width: 80, height: 20 },
+    );
+    // full width should produce more horizontal span of border chars than sm
+    const narrowBorderCols = narrow.output.split("").filter((c) => c === "─").length;
+    const fullBorderCols = full.output.split("").filter((c) => c === "─").length;
+    expect(fullBorderCols).toBeGreaterThan(narrowBorderCols);
+  });
+
+  it("compound Root renders without Title/Body/Footer sub-parts", () => {
+    const result = renderForTest(
+      React.createElement(Modal.Root, { visible: true },
+        React.createElement("tui-text", null, "BareRoot"),
+      ),
+      { width: 60, height: 20 },
+    );
+    expect(result.hasText("BareRoot")).toBe(true);
+  });
+
+  it("flat Modal with renderTitle prop renders custom title", () => {
+    const result = renderForTest(
+      React.createElement(Modal, {
+        visible: true,
+        title: "raw",
+        renderTitle: (t) => React.createElement("tui-text", null, `CUSTOM:${t}`),
+      }, React.createElement("tui-text", null, "body")),
+      { width: 60, height: 20 },
+    );
+    expect(result.hasText("CUSTOM:raw")).toBe(true);
+  });
 });

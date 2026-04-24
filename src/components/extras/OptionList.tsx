@@ -193,6 +193,7 @@ const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps)
       const changeCb = onChangeRef.current;
 
       if (event.key === "up") {
+        event.consumed = true;
         const next = findNextItem(itms, activeIndexRef.current, -1);
         if (next !== activeIndexRef.current) {
           activeIndexRef.current = next;
@@ -201,6 +202,7 @@ const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps)
           requestRender();
         }
       } else if (event.key === "down") {
+        event.consumed = true;
         const next = findNextItem(itms, activeIndexRef.current, 1);
         if (next !== activeIndexRef.current) {
           activeIndexRef.current = next;
@@ -209,6 +211,7 @@ const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps)
           requestRender();
         }
       } else if (event.key === "return") {
+        event.consumed = true;
         const item = itms[activeIndexRef.current];
         if (item && isNavigable(item) && cb) {
           cb(item.value);

@@ -7,6 +7,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useTui } from "../../context/TuiContext.js";
 import { Gradient } from "../effects/Gradient.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 export const Welcome = React.memo(function Welcome(rawProps) {
     const colors = useColors();
     const personality = usePersonality();
@@ -50,7 +51,7 @@ export const Welcome = React.memo(function Welcome(rawProps) {
         event.consumed = true;
         onDismissRef.current?.();
     }, [forceUpdate]);
-    useInput(handleInput, { isActive: visible, priority: 500 });
+    useInput(handleInput, { isActive: visible, priority: INPUT_PRIORITY.INLINE_OVERLAY });
     if (!visible)
         return null;
     // ── Build children ─────────────────────────────────────────

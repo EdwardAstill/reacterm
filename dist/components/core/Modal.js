@@ -3,6 +3,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useInput } from "../../hooks/useInput.js";
 import { FocusGroup } from "./FocusGroup.js";
 import { useColors } from "../../hooks/useColors.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePersonality } from "../../core/personality.js";
@@ -15,15 +16,16 @@ export function useModalContext() {
         throw new Error("Modal sub-components must be used inside Modal.Root");
     return ctx;
 }
-function ModalRoot({ visible, onClose, size = "md", children }) {
-    const personality = usePersonality();
-    const { screen, focus } = useTui();
+/**
+ * Registers Escape-to-close + Tab/Shift+Tab focus cycling at the Modal priority
+ * (1000). Consumes only those keys — typing keys still reach child inputs.
+ * Also returns a stable per-instance group id for the FocusGroup wrapper.
+ */
+function useModalFocusTrap(visible, onClose) {
+    const { focus } = useTui();
     const onCloseRef = useRef(onClose);
     onCloseRef.current = onClose;
-    // Stable unique group ID for this modal instance (supports nested modals)
     const groupIdRef = useRef(`modal-${nextModalId++}`);
-    // Focus trap handler: only consumes Escape and Tab.
-    // All other keys pass through to child components (ScrollView, TextInput, Select, etc.)
     const handleInput = useCallback((event) => {
         if (event.key === "escape") {
             event.consumed = true;
@@ -32,21 +34,30 @@ function ModalRoot({ visible, onClose, size = "md", children }) {
         }
         if (event.key === "tab") {
             event.consumed = true;
-            if (event.shift) {
+            if (event.shift)
                 focus.cyclePrev();
-            }
-            else {
+            else
                 focus.cycleNext();
-            }
             return;
         }
     }, [focus]);
-    useInput(handleInput, { isActive: visible, priority: 1000 });
+    useInput(handleInput, { isActive: visible, priority: INPUT_PRIORITY.MODAL });
+    return groupIdRef.current;
+}
+/**
+ * Wrap modal body content in the standard tui-overlay + focus-trapped
+ * FocusGroup layers. Keeps ModalRoot and ModalBase in lock-step.
+ */
+function renderModalShell(overlayProps, groupId, body) {
+    return React.createElement("tui-overlay", overlayProps, React.createElement(FocusGroup, { id: groupId, trap: true, direction: "vertical" }, body));
+}
+function ModalRoot({ visible, onClose, size = "md", children }) {
+    const personality = usePersonality();
+    const { screen } = useTui();
+    const groupId = useModalFocusTrap(visible, onClose);
     if (!visible)
         return null;
-    const sizeWidth = size === "full"
-        ? Math.max(1, screen.width - 4)
-        : (SIZE_WIDTHS[size] ?? DEFAULTS.modal.width);
+    const sizeWidth = getModalWidth(size, screen.width);
     const ctx = { visible, onClose, size };
     const overlayProps = {
         visible: true,
@@ -56,7 +67,7 @@ function ModalRoot({ visible, onClose, size = "md", children }) {
         width: sizeWidth,
         borderColor: personality.colors.brand.primary,
     };
-    return React.createElement("tui-overlay", overlayProps, React.createElement(FocusGroup, { id: groupIdRef.current, trap: true, direction: "vertical" }, React.createElement(ModalContext.Provider, { value: ctx }, React.createElement("tui-box", { flexDirection: "column" }, children))));
+    return renderModalShell(overlayProps, groupId, React.createElement(ModalContext.Provider, { value: ctx }, React.createElement("tui-box", { flexDirection: "column" }, children)));
 }
 function ModalTitle({ children }) {
     const colors = useColors();
@@ -73,41 +84,22 @@ const SIZE_WIDTHS = {
     md: 50,
     lg: 70,
 };
+/** Resolve a ModalSize preset to a pixel/column width for the given screen. */
+function getModalWidth(size, screenWidth) {
+    if (size === "full")
+        return Math.max(1, screenWidth - 4);
+    return SIZE_WIDTHS[size] ?? DEFAULTS.modal.width;
+}
 const ModalBase = React.memo(function Modal(rawProps) {
     const colors = useColors();
     const props = usePluginProps("Modal", rawProps);
     const personality = usePersonality();
     const { visible, title, children, onClose, size = "md", } = props;
-    const { screen, focus } = useTui();
+    const { screen } = useTui();
     const userStyles = pickStyleProps(props);
-    const sizeWidth = size === "full"
-        ? Math.max(1, screen.width - 4)
-        : (SIZE_WIDTHS[size] ?? DEFAULTS.modal.width);
+    const sizeWidth = getModalWidth(size, screen.width);
     const width = userStyles.width ?? sizeWidth;
-    const onCloseRef = useRef(onClose);
-    onCloseRef.current = onClose;
-    // Stable unique group ID for this modal instance (supports nested modals)
-    const groupIdRef = useRef(`modal-${nextModalId++}`);
-    // Focus trap handler: only consumes Escape and Tab.
-    // All other keys pass through to child components (ScrollView, TextInput, Select, etc.)
-    const handleInput = useCallback((event) => {
-        if (event.key === "escape") {
-            event.consumed = true;
-            onCloseRef.current?.();
-            return;
-        }
-        if (event.key === "tab") {
-            event.consumed = true;
-            if (event.shift) {
-                focus.cyclePrev();
-            }
-            else {
-                focus.cycleNext();
-            }
-            return;
-        }
-    }, [focus]);
-    useInput(handleInput, { isActive: visible, priority: 1000 });
+    const groupId = useModalFocusTrap(visible, onClose);
     if (!visible)
         return null;
     const contentChildren = [];
@@ -140,7 +132,7 @@ const ModalBase = React.memo(function Modal(rawProps) {
         borderColor: personality.colors.brand.primary,
         role: "dialog",
     }, userStyles);
-    return React.createElement("tui-overlay", overlayProps, React.createElement(FocusGroup, { id: groupIdRef.current, trap: true, direction: "vertical" }, React.createElement("tui-box", { flexDirection: "column" }, ...contentChildren)));
+    return renderModalShell(overlayProps, groupId, React.createElement("tui-box", { flexDirection: "column" }, ...contentChildren));
 });
 export const Modal = Object.assign(ModalBase, {
     Root: ModalRoot,

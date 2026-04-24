@@ -8,6 +8,54 @@ import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getDialogTypeColors, getDialogVariantColors } from "../../utils/theme-maps.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
+/**
+ * Runs a 1-second-tick countdown while `active` is true. Side effects use the
+ * reacterm render-phase pattern (eager init + useCleanup on unmount); useEffect
+ * cleanup is unreliable in Storm's reconciler. Returns remaining whole seconds,
+ * or null when inactive.
+ */
+function useCountdown(active, durationMs, onExpire) {
+    const { requestRender } = useTui();
+    const remainingRef = useRef(null);
+    const timerRef = useRef(null);
+    const startedRef = useRef(false);
+    const onExpireRef = useRef(onExpire);
+    onExpireRef.current = onExpire;
+    if (active && durationMs != null && durationMs > 0 && !startedRef.current) {
+        startedRef.current = true;
+        remainingRef.current = Math.ceil(durationMs / 1000);
+        timerRef.current = setInterval(() => {
+            if (remainingRef.current != null && remainingRef.current > 1) {
+                remainingRef.current -= 1;
+                requestRender();
+            }
+            else {
+                if (timerRef.current != null) {
+                    clearInterval(timerRef.current);
+                    timerRef.current = null;
+                }
+                remainingRef.current = null;
+                onExpireRef.current();
+            }
+        }, 1000);
+    }
+    else if (!active && startedRef.current) {
+        startedRef.current = false;
+        remainingRef.current = null;
+        if (timerRef.current != null) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }
+    useCleanup(() => {
+        if (timerRef.current != null) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    });
+    return remainingRef.current;
+}
 export const ConfirmDialogContext = createContext(null);
 export function useConfirmDialogContext() {
     const ctx = useContext(ConfirmDialogContext);
@@ -18,11 +66,11 @@ export function useConfirmDialogContext() {
 function ConfirmDialogRoot({ visible, type = "info", onConfirm, onCancel, focusedActionIndex = 0, onFocusedActionChange, children, }) {
     const { requestRender } = useTui();
     const personality = usePersonality();
+    const colors = useColors();
     const onFocusRef = useRef(onFocusedActionChange);
     onFocusRef.current = onFocusedActionChange;
     if (!visible)
         return null;
-    const colors = useColors();
     const borderColor = { info: colors.brand.primary, warning: colors.warning, danger: colors.error }[type] ?? colors.brand.primary;
     const ctx = {
         visible,
@@ -56,54 +104,18 @@ const ConfirmDialogBase = React.memo(function ConfirmDialog(rawProps) {
     actionsRef.current = actions;
     // Focused action button index (for multi-action mode)
     const focusedActionRef = useRef(0);
-    // Countdown state via ref
-    const remainingRef = useRef(null);
-    const timerRef = useRef(null);
-    const startedRef = useRef(false);
-    // Manage countdown timer
-    if (visible && timeoutMs != null && timeoutMs > 0 && !startedRef.current) {
-        // Start countdown
-        startedRef.current = true;
-        remainingRef.current = Math.ceil(timeoutMs / 1000);
-        timerRef.current = setInterval(() => {
-            if (remainingRef.current != null && remainingRef.current > 1) {
-                remainingRef.current = remainingRef.current - 1;
-                requestRender();
-            }
-            else {
-                // Timeout reached — fire action
-                if (timerRef.current != null) {
-                    clearInterval(timerRef.current);
-                    timerRef.current = null;
-                }
-                remainingRef.current = null;
-                if (timeoutAction === "confirm") {
-                    onConfirmRef.current?.();
-                }
-                else {
-                    onCancelRef.current?.();
-                }
-            }
-        }, 1000);
-    }
-    else if (!visible && startedRef.current) {
-        // Dialog hidden — clean up timer
-        startedRef.current = false;
-        remainingRef.current = null;
-        if (timerRef.current != null) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
-    }
+    const timeoutActionRef = useRef(timeoutAction);
+    timeoutActionRef.current = timeoutAction;
+    const handleExpire = useCallback(() => {
+        if (timeoutActionRef.current === "confirm")
+            onConfirmRef.current?.();
+        else
+            onCancelRef.current?.();
+    }, []);
+    const remainingSec = useCountdown(visible, timeoutMs, handleExpire);
     if (!visible) {
         focusedActionRef.current = 0;
     }
-    useCleanup(() => {
-        if (timerRef.current != null) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
-    });
     const typeRef = useRef(type);
     typeRef.current = type;
     const handleInput = useCallback((event) => {
@@ -161,10 +173,13 @@ const ConfirmDialogBase = React.memo(function ConfirmDialog(rawProps) {
             onCancelRef.current?.();
         }
     }, [requestRender]);
-    // Focus trap: use priority input when visible to suppress all other handlers
+    // Focus trap: use priority input when visible to suppress all other handlers.
+    // Priority exceeds INPUT_PRIORITY.MODAL so a ConfirmDialog mounted over a
+    // Modal receives Escape (otherwise the Modal's higher priority would steal
+    // the event and close the wrong layer).
     useInput(handleInput, {
         isActive: visible,
-        ...(visible ? { priority: 100 } : {}),
+        ...(visible ? { priority: INPUT_PRIORITY.CONFIRM_DIALOG } : {}),
     });
     if (!visible)
         return null;
@@ -176,9 +191,9 @@ const ConfirmDialogBase = React.memo(function ConfirmDialog(rawProps) {
     // Message text
     children.push(React.createElement("tui-text", { key: "msg", color: colors.text.primary }, message));
     // Countdown indicator
-    if (remainingRef.current != null) {
+    if (remainingSec != null) {
         const actionLabel = timeoutAction === "confirm" ? "auto-confirm" : "auto-cancel";
-        children.push(React.createElement("tui-text", { key: "countdown", color: colors.text.dim, dim: true }, `(${actionLabel} in ${remainingRef.current}s)`));
+        children.push(React.createElement("tui-text", { key: "countdown", color: colors.text.dim, dim: true }, `(${actionLabel} in ${remainingSec}s)`));
     }
     // Spacer line
     children.push(React.createElement("tui-text", { key: "spacer" }, ""));

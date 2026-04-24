@@ -18,6 +18,12 @@ export class TestInputManager {
     prioritizedKeyHandlers = new Set();
     mouseHandlers = new Set();
     pasteHandlers = new Set();
+    /**
+     * Count of prioritized handlers that ran for the most recent pressKey call
+     * without anyone consuming. Mirrors the production manager's warning logic
+     * so tests can assert the "multiple isFocused" warning would or would not fire.
+     */
+    lastUnconsumedCountAtMax = 0;
     onKey(handler) {
         this.keyHandlers.add(handler);
         return () => { this.keyHandlers.delete(handler); };
@@ -46,13 +52,32 @@ export class TestInputManager {
             shift: options?.shift ?? false,
             meta: options?.meta ?? false,
         };
+        this.lastUnconsumedCountAtMax = 0;
         if (this.prioritizedKeyHandlers.size > 0) {
-            const sorted = [...this.prioritizedKeyHandlers].sort((a, b) => b.priority - a.priority);
-            for (const entry of sorted)
+            let maxPriority = -Infinity;
+            for (const entry of this.prioritizedKeyHandlers) {
+                if (entry.priority > maxPriority)
+                    maxPriority = entry.priority;
+            }
+            let countAtMax = 0;
+            for (const entry of this.prioritizedKeyHandlers) {
+                if (entry.priority !== maxPriority)
+                    continue;
+                countAtMax++;
                 entry.handler(event);
+                if (event.consumed)
+                    break;
+            }
+            if (!event.consumed)
+                this.lastUnconsumedCountAtMax = countAtMax;
+            if (event.consumed)
+                return;
         }
-        for (const h of this.keyHandlers)
+        for (const h of this.keyHandlers) {
             h(event);
+            if (event.consumed)
+                return;
+        }
     }
     /** Simulate typing a string character by character */
     type(text) {

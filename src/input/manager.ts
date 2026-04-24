@@ -297,10 +297,19 @@ export class InputManager {
         if (entry.priority === maxPriority) {
           countAtMax++;
           entry.handler(event);
+          if (event.consumed) break;
         }
       }
-      // Dev warning: multiple handlers at the same priority receive input simultaneously
-      if (process.env.NODE_ENV !== "production" && !this.warnedMultipleHandlers && countAtMax > 1) {
+      // Dev warning: two or more handlers ran at the same priority. The loop
+      // above breaks on `event.consumed`, so countAtMax only exceeds 1 when
+      // NO handler claimed the event — true accidental double-focus. Disjoint-
+      // domain coexistence (e.g. SearchInput + OptionList per improvements.md §4)
+      // works automatically via the break because one handler always consumes.
+      if (
+        process.env.NODE_ENV !== "production"
+        && !this.warnedMultipleHandlers
+        && countAtMax > 1
+      ) {
         this.warnedMultipleHandlers = true;
         process.stderr.write("[storm] Warning: Multiple components are receiving keyboard input simultaneously. This usually means multiple isFocused={true} props on sibling components. Use a focus state to control which component is active. See docs/pitfalls.md#7\n");
       }
@@ -313,6 +322,7 @@ export class InputManager {
     // scroll, and TextInput all register independent listeners. No warning here.
     for (const handler of this.keyListeners) {
       handler(event);
+      if (event.consumed) return;
     }
   }
 

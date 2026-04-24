@@ -7,6 +7,7 @@ import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { FocusGroup } from "../core/FocusGroup.js";
 import { findNextNavigable } from "../../utils/navigation.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 /**
  * Simple fuzzy match: checks if all characters of the query appear
  * in order within the target string. Returns a score (lower = better match)
@@ -285,7 +286,7 @@ const CommandPaletteBase = React.memo(function CommandPalette(rawProps) {
             forceUpdate();
         }
     }, [trigger, controlledIsOpen, forceUpdate]);
-    useInput(handleInput, { isActive, priority: 900 });
+    useInput(handleInput, { isActive, priority: INPUT_PRIORITY.FLOATING_PANEL });
     // ── Render: hidden ─────────────────────────────────────────
     if (!effectiveIsOpen)
         return null;

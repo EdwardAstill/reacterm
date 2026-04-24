@@ -5,6 +5,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useForceUpdate } from "../../hooks/useForceUpdate.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 export const HelpPanel = React.memo(function HelpPanel(rawProps) {
     const colors = useColors();
     const personality = usePersonality();
@@ -76,7 +77,10 @@ export const HelpPanel = React.memo(function HelpPanel(rawProps) {
             return;
         }
     }, [triggerKey, selfManaged, isVisible, forceUpdate]);
-    useInput(handleInput, { isActive: true, priority: mode === "modal" ? 900 : 0 });
+    useInput(handleInput, {
+        isActive: true,
+        priority: mode === "modal" ? INPUT_PRIORITY.FLOATING_PANEL : INPUT_PRIORITY.DEFAULT,
+    });
     if (!isVisible)
         return null;
     // ── Filter bindings ──────────────────────────────────────────

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { EventEmitter } from "node:events";
 import { InputManager } from "../input/manager.js";
 import type { MouseEvent, KeyEvent } from "../input/types.js";
@@ -134,5 +134,102 @@ describe("InputManager bare Escape", () => {
     await new Promise((r) => setTimeout(r, 80));
     expect(mouse.length).toBe(1);
     expect(mouse[0]!.button).toBe("scroll-up");
+  });
+});
+
+describe("InputManager key consumption", () => {
+  let stdin: ReturnType<typeof makeFakeStdin>;
+  let im: InputManager;
+
+  beforeEach(() => {
+    stdin = makeFakeStdin();
+    im = new InputManager(stdin);
+    im.start();
+  });
+
+  it("stops normal key propagation after a listener consumes the event", () => {
+    const calls: string[] = [];
+
+    im.onKey((event) => {
+      calls.push("first");
+      event.consumed = true;
+    });
+    im.onKey(() => {
+      calls.push("second");
+    });
+
+    stdin.push("\r");
+
+    expect(calls).toEqual(["first"]);
+  });
+
+  it("stops same-priority propagation after a prioritized listener consumes the event", () => {
+    const calls: string[] = [];
+
+    im.onKeyPrioritized((event) => {
+      calls.push("first");
+      event.consumed = true;
+    }, 100);
+    im.onKeyPrioritized(() => {
+      calls.push("second");
+    }, 100);
+    im.onKey(() => {
+      calls.push("normal");
+    });
+
+    stdin.push("\r");
+
+    expect(calls).toEqual(["first"]);
+  });
+});
+
+describe("InputManager multi-handler warning (improvements.md §4)", () => {
+  let stdin: ReturnType<typeof makeFakeStdin>;
+  let im: InputManager;
+  let originalNodeEnv: string | undefined;
+  let stderrWrites: string[];
+  let originalStderrWrite: typeof process.stderr.write;
+
+  beforeEach(() => {
+    originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+    stdin = makeFakeStdin();
+    im = new InputManager(stdin);
+    im.start();
+    stderrWrites = [];
+    originalStderrWrite = process.stderr.write;
+    process.stderr.write = ((chunk: string | Uint8Array) => {
+      stderrWrites.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as typeof process.stderr.write;
+  });
+
+  afterEach(() => {
+    process.stderr.write = originalStderrWrite;
+    if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = originalNodeEnv;
+  });
+
+  const hasMultiHandlerWarning = () =>
+    stderrWrites.some((s) => s.includes("Multiple components are receiving keyboard input"));
+
+  it("does NOT warn when one of two same-priority handlers consumes the event (SearchInput+OptionList disjoint pattern)", () => {
+    im.onKeyPrioritized((event) => { event.consumed = true; }, 500);
+    im.onKeyPrioritized(() => { /* no-op */ }, 500);
+    stdin.push("\r");
+    expect(hasMultiHandlerWarning()).toBe(false);
+  });
+
+  it("DOES warn when two same-priority handlers both run and neither consumes (true accidental double-focus)", () => {
+    im.onKeyPrioritized(() => { /* doesn't consume */ }, 500);
+    im.onKeyPrioritized(() => { /* doesn't consume */ }, 500);
+    stdin.push("\r");
+    expect(hasMultiHandlerWarning()).toBe(true);
+  });
+
+  it("does not warn for a single handler at the top priority", () => {
+    im.onKeyPrioritized(() => { /* no-op */ }, 500);
+    stdin.push("\r");
+    expect(hasMultiHandlerWarning()).toBe(false);
   });
 });

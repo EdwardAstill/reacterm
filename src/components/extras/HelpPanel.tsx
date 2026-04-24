@@ -8,6 +8,7 @@ import { useForceUpdate } from "../../hooks/useForceUpdate.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import type { KeyEvent } from "../../input/types.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 
 export interface HelpBinding {
   /** Key combo label, e.g. "Ctrl+S", "↑↓" */
@@ -135,7 +136,10 @@ export const HelpPanel = React.memo(function HelpPanel(rawProps: HelpPanelProps)
     }
   }, [triggerKey, selfManaged, isVisible, forceUpdate]);
 
-  useInput(handleInput, { isActive: true, priority: mode === "modal" ? 900 : 0 });
+  useInput(handleInput, {
+    isActive: true,
+    priority: mode === "modal" ? INPUT_PRIORITY.FLOATING_PANEL : INPUT_PRIORITY.DEFAULT,
+  });
 
   if (!isVisible) return null;
 

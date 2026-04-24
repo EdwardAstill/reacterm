@@ -9,6 +9,7 @@ import { FocusGroup } from "../core/FocusGroup.js";
 import type { KeyEvent } from "../../input/types.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { findNextNavigable } from "../../utils/navigation.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 
 export interface PaletteCommand {
   /** Unique identifier for the command. */
@@ -486,7 +487,7 @@ const CommandPaletteBase = React.memo(function CommandPalette(rawProps: CommandP
     }
   }, [trigger, controlledIsOpen, forceUpdate]);
 
-  useInput(handleInput, { isActive, priority: 900 });
+  useInput(handleInput, { isActive, priority: INPUT_PRIORITY.FLOATING_PANEL });
 
   // ── Render: hidden ─────────────────────────────────────────
   if (!effectiveIsOpen) return null;

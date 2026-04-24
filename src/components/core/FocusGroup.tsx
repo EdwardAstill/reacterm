@@ -48,10 +48,17 @@ export const FocusGroup = React.memo(function FocusGroup(rawProps: FocusGroupPro
   const groupId = groupIdRef.current;
 
   // ── Focus trap mode ────────────────────────────────────────────
+  // Render-phase side effects are intentional here: Storm's reconciler has
+  // unreliable useEffect cleanup (see hooks/useCleanup.ts), so we register
+  // trapFocus eagerly in render and rely on useCleanup for unmount release.
+  // Responds to prop changes: false→true activates, true→false releases.
   const trapActivatedRef = useRef(false);
   if (trap && !trapActivatedRef.current) {
     trapActivatedRef.current = true;
     fm.trapFocus(groupId);
+  } else if (!trap && trapActivatedRef.current) {
+    trapActivatedRef.current = false;
+    fm.releaseFocus();
   }
 
   useCleanup(() => {

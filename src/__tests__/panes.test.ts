@@ -134,6 +134,36 @@ describe("Panes", () => {
     expect(result.output).toContain("┤");
   });
 
+  it("column with nested row: compound sep has ┬/┴ junctions where nested columns meet the outer caps", () => {
+    // Regression for the symmetric compound path added 2026-04-24. Before
+    // that fix, the outer column's sep row was a plain ├────┤ with no
+    // junction at the nested row's vertical separator position.
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "column", borderStyle: "single", width: 30, height: 10 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "Full")),
+        React.createElement(
+          Panes,
+          { direction: "row", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "BL")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "BR")),
+        ),
+      ),
+      { width: 30, height: 10 },
+    );
+    expect(result.hasText("Full")).toBe(true);
+    expect(result.hasText("BL")).toBe(true);
+    expect(result.hasText("BR")).toBe(true);
+    // Top-side junction character for nested row (nestedOnTop=false case
+    // uses jc.top=┬ on the compound sep row between Full and the row pair).
+    expect(result.output).toContain("┬");
+    // Bottom cap also has ┴ where the nested row's vertical sep meets it.
+    expect(result.output).toContain("┴");
+    // No double-vertical seams inside the nested row
+    expect(result.output.includes("││")).toBe(false);
+  });
+
   it("prints output for visual inspection", () => {
     const row = renderForTest(
       React.createElement(
@@ -160,6 +190,77 @@ describe("Panes", () => {
     console.log("── Panes column ───────────────────────────────────");
     console.log(col.output);
     expect(true).toBe(true);
+  });
+});
+
+describe("Panes edge cases", () => {
+  it("row: 4 children all render", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "row", borderStyle: "single", width: 60, height: 6 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "A")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "B")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "C")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "D")),
+      ),
+      { width: 60, height: 6 },
+    );
+    expect(result.hasText("A")).toBe(true);
+    expect(result.hasText("B")).toBe(true);
+    expect(result.hasText("C")).toBe(true);
+    expect(result.hasText("D")).toBe(true);
+    expect(result.output.includes("││")).toBe(false);
+  });
+
+  it("column: 4 children all render", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "column", borderStyle: "single", width: 20, height: 20 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "A1")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "B1")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "C1")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "D1")),
+      ),
+      { width: 20, height: 20 },
+    );
+    expect(result.hasText("A1")).toBe(true);
+    expect(result.hasText("B1")).toBe(true);
+    expect(result.hasText("C1")).toBe(true);
+    expect(result.hasText("D1")).toBe(true);
+  });
+
+  it("borderStyle=none: labels render, no border chars", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "row", borderStyle: "none", width: 30, height: 5 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "NL")),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "NR")),
+      ),
+      { width: 30, height: 5 },
+    );
+    expect(result.hasText("NL")).toBe(true);
+    expect(result.hasText("NR")).toBe(true);
+    // no box-drawing chars from panes
+    expect(result.output.includes("│")).toBe(false);
+    expect(result.output.includes("─")).toBe(false);
+  });
+
+  it("empty Panes renders without crash", () => {
+    // Panes with zero children takes the degenerate path. Test passes if
+    // render did not throw; line count may legitimately be 0 when no borders
+    // or content are drawn.
+    expect(() => {
+      renderForTest(
+        React.createElement(
+          Panes,
+          { direction: "row", borderStyle: "single", width: 20, height: 5 },
+        ),
+        { width: 20, height: 5 },
+      );
+    }).not.toThrow();
   });
 });
 

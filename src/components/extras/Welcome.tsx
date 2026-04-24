@@ -9,6 +9,7 @@ import { Gradient } from "../effects/Gradient.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
+import { INPUT_PRIORITY } from "../../input/priorities.js";
 
 /** A selectable action shown in the recent items section. */
 export interface WelcomeAction {
@@ -131,7 +132,7 @@ export const Welcome = React.memo(function Welcome(rawProps: WelcomeProps): Reac
     onDismissRef.current?.();
   }, [forceUpdate]);
 
-  useInput(handleInput, { isActive: visible, priority: 500 });
+  useInput(handleInput, { isActive: visible, priority: INPUT_PRIORITY.INLINE_OVERLAY });
 
   if (!visible) return null;
 
