@@ -152,3 +152,89 @@ describe("reorderReducer — live motion", () => {
     expect(c.scratchNodes?.map((n) => n.key)).toEqual(["b", "c", "a"]);
   });
 });
+
+describe("reorderReducer — commit + stash", () => {
+  it("live commit fires change with nextNodes, expandedKeys, movedKeys, mode", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "b1" }, nodes);
+    const b = reorderReducer(a.state, { type: "outdent" }, nodes, undefined, a.scratchNodes, a.ephemeralExpanded);
+    const c = reorderReducer(b.state, { type: "commit", cursorKey: "b1" }, nodes, undefined, b.scratchNodes, b.ephemeralExpanded);
+    expect(c.state.phase).toBe("idle");
+    expect(c.change?.nextNodes.map((n) => n.key)).toEqual(["a", "b", "b1", "c"]);
+    expect(c.change?.expandedKeys).toEqual([]);
+    expect(c.change?.movedKeys).toEqual(["b1"]);
+    expect(c.change?.mode).toBe("live");
+    expect(c.change?.targetParentKey).toBeNull();
+    expect(c.change?.targetIndex).toBe(2);
+    expect(c.change?.previousParents).toEqual({ b1: "b" });
+    expect(c.change?.previousIndices).toEqual({ b1: 0 });
+  });
+
+  it("live commit surfaces ephemerally expanded folders in expandedKeys", () => {
+    const collapsed: TreeNode[] = [
+      { key: "a", label: "A" },
+      { key: "b", label: "B", expanded: false, children: [{ key: "b1", label: "B1" }] },
+      { key: "c", label: "C" },
+    ];
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, collapsed);
+    const b = reorderReducer(a.state, { type: "indent" }, collapsed, undefined, a.scratchNodes, a.ephemeralExpanded);
+    const c = reorderReducer(b.state, { type: "commit", cursorKey: "c" }, collapsed, undefined, b.scratchNodes, b.ephemeralExpanded);
+    expect(c.change?.expandedKeys).toEqual(["b"]);
+  });
+
+  it("stash commit splices marked group after cursor as siblings", () => {
+    let s = reorderReducer(initialReorderState, { type: "toggleMark", key: "a" }, nodes);
+    s = reorderReducer(s.state, { type: "toggleMark", key: "c" }, nodes);
+    s = reorderReducer(s.state, { type: "grabStash", cursorKey: "a" }, nodes);
+    const committed = reorderReducer(s.state, { type: "commit", cursorKey: "b" }, nodes);
+    expect(committed.change?.nextNodes.map((n) => n.key)).toEqual(["b", "a", "c"]);
+    expect(committed.change?.mode).toBe("stash");
+    expect(committed.change?.movedKeys).toEqual(["a", "c"]);
+    expect(committed.change?.targetParentKey).toBeNull();
+    expect(committed.change?.expandedKeys).toEqual([]);
+  });
+
+  it("stash skips ancestors-of-marked when lifting (topmost only)", () => {
+    const deep: TreeNode[] = [
+      { key: "p", label: "P", expanded: true, children: [{ key: "c", label: "C" }] },
+      { key: "x", label: "X" },
+    ];
+    let s = reorderReducer(initialReorderState, { type: "toggleMark", key: "p" }, deep);
+    s = reorderReducer(s.state, { type: "toggleMark", key: "c" }, deep);
+    s = reorderReducer(s.state, { type: "grabStash", cursorKey: "p" }, deep);
+    if (s.state.phase === "grabbed") expect(s.state.moving).toEqual(["p"]);
+  });
+
+  it("stash cursor on collapsed folder drops group AFTER folder (sibling, not child)", () => {
+    const coll: TreeNode[] = [
+      { key: "a", label: "A" },
+      { key: "f", label: "F", expanded: false, children: [{ key: "f1", label: "F1" }] },
+    ];
+    let s = reorderReducer(initialReorderState, { type: "toggleMark", key: "a" }, coll);
+    s = reorderReducer(s.state, { type: "grabStash", cursorKey: "a" }, coll);
+    const committed = reorderReducer(s.state, { type: "commit", cursorKey: "f" }, coll);
+    expect(committed.change?.nextNodes.map((n) => n.key)).toEqual(["f", "a"]);
+    expect(committed.change?.targetParentKey).toBeNull();
+    // f still has its original (collapsed) children intact
+    expect(committed.change?.nextNodes[0]?.children?.map((n) => n.key)).toEqual(["f1"]);
+  });
+
+  it("stash cursor on a marked row drops group at end of cursor's original parent (first unmarked after cursor = none)", () => {
+    // Mark a + c (both root-level). Cursor = a (which is itself marked).
+    // Expected: group lifted; drop at end of cursor's original parent (root).
+    let s = reorderReducer(initialReorderState, { type: "toggleMark", key: "a" }, nodes);
+    s = reorderReducer(s.state, { type: "toggleMark", key: "c" }, nodes);
+    s = reorderReducer(s.state, { type: "grabStash", cursorKey: "a" }, nodes);
+    const committed = reorderReducer(s.state, { type: "commit", cursorKey: "a" }, nodes);
+    // Lift a + c. Drop at end of root (only b remains, unmarked, before drop). Final order: b, a, c.
+    expect(committed.change?.nextNodes.map((n) => n.key)).toEqual(["b", "a", "c"]);
+  });
+
+  it("motion actions during stash are no-ops", () => {
+    let s = reorderReducer(initialReorderState, { type: "toggleMark", key: "a" }, nodes);
+    s = reorderReducer(s.state, { type: "grabStash", cursorKey: "a" }, nodes);
+    const prior = s;
+    const moved = reorderReducer(s.state, { type: "moveDown" }, nodes);
+    expect(moved.state).toEqual(prior.state);
+    expect(moved.scratchNodes).toBeUndefined();
+  });
+});

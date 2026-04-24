@@ -58,7 +58,14 @@ export function reorderReducer(
       return handleLiveMotion(state, action, nodes, canMove, priorScratch, priorEphemeral);
     }
 
-    // commit handled in a later task; fall-through no-op for now.
+    if (action.type === "commit") {
+      if (state.mode === "live") {
+        return commitLive(state, action.cursorKey, nodes, priorScratch, priorEphemeral);
+      }
+      return commitStash(state, action.cursorKey, nodes);
+    }
+
+    // Motion during stash is a no-op (cursor lives on the Tree component).
     return { state };
   }
 
@@ -187,6 +194,175 @@ function handleLiveMotion(
   }
 
   return build(baseline, priorEphemeral);
+}
+
+function commitLive(
+  state: { phase: "grabbed"; mode: "live" | "stash"; moving: string[] },
+  _cursorKey: string,
+  nodes: TreeNode[],
+  priorScratch: TreeNode[] | undefined,
+  priorEphemeral: string[] | undefined,
+): ReorderStep {
+  const nextNodes = priorScratch ?? nodes;
+  const movingKey = state.moving[0];
+  if (!movingKey) {
+    return { state: { phase: "idle" } };
+  }
+  const finalPath = findPath(nextNodes, movingKey);
+  const origPath = findPath(nodes, movingKey);
+  if (!finalPath || !origPath) {
+    return { state: { phase: "idle" } };
+  }
+  const finalParentPath = finalPath.slice(0, -1);
+  const targetParentKey =
+    finalParentPath.length === 0 ? null : getNodeAtPath(nextNodes, finalParentPath)?.key ?? null;
+  const targetIndex = finalPath[finalPath.length - 1]!;
+  const origParentPath = origPath.slice(0, -1);
+  const origParentKey =
+    origParentPath.length === 0 ? null : getNodeAtPath(nodes, origParentPath)?.key ?? null;
+  const origIdx = origPath[origPath.length - 1]!;
+  const change: ReorderChange = {
+    movedKeys: [movingKey],
+    targetParentKey,
+    targetIndex,
+    mode: "live",
+    previousParents: { [movingKey]: origParentKey },
+    previousIndices: { [movingKey]: origIdx },
+    nextNodes,
+    expandedKeys: priorEphemeral ?? [],
+  };
+  return { state: { phase: "idle" }, change };
+}
+
+function commitStash(
+  state: { phase: "grabbed"; mode: "live" | "stash"; moving: string[] },
+  cursorKey: string,
+  nodes: TreeNode[],
+): ReorderStep {
+  const moving = state.moving;
+  const movingSet = new Set(moving);
+
+  // Record original positions (pre-lift) from `nodes`.
+  const previousParents: Record<string, string | null> = {};
+  const previousIndices: Record<string, number> = {};
+  const liftedMap = new Map<string, TreeNode>();
+  for (const k of moving) {
+    const p = findPath(nodes, k);
+    if (!p) continue;
+    const parentPath = p.slice(0, -1);
+    const parentKey =
+      parentPath.length === 0 ? null : getNodeAtPath(nodes, parentPath)?.key ?? null;
+    const idx = p[p.length - 1]!;
+    previousParents[k] = parentKey;
+    previousIndices[k] = idx;
+    const node = getNodeAtPath(nodes, p);
+    if (node) liftedMap.set(k, node);
+  }
+
+  // Lift: clone tree, removing any node whose key is in movingSet.
+  const postLift = liftKeys(nodes, movingSet);
+
+  // Compute drop target.
+  const cursorOrigPath = findPath(nodes, cursorKey);
+  let targetParentKey: string | null;
+  let targetIndex: number;
+
+  if (!cursorOrigPath) {
+    // Cursor not found; drop at end of root.
+    targetParentKey = null;
+    targetIndex = postLift.length;
+  } else if (movingSet.has(cursorKey)) {
+    // Cursor itself is lifted; drop at end of cursor's pre-lift parent.
+    const origParentPath = cursorOrigPath.slice(0, -1);
+    const origParentKey =
+      origParentPath.length === 0 ? null : getNodeAtPath(nodes, origParentPath)?.key ?? null;
+    targetParentKey = origParentKey;
+    if (origParentKey === null) {
+      targetIndex = postLift.length;
+    } else {
+      const parentInPostLift = findPath(postLift, origParentKey);
+      const parentNode = parentInPostLift ? getNodeAtPath(postLift, parentInPostLift) : null;
+      targetIndex = parentNode?.children?.length ?? 0;
+    }
+  } else {
+    // Cursor survives; drop immediately after cursor within its post-lift parent.
+    const cursorPostPath = findPath(postLift, cursorKey);
+    if (!cursorPostPath) {
+      targetParentKey = null;
+      targetIndex = postLift.length;
+    } else {
+      const parentPath = cursorPostPath.slice(0, -1);
+      const cursorIdx = cursorPostPath[cursorPostPath.length - 1]!;
+      targetParentKey =
+        parentPath.length === 0 ? null : getNodeAtPath(postLift, parentPath)?.key ?? null;
+      targetIndex = cursorIdx + 1;
+    }
+  }
+
+  // Splice lifted nodes into target, preserving mark order.
+  const liftedInOrder: TreeNode[] = [];
+  for (const k of moving) {
+    const n = liftedMap.get(k);
+    if (n) liftedInOrder.push(n);
+  }
+  let nextNodes = postLift;
+  if (targetParentKey === null) {
+    const insertPath = [targetIndex];
+    let cur = nextNodes;
+    for (let i = 0; i < liftedInOrder.length; i++) {
+      cur = insertAtPath(cur, [insertPath[0]! + i], liftedInOrder[i]!);
+    }
+    nextNodes = cur;
+  } else {
+    const parentPath = findPath(nextNodes, targetParentKey);
+    if (!parentPath) {
+      // Fallback: append to root.
+      let cur = nextNodes;
+      for (let i = 0; i < liftedInOrder.length; i++) {
+        cur = insertAtPath(cur, [cur.length], liftedInOrder[i]!);
+      }
+      nextNodes = cur;
+    } else {
+      // Ensure parent has a children array.
+      const parentNode = getNodeAtPath(nextNodes, parentPath);
+      if (parentNode && !Array.isArray(parentNode.children)) {
+        nextNodes = makeFolder(nextNodes, targetParentKey);
+      }
+      let cur = nextNodes;
+      for (let i = 0; i < liftedInOrder.length; i++) {
+        cur = insertAtPath(cur, [...parentPath, targetIndex + i], liftedInOrder[i]!);
+      }
+      nextNodes = cur;
+    }
+  }
+
+  const change: ReorderChange = {
+    movedKeys: moving,
+    targetParentKey,
+    targetIndex,
+    mode: "stash",
+    previousParents,
+    previousIndices,
+    nextNodes,
+    expandedKeys: [],
+  };
+  return { state: { phase: "idle" }, change };
+}
+
+function liftKeys(tree: TreeNode[], keys: Set<string>): TreeNode[] {
+  const result: TreeNode[] = [];
+  for (const n of tree) {
+    if (keys.has(n.key)) continue;
+    if (n.children) {
+      const nextChildren = liftKeys(n.children, keys);
+      if (nextChildren !== n.children) {
+        result.push({ ...n, children: nextChildren });
+        continue;
+      }
+    }
+    result.push(n);
+  }
+  return result;
 }
 
 function findPath(tree: TreeNode[], key: string): number[] | null {
