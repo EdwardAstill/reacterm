@@ -1,6 +1,14 @@
 import { describe, it, expect } from "vitest";
+import React from "react";
+import { renderForTest } from "../testing/index.js";
+import { Tree } from "../components/index.js";
 import { reorderReducer, initialReorderState } from "../components/data/treeReorderReducer.js";
 import type { TreeNode } from "../components/data/Tree.js";
+import type {
+  TreeController,
+  ReorderChange,
+  ReorderState,
+} from "../components/data/Tree.types.js";
 
 const nodes: TreeNode[] = [
   { key: "a", label: "A" },
@@ -236,5 +244,116 @@ describe("reorderReducer — commit + stash", () => {
     const moved = reorderReducer(s.state, { type: "moveDown" }, nodes);
     expect(moved.state).toEqual(prior.state);
     expect(moved.scratchNodes).toBeUndefined();
+  });
+});
+
+describe("Tree integration — controller + renderNode flags", () => {
+  it("controller.toggleMark surfaces isMarked to renderNode", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const flags: Record<string, { m?: boolean; g?: boolean }> = {};
+    const element = React.createElement(Tree, {
+      nodes,
+      reorderable: true,
+      controller: ctrl,
+      renderNode: (n: TreeNode, s: { isMarked: boolean; isGrabbed: boolean }) => {
+        flags[n.key] = { m: s.isMarked, g: s.isGrabbed };
+        return React.createElement("tui-text", {}, n.label);
+      },
+    });
+    const result = renderForTest(element, { width: 40, height: 10 });
+    expect(ctrl.current).not.toBeNull();
+    ctrl.current!.toggleMark("a");
+    result.rerender(element);
+    expect(flags.a?.m).toBe(true);
+    expect(flags.b?.m ?? false).toBe(false);
+  });
+
+  it("live grab + moveDown + commit fires onReorder with correct nextNodes", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    let change: ReorderChange | null = null;
+    renderForTest(
+      React.createElement(Tree, {
+        nodes,
+        reorderable: true,
+        controller: ctrl,
+        onReorder: (c: ReorderChange) => { change = c; },
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.grabLive("b1");
+    ctrl.current!.moveDown();
+    ctrl.current!.commit();
+    expect(change).not.toBeNull();
+    expect(change!.nextNodes[1]!.children!.map((n) => n.key)).toEqual(["b2", "b1"]);
+    expect(change!.mode).toBe("live");
+  });
+
+  it("cancel discards scratch and returns state to idle", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const states: string[] = [];
+    renderForTest(
+      React.createElement(Tree, {
+        nodes,
+        reorderable: true,
+        controller: ctrl,
+        onStateChange: (s: ReorderState) => states.push(s.phase),
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.grabLive("a");
+    ctrl.current!.moveDown();
+    ctrl.current!.cancel();
+    expect(states.at(-1)).toBe("idle");
+  });
+
+  it("grabLive returns false when >1 marked", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    renderForTest(
+      React.createElement(Tree, { nodes, reorderable: true, controller: ctrl }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.toggleMark("a");
+    ctrl.current!.toggleMark("c");
+    expect(ctrl.current!.grabLive("a")).toBe(false);
+  });
+
+  it("onStateChange fires on phase transitions", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    const phases: string[] = [];
+    renderForTest(
+      React.createElement(Tree, {
+        nodes,
+        reorderable: true,
+        controller: ctrl,
+        onStateChange: (s: ReorderState) => phases.push(s.phase),
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.toggleMark("a");
+    ctrl.current!.grabStash();
+    ctrl.current!.commit();
+    expect(phases).toContain("marking");
+    expect(phases).toContain("grabbed");
+    expect(phases.at(-1)).toBe("idle");
+  });
+
+  it("stash commit via controller reorders correctly", () => {
+    const ctrl: { current: TreeController | null } = { current: null };
+    let change: ReorderChange | null = null;
+    renderForTest(
+      React.createElement(Tree, {
+        nodes,
+        reorderable: true,
+        controller: ctrl,
+        onReorder: (c: ReorderChange) => { change = c; },
+      }),
+      { width: 40, height: 10 },
+    );
+    ctrl.current!.toggleMark("a");
+    ctrl.current!.toggleMark("c");
+    ctrl.current!.grabStash();
+    ctrl.current!.commit();
+    expect(change).not.toBeNull();
+    expect(change!.movedKeys).toEqual(["a", "c"]);
   });
 });

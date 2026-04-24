@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useTui } from "../../context/TuiContext.js";
@@ -6,6 +6,17 @@ import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
+import {
+  reorderReducer,
+  initialReorderState,
+  type ReorderAction,
+} from "./treeReorderReducer.js";
+import type {
+  MoveContext,
+  ReorderChange,
+  ReorderState,
+  TreeController,
+} from "./Tree.types.js";
 
 const MAX_TREE_DEPTH = 100;
 
@@ -23,6 +34,12 @@ export interface TreeRenderState {
   isHighlighted: boolean;
   isSelected: boolean;
   depth: number;
+  /** True when the node's key is in the current mark set (marking phase only). */
+  isMarked: boolean;
+  /** True when the node is currently being moved (grabbed:live or grabbed:stash). */
+  isGrabbed: boolean;
+  /** Reserved for future stash drop-target rendering. Always false in v1. */
+  isDropTarget: boolean;
 }
 
 export interface TreeProps {
@@ -37,6 +54,20 @@ export interface TreeProps {
   maxVisible?: number;
   /** Custom renderer for each tree node. */
   renderNode?: (node: TreeNode, state: TreeRenderState) => React.ReactNode;
+  /** Enables reorder mode; when false (default), controller + reorder callbacks are inert. */
+  reorderable?: boolean;
+  /** Optional predicate consulted per motion step; rejection makes the step a no-op. */
+  canMove?: (ctx: MoveContext) => boolean;
+  /** Fires once per completed reorder (on commit). */
+  onReorder?: (change: ReorderChange) => void;
+  /** Fires on every reorder state transition. */
+  onStateChange?: (state: ReorderState) => void;
+  /**
+   * Ref-holding prop (not React's `ref` keyword) populated with an imperative
+   * controller handle when `reorderable` is true. Apps bind their own keys to
+   * these methods — Tree adds no default keybindings for reorder.
+   */
+  controller?: { current: TreeController | null };
 }
 
 interface FlatNode {
@@ -82,13 +113,13 @@ function buildPrefix(entry: FlatNode): string {
     if (entry.parentIsLast[d]) {
       prefix += "   ";
     } else {
-      prefix += "\u2502  "; // │
+      prefix += "│  "; // │
     }
   }
   if (entry.depth > 0) {
     prefix =
       prefix.slice(0, -3) +
-      (entry.isLast ? "\u2514\u2500\u2500" : "\u251C\u2500\u2500"); // └── or ├──
+      (entry.isLast ? "└──" : "├──"); // └── or ├──
   }
   return prefix;
 }
@@ -106,26 +137,188 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
     color = colors.brand.primary,
     isFocused = false,
     maxVisible,
+    reorderable = false,
+    canMove,
+    onReorder,
+    onStateChange,
+    controller: controllerProp,
   } = props;
 
   const { requestRender } = useTui();
   const highlightRef = useRef(0);
   const scrollOffsetRef = useRef(0);
 
-  if (nodes.length === 0) {
-    return React.createElement(
-      "tui-text",
-      { color: colors.text.dim, dim: true },
-      "No items",
-    );
+  // Reorder state: useState drives re-renders; stateRef mirrors the current
+  // phase synchronously so controller methods invoked back-to-back outside of
+  // the React lifecycle see fresh values (setState is batched / async).
+  const [reorderState, setReorderStateBase] = useState<ReorderState>(initialReorderState);
+  const stateRef = useRef<ReorderState>(reorderState);
+  const scratchRef = useRef<TreeNode[] | undefined>(undefined);
+  const ephemeralRef = useRef<string[] | undefined>(undefined);
+  const nodesRef = useRef<TreeNode[]>(nodes);
+
+  const onStateChangeRef = useRef(onStateChange);
+  onStateChangeRef.current = onStateChange;
+
+  const setReorderState = useCallback((next: ReorderState) => {
+    const prev = stateRef.current;
+    stateRef.current = next;
+    setReorderStateBase(next);
+    if (prev !== next) {
+      onStateChangeRef.current?.(next);
+    }
+  }, []);
+
+  // External nodes-prop change while grabbed → abort grab.
+  if (reorderable && nodesRef.current !== nodes && reorderState.phase === "grabbed") {
+    scratchRef.current = undefined;
+    ephemeralRef.current = undefined;
+    // Defer state update to after render; do not mutate during render.
+    // Using a microtask-style flip via setState in an effect is cleanest.
+    // Handled via the effect below.
   }
 
-  const flatNodes = flattenVisible(nodes, 0, []);
+  // Sync phase -> idle when nodes change during grab.
+  useEffect(() => {
+    if (!reorderable) return;
+    if (nodesRef.current !== nodes && reorderState.phase === "grabbed") {
+      scratchRef.current = undefined;
+      ephemeralRef.current = undefined;
+      setReorderState({ phase: "idle" });
+    }
+    nodesRef.current = nodes;
+  }, [nodes, reorderable, reorderState.phase]);
+
+  // Effective nodes: scratch when grabbed (and present), else prop nodes.
+  const effectiveNodes =
+    reorderable && reorderState.phase === "grabbed" && scratchRef.current !== undefined
+      ? scratchRef.current
+      : nodes;
+
+  // Flat + derived structures (computed every render; cheap for typical trees).
+  const flatNodes = flattenVisible(effectiveNodes, 0, []);
   const visibleKeys = collectVisibleKeysFromFlat(flatNodes);
   const nodeMap = buildNodeMap(flatNodes);
   const selectedIndex = selectedKey !== undefined
     ? flatNodes.findIndex((entry) => entry.node.key === selectedKey)
     : -1;
+
+  // Bundle fresh values for controller methods to read on every invocation.
+  const liveRef = useRef({
+    nodes,
+    visibleKeys,
+    flatNodes,
+    canMove,
+    onReorder,
+  });
+  liveRef.current = {
+    nodes,
+    visibleKeys,
+    flatNodes,
+    canMove,
+    onReorder,
+  };
+
+  const dispatchAction = useCallback(
+    (action: ReorderAction): { rejected?: boolean; change?: ReorderChange } => {
+      const live = liveRef.current;
+      const step = reorderReducer(
+        stateRef.current,
+        action,
+        live.nodes,
+        live.canMove,
+        scratchRef.current,
+        ephemeralRef.current,
+      );
+      if (step.rejected) {
+        return { rejected: true };
+      }
+      // Update scratch + ephemeral refs based on step.
+      if (step.state.phase === "grabbed") {
+        if (step.scratchNodes !== undefined) {
+          scratchRef.current = step.scratchNodes;
+        }
+        // Only overwrite ephemeral when reducer returns one explicitly.
+        if (step.ephemeralExpanded !== undefined) {
+          ephemeralRef.current = step.ephemeralExpanded;
+        }
+      } else {
+        // Transition out of grabbed: clear scratch + ephemeral.
+        scratchRef.current = undefined;
+        ephemeralRef.current = undefined;
+      }
+      setReorderState(step.state);
+      return step.change !== undefined ? { change: step.change } : {};
+    },
+    [],
+  );
+
+  const getCursorKey = useCallback((): string | null => {
+    const live = liveRef.current;
+    return live.visibleKeys[highlightRef.current] ?? null;
+  }, []);
+
+  // Build stable controller handle; read fresh state via liveRef.
+  const controller = useRef<TreeController | null>(null);
+  if (controller.current === null) {
+    controller.current = {
+      toggleMark(key: string): void {
+        dispatchAction({ type: "toggleMark", key });
+      },
+      clearMarks(): void {
+        dispatchAction({ type: "clearMarks" });
+      },
+      getMarked(): string[] {
+        const s = stateRef.current;
+        return s.phase === "marking" ? [...s.marked] : [];
+      },
+      grabLive(key?: string): boolean {
+        const k = key ?? getCursorKey();
+        if (!k) return false;
+        const result = dispatchAction({ type: "grabLive", key: k });
+        return !result.rejected;
+      },
+      grabStash(): boolean {
+        const cursorKey = getCursorKey() ?? "";
+        const result = dispatchAction({ type: "grabStash", cursorKey });
+        return !result.rejected;
+      },
+      commit(): void {
+        const cursorKey = getCursorKey() ?? "";
+        const { change } = dispatchAction({ type: "commit", cursorKey });
+        if (change) {
+          liveRef.current.onReorder?.(change);
+        }
+      },
+      cancel(): void {
+        dispatchAction({ type: "cancel" });
+      },
+      moveUp(): void {
+        dispatchAction({ type: "moveUp" });
+      },
+      moveDown(): void {
+        dispatchAction({ type: "moveDown" });
+      },
+      indent(): void {
+        dispatchAction({ type: "indent" });
+      },
+      outdent(): void {
+        dispatchAction({ type: "outdent" });
+      },
+      getCursorKey,
+    };
+  }
+
+  // Publish controller handle to the consumer's ref-holding prop.
+  useLayoutEffect(() => {
+    if (!reorderable || !controllerProp) return;
+    controllerProp.current = controller.current;
+    return () => {
+      if (controllerProp.current === controller.current) {
+        controllerProp.current = null;
+      }
+    };
+  }, [reorderable, controllerProp]);
 
   if (selectedIndex >= 0) {
     highlightRef.current = selectedIndex;
@@ -137,6 +330,14 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   }
   if (highlightRef.current < 0) {
     highlightRef.current = 0;
+  }
+
+  if (nodes.length === 0) {
+    return React.createElement(
+      "tui-text",
+      { color: colors.text.dim, dim: true },
+      "No items",
+    );
   }
 
   // Virtual scrolling
@@ -174,6 +375,20 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
 
   const handleInput = useCallback(
     (event: KeyEvent) => {
+      // Gate native nav keys during grabbed; app owns those through controller.
+      if (reorderState.phase === "grabbed") {
+        if (
+          event.key === "up" ||
+          event.key === "down" ||
+          event.key === "left" ||
+          event.key === "right" ||
+          event.key === "space" ||
+          event.key === "return"
+        ) {
+          return;
+        }
+      }
+
       if (visibleKeys.length === 0) return;
 
       if (event.key === "up") {
@@ -216,7 +431,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
         }
       }
     },
-    [visibleKeys, nodeMap, onToggle, onSelect, requestRender, setHighlight, triggerSelect],
+    [visibleKeys, nodeMap, onToggle, onSelect, requestRender, setHighlight, triggerSelect, reorderState.phase],
   );
 
   useInput(handleInput, { isActive: isFocused });
@@ -230,6 +445,8 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
   const mouseTarget = useMouseTarget({
     disabled: flatNodes.length === 0,
     onMouse: (event, localX, localY) => {
+      // During grab, target still registers for layout/focus but clicks are no-ops.
+      if (reorderState.phase === "grabbed") return;
       if (event.button !== "left" || event.action !== "press") return;
       let rowOffset = localY;
       if (topOverflowRows === 1) {
@@ -266,6 +483,10 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
     },
   });
 
+  // Compute mark + moving sets for renderNode flags.
+  const markedSet = reorderState.phase === "marking" ? new Set(reorderState.marked) : null;
+  const movingSet = reorderState.phase === "grabbed" ? new Set(reorderState.moving) : null;
+
   const allElements: React.ReactElement[] = [];
 
   // Overflow indicator at top
@@ -274,7 +495,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       React.createElement(
         "tui-text",
         { key: "__scroll-up", color: colors.text.dim, dim: true },
-        `  \u25B2 ${visibleStart} more above`,
+        `  ▲ ${visibleStart} more above`,
       ),
     );
   }
@@ -290,8 +511,8 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
     // Expand/collapse marker
     const marker = hasChildren
       ? entry.node.expanded
-        ? "\u25BE" // ▾
-        : "\u25B8" // ▸
+        ? "▾" // ▾
+        : "▸" // ▸
       : " ";
 
     const parts: React.ReactElement[] = [];
@@ -327,6 +548,9 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       );
     }
 
+    const isMarked = markedSet?.has(entry.node.key) ?? false;
+    const isGrabbed = movingSet?.has(entry.node.key) ?? false;
+
     if (props.renderNode) {
       allElements.push(
         React.createElement(
@@ -337,6 +561,9 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
             isHighlighted,
             isSelected,
             depth: entry.depth,
+            isMarked,
+            isGrabbed,
+            isDropTarget: false,
           }),
         ),
       );
@@ -373,7 +600,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       React.createElement(
         "tui-text",
         { key: "__scroll-down", color: colors.text.dim, dim: true },
-        `  \u25BC ${flatNodes.length - visibleEnd} more below`,
+        `  ▼ ${flatNodes.length - visibleEnd} more below`,
       ),
     );
   }
