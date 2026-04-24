@@ -129,8 +129,6 @@ describe("reorderReducer — live motion", () => {
   });
 
   it("indent into leaf turns it into a folder (canMove permits)", () => {
-    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, nodes);
-    // prev sibling of "c" at root is "b" (a folder); try a different setup
     const leafNodes: TreeNode[] = [
       { key: "x", label: "X" },
       { key: "y", label: "Y" },
