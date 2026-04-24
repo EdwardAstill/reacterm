@@ -69,3 +69,88 @@ describe("reorderReducer — idle / marking / grab lifecycle", () => {
     expect(result.state.phase).toBe("idle");
   });
 });
+
+describe("reorderReducer — live motion", () => {
+  it("moveDown swaps siblings under same parent", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "b1" }, nodes);
+    const b = reorderReducer(a.state, { type: "moveDown" }, nodes);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b2", "b1"]);
+  });
+
+  it("moveUp at first-sibling boundary is no-op", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "b1" }, nodes);
+    const b = reorderReducer(a.state, { type: "moveUp" }, nodes);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b1", "b2"]);
+  });
+
+  it("moveDown at last-sibling boundary is no-op", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, nodes);
+    const b = reorderReducer(a.state, { type: "moveDown" }, nodes);
+    expect(b.scratchNodes?.map((n) => n.key)).toEqual(["a", "b", "c"]);
+  });
+
+  it("outdent at root is no-op", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "a" }, nodes);
+    const b = reorderReducer(a.state, { type: "outdent" }, nodes);
+    expect(b.scratchNodes?.map((n) => n.key)).toEqual(["a", "b", "c"]);
+  });
+
+  it("outdent from nested places grabbed node after its parent", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "b1" }, nodes);
+    const b = reorderReducer(a.state, { type: "outdent" }, nodes);
+    expect(b.scratchNodes?.map((n) => n.key)).toEqual(["a", "b", "b1", "c"]);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b2"]);
+  });
+
+  it("indent into prev-sibling folder places grabbed as last child", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, nodes);
+    const b = reorderReducer(a.state, { type: "indent" }, nodes);
+    expect(b.scratchNodes?.map((n) => n.key)).toEqual(["a", "b"]);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b1", "b2", "c"]);
+  });
+
+  it("indent with no prev sibling is no-op", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "a" }, nodes);
+    const b = reorderReducer(a.state, { type: "indent" }, nodes);
+    expect(b.scratchNodes?.map((n) => n.key)).toEqual(["a", "b", "c"]);
+  });
+
+  it("indent into collapsed folder auto-expands ephemerally", () => {
+    const collapsed: TreeNode[] = [
+      { key: "a", label: "A" },
+      { key: "b", label: "B", expanded: false, children: [{ key: "b1", label: "B1" }] },
+      { key: "c", label: "C" },
+    ];
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, collapsed);
+    const b = reorderReducer(a.state, { type: "indent" }, collapsed);
+    expect(b.ephemeralExpanded).toEqual(["b"]);
+    expect(b.scratchNodes?.[1]?.expanded).toBe(true);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b1", "c"]);
+  });
+
+  it("indent into leaf turns it into a folder (canMove permits)", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "c" }, nodes);
+    // prev sibling of "c" at root is "b" (a folder); try a different setup
+    const leafNodes: TreeNode[] = [
+      { key: "x", label: "X" },
+      { key: "y", label: "Y" },
+    ];
+    const g = reorderReducer(initialReorderState, { type: "grabLive", key: "y" }, leafNodes);
+    const r = reorderReducer(g.state, { type: "indent" }, leafNodes);
+    expect(r.scratchNodes?.[0]?.children?.map((n) => n.key)).toEqual(["y"]);
+    expect(r.scratchNodes?.length).toBe(1);
+  });
+
+  it("canMove=false makes motion a no-op", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "b1" }, nodes);
+    const b = reorderReducer(a.state, { type: "moveDown" }, nodes, () => false);
+    expect(b.scratchNodes?.[1]?.children?.map((n) => n.key)).toEqual(["b1", "b2"]);
+  });
+
+  it("repeat motion threads through priorScratch", () => {
+    const a = reorderReducer(initialReorderState, { type: "grabLive", key: "a" }, nodes);
+    const b = reorderReducer(a.state, { type: "moveDown" }, nodes);
+    const c = reorderReducer(b.state, { type: "moveDown" }, nodes, undefined, b.scratchNodes, b.ephemeralExpanded);
+    expect(c.scratchNodes?.map((n) => n.key)).toEqual(["b", "c", "a"]);
+  });
+});
