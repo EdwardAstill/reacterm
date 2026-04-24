@@ -255,6 +255,84 @@ function FileTree({ rootNodes }: { rootNodes: TreeNode[] }) {
 
 This is the right shape for a dock/sidebar sections panel: `Tree` handles hierarchy, selection, and click/keyboard navigation. Your app code decides what selection means.
 
+#### Reorder
+
+`Tree` supports user-driven reordering through an imperative controller. The consuming app owns the keybindings — Tree ships no default reorder keys, so you wire `useInput` (or any other input source) to controller methods.
+
+Two modes are supported:
+
+- **live** — a single grabbed node; the tree restructures as the user moves it (up/down between siblings, indent into previous sibling, outdent to grandparent).
+- **stash** — mark any non-contiguous set of nodes, then splice them as a group at the cursor on commit (yazi-style lift + paste).
+
+**New props:**
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `reorderable` | `boolean` | `false` | Enables the reorder state machine and controller wiring |
+| `canMove` | `(ctx: MoveContext) => boolean` | -- | Consulted per motion step; returning `false` makes the step a no-op. Not re-checked at commit |
+| `onReorder` | `(change: ReorderChange) => void` | -- | Fires exactly once per commit with the full reordered tree |
+| `onStateChange` | `(state: ReorderState) => void` | -- | Push notifications for status-bar UI (`idle` / `marking` / `grabbed`) |
+| `controller` | `{ current: TreeController \| null }` | -- | Ref-holding prop Tree assigns the imperative handle into |
+
+`controller` is a ref-holding prop, not React's `ref` keyword — pass a `useRef<TreeController>(null)` directly.
+
+**`TreeController` (summary):**
+
+- Marking: `toggleMark(key)`, `clearMarks()`, `getMarked()`
+- Grab lifecycle: `grabLive(key?)`, `grabStash()`, `commit()`, `cancel()`
+- Motion (valid only while grabbed): `moveUp()`, `moveDown()`, `indent()`, `outdent()`
+- Inspection: `getCursorKey()`
+
+Full signatures and payload shapes (`MoveContext`, `ReorderChange`, `ReorderState`) live in [`src/components/data/Tree.types.ts`](../../src/components/data/Tree.types.ts).
+
+**Consumer wiring:**
+
+```tsx
+import { Tree } from "reacterm";
+import type { TreeController } from "reacterm";
+
+const ctrl = useRef<TreeController>(null);
+const [sections, setSections] = useState(SECTIONS);
+const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+useInput((e) => {
+  if (e.char === "m") ctrl.current?.toggleMark(focusedKey);
+  else if (e.char === "g") ctrl.current?.grabLive();
+  else if (e.char === "G") ctrl.current?.grabStash();
+  else if (e.key === "return") ctrl.current?.commit();
+  else if (e.key === "escape") ctrl.current?.cancel();
+  else if (e.char === "K") ctrl.current?.moveUp();
+  else if (e.char === "J") ctrl.current?.moveDown();
+  else if (e.char === ">") ctrl.current?.indent();
+  else if (e.char === "<") ctrl.current?.outdent();
+});
+
+<Tree
+  nodes={sections}
+  controller={ctrl}
+  reorderable
+  canMove={(ctx) => true /* domain rule */}
+  onReorder={(change) => {
+    setSections(change.nextNodes);
+    if (change.expandedKeys.length) {
+      setExpandedIds((prev) => new Set([...prev, ...change.expandedKeys]));
+    }
+  }}
+  onStateChange={(s) => setStatus(s)}
+/>
+```
+
+**Behavioral notes:**
+
+- `commit` fires `onReorder(change)` **once**. `change.nextNodes` is the full reordered tree — apply it as your new source of truth. `change.expandedKeys` lists folders that Tree ephemerally auto-expanded during `indent` motions so the grabbed node could be dropped inside; persist these alongside the reorder in a single state update.
+- `cancel` discards any scratch state (including ephemeral expansions) and fires no `onReorder`.
+- `canMove` is consulted per motion step, not at commit. If it rejects every step in one direction, the grab stays open — the user resolves by either finding an allowed path or cancelling.
+- In stash mode, marks are snapshot at `grabStash()`. `toggleMark` during `grabbed:*` is ignored — edit marks before grabbing.
+- Stash commit drops the lifted group as **siblings after the cursor row**, at the cursor's parent + depth. Tree never auto-enters a collapsed folder; to drop inside a folder, expand it manually and place the cursor inside before committing.
+- `indent` / `outdent` are no-ops in stash mode (drop depth = cursor depth).
+
+Full design rationale, state-machine diagram, and edge cases: [`docs/specs/2026-04-24-tree-reorder-design.md`](../specs/2026-04-24-tree-reorder-design.md).
+
 ---
 
 ### DirectoryTree
