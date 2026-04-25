@@ -21,6 +21,8 @@ function run(relPath) {
 function runDemo(name) {
   const map = {
     feature: "showcase/feature.tsx",
+    "horizontal-scroll": "../debug/horizontal-scroll.tsx",
+    hscroll: "../debug/horizontal-scroll.tsx",
     logbook: "showcase/logbook.tsx",
     bios95: "showcase/bios95.tsx",
     brutalist: "showcase/brutalist.tsx",
@@ -52,9 +54,10 @@ function usage() {
     "Usage: reacterm demo [command]\n\n" +
     "Commands:\n" +
     "  demo                       showcase picker (8 demos, dock is #8)\n" +
+    "  demo horizontal-scroll     terminal horizontal scrolling demo\n" +
     "  demo showcase              alias for demo\n" +
     "  demo showcase <name>       open demo directly\n" +
-    "                             names: feature logbook bios95\n" +
+    "                             names: feature horizontal-scroll hscroll logbook bios95\n" +
     "                                    brutalist flightdeck posting oxide dock\n" +
     "  demo style                 terminal style guide\n",
   );
@@ -70,6 +73,9 @@ const sub = args[1];
 const sub2 = args[2];
 
 if (!sub) { runShowcasePicker(); process.exit(0); }
+if (sub === "horizontal-scroll" || sub === "hscroll") {
+  runDemo(sub); process.exit(0);
+}
 if (sub === "showcase") {
   if (!sub2) { runShowcasePicker(); process.exit(0); }
   runDemo(sub2); process.exit(0);

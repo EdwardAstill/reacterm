@@ -1106,9 +1106,19 @@ export function computeLayout(
     }];
   }
 
+  const parentIsScroll = props.overflow === "scroll";
+  const estimatedMainTotal = wrapLines.reduce(
+    (sum, line, idx) => sum + line.mainTotal + (idx > 0 ? crossAxisGap : 0),
+    0,
+  );
+  const scrollContainerScrollbarReserve = parentIsScroll && isColumn && estimatedMainTotal > mainSize
+    ? resolveScrollbarGutter(props.scrollbarGutter) + 1
+    : 0;
+
   // Phase 2 + 3 + 4: For each wrap line, distribute flex, justify, and position
   let crossOffset = 0;
   let contentTotal = 0;
+  let maxCrossExtent = 0;
 
   // align-content: distribute wrap lines along the cross axis
   const alignContentVal = props.alignContent ?? "stretch";
@@ -1384,20 +1394,16 @@ export function computeLayout(
       // This is the correct CSS overflow:scroll behavior — children are NOT
       // constrained to the viewport. They render at their natural height,
       // and the scroll view clips + scrolls the overflow.
-      const parentIsScroll = props.overflow === "scroll";
       const childAvailH = parentIsScroll && isColumn ? UNCONSTRAINED : childH;
       const childAvailW = parentIsScroll && !isColumn ? UNCONSTRAINED : childW;
-      const scrollbarGutter = parentIsScroll && isColumn ? resolveScrollbarGutter(props.scrollbarGutter) : 0;
-      const estimatedMainTotal = wrapLines.reduce(
-        (sum, line, idx) => sum + line.mainTotal + (idx > 0 ? crossAxisGap : 0),
-        0,
-      );
-      const scrollbarReserve = parentIsScroll && isColumn && estimatedMainTotal > mainSize
-        ? scrollbarGutter + 1
-        : 0;
       computeLayout(child, childX, childY,
-        isColumn ? Math.max(0, childW - scrollbarReserve) : childAvailW,
+        isColumn ? Math.max(0, childW - scrollContainerScrollbarReserve) : childAvailW,
         isColumn ? childAvailH : childH);
+
+      const childCrossExtent = isColumn
+        ? child.layout.x + child.layout.width + crossMarginAfter - innerX
+        : child.layout.y + child.layout.height + crossMarginAfter - innerY;
+      maxCrossExtent = Math.max(maxCrossExtent, childCrossExtent);
 
       // RTL + row: flip x positions so children flow right-to-left
       if (isRtl && !isColumn) {
@@ -1452,8 +1458,10 @@ export function computeLayout(
     computeLayout(child, childX, childY, clampedW, clampedH);
   }
 
-  node.layout.contentHeight = isColumn ? Math.max(contentTotal, innerHeight) : innerHeight;
-  node.layout.contentWidth = isColumn ? innerWidth : Math.max(contentTotal, innerWidth);
+  node.layout.contentHeight = isColumn ? Math.max(contentTotal, innerHeight) : Math.max(maxCrossExtent, innerHeight);
+  node.layout.contentWidth = isColumn
+    ? Math.max(maxCrossExtent + scrollContainerScrollbarReserve, innerWidth)
+    : Math.max(contentTotal, innerWidth);
 
   // ── Store cache for incremental layout ──
   node.dirty = false;

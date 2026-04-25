@@ -1120,6 +1120,7 @@ function paintScrollView(
 
   const overflowY = (props["overflowY"] as string | undefined) ?? "scroll";
   const overflowX = (props["overflowX"] as string | undefined) ?? "hidden";
+  const horizontalScroll = props["horizontalScroll"] === true;
 
   // Viewport clip — children are clipped to the scroll view's inner area.
   // layout.innerX/innerY already include the border offset (border is baked into
@@ -1131,17 +1132,21 @@ function paintScrollView(
   const viewportX = x + layout.innerX - layout.x;
   const viewportY = y + layout.innerY - layout.y;
   const viewportWidth = Math.max(0, layout.innerWidth - scrollbarReserve);
+  const contentWidth = horizontalScroll
+    ? Math.max(0, layout.contentWidth - scrollbarReserve)
+    : viewportWidth;
+  const hasHBar = horizontalScroll && contentWidth > layout.innerWidth && viewportWidth > 0 && layout.innerHeight > 0;
+  const viewportHeight = Math.max(0, layout.innerHeight - (hasHBar ? 1 : 0));
 
   const viewportClip = intersectClip(clip, {
     x1: overflowX === "visible" ? clip.x1 : viewportX,
     y1: overflowY === "visible" ? clip.y1 : viewportY,
     x2: overflowX === "visible" ? clip.x2 : viewportX + viewportWidth,
-    y2: overflowY === "visible" ? clip.y2 : viewportY + layout.innerHeight,
+    y2: overflowY === "visible" ? clip.y2 : viewportY + viewportHeight,
   });
 
   if (isClipEmpty(viewportClip)) return;
-  const viewportHeight = layout.innerHeight;
-  const maxScroll = Math.max(0, contentHeight - viewportHeight);
+  const maxScroll = willHaveVBar ? Math.max(0, contentHeight - viewportHeight) : 0;
   const rawScrollTop = (props["scrollTop"] as number | undefined) ?? 0;
   const scrollState = props["_scrollState"] as { clampedTop: number; maxScroll: number; clampedLeft?: number; maxHScroll?: number; _screenY1?: number; _screenY2?: number } | undefined;
 
@@ -1151,8 +1156,7 @@ function paintScrollView(
   const wasAtBottom = rawScrollTop >= prevMaxScroll;
   const scrollTop = wasAtBottom ? maxScroll : Math.max(0, Math.min(maxScroll, rawScrollTop));
 
-  const contentWidth = Math.max(0, layout.contentWidth - scrollbarReserve);
-  const maxHScroll = Math.max(0, contentWidth - viewportWidth);
+  const maxHScroll = hasHBar ? Math.max(0, contentWidth - viewportWidth) : 0;
   const rawScrollLeft = (props["scrollLeft"] as number | undefined) ?? 0;
   const scrollLeft = Math.max(0, Math.min(maxHScroll, rawScrollLeft));
 
@@ -1201,10 +1205,9 @@ function paintScrollView(
   }
 
   // Paint vertical scrollbar
-  const hasHBar = contentWidth > viewportWidth && viewportWidth > 0;
   if (contentHeight > viewportHeight && viewportHeight > 0) {
     paintScrollbar(buffer, x + layout.width - 1 - borderOffset, y + borderOffset,
-      viewportHeight - (hasHBar ? 1 : 0), scrollTop, contentHeight, clip,
+      viewportHeight, scrollTop, contentHeight, clip,
       parseColor(props["scrollbarThumbColor"] as string | number | undefined),
       parseColor(props["scrollbarTrackColor"] as string | number | undefined),
       (props["scrollbarChar"] as string | undefined),
@@ -1214,7 +1217,7 @@ function paintScrollView(
 
   // Paint horizontal scrollbar at bottom of viewport
   if (hasHBar) {
-    paintHScrollbar(buffer, x + borderOffset, y + layout.height - 1 - borderOffset,
+    paintHScrollbar(buffer, viewportX, viewportY + viewportHeight,
       viewportWidth, scrollLeft, contentWidth, clip,
       parseColor(props["scrollbarThumbColor"] as string | number | undefined),
       parseColor(props["scrollbarTrackColor"] as string | number | undefined),

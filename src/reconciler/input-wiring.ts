@@ -36,10 +36,23 @@ export class InputWiring {
           target.onMouse?.(processed, localX, localY);
         }
       }
-      if (processed.button === "scroll-up" || processed.button === "scroll-down") {
+      if (
+        processed.button === "scroll-up" ||
+        processed.button === "scroll-down" ||
+        processed.button === "scroll-left" ||
+        processed.button === "scroll-right"
+      ) {
         const target = renderCtx.focus.hitTestScroll(processed.x, processed.y);
-        const delta = processed.button === "scroll-up" ? -1 : 1;
-        if (processed.shift && target?.onHScroll) {
+        const isHorizontalWheel = processed.button === "scroll-left" || processed.button === "scroll-right";
+        const delta = processed.button === "scroll-up" || processed.button === "scroll-left" ? -1 : 1;
+        if ((processed.shift || isHorizontalWheel) && target?.onHScroll) {
+          target.onHScroll(delta);
+        } else if (
+          target &&
+          target.canScrollVertically?.() === false &&
+          target.canScrollHorizontally?.() &&
+          target.onHScroll
+        ) {
           target.onHScroll(delta);
         } else if (target?.onScroll) {
           target.onScroll(delta);

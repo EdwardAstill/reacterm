@@ -52,6 +52,7 @@ export interface TuiTextProps {
 export interface TuiScrollViewProps extends LayoutProps {
   scrollTop?: number;
   scrollLeft?: number;
+  horizontalScroll?: boolean;
   onScroll?: (scrollTop: number, maxScroll: number) => void;
   borderStyle?: BorderStyle;
   borderColor?: string | number;

@@ -179,6 +179,7 @@ Scrollable container with hit-tested mouse scroll, keyboard navigation, optional
 | `children` | `ReactNode` | -- | Scrollable content |
 | `stickToBottom` | `boolean` | `false` | Auto-scroll when new content is added at bottom |
 | `scrollSpeed` | `number` | `3` | Lines per mouse scroll tick |
+| `horizontalScroll` | `boolean` | `true` | Enable a bottom scrollbar when content is wider than the viewport |
 | `scrollStateRef` | `MutableRefObject<ScrollState>` | -- | Ref to access scroll state imperatively |
 | `onScroll` | `(scrollTop: number) => void` | -- | Called on scroll position change |
 | `scrollbarThumbColor` | `string \| number` | -- | Scrollbar thumb color |
@@ -202,6 +203,20 @@ import { ScrollView, Text } from "reacterm";
   ))}
 </ScrollView>
 ```
+
+**Horizontal overflow**
+
+```tsx
+import { ScrollView, Box, Text } from "reacterm";
+
+<ScrollView width={48} height={6} horizontalScroll>
+  <Box width={120}>
+    <Text wrap="truncate">A very wide log line or table row...</Text>
+  </Box>
+</ScrollView>
+```
+
+When the content is wider than the viewport, ScrollView renders a bottom scrollbar. Plain mouse wheel scrolls horizontally when only the horizontal axis overflows; Shift+wheel and Left/Right also scroll horizontally.
 
 **Advanced: Controlled scroll with imperative access**
 

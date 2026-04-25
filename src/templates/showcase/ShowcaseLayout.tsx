@@ -21,6 +21,12 @@ const SCROLL_LINES = Array.from({ length: 10 }, (_, i) =>
   `  Line ${i + 1} — scrollable content area`
 );
 
+const WIDE_SCROLL_LINES = [
+  "  package/src/reconciler/renderer.ts  | paintScrollView | viewport=44 | content=118 | horizontal-bar=visible",
+  "  package/src/layout/engine.ts        | computeLayout   | cross-axis overflow is measured from child width",
+  "  package/src/reconciler/input.ts     | wheel routing   | plain wheel moves sideways when only x overflows",
+];
+
 export function ShowcaseLayout(props: ShowcaseLayoutProps): React.ReactElement {
   const colors = useColors();
   const { title = "Layout & Containers" } = props;
@@ -51,6 +57,25 @@ export function ShowcaseLayout(props: ShowcaseLayoutProps): React.ReactElement {
       React.createElement(ScrollView, { height: 5 },
         ...SCROLL_LINES.map((line, i) =>
           React.createElement("tui-text", { key: `sl-${i}` }, line)
+        ),
+      ),
+    ),
+    blank("b1widea"),
+    React.createElement("tui-box", { key: "d-hscroll", marginLeft: 2 },
+      React.createElement(ScrollView, {
+        height: 4,
+        width: 48,
+        horizontalScroll: true,
+        scrollSpeed: 3,
+        borderStyle: "single",
+        borderColor: colors.text.dim,
+        scrollbarThumbColor: colors.brand.light,
+        scrollbarTrackColor: colors.text.disabled,
+      },
+        ...WIDE_SCROLL_LINES.map((line, i) =>
+          React.createElement("tui-box", { key: `wsl-${i}`, width: 118 },
+            React.createElement("tui-text", { wrap: "truncate" }, line)
+          )
         ),
       ),
     ),

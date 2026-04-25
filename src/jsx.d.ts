@@ -40,6 +40,7 @@ declare global {
       "tui-scroll-view": LayoutProps & {
         scrollTop?: number;
         scrollLeft?: number;
+        horizontalScroll?: boolean;
         borderStyle?: BorderStyle;
         borderColor?: string | number;
         overflow?: string;

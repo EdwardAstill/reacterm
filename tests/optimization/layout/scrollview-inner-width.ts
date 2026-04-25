@@ -72,8 +72,8 @@ console.log("  2. Prefix + text respects scrollbar");
   r.unmount();
 }
 
-// ── 3. Short content — scrollbar column reserved but empty ──────
-console.log("  3. Short content — scrollbar reserve");
+// ── 3. Short content — no scrollbar column needed ───────────────
+console.log("  3. Short content — no scrollbar reserve");
 {
   const el = React.createElement(Box, { width: W, height: H },
     React.createElement(ScrollView, { height: 6 },
@@ -82,9 +82,8 @@ console.log("  3. Short content — scrollbar reserve");
   );
   const r = renderToString(el, { width: W, height: H });
   const xCount = (r.lines[0] || "").match(/X/g)?.length ?? 0;
-  // Scroll containers always reserve 1 col for scrollbar (layout can't predict overflow)
-  check("short content: X's fill W-1", xCount === W - 1,
-    `got ${xCount} X's (expected ${W - 1})`);
+  check("short content: X's fill full width", xCount === W,
+    `got ${xCount} X's (expected ${W})`);
   r.unmount();
 }
 

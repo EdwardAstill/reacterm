@@ -127,6 +127,37 @@ describe("ScrollView", () => {
     expect(result.output).toBeTruthy();
   });
 
+  it("renders a horizontal scrollbar when column content is wider than the viewport", () => {
+    const result = renderForTest(
+      React.createElement(ScrollView, { width: 20, height: 4, horizontalScroll: true },
+        React.createElement("tui-box", { width: 60 },
+          React.createElement("tui-text", { wrap: "truncate" }, "0123456789".repeat(6)),
+        ),
+      ),
+      { width: 20, height: 6 },
+    );
+
+    expect(result.lines.at(-1)).toContain("━");
+  });
+
+  it("uses plain mouse wheel for horizontal scrolling when only the horizontal axis overflows", () => {
+    const ref = { current: null } as React.MutableRefObject<any>;
+    const result = renderForTest(
+      React.createElement(ScrollView, { width: 20, height: 4, horizontalScroll: true, scrollStateRef: ref },
+        React.createElement("tui-box", { width: 60 },
+          React.createElement("tui-text", { wrap: "truncate" }, "0123456789".repeat(6)),
+        ),
+      ),
+      { width: 20, height: 6 },
+    );
+
+    expect(ref.current?.maxHScroll).toBeGreaterThan(0);
+
+    result.scroll("down", 1, 1);
+
+    expect(ref.current?.clampedLeft).toBeGreaterThan(0);
+  });
+
   it("exposes scrollToBottom via scrollStateRef", () => {
     const ref = { current: null } as React.MutableRefObject<any>;
     renderForTest(
