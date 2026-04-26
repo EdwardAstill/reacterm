@@ -40,6 +40,10 @@ export interface FocusableEntry {
     onScroll?: (delta: number) => void;
     /** For scroll views: imperative horizontal scroll callback */
     onHScroll?: (delta: number) => void;
+    /** Whether this scroll view currently has vertical overflow. */
+    canScrollVertically?: () => boolean;
+    /** Whether this scroll view currently has horizontal overflow. */
+    canScrollHorizontally?: () => boolean;
     /** Scope this entry belongs to (set when pushed inside a scope) */
     scopeId?: string;
     /** Numeric tab order — lower values receive focus first. Default: registration order. */

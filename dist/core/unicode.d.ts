@@ -21,6 +21,14 @@ export declare function isAscii(str: string): boolean;
 /** Get the display width of a string in terminal cells. */
 export declare function stringWidth(str: string): number;
 /**
+ * Pad a string with trailing spaces so it occupies at least `cells` terminal
+ * columns (cell-aware, unlike String.prototype.padEnd which counts code units).
+ * Strings already wider than `cells` are returned unchanged.
+ */
+export declare function padEndCells(text: string, cells: number): string;
+/** Cell-aware leading pad. */
+export declare function padStartCells(text: string, cells: number): string;
+/**
  * A grapheme cluster with its display width and original segment string.
  * Used by buffer/renderer for correct per-grapheme cell placement.
  */

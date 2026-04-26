@@ -13,6 +13,11 @@ import { Card } from "../../components/extras/Card.js";
 import { Shadow } from "../../components/effects/Shadow.js";
 import { heading, blank } from "./helpers.js";
 const SCROLL_LINES = Array.from({ length: 10 }, (_, i) => `  Line ${i + 1} — scrollable content area`);
+const WIDE_SCROLL_LINES = [
+    "  package/src/reconciler/renderer.ts  | paintScrollView | viewport=44 | content=118 | horizontal-bar=visible",
+    "  package/src/layout/engine.ts        | computeLayout   | cross-axis overflow is measured from child width",
+    "  package/src/reconciler/input.ts     | wheel routing   | plain wheel moves sideways when only x overflows",
+];
 export function ShowcaseLayout(props) {
     const colors = useColors();
     const { title = "Layout & Containers" } = props;
@@ -33,7 +38,16 @@ export function ShowcaseLayout(props) {
         key: "title", bold: true, color: colors.brand.light,
     }, `  === ${title} ===`), blank("b0"), 
     // 1. ScrollView (nested, small viewport)
-    heading("ScrollView", "h-scroll"), blank("b1a"), React.createElement("tui-box", { key: "d-scroll", marginLeft: 2 }, React.createElement(ScrollView, { height: 5 }, ...SCROLL_LINES.map((line, i) => React.createElement("tui-text", { key: `sl-${i}` }, line)))), blank("b1b"), 
+    heading("ScrollView", "h-scroll"), blank("b1a"), React.createElement("tui-box", { key: "d-scroll", marginLeft: 2 }, React.createElement(ScrollView, { height: 5 }, ...SCROLL_LINES.map((line, i) => React.createElement("tui-text", { key: `sl-${i}` }, line)))), blank("b1widea"), React.createElement("tui-box", { key: "d-hscroll", marginLeft: 2 }, React.createElement(ScrollView, {
+        height: 4,
+        width: 48,
+        horizontalScroll: true,
+        scrollSpeed: 3,
+        borderStyle: "single",
+        borderColor: colors.text.dim,
+        scrollbarThumbColor: colors.brand.light,
+        scrollbarTrackColor: colors.text.disabled,
+    }, ...WIDE_SCROLL_LINES.map((line, i) => React.createElement("tui-box", { key: `wsl-${i}`, width: 118 }, React.createElement("tui-text", { wrap: "truncate" }, line))))), blank("b1b"), 
     // 2. Collapsible
     heading("Collapsible", "h-coll"), blank("b2a"), React.createElement("tui-box", { key: "d-coll", marginLeft: 2 }, React.createElement(Collapsible, { title: "Click to expand", expanded: true }, React.createElement("tui-text", null, "  Hidden content revealed!"))), blank("b2b"), 
     // 3. Accordion

@@ -8,7 +8,7 @@ let scrollViewCounter = 0;
 // preserve total scroll height. Fully backward-compatible — no API change needed.
 export const ScrollView = React.memo(function ScrollView(rawProps) {
     const props = usePluginProps("ScrollView", rawProps);
-    const { children, scrollSpeed = 3, stickToBottom = false, scrollStateRef: parentScrollStateRef, onScroll, maxRenderChildren = 500, itemHeight = 1, horizontalScroll = false, snapToItem = false, ...layoutProps } = props;
+    const { children, scrollSpeed = 3, stickToBottom = false, scrollStateRef: parentScrollStateRef, onScroll, maxRenderChildren = 500, itemHeight = 1, horizontalScroll = true, snapToItem = false, ...layoutProps } = props;
     // Track whether this ScrollView is missing a height constraint (used for inline dev warning)
     let missingHeightConstraint = false;
     if (process.env.NODE_ENV !== "production") {
@@ -110,6 +110,8 @@ export const ScrollView = React.memo(function ScrollView(rawProps) {
     }, [scrollSpeed, onScroll, requestRender, snapToItem, itemHeight]);
     // Imperative horizontal scroll handler
     const handleHScroll = useCallback((delta) => {
+        if (!horizontalScrollRef.current)
+            return;
         const base = scrollStateRef.current.clampedLeft;
         const ms = scrollStateRef.current.maxHScroll;
         const next = Math.max(0, Math.min(ms, base + delta * scrollSpeed));
@@ -138,6 +140,8 @@ export const ScrollView = React.memo(function ScrollView(rawProps) {
             bounds: { x: 0, y: 0, width: 0, height: 0 }, // renderer updates these
             onScroll: (delta) => handleScrollRef.current(delta),
             onHScroll: (delta) => handleHScrollRef.current(delta),
+            canScrollVertically: () => (scrollStateRef.current?.maxScroll ?? 0) > 0,
+            canScrollHorizontally: () => horizontalScrollRef.current && (scrollStateRef.current?.maxHScroll ?? 0) > 0,
         });
     }
     // Unregister from focus manager on unmount to prevent leak
@@ -227,6 +231,7 @@ export const ScrollView = React.memo(function ScrollView(rawProps) {
         _scrollState: scrollStateRef.current,
         _hostPropsRef: hostPropsRef,
         _focusId: idRef.current,
+        horizontalScroll,
         overflow: "scroll",
         stickToBottom,
     }, devWarningElement, renderedChildren);

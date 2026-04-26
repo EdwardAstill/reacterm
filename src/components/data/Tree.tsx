@@ -6,6 +6,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
+import { padEndCells } from "../../core/unicode.js";
 import {
   reorderReducer,
   initialReorderState,
@@ -542,13 +543,14 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       ),
     );
 
-    // Optional icon
+    // Optional icon — pad slot cell-aware so wide emoji and narrow glyphs
+    // both leave the label aligned at the same column.
     if (entry.node.icon !== undefined) {
       parts.push(
         React.createElement(
           "tui-text",
           { key: "icon" },
-          entry.node.icon + " ",
+          padEndCells(entry.node.icon, 2) + " ",
         ),
       );
     }

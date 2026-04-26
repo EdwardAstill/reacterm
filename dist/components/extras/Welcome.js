@@ -8,6 +8,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { Gradient } from "../effects/Gradient.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
+import { padEndCells } from "../../core/unicode.js";
 export const Welcome = React.memo(function Welcome(rawProps) {
     const colors = useColors();
     const personality = usePersonality();
@@ -100,7 +101,7 @@ export const Welcome = React.memo(function Welcome(rawProps) {
             actionParts.push(React.createElement("tui-text", { key: `ind-${i}`, color: isSelected ? colors.brand.primary : colors.text.dim }, indicator));
             // Icon
             if (action.icon) {
-                actionParts.push(React.createElement("tui-text", { key: `icon-${i}`, color: labelColor }, `${action.icon} `));
+                actionParts.push(React.createElement("tui-text", { key: `icon-${i}`, color: labelColor }, `${padEndCells(action.icon, 2)} `));
             }
             // Label
             actionParts.push(React.createElement("tui-text", { key: `label-${i}`, color: labelColor, bold: isSelected }, action.label));

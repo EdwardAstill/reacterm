@@ -508,7 +508,7 @@ export {
   type TreeSitterToken,
   type TreeSitterTokenizer,
 } from "./utils/tree-sitter.js";
-export { charWidth, stringWidth, iterGraphemes, type Grapheme } from "./core/unicode.js";
+export { charWidth, stringWidth, padEndCells, padStartCells, iterGraphemes, type Grapheme } from "./core/unicode.js";
 export { WebRenderer, type WebRendererOptions } from "./core/web-renderer.js";
 export {
   ResizeObserver,

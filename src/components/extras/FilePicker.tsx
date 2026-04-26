@@ -5,6 +5,7 @@ import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { padEndCells } from "../../core/unicode.js";
 
 export interface FileNode {
   name: string;
@@ -128,7 +129,7 @@ function FilePickerEntry({ file, depth = 0, index = 0, children }: FilePickerCom
       { color: isHighlighted ? colors.brand.primary : undefined },
       isHighlighted ? "\u276F " : "  ",
     ),
-    React.createElement("tui-text", { ...(isHighlighted ? { color: colors.brand.primary } : {}) }, `${indent}${icon} `),
+    React.createElement("tui-text", { ...(isHighlighted ? { color: colors.brand.primary } : {}) }, `${indent}${padEndCells(icon, 2)} `),
     React.createElement(
       "tui-text",
       { ...(isHighlighted ? { bold: true, color: colors.brand.primary } : {}) },
@@ -514,7 +515,7 @@ const FilePickerBase = React.memo(function FilePicker(rawProps: FilePickerProps)
       React.createElement(
         "tui-text",
         { key: "prefix", ...(isHighlighted ? { color } : {}) },
-        `${indent}${icon} `,
+        `${indent}${padEndCells(icon, 2)} `,
       ),
     );
 

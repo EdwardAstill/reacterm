@@ -4,6 +4,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { padEndCells } from "../../core/unicode.js";
 export const FilePickerContext = createContext(null);
 export function useFilePickerContext() {
     const ctx = useContext(FilePickerContext);
@@ -40,7 +41,7 @@ function FilePickerEntry({ file, depth = 0, index = 0, children }) {
     if (children) {
         return React.createElement("tui-box", { flexDirection: "row" }, children);
     }
-    return React.createElement("tui-box", { flexDirection: "row" }, React.createElement("tui-text", { color: isHighlighted ? colors.brand.primary : undefined }, isHighlighted ? "\u276F " : "  "), React.createElement("tui-text", { ...(isHighlighted ? { color: colors.brand.primary } : {}) }, `${indent}${icon} `), React.createElement("tui-text", { ...(isHighlighted ? { bold: true, color: colors.brand.primary } : {}) }, `${file.name}${suffix}`));
+    return React.createElement("tui-box", { flexDirection: "row" }, React.createElement("tui-text", { color: isHighlighted ? colors.brand.primary : undefined }, isHighlighted ? "\u276F " : "  "), React.createElement("tui-text", { ...(isHighlighted ? { color: colors.brand.primary } : {}) }, `${indent}${padEndCells(icon, 2)} `), React.createElement("tui-text", { ...(isHighlighted ? { bold: true, color: colors.brand.primary } : {}) }, `${file.name}${suffix}`));
 }
 const FOLDER_ICON = "\uD83D\uDCC1"; // 📁
 const FILE_ICON = "\uD83D\uDCC4"; // 📄
@@ -320,7 +321,7 @@ const FilePickerBase = React.memo(function FilePicker(rawProps) {
         // Highlight indicator
         children.push(React.createElement("tui-text", { key: "ind", color: isHighlighted ? color : undefined }, isHighlighted ? "\u276F " : "  "));
         // Indent + icon
-        children.push(React.createElement("tui-text", { key: "prefix", ...(isHighlighted ? { color } : {}) }, `${indent}${icon} `));
+        children.push(React.createElement("tui-text", { key: "prefix", ...(isHighlighted ? { color } : {}) }, `${indent}${padEndCells(icon, 2)} `));
         // Name with highlighted matching characters
         const matchIndices = matchCache.get(entry.node.path) ?? null;
         const nameColor = isHighlighted ? color : undefined;

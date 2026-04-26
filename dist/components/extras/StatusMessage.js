@@ -3,6 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { padEndCells } from "../../core/unicode.js";
 function getTypeConfig(colors) {
     return {
         success: { icon: "\u2713", color: colors.success },
@@ -30,7 +31,7 @@ export const StatusMessage = React.memo(function StatusMessage(rawProps) {
     useInput(handleInput, { isActive: isFocused && detail !== undefined });
     const iconElement = props.renderIcon
         ? React.createElement(React.Fragment, { key: "icon" }, props.renderIcon(type, config.icon))
-        : React.createElement("tui-text", { color: resolvedColor, bold: resolvedBold, ...(dim !== undefined ? { dim } : {}), key: "icon" }, `${config.icon} `);
+        : React.createElement("tui-text", { color: resolvedColor, bold: resolvedBold, ...(dim !== undefined ? { dim } : {}), key: "icon" }, `${padEndCells(config.icon, 2)} `);
     const children = [iconElement];
     if (title) {
         children.push(React.createElement("tui-text", { color: resolvedColor, bold: resolvedBold, ...(dim !== undefined ? { dim } : {}), key: "title" }, `${title} `));

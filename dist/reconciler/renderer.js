@@ -940,6 +940,7 @@ function paintScrollView(buffer, element, clip, scrollOffsetX, scrollOffsetY, ct
     }
     const overflowY = props["overflowY"] ?? "scroll";
     const overflowX = props["overflowX"] ?? "hidden";
+    const horizontalScroll = props["horizontalScroll"] === true;
     // Viewport clip — children are clipped to the scroll view's inner area.
     // layout.innerX/innerY already include the border offset (border is baked into
     // padding by extractLayoutProps), so we must NOT add borderOffset again here.
@@ -950,16 +951,20 @@ function paintScrollView(buffer, element, clip, scrollOffsetX, scrollOffsetY, ct
     const viewportX = x + layout.innerX - layout.x;
     const viewportY = y + layout.innerY - layout.y;
     const viewportWidth = Math.max(0, layout.innerWidth - scrollbarReserve);
+    const contentWidth = horizontalScroll
+        ? Math.max(0, layout.contentWidth - scrollbarReserve)
+        : viewportWidth;
+    const hasHBar = horizontalScroll && contentWidth > layout.innerWidth && viewportWidth > 0 && layout.innerHeight > 0;
+    const viewportHeight = Math.max(0, layout.innerHeight - (hasHBar ? 1 : 0));
     const viewportClip = intersectClip(clip, {
         x1: overflowX === "visible" ? clip.x1 : viewportX,
         y1: overflowY === "visible" ? clip.y1 : viewportY,
         x2: overflowX === "visible" ? clip.x2 : viewportX + viewportWidth,
-        y2: overflowY === "visible" ? clip.y2 : viewportY + layout.innerHeight,
+        y2: overflowY === "visible" ? clip.y2 : viewportY + viewportHeight,
     });
     if (isClipEmpty(viewportClip))
         return;
-    const viewportHeight = layout.innerHeight;
-    const maxScroll = Math.max(0, contentHeight - viewportHeight);
+    const maxScroll = willHaveVBar ? Math.max(0, contentHeight - viewportHeight) : 0;
     const rawScrollTop = props["scrollTop"] ?? 0;
     const scrollState = props["_scrollState"];
     // Stick-to-bottom: if user was at bottom, keep them there as content grows.
@@ -967,8 +972,7 @@ function paintScrollView(buffer, element, clip, scrollOffsetX, scrollOffsetY, ct
     const prevMaxScroll = scrollState?.maxScroll ?? 0;
     const wasAtBottom = rawScrollTop >= prevMaxScroll;
     const scrollTop = wasAtBottom ? maxScroll : Math.max(0, Math.min(maxScroll, rawScrollTop));
-    const contentWidth = Math.max(0, layout.contentWidth - scrollbarReserve);
-    const maxHScroll = Math.max(0, contentWidth - viewportWidth);
+    const maxHScroll = hasHBar ? Math.max(0, contentWidth - viewportWidth) : 0;
     const rawScrollLeft = props["scrollLeft"] ?? 0;
     const scrollLeft = Math.max(0, Math.min(maxHScroll, rawScrollLeft));
     if (scrollState) {
@@ -1011,13 +1015,12 @@ function paintScrollView(buffer, element, clip, scrollOffsetX, scrollOffsetY, ct
         }
     }
     // Paint vertical scrollbar
-    const hasHBar = contentWidth > viewportWidth && viewportWidth > 0;
     if (contentHeight > viewportHeight && viewportHeight > 0) {
-        paintScrollbar(buffer, x + layout.width - 1 - borderOffset, y + borderOffset, viewportHeight - (hasHBar ? 1 : 0), scrollTop, contentHeight, clip, parseColor(props["scrollbarThumbColor"]), parseColor(props["scrollbarTrackColor"]), props["scrollbarChar"], props["scrollbarTrackChar"], ctx, childBg);
+        paintScrollbar(buffer, x + layout.width - 1 - borderOffset, y + borderOffset, viewportHeight, scrollTop, contentHeight, clip, parseColor(props["scrollbarThumbColor"]), parseColor(props["scrollbarTrackColor"]), props["scrollbarChar"], props["scrollbarTrackChar"], ctx, childBg);
     }
     // Paint horizontal scrollbar at bottom of viewport
     if (hasHBar) {
-        paintHScrollbar(buffer, x + borderOffset, y + layout.height - 1 - borderOffset, viewportWidth, scrollLeft, contentWidth, clip, parseColor(props["scrollbarThumbColor"]), parseColor(props["scrollbarTrackColor"]), ctx, childBg);
+        paintHScrollbar(buffer, viewportX, viewportY + viewportHeight, viewportWidth, scrollLeft, contentWidth, clip, parseColor(props["scrollbarThumbColor"]), parseColor(props["scrollbarTrackColor"]), ctx, childBg);
     }
 }
 function paintTextInput(buffer, element, clip, x, y, ctx, inheritedBg = DEFAULT_COLOR) {

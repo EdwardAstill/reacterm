@@ -6,6 +6,7 @@ import type { StormColors } from "../../theme/colors.js";
 import type { KeyEvent } from "../../input/types.js";
 import type { StormTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { padEndCells } from "../../core/unicode.js";
 
 export interface StatusMessageProps extends StormTextStyleProps {
   message: string;
@@ -58,7 +59,7 @@ export const StatusMessage = React.memo(function StatusMessage(rawProps: StatusM
     : React.createElement(
         "tui-text",
         { color: resolvedColor, bold: resolvedBold, ...(dim !== undefined ? { dim } : {}), key: "icon" },
-        `${config.icon} `,
+        `${padEndCells(config.icon, 2)} `,
       );
 
   const children: React.ReactElement[] = [iconElement];

@@ -36,6 +36,7 @@ export { Table, type TableProps, type TableColumn } from "./components/table/Tab
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";
 export { Tabs, type TabsProps, type Tab, type TabsVariant } from "./components/core/Tabs.js";
 export { Tree, type TreeProps, type TreeNode } from "./components/data/Tree.js";
+export type { TreeController, ReorderState, ReorderChange, MoveContext } from "./components/data/Tree.types.js";
 export { Toast, ToastContainer, type ToastProps, type ToastContainerProps, type ToastItem } from "./components/extras/Toast.js";
 export { Checkbox, type CheckboxProps } from "./components/core/Checkbox.js";
 export { RadioGroup, type RadioGroupProps, type RadioOption } from "./components/core/RadioGroup.js";
@@ -219,7 +220,7 @@ export { enableCrashLog, type CrashLogOptions, type CrashLogData, } from "./devt
 export { BrailleCanvas, BRAILLE_BASE } from "./utils/braille-canvas.js";
 export { createAnimation, tickAnimation, easings, type EasingFn, type AnimationRef, } from "./utils/animate.js";
 export { enableTreeSitter, getTreeSitter, type TreeSitterToken, type TreeSitterTokenizer, } from "./utils/tree-sitter.js";
-export { charWidth, stringWidth, iterGraphemes, type Grapheme } from "./core/unicode.js";
+export { charWidth, stringWidth, padEndCells, padStartCells, iterGraphemes, type Grapheme } from "./core/unicode.js";
 export { WebRenderer, type WebRendererOptions } from "./core/web-renderer.js";
 export { ResizeObserver, notifyResizeObservers, type ResizeObserverEntry, } from "./core/resize-observer.js";
 export { StormSSHServer, type StormSSHOptions, type SSHSession, type SSHEvent } from "./ssh/index.js";

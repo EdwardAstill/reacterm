@@ -198,6 +198,24 @@ export function stringWidth(str) {
     return width;
 }
 /**
+ * Pad a string with trailing spaces so it occupies at least `cells` terminal
+ * columns (cell-aware, unlike String.prototype.padEnd which counts code units).
+ * Strings already wider than `cells` are returned unchanged.
+ */
+export function padEndCells(text, cells) {
+    const w = stringWidth(text);
+    if (w >= cells)
+        return text;
+    return text + " ".repeat(cells - w);
+}
+/** Cell-aware leading pad. */
+export function padStartCells(text, cells) {
+    const w = stringWidth(text);
+    if (w >= cells)
+        return text;
+    return " ".repeat(cells - w) + text;
+}
+/**
  * Iterate over grapheme clusters in a string, yielding each cluster
  * with its display width. This is the primitive that all rendering loops
  * should use instead of manual codepoint iteration.

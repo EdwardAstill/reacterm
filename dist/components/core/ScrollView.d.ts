@@ -26,10 +26,10 @@ export interface ScrollViewProps extends StormContainerStyleProps {
     /** Estimated height (rows) of each child element — used by windowing and
      *  snap-to-item to calculate which children are in view. Default: 1. */
     itemHeight?: number;
-    /** When true, enable horizontal scrolling via Left/Right arrow keys and
-     *  Shift+mouse-scroll. A horizontal scrollbar is rendered at the bottom
-     *  when content overflows horizontally.
-     *  @default false */
+    /** Enable horizontal scrolling via Left/Right arrow keys, horizontal wheel,
+     *  Shift+mouse-scroll, or plain wheel when only horizontal overflow exists.
+     *  A horizontal scrollbar is rendered at the bottom when content overflows.
+     *  @default true */
     horizontalScroll?: boolean;
     /** When true, scroll always lands on item boundaries (never mid-item).
      *  Requires itemHeight for calculation. Default: false. */

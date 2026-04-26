@@ -215,7 +215,7 @@ export { enableCrashLog, } from "./devtools/crash-log.js";
 export { BrailleCanvas, BRAILLE_BASE } from "./utils/braille-canvas.js";
 export { createAnimation, tickAnimation, easings, } from "./utils/animate.js";
 export { enableTreeSitter, getTreeSitter, } from "./utils/tree-sitter.js";
-export { charWidth, stringWidth, iterGraphemes } from "./core/unicode.js";
+export { charWidth, stringWidth, padEndCells, padStartCells, iterGraphemes } from "./core/unicode.js";
 export { WebRenderer } from "./core/web-renderer.js";
 export { ResizeObserver, notifyResizeObservers, } from "./core/resize-observer.js";
 export { StormSSHServer } from "./ssh/index.js";

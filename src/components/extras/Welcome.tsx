@@ -10,6 +10,7 @@ import { pickStyleProps } from "../../styles/applyStyles.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
+import { padEndCells } from "../../core/unicode.js";
 
 /** A selectable action shown in the recent items section. */
 export interface WelcomeAction {
@@ -259,7 +260,7 @@ export const Welcome = React.memo(function Welcome(rawProps: WelcomeProps): Reac
           React.createElement(
             "tui-text",
             { key: `icon-${i}`, color: labelColor },
-            `${action.icon} `,
+            `${padEndCells(action.icon, 2)} `,
           ),
         );
       }

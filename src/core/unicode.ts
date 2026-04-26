@@ -190,6 +190,24 @@ export function stringWidth(str: string): number {
 }
 
 /**
+ * Pad a string with trailing spaces so it occupies at least `cells` terminal
+ * columns (cell-aware, unlike String.prototype.padEnd which counts code units).
+ * Strings already wider than `cells` are returned unchanged.
+ */
+export function padEndCells(text: string, cells: number): string {
+  const w = stringWidth(text);
+  if (w >= cells) return text;
+  return text + " ".repeat(cells - w);
+}
+
+/** Cell-aware leading pad. */
+export function padStartCells(text: string, cells: number): string {
+  const w = stringWidth(text);
+  if (w >= cells) return text;
+  return " ".repeat(cells - w) + text;
+}
+
+/**
  * A grapheme cluster with its display width and original segment string.
  * Used by buffer/renderer for correct per-grapheme cell placement.
  */
