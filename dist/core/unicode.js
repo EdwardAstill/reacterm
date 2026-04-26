@@ -88,6 +88,49 @@ function initBmpWidthTable() {
     // Fullwidth Signs
     for (let i = 0xffe0; i <= 0xffe6; i++)
         BMP_WIDTH[i] = 2;
+    // Default emoji-presentation codepoints (Unicode Emoji_Presentation=Yes)
+    // outside the existing wide ranges. Bare codepoints render as 2-cell
+    // glyphs in modern terminals even without U+FE0F variation selector.
+    // Source: https://www.unicode.org/Public/UCD/latest/ucd/emoji/emoji-data.txt
+    const EMOJI_PRESENTATION_BMP = [
+        [0x231a, 0x231b], // ⌚ ⌛
+        [0x23e9, 0x23ec], // ⏩ ⏪ ⏫ ⏬
+        [0x23f0, 0x23f0], // ⏰
+        [0x23f3, 0x23f3], // ⏳
+        [0x25fd, 0x25fe], // ◽ ◾
+        [0x2614, 0x2615], // ☔ ☕
+        [0x2648, 0x2653], // ♈..♓
+        [0x267f, 0x267f], // ♿
+        [0x2693, 0x2693], // ⚓
+        [0x26a1, 0x26a1], // ⚡
+        [0x26aa, 0x26ab], // ⚪ ⚫
+        [0x26bd, 0x26be], // ⚽ ⚾
+        [0x26c4, 0x26c5], // ⛄ ⛅
+        [0x26ce, 0x26ce], // ⛎
+        [0x26d4, 0x26d4], // ⛔
+        [0x26ea, 0x26ea], // ⛪
+        [0x26f2, 0x26f3], // ⛲ ⛳
+        [0x26f5, 0x26f5], // ⛵
+        [0x26fa, 0x26fa], // ⛺
+        [0x26fd, 0x26fd], // ⛽
+        [0x2705, 0x2705], // ✅
+        [0x270a, 0x270b], // ✊ ✋
+        [0x2728, 0x2728], // ✨
+        [0x274c, 0x274c], // ❌
+        [0x274e, 0x274e], // ❎
+        [0x2753, 0x2755], // ❓ ❔ ❕
+        [0x2757, 0x2757], // ❗
+        [0x2795, 0x2797], // ➕ ➖ ➗
+        [0x27b0, 0x27b0], // ➰
+        [0x27bf, 0x27bf], // ➿
+        [0x2b1b, 0x2b1c], // ⬛ ⬜
+        [0x2b50, 0x2b50], // ⭐
+        [0x2b55, 0x2b55], // ⭕
+    ];
+    for (const [start, end] of EMOJI_PRESENTATION_BMP) {
+        for (let i = start; i <= end; i++)
+            BMP_WIDTH[i] = 2;
+    }
 }
 initBmpWidthTable();
 export function charWidth(code) {
@@ -138,6 +181,16 @@ function hasZWJ(str) {
     }
     return false;
 }
+const VS15 = 0xfe0e; // text presentation selector — forces narrow rendering
+const VS16 = 0xfe0f; // emoji presentation selector — forces wide rendering
+/** True when segment contains U+FE0E (text-presentation variation selector). */
+function hasVS15(segment) {
+    for (let i = 0; i < segment.length; i++) {
+        if (segment.charCodeAt(i) === VS15)
+            return true;
+    }
+    return false;
+}
 /**
  * Returns true if the segment is a multi-codepoint emoji sequence that
  * terminals render as a single 2-column glyph. This covers:
@@ -162,7 +215,7 @@ function isMultiCodepointEmoji(segment) {
         if (cp2 >= 0x1f3fb && cp2 <= 0x1f3ff)
             return true;
         // Variation Selector 16 (emoji presentation)
-        if (cp2 === 0xfe0f)
+        if (cp2 === VS16)
             return true;
     }
     return false;
@@ -174,7 +227,11 @@ export function stringWidth(str) {
     if (segmenter) {
         let width = 0;
         for (const { segment } of segmenter.segment(str)) {
-            if (isMultiCodepointEmoji(segment)) {
+            // VS15 forces text-presentation = 1-cell glyph, regardless of base codepoint.
+            if (hasVS15(segment)) {
+                width += 1;
+            }
+            else if (isMultiCodepointEmoji(segment)) {
                 // Multi-codepoint emoji — terminal renders as single 2-column glyph
                 width += 2;
             }
@@ -229,7 +286,10 @@ export function* iterGraphemes(str) {
         return;
     if (segmenter) {
         for (const { segment } of segmenter.segment(str)) {
-            if (isMultiCodepointEmoji(segment)) {
+            if (hasVS15(segment)) {
+                yield { text: segment, width: 1 };
+            }
+            else if (isMultiCodepointEmoji(segment)) {
                 yield { text: segment, width: 2 };
             }
             else {
