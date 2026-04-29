@@ -1,0 +1,153 @@
+version: 1
+plan:
+  slug: tree-table-plan
+  prose: docs/plans/2026-04-29-tree-table-plan.md
+  goal: Add a TreeTable component combining Table's column model with Tree's expand/collapse hierarchy.
+
+nodes:
+  - id: flatten_helper
+    type: implement
+    description: Pure flattenVisible helper + TreeTableRow / FlatTreeTableRow types.
+    files:
+      create:
+        - src/components/data/TreeTable.flatten.ts
+      test:
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t flattenVisible
+
+  - id: skeleton
+    type: implement
+    depends_on: [flatten_helper]
+    description: TreeTable component skeleton — empty state + header + flat row render.
+    files:
+      create:
+        - src/components/data/TreeTable.tsx
+      modify:
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t skeleton
+
+  - id: tree_column
+    type: implement
+    depends_on: [skeleton]
+    description: Tree column rendering — connectors, ▾/▸ marker, icon, treeColumnKey override.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t "tree column"
+
+  - id: keyboard
+    type: implement
+    depends_on: [tree_column]
+    description: Keyboard navigation — arrow keys, expand/collapse via ←/→, Enter select, header sort cycle.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t keyboard
+
+  - id: mouse
+    type: implement
+    depends_on: [tree_column]
+    description: Mouse interaction — marker toggle, body row press, header sort.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t mouse
+
+  - id: virtualization
+    type: implement
+    depends_on: [keyboard, mouse]
+    description: Virtualization on the flattened-visible row list with row indicator.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t virtualization
+
+  - id: renderers_and_styles
+    type: implement
+    depends_on: [virtualization]
+    description: Custom renderTreeCell / renderCell / renderHeader hooks + style precedence.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t "renderers"
+
+  - id: edge_cases
+    type: implement
+    depends_on: [renderers_and_styles]
+    description: Cycle clamp, empty-children leaf, bad-treeColumnKey fallback with warn-once.
+    files:
+      modify:
+        - src/components/data/TreeTable.tsx
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t "edge cases"
+
+  - id: public_api
+    type: implement
+    depends_on: [edge_cases]
+    description: Re-export TreeTable + types from src/components/index.ts and src/index.ts.
+    files:
+      modify:
+        - src/components/index.ts
+        - src/index.ts
+        - src/__tests__/tree-table.test.ts
+    verify:
+      - bun test src/__tests__/tree-table.test.ts -t "public API"
+      - bun test
+      - bun run build
+
+  - id: review_implementation
+    type: review
+    depends_on: [public_api]
+    description: Code review pass on TreeTable.tsx for parity with Table patterns and absence of duplicated state machinery.
+    reviewer: code_quality
+
+  - id: playground_example
+    type: implement
+    depends_on: [public_api]
+    description: 3-level × 4-column playground example exercising expand/collapse and sort.
+    files:
+      create:
+        - playground/examples/tree-table.tsx
+    verify:
+      - bun run build
+      - test -f playground/examples/tree-table.tsx
+
+  - id: docs
+    type: implement
+    depends_on: [public_api]
+    description: Component reference in docs/components/data.md, index update, recipe, README badge bump.
+    files:
+      modify:
+        - docs/components/data.md
+        - docs/components.md
+        - docs/recipes.md
+        - README.md
+    verify:
+      - grep -q "## TreeTable" docs/components/data.md
+      - grep -q "components-98" README.md
+
+  - id: spec_acceptance
+    type: verify
+    depends_on: [review_implementation, playground_example, docs]
+    description: Run every spec acceptance criterion, fill Known Limitations and Post-Implementation Review.
+    files:
+      modify:
+        - docs/specs/2026-04-29-tree-table-design.md
+    verify:
+      - bun test
+      - bun run build
+      - grep -q "## Post-Implementation Review" docs/specs/2026-04-29-tree-table-design.md
+      - 'grep -A 3 "### Acceptance results" docs/specs/2026-04-29-tree-table-design.md | grep -E "(✅|⚠)"'

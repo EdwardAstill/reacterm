@@ -911,3 +911,96 @@ render(<App />, { background: "dots" });
 - `animate` -- enable animation (default: false)
 - `animateSpeed` -- animation speed in ms (default: 200)
 - `opacity` -- 0-1 for blending (default: 1)
+
+---
+
+## 13. Task List with Subtasks
+
+`TreeTable` renders hierarchical rows with shared columns. Reach for it when each row has tabular metadata and rows can own subtrees that share the same columns. Hierarchy lives in your state — pass each row's `expanded` flag in, flip it in response to `onToggle`. Sort cycles via header `Enter` or `s`; you re-sort the data yourself, and you typically want to sort *siblings only* so the parent ordering survives.
+
+```tsx
+import React, { useCallback, useState } from "react";
+import { render, Box, Text, TreeTable, type TreeTableRow, useTui, useInput } from "reacterm";
+
+const initial: TreeTableRow[] = [
+  {
+    key: "auth", icon: "🔐", expanded: true,
+    values: { name: "Auth flow", owner: "Edward", priority: "P0", status: "in-progress" },
+    children: [
+      { key: "auth-jwt", values: { name: "JWT refresh", owner: "Edward", priority: "P0", status: "todo" } },
+      { key: "auth-mfa", values: { name: "MFA prompt", owner: "Sara", priority: "P1", status: "review" } },
+    ],
+  },
+  {
+    key: "dash", icon: "📊",
+    values: { name: "Dashboard", owner: "Maya", priority: "P1", status: "review" },
+    children: [
+      { key: "dash-charts", values: { name: "Live charts", owner: "Maya", priority: "P1", status: "review" } },
+    ],
+  },
+];
+
+const columns = [
+  { key: "name", header: "Task" },
+  { key: "owner", header: "Owner", width: 10 },
+  { key: "priority", header: "Pri", width: 5, align: "center" as const },
+  { key: "status", header: "Status", width: 14 },
+];
+
+function toggleExpanded(rows: TreeTableRow[], key: string): TreeTableRow[] {
+  return rows.map((row) => {
+    if (row.key === key) return { ...row, expanded: !row.expanded };
+    if (row.children) return { ...row, children: toggleExpanded(row.children, key) };
+    return row;
+  });
+}
+
+function compareValues(a: string | number | undefined, b: string | number | undefined, dir: "asc" | "desc"): number {
+  const av = a ?? "";
+  const bv = b ?? "";
+  if (av === bv) return 0;
+  const cmp = av < bv ? -1 : 1;
+  return dir === "asc" ? cmp : -cmp;
+}
+
+function sortRecursive(rows: TreeTableRow[], key: string, dir: "asc" | "desc"): TreeTableRow[] {
+  return [...rows]
+    .sort((a, b) => compareValues(a.values[key], b.values[key], dir))
+    .map((row) => row.children ? { ...row, children: sortRecursive(row.children, key, dir) } : row);
+}
+
+function App() {
+  const { exit } = useTui();
+  useInput((e) => { if (e.key === "c" && e.ctrl) exit(); });
+  const [data, setData] = useState(initial);
+
+  const onToggle = useCallback((key: string) => {
+    setData((prev) => toggleExpanded(prev, key));
+  }, []);
+
+  const onSort = useCallback((key: string, dir: "asc" | "desc") => {
+    setData((prev) => sortRecursive(prev, key, dir));
+  }, []);
+
+  return (
+    <Box flexDirection="column" padding={1}>
+      <Box paddingBottom={1}>
+        <Text dim>↑/↓ navigate · ←/→ collapse/expand · Enter select · s sort</Text>
+      </Box>
+      <TreeTable
+        columns={columns}
+        data={data}
+        isFocused
+        rowHighlight
+        sortable
+        onToggle={onToggle}
+        onSort={onSort}
+      />
+    </Box>
+  );
+}
+
+render(<App />).waitUntilExit();
+```
+
+`sortRecursive` keeps the hierarchy intact — siblings reorder relative to each other, parents stay where they are. If you want a flat sort that ignores the tree, flatten the rows before passing them in (and lose the hierarchy).

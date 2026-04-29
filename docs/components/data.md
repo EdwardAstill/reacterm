@@ -335,6 +335,87 @@ Full design rationale, state-machine diagram, and edge cases: [`docs/specs/2026-
 
 ---
 
+### TreeTable
+
+Hierarchical rows with shared columns. Combines `Table`'s column model with `Tree`'s expand/collapse hierarchy. Reach for `TreeTable` when each row has tabular metadata (priority, owner, status, …) **and** rows can own children that share the same columns — task lists with subtasks, schema browsers, financial reports with subtotals.
+
+The component does not own hierarchy state. Pass each row's `expanded` flag in; flip it in your own state in response to `onToggle`. Sort follows the same contract as `Table`: `onSort` is a notification, not a mutation — re-sort the data yourself. Sort siblings recursively; do not flatten across parent boundaries unless that is the intended UX.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `columns` | `TableColumn[]` | -- | Column definitions (required) |
+| `data` | `TreeTableRow[]` | -- | Hierarchical row data (required) |
+| `treeColumnKey` | `string` | `columns[0].key` | Which column gets the indent + ▾/▸ marker |
+| `onToggle` | `(key, row) => void` | -- | Flip the row's `expanded` flag in your state |
+| `onRowSelect` | `(key, row) => void` | -- | Enter on a body row |
+| `onRowPress` | `(key, row) => void` | -- | Mouse click on a body row |
+| `onSort` | `(key, dir) => void` | -- | Sort cycled via header `Enter` or `s` key |
+| `onHeaderPress` | `(key) => void` | -- | Mouse click on a header cell |
+| `isFocused` | `boolean` | `false` | Enables keyboard input |
+| `rowHighlight` | `boolean` | `false` | Highlight the cursor row |
+| `sortable` | `boolean` | `false` | Enable header-row navigation + sort cycle |
+| `stripe` | `boolean` | `false` | Zebra-striped body rows |
+| `maxVisibleRows` | `number` | `100` | Virtualize the flat-visible list past this count |
+| `renderTreeCell` | `(value, row, depth, state) => ReactNode` | -- | Replace tree-column cell content |
+| `renderCell` | `(value, col, row, state) => ReactNode` | -- | Replace non-tree-column cells |
+| `renderHeader` | `(col) => ReactNode` | -- | Replace the default header cell |
+
+**TreeTableRow type:**
+
+| Property | Type | Description |
+|---|---|---|
+| `key` | `string` | Stable row identifier |
+| `values` | `Record<string, string \| number>` | One entry per column key |
+| `children` | `TreeTableRow[]` | Optional child rows |
+| `expanded` | `boolean` | Whether children are visible |
+| `icon` | `string` | Optional icon in the tree column |
+
+Keyboard:
+- `↑` / `↓` move cursor; from row 0 with `sortable`, `↑` enters the header row.
+- `←` collapses the cursor row if expanded; otherwise moves the column cursor left.
+- `→` expands the cursor row if it has hidden children; otherwise moves the column cursor right.
+- `Enter` selects on body row, cycles sort on header row.
+- `s` cycles sort on the cursor column (when `sortable`).
+
+Mouse:
+- Click a ▸/▾ marker → `onToggle`.
+- Click any other body cell → `onRowPress`.
+- Click a header cell → `onHeaderPress` (and sort cycle if `sortable`).
+
+**Basic: Tasks with subtasks**
+
+```tsx
+import { TreeTable, type TreeTableRow } from "reacterm";
+
+const tasks: TreeTableRow[] = [
+  {
+    key: "a", icon: "📁", expanded: true,
+    values: { name: "Auth flow", owner: "Edward", priority: "P0" },
+    children: [
+      { key: "a1", values: { name: "JWT refresh", owner: "Edward", priority: "P0" } },
+      { key: "a2", values: { name: "MFA", owner: "Sara", priority: "P1" } },
+    ],
+  },
+  { key: "b", values: { name: "Docs", owner: "Maya", priority: "P2" } },
+];
+
+<TreeTable
+  columns={[
+    { key: "name", header: "Task" },
+    { key: "owner", header: "Owner", width: 10 },
+    { key: "priority", header: "Pri", width: 5, align: "center" },
+  ]}
+  data={tasks}
+  isFocused
+  rowHighlight
+  onToggle={(key) => setTasks((prev) => toggleExpanded(prev, key))}
+/>
+```
+
+See [`docs/recipes.md`](../recipes.md) for the `toggleExpanded` and `sortRecursive` helpers, and the full "Task list with subtasks" recipe.
+
+---
+
 ### DirectoryTree
 
 Filesystem tree browser with expand/collapse, tree connectors, and keyboard navigation.

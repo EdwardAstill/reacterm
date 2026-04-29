@@ -1,6 +1,6 @@
 # Components
 
-Storm ships 98 built-in components organized by category.
+Storm ships 99 built-in components organized by category.
 
 ## Quick Decision Guide
 
@@ -10,7 +10,7 @@ Storm ships 98 built-in components organized by category.
 | Show a scrollable area | `<ScrollView height={N}>` or `<ScrollView flex={1}>` |
 | Get text input | `<TextInput>` (single line), `<ChatInput>` (multi-line), or `<Editor>` (code/document editing) |
 | Show a dropdown | `<Select>` |
-| Show a data table | `<Table>` (simple) or `<DataGrid>` (sortable, selectable, editable) |
+| Show a data table | `<Table>` (simple), `<DataGrid>` (sortable, selectable, editable), or `<TreeTable>` (rows with subtrees) |
 | Show a progress bar | `<ProgressBar>` (block fill) or `<GradientProgress>` (gradient) |
 | Show a modal/dialog | `<Modal.Root>` (custom) or `<ConfirmDialog>` (yes/no) |
 | Show tabs | `<TabbedContent>` (tabs + content) or `<Tabs>` (tab bar only) |
@@ -27,7 +27,7 @@ Storm ships 98 built-in components organized by category.
 |---|---|---|
 | [Core](core.md) | Box, Text, ScrollView, Overlay, Spacer | Fundamental building blocks |
 | [Input](input.md) | TextInput, TextArea, Editor, ChatInput, Button, Checkbox, Switch, RadioGroup, Select, OptionList, SearchInput, Form, MaskedInput, FilePicker, SelectInput, SelectionList, DatePicker | User input and forms |
-| [Data](data.md) | Table, DataGrid, Tree, DirectoryTree, ListView, VirtualList, DiffView, InlineDiff, Calendar, Pretty | Data display |
+| [Data](data.md) | Table, DataGrid, Tree, TreeTable, DirectoryTree, ListView, VirtualList, DiffView, InlineDiff, Calendar, Pretty | Data display |
 | [Layout](layout.md) | Modal, Tabs, TabbedContent, Accordion, Collapsible, ContentSwitcher, ConfirmDialog, Header, Footer, FocusGroup, ErrorBoundary, Static, AnimatePresence, Transition, Welcome | Structure and containers |
 | [Feedback](feedback.md) | Spinner, ProgressBar, LoadingIndicator, Badge, Toast, ToastContainer, Alert, StatusMessage, Tooltip | User feedback |
 | [Visualization](visualization.md) | LineChart, AreaChart, BarChart, ScatterPlot, Heatmap, Histogram, Sparkline, Gauge, Diagram, Canvas, GradientProgress | Charts and graphs |
