@@ -82,7 +82,7 @@ export const ApprovalPrompt = React.memo(function ApprovalPrompt(rawProps) {
             onSelect(e.key);
         }
     }, [onSelect]), { isActive: props.visible !== false });
-    const dividerWidth = Math.max(20, termWidth - 4);
+    const dividerWidth = Math.max(20, props.width ?? termWidth - 4);
     const borderColor = riskBorderColor(risk, colors);
     return (_jsxs(Box, { flexDirection: "column", paddingX: 1, children: [_jsx(Divider, { style: "solid", width: dividerWidth, color: borderColor }), _jsxs(Box, { flexDirection: "column", paddingX: 1, paddingY: 1, children: [_jsxs(Box, { flexDirection: "row", children: [_jsx(Text, { bold: true, color: colors.approval.header, children: tool }), risk !== undefined && (_jsxs(Text, { color: riskBorderColor(risk, colors), bold: true, children: [" (", risk, ")"] }))] }), params !== undefined && Object.keys(params).length > 0 && (_jsx(Box, { paddingLeft: 2, children: _jsx(Text, { color: colors.text.dim, children: formatParams(params) }) })), _jsx(Box, { flexDirection: "row", paddingTop: 1, children: options.map((opt, i) => (props.renderOption
                             ? _jsx(Box, { children: props.renderOption(opt, i) }, opt.key)

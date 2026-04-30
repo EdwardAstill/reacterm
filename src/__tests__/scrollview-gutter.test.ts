@@ -28,17 +28,17 @@ function renderScrollView(height: number, extraProps: Record<string, unknown> = 
 describe("ScrollView scrollbar gutter", () => {
   it("keeps bordered content off the default scrollbar gutter", () => {
     const result = renderScrollView(4);
-    const lastLine = result.lines.at(-1) ?? "";
+    const firstLine = result.lines.at(0) ?? "";
 
-    expect(lastLine.endsWith(" ┃")).toBe(true);
+    expect(firstLine.endsWith(" ┃")).toBe(true);
   });
 
   it("allows compact legacy behavior with scrollbarGutter=0", () => {
     const result = renderScrollView(4, { scrollbarGutter: 0 });
-    const lastLine = result.lines.at(-1) ?? "";
+    const firstLine = result.lines.at(0) ?? "";
 
-    expect(lastLine.endsWith("┃")).toBe(true);
-    expect(lastLine.endsWith(" ┃")).toBe(false);
+    expect(firstLine.endsWith("┃")).toBe(true);
+    expect(firstLine.endsWith(" ┃")).toBe(false);
   });
 
   it("does not render a scrollbar when content fits", () => {

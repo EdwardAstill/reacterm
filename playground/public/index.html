@@ -111,6 +111,21 @@
   .topbar-status .dot.connected { background: var(--green); }
   .topbar-status .dot.error     { background: var(--red); }
 
+  .file-status {
+    max-width: 220px;
+    min-width: 64px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .file-status span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .file-status span[data-state="clean"]  { color: var(--green); }
+  .file-status span[data-state="dirty"]  { color: var(--yellow); }
+  .file-status span[data-state="saving"] { color: var(--accent); }
+  .file-status span[data-state="error"]  { color: var(--red); }
+
   .btn {
     font-family: var(--mono);
     font-size: 12px;
@@ -129,6 +144,7 @@
 
   .btn-run  { background: var(--green); color: #1a1b26; }
   .btn-stop { background: var(--red);   color: #1a1b26; }
+  .btn-save { background: var(--accent); color: #1a1b26; }
 
   /* ── Main panels ────────────────────────────────────────── */
 
@@ -294,10 +310,14 @@
       <option value="form">form.tsx -- Form Inputs</option>
     </select>
     <div class="topbar-spacer"></div>
+    <div class="topbar-status file-status" id="file-status">
+      <span id="file-status-text">No file</span>
+    </div>
     <div class="topbar-status">
       <div class="dot" id="status-dot"></div>
       <span id="status-text">Connecting...</span>
     </div>
+    <button class="btn btn-save" id="btn-save" disabled>Save</button>
     <button class="btn btn-run" id="btn-run" disabled>Run</button>
     <button class="btn btn-stop" id="btn-stop" disabled>Stop</button>
   </div>
@@ -332,6 +352,7 @@
   <!-- Bottom bar -->
   <div class="bottombar">
     <span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run</span>
+    <span><kbd>Ctrl</kbd>+<kbd>S</kbd> Save</span>
     <span><kbd>Ctrl</kbd>+<kbd>.</kbd> Stop</span>
     <span>Terminal input is live when a process is running</span>
     <div style="flex:1"></div>
@@ -393,8 +414,8 @@ render(<Counter />).waitUntilExit();`,
 
     dashboard: `import React, { useRef } from "react";
 import {
-  render, Box, Text, Sparkline, Gauge, Badge,
-  Separator, Spinner, useInput, useTerminal, useTui, useTick,
+  render, Box, Text, Sparkline, Gauge, LineChart, BarChart, Badge,
+  Divider, Spinner, useInput, useTerminal, useTui, useTick,
 } from "../src/index.js";
 
 function Dashboard() {
@@ -406,6 +427,8 @@ function Dashboard() {
     Array.from({ length: 30 }, () => 20 + Math.random() * 40)
   );
   const memRef = useRef(55);
+  const ioRef = useRef(28);
+  const netRef = useRef(34);
 
   useTick(500, () => {
     const arr = cpuRef.current;
@@ -416,10 +439,27 @@ function Dashboard() {
     memRef.current = Math.max(30, Math.min(85,
       memRef.current + (Math.random() - 0.45) * 3
     ));
+    ioRef.current = Math.max(10, Math.min(92,
+      ioRef.current + (Math.random() - 0.5) * 9
+    ));
+    netRef.current = Math.max(8, Math.min(88,
+      netRef.current + (Math.random() - 0.48) * 7
+    ));
   });
 
   const cpu = Math.round(cpuRef.current[cpuRef.current.length - 1]);
   const mem = Math.round(memRef.current);
+  const io = Math.round(ioRef.current);
+  const net = Math.round(netRef.current);
+  const chartWidth = Math.max(24, width - 36);
+  const sideWidth = Math.max(20, Math.min(32, Math.floor(width / 3)));
+  const chartHeight = Math.max(5, Math.min(10, height - 10));
+  const barData = [
+    { label: "CPU", value: cpu, color: cpu > 70 ? "#F7768E" : "#9ECE6A" },
+    { label: "MEM", value: mem, color: mem > 70 ? "#E0AF68" : "#9ECE6A" },
+    { label: "I/O", value: io, color: io > 70 ? "#BB9AF7" : "#7DCFFF" },
+    { label: "NET", value: net, color: net > 70 ? "#E0AF68" : "#82AAFF" },
+  ];
 
   return (
     <Box flexDirection="column" width={width} height={height}>
@@ -431,22 +471,41 @@ function Dashboard() {
         <Text> </Text>
         <Badge label={\`MEM \${mem}%\`} variant={mem > 70 ? "warning" : "success"} />
       </Box>
-      <Separator style="line" color="#565F89" />
-      <Box flex={1} flexDirection="row" paddingX={1}>
+      <Divider style="line" color="#565F89" />
+      <Box flex={1} flexDirection="row" paddingX={1} gap={2}>
         <Box flex={1} flexDirection="column">
-          <Text bold color="#82AAFF">CPU Usage</Text>
+          <Text bold color="#82AAFF">CPU Line Plot</Text>
+          <LineChart
+            series={[{ data: cpuRef.current, name: "CPU", color: "#82AAFF" }]}
+            width={chartWidth}
+            height={chartHeight}
+            yMin={0}
+            yMax={100}
+            showLegend={false}
+            showGrid
+          />
+          <Text bold color="#82AAFF">Sparkline</Text>
           <Sparkline
             data={cpuRef.current}
-            width={Math.max(10, Math.floor(width / 2) - 4)}
-            height={3}
+            width={Math.max(10, chartWidth)}
+            height={2}
             color="#82AAFF"
           />
         </Box>
-        <Box flex={1} flexDirection="column">
-          <Text bold color="#82AAFF">Memory</Text>
+        <Box width={sideWidth} flexDirection="column">
+          <Text bold color="#82AAFF">Bar Plot</Text>
+          <BarChart
+            bars={barData}
+            orientation="horizontal"
+            width={sideWidth}
+            showValues
+            showAxes={false}
+          />
+          <Box height={1} />
+          <Text bold color="#82AAFF">Memory Gauge</Text>
           <Gauge
             value={mem}
-            width={Math.max(10, Math.floor(width / 2) - 4)}
+            width={Math.max(10, sideWidth - 8)}
             color={mem > 70 ? "#E0AF68" : "#9ECE6A"}
             label={\`\${mem}%\`}
           />
@@ -512,8 +571,10 @@ render(<FormDemo />).waitUntilExit();`,
   const lineNumbers  = document.getElementById("line-numbers");
   const editorFname  = document.getElementById("editor-filename");
   const exampleSel   = document.getElementById("example-select");
+  const btnSave      = document.getElementById("btn-save");
   const btnRun       = document.getElementById("btn-run");
   const btnStop      = document.getElementById("btn-stop");
+  const fileStatusText = document.getElementById("file-status-text");
   const statusDot    = document.getElementById("status-dot");
   const statusText   = document.getElementById("status-text");
   const terminalEl   = document.getElementById("terminal");
@@ -575,6 +636,109 @@ render(<FormDemo />).waitUntilExit();`,
   let ws = null;
   let running = false;
   let reconnectTimer = null;
+  let loadedPath = null;
+  let loadedToken = null;
+  let loadedMtimeMs = null;
+  let dirty = false;
+  let loadingFile = false;
+
+  function fileBaseName(path) {
+    return String(path || "").split(/[\\/]/).pop() || "file";
+  }
+
+  function setFileStatus(text, state) {
+    fileStatusText.textContent = text;
+    fileStatusText.dataset.state = state || "";
+  }
+
+  function updateSaveState() {
+    btnSave.disabled = !loadedPath || loadingFile || !dirty;
+  }
+
+  function setDirty(next) {
+    dirty = next;
+    updateSaveState();
+    if (!loadedPath) {
+      setFileStatus("No file", "");
+      return;
+    }
+    const name = fileBaseName(loadedPath);
+    setFileStatus(dirty ? "Unsaved " + name : "Saved " + name, dirty ? "dirty" : "clean");
+  }
+
+  function clearFileSession() {
+    loadedPath = null;
+    loadedToken = null;
+    loadedMtimeMs = null;
+    loadingFile = false;
+    setDirty(false);
+  }
+
+  async function loadFileFromQuery() {
+    const params = new URLSearchParams(location.search);
+    const file = params.get("file");
+    const token = params.get("token") || "";
+    if (!file) return false;
+
+    loadingFile = true;
+    loadedToken = token;
+    updateSaveState();
+    setFileStatus("Loading " + fileBaseName(file), "saving");
+
+    try {
+      const res = await fetch(
+        "/api/file?path=" + encodeURIComponent(file) + "&token=" + encodeURIComponent(token),
+      );
+      const body = await res.json();
+      if (!res.ok || body.ok === false) {
+        throw new Error(body.message || body.error || "Failed to load file");
+      }
+
+      loadedPath = body.path;
+      loadedMtimeMs = body.mtimeMs;
+      editor.value = body.content;
+      editorFname.textContent = "\u00a0-- " + fileBaseName(body.path);
+      if (exampleSel) exampleSel.value = "";
+      updateLineNumbers();
+      return true;
+    } finally {
+      loadingFile = false;
+      setDirty(false);
+    }
+  }
+
+  async function saveLoadedFile() {
+    if (!loadedPath || !dirty || loadingFile) return;
+
+    btnSave.disabled = true;
+    setFileStatus("Saving " + fileBaseName(loadedPath), "saving");
+
+    try {
+      const res = await fetch("/api/file", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: loadedPath,
+          token: loadedToken,
+          baseMtimeMs: loadedMtimeMs,
+          content: editor.value,
+        }),
+      });
+      const body = await res.json();
+
+      if (!res.ok || body.ok === false) {
+        setFileStatus(body.error === "conflict" ? "Conflict" : "Save failed", "error");
+        updateSaveState();
+        return;
+      }
+
+      loadedMtimeMs = body.mtimeMs;
+      setDirty(false);
+    } catch {
+      setFileStatus("Save failed", "error");
+      updateSaveState();
+    }
+  }
 
   function setStatus(state) {
     statusDot.className = "dot " + state;
@@ -699,7 +863,10 @@ render(<FormDemo />).waitUntilExit();`,
     lineNumbers.innerHTML = html;
   }
 
-  editor.addEventListener("input", updateLineNumbers);
+  editor.addEventListener("input", () => {
+    updateLineNumbers();
+    if (!loadingFile && loadedPath) setDirty(true);
+  });
   editor.addEventListener("scroll", () => {
     lineNumbers.style.transform = "translateY(-" + editor.scrollTop + "px)";
   });
@@ -709,6 +876,7 @@ render(<FormDemo />).waitUntilExit();`,
   function loadExample(name) {
     const code = EXAMPLES[name];
     if (!code) return;
+    clearFileSession();
     editor.value = code;
     editorFname.textContent = "\u00a0-- " + name + ".tsx";
     updateLineNumbers();
@@ -725,6 +893,11 @@ render(<FormDemo />).waitUntilExit();`,
   // ── Keyboard shortcuts ─────────────────────────────────
 
   document.addEventListener("keydown", (e) => {
+    // Ctrl+S or Cmd+S -> Save loaded file
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && loadedPath) {
+      e.preventDefault();
+      void saveLoadedFile();
+    }
     // Ctrl+Enter or Cmd+Enter → Run
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
@@ -770,8 +943,19 @@ render(<FormDemo />).waitUntilExit();`,
 
   // ── Init ───────────────────────────────────────────────
 
-  loadExample("dashboard");
-  connect();
+  btnSave.addEventListener("click", () => {
+    void saveLoadedFile();
+  });
+
+  void loadFileFromQuery()
+    .catch((error) => {
+      setFileStatus(error.message || "Load failed", "error");
+      return false;
+    })
+    .then((loaded) => {
+      if (!loaded) loadExample("dashboard");
+      connect();
+    });
 })();
 </script>
 </body>

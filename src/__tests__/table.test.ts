@@ -224,4 +224,147 @@ describe("Table", () => {
     expect(result.hasText("Format")).toBe(true);
     expect(result.hasText("Live load ele…")).toBe(true);
   });
+
+  // ── Styling: predicate row/cell + per-column ────────────────────────
+
+  /** True if any of the preceding 80 bytes before `text` in `styled` contain the SGR sequence `sgr`. */
+  function hasStyleBefore(styled: string, text: string, sgr: string): boolean {
+    const idx = styled.indexOf(text);
+    if (idx === -1) return false;
+    const window = styled.slice(Math.max(0, idx - 25), idx);
+    return window.includes(sgr);
+  }
+
+  /** True if no occurrence of `text` in `styled` is preceded (within 80 bytes) by `sgr`. */
+  function neverHasStyleBefore(styled: string, text: string, sgr: string): boolean {
+    let pos = 0;
+    while (true) {
+      const idx = styled.indexOf(text, pos);
+      if (idx === -1) return true;
+      const window = styled.slice(Math.max(0, idx - 25), idx);
+      if (window.includes(sgr)) return false;
+      pos = idx + text.length;
+    }
+  }
+
+  it("rowStyle predicate styles a specific row", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns: [
+          { key: "name", header: "Name" },
+          { key: "status", header: "Status" },
+        ],
+        data: [
+          { name: "Alice", status: "ok" },
+          { name: "Bob", status: "error" },
+        ],
+        rowStyle: (row: Record<string, string | number>) =>
+          row.status === "error" ? { bold: true } : undefined,
+      }),
+      { width: 40, height: 10 },
+    );
+    // Bob's row is bolded; Alice's is not.
+    expect(hasStyleBefore(result.styledOutput, "Bob", "\x1b[1m")).toBe(true);
+    expect(neverHasStyleBefore(result.styledOutput, "Alice", "\x1b[1m")).toBe(true);
+  });
+
+  it("cellStyle predicate styles a specific cell", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns,
+        data: [
+          { name: "Alice", score: 95 },
+          { name: "Bob", score: 70 },
+        ],
+        cellStyle: (value: string | number, column: { key: string }) =>
+          column.key === "score" && Number(value) > 90 ? { italic: true } : undefined,
+      }),
+      { width: 40, height: 10 },
+    );
+    // Alice's score is italic; Bob's score and Alice's name are not.
+    expect(hasStyleBefore(result.styledOutput, "95", "\x1b[3m")).toBe(true);
+    expect(neverHasStyleBefore(result.styledOutput, "70", "\x1b[3m")).toBe(true);
+    expect(neverHasStyleBefore(result.styledOutput, "Alice", "\x1b[3m")).toBe(true);
+  });
+
+  it("column style applies to all body cells in that column", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns: [
+          { key: "name", header: "Name", dim: true },
+          { key: "score", header: "Score" },
+        ],
+        data: [
+          { name: "Alice", score: 95 },
+          { name: "Bob", score: 70 },
+        ],
+      }),
+      { width: 40, height: 10 },
+    );
+    // All body name cells render dim (\x1b[2m).
+    expect(hasStyleBefore(result.styledOutput, "Alice", "\x1b[2m")).toBe(true);
+    expect(hasStyleBefore(result.styledOutput, "Bob", "\x1b[2m")).toBe(true);
+    // Score cells are not dim.
+    expect(neverHasStyleBefore(result.styledOutput, "95", "\x1b[2m")).toBe(true);
+  });
+
+  it("column style does NOT affect headers", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns: [
+          { key: "name", header: "Name", dim: true },
+          { key: "score", header: "Score" },
+        ],
+        data: [{ name: "Alice", score: 95 }],
+      }),
+      { width: 40, height: 10 },
+    );
+    // Header "Name" is NOT dim despite the column setting dim=true.
+    expect(neverHasStyleBefore(result.styledOutput, "Name", "\x1b[2m")).toBe(true);
+  });
+
+  it("state style overrides rowStyle predicate (focus stays visible)", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns,
+        data: [{ name: "Alice", score: 95 }],
+        isFocused: true,
+        rowHighlight: true,
+        rowStyle: () => ({ bold: false, inverse: false }),
+        stateStyles: { focusedRow: { inverse: true } },
+      }),
+      { width: 40, height: 10 },
+    );
+    // Focused row gets inverse (\x1b[7m) from stateStyles, overriding the predicate.
+    expect(hasStyleBefore(result.styledOutput, "Alice", "\x1b[7m")).toBe(true);
+  });
+
+  it("cellStyle overrides rowStyle for the same cell", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns,
+        data: [{ name: "Alice", score: 95 }],
+        rowStyle: () => ({ bold: true, italic: false }),
+        cellStyle: (_value: string | number, column: { key: string }) =>
+          column.key === "score" ? { bold: false, italic: true } : undefined,
+      }),
+      { width: 40, height: 10 },
+    );
+    // Score cell: italic wins, bold disabled by cellStyle.
+    expect(hasStyleBefore(result.styledOutput, "95", "\x1b[3m")).toBe(true);
+    // Name cell: bold from rowStyle still applied.
+    expect(hasStyleBefore(result.styledOutput, "Alice", "\x1b[1m")).toBe(true);
+  });
+
+  it("italic propagates from cellStyle to rendered tui-text", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        columns,
+        data: [{ name: "Alice", score: 95 }],
+        cellStyle: () => ({ italic: true }),
+      }),
+      { width: 40, height: 10 },
+    );
+    expect(result.styledOutput.includes("\x1b[3m")).toBe(true);
+  });
 });

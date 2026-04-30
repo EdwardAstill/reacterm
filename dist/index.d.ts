@@ -36,6 +36,8 @@ export { Table, type TableProps, type TableColumn } from "./components/table/Tab
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";
 export { Tabs, type TabsProps, type Tab, type TabsVariant } from "./components/core/Tabs.js";
 export { Tree, type TreeProps, type TreeNode } from "./components/data/Tree.js";
+export { TreeTable, type TreeTableProps } from "./components/data/TreeTable.js";
+export type { TreeTableRow } from "./components/data/TreeTable.flatten.js";
 export type { TreeController, ReorderState, ReorderChange, MoveContext } from "./components/data/Tree.types.js";
 export { Toast, ToastContainer, type ToastProps, type ToastContainerProps, type ToastItem } from "./components/extras/Toast.js";
 export { Checkbox, type CheckboxProps } from "./components/core/Checkbox.js";
@@ -76,6 +78,8 @@ export { Paragraph, type ParagraphProps } from "./components/extras/Paragraph.js
 export { Diagram, type DiagramProps, type DiagramNode, type DiagramEdge } from "./components/effects/Diagram.js";
 export { Canvas, type CanvasProps, type CanvasNode, type CanvasEdge } from "./components/effects/canvas/index.js";
 export { SearchInput, type SearchInputProps } from "./components/extras/SearchInput.js";
+export { SearchList, type SearchListProps, type SearchListItem } from "./components/extras/SearchList.js";
+export { SearchTable, type SearchTableProps } from "./components/extras/SearchTable.js";
 export { MaskedInput, type MaskedInputProps } from "./components/extras/MaskedInput.js";
 export { Form, type FormField, type FormFieldOption, type FormProps } from "./components/extras/Form.js";
 export { DataGrid, type DataGridColumn, type DataGridProps } from "./components/data/DataGrid.js";
@@ -127,6 +131,7 @@ export { useAsyncCleanup } from "./hooks/useAsyncCleanup.js";
 export { useForceUpdate } from "./hooks/useForceUpdate.js";
 export { useInput, type UseInputOptions } from "./hooks/useInput.js";
 export { useMouse, type UseMouseOptions } from "./hooks/useMouse.js";
+export { useMousePosition, type UseMousePositionOptions, type UseMousePositionResult, type MousePositionState } from "./hooks/useMousePosition.js";
 export { useMouseTarget, type UseMouseTargetOptions, type UseMouseTargetResult } from "./hooks/useMouseTarget.js";
 export { useTerminal, type TerminalInfo } from "./hooks/useTerminal.js";
 export { useFocus, type UseFocusOptions, type UseFocusResult } from "./hooks/useFocus.js";

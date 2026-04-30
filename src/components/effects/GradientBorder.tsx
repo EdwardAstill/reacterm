@@ -32,6 +32,7 @@ export const GradientBorder = React.memo(function GradientBorder(rawProps: Gradi
     ? rawWidth
     : (parseInt(rawWidth, 10) || 40);
   const innerWidth = Math.max(totalWidth - 2, 0); // subtract left+right border
+  const contentWidth = Math.max(innerWidth - padding * 2, 0);
   const [colorFrom, colorTo] = gradientColors;
 
   // Total border perimeter characters for interpolation
@@ -79,10 +80,10 @@ export const GradientBorder = React.memo(function GradientBorder(rawProps: Gradi
 
   const contentRow = React.createElement(
     "tui-box",
-    { key: "mid", flexDirection: "row" },
+    { key: "mid", flexDirection: "row", width: totalWidth },
     React.createElement("tui-text", { key: "ml", color: colorAt(midIndex - 2) }, "\u2502"),
     React.createElement("tui-text", { key: "pl" }, padStr),
-    React.createElement("tui-box", { key: "content", flex: 1 }, children),
+    React.createElement("tui-box", { key: "content", width: contentWidth, overflow: "hidden" }, children),
     React.createElement("tui-text", { key: "pr" }, padStr),
     React.createElement("tui-text", { key: "mr", color: colorAt(midIndex + 2) }, "\u2502"),
   );

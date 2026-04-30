@@ -8,6 +8,13 @@ export interface TableColumn {
     focusable?: boolean;
     editable?: boolean;
     locked?: boolean;
+    /** Style applied to every body cell in this column (not the header). */
+    color?: string | number;
+    backgroundColor?: string | number;
+    bold?: boolean;
+    dim?: boolean;
+    italic?: boolean;
+    underline?: boolean;
 }
 export type TableFocusMode = "row" | "column" | "cell";
 export interface TableCellRef {
@@ -19,6 +26,7 @@ export interface TableCellStyle {
     backgroundColor?: string | number;
     bold?: boolean;
     dim?: boolean;
+    italic?: boolean;
     underline?: boolean;
     inverse?: boolean;
 }
@@ -87,6 +95,10 @@ export interface TableProps extends StormContainerStyleProps {
     editedCells?: TableCellRef[];
     lockedCells?: TableCellRef[];
     stateStyles?: TableStateStyles;
+    /** Predicate-based row style. Merged AFTER per-column style and BEFORE state styles (state always wins). */
+    rowStyle?: (row: Record<string, string | number>, rowIndex: number) => TableCellStyle | undefined;
+    /** Predicate-based per-cell style. Merged AFTER rowStyle and BEFORE state styles. */
+    cellStyle?: (value: string | number, column: TableColumn, rowIndex: number, row: Record<string, string | number>) => TableCellStyle | undefined;
     editable?: boolean;
     onCellEdit?: (rowIndex: number, columnKey: string, newValue: string) => void;
     isCellLocked?: (value: string | number, column: TableColumn, rowIndex: number, row: Record<string, string | number>) => boolean;

@@ -61,7 +61,7 @@ function TableCompoundCell({ children, width, align, bold, color: cellColor }) {
 const TableBase = React.memo(function Table(rawProps) {
     const colors = useColors();
     const props = usePluginProps("Table", rawProps);
-    const { columns, data, headerColor = colors.brand.primary, stripe = false, maxVisibleRows = 100, scrollOffset = 0, onScrollChange, isFocused = false, onRowSelect, rowHighlight = false, visibleWidth, sortable = false, onSort, renderCell, renderHeader, onRowPress, onCellPress, onHeaderPress, focusMode = "row", focusedRow, focusedColumn, focusedCell = null, selectedRows = [], selectedCells = [], editedCells = [], lockedCells = [], stateStyles, editable = false, onCellEdit, isCellLocked, isCellEditable, isCellFocusable, } = props;
+    const { columns, data, headerColor = colors.brand.primary, stripe = false, maxVisibleRows = 100, scrollOffset = 0, onScrollChange, isFocused = false, onRowSelect, rowHighlight = false, visibleWidth, sortable = false, onSort, renderCell, renderHeader, onRowPress, onCellPress, onHeaderPress, focusMode = "row", focusedRow, focusedColumn, focusedCell = null, selectedRows = [], selectedCells = [], editedCells = [], lockedCells = [], stateStyles, rowStyle, cellStyle, editable = false, onCellEdit, isCellLocked, isCellEditable, isCellFocusable, } = props;
     const { requestRender } = useTui();
     const scrollRef = useRef(scrollOffset);
     const cursorRowRef = useRef(0);
@@ -146,8 +146,32 @@ const TableBase = React.memo(function Table(rawProps) {
             isEditing: editingRef.current?.row === rowIndex && editingRef.current?.col === colIndex,
         };
     }
-    function getCellStyle(state) {
-        return mergeStyles(state.isLocked ? resolvedStateStyles.lockedCell : undefined, state.isEdited ? resolvedStateStyles.editedCell : undefined, state.isSelectedRow ? resolvedStateStyles.selectedRow : undefined, state.isSelectedCell ? resolvedStateStyles.selectedCell : undefined, state.isFocusedRow ? resolvedStateStyles.focusedRow : undefined, state.isFocusedColumn ? resolvedStateStyles.focusedColumn : undefined, state.isFocusedCell ? resolvedStateStyles.focusedCell : undefined);
+    function columnToStyle(col) {
+        if (col.color === undefined &&
+            col.backgroundColor === undefined &&
+            col.bold === undefined &&
+            col.dim === undefined &&
+            col.italic === undefined &&
+            col.underline === undefined)
+            return undefined;
+        const out = {};
+        if (col.color !== undefined)
+            out.color = col.color;
+        if (col.backgroundColor !== undefined)
+            out.backgroundColor = col.backgroundColor;
+        if (col.bold !== undefined)
+            out.bold = col.bold;
+        if (col.dim !== undefined)
+            out.dim = col.dim;
+        if (col.italic !== undefined)
+            out.italic = col.italic;
+        if (col.underline !== undefined)
+            out.underline = col.underline;
+        return out;
+    }
+    const columnStyles = columns.map(columnToStyle);
+    function getCellStyle(state, row, rowIndex, column, columnIndex, value) {
+        return mergeStyles(columnStyles[columnIndex], rowStyle?.(row, rowIndex), cellStyle?.(value, column, rowIndex, row), state.isLocked ? resolvedStateStyles.lockedCell : undefined, state.isEdited ? resolvedStateStyles.editedCell : undefined, state.isSelectedRow ? resolvedStateStyles.selectedRow : undefined, state.isSelectedCell ? resolvedStateStyles.selectedCell : undefined, state.isFocusedRow ? resolvedStateStyles.focusedRow : undefined, state.isFocusedColumn ? resolvedStateStyles.focusedColumn : undefined, state.isFocusedCell ? resolvedStateStyles.focusedCell : undefined);
     }
     // Sync scrollRef with controlled prop
     scrollRef.current = scrollOffset;
@@ -397,6 +421,7 @@ const TableBase = React.memo(function Table(rawProps) {
                     ...(style.color !== undefined ? { color: style.color } : {}),
                     ...(style.bold ? { bold: true } : {}),
                     ...(style.dim ? { dim: true } : {}),
+                    ...(style.italic ? { italic: true } : {}),
                     ...(style.underline ? { underline: true } : {}),
                     ...(style.inverse ? { inverse: true } : {}),
                 }, " " + padCell(headerText, colWidths[ci], col.align ?? "left") + " ")),
@@ -426,7 +451,7 @@ const TableBase = React.memo(function Table(rawProps) {
             const val = row[col.key];
             const displayValue = val !== undefined ? String(val) : "";
             const state = getCellState(row, ri, col, ci);
-            const style = getCellStyle(state);
+            const style = getCellStyle(state, row, ri, col, ci, val !== undefined ? val : "");
             let content;
             if (state.isEditing && editingRef.current) {
                 const edit = editingRef.current;
@@ -445,6 +470,7 @@ const TableBase = React.memo(function Table(rawProps) {
                 ...(style.color !== undefined ? { color: style.color } : {}),
                 ...(style.bold ? { bold: true } : {}),
                 ...(style.dim ? { dim: true } : {}),
+                ...(style.italic ? { italic: true } : {}),
                 ...(style.underline ? { underline: true } : {}),
                 ...(style.inverse ? { inverse: true } : {}),
             };

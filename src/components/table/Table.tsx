@@ -29,6 +29,13 @@ export interface TableColumn {
   focusable?: boolean;
   editable?: boolean;
   locked?: boolean;
+  /** Style applied to every body cell in this column (not the header). */
+  color?: string | number;
+  backgroundColor?: string | number;
+  bold?: boolean;
+  dim?: boolean;
+  italic?: boolean;
+  underline?: boolean;
 }
 
 export type TableFocusMode = "row" | "column" | "cell";
@@ -43,6 +50,7 @@ export interface TableCellStyle {
   backgroundColor?: string | number;
   bold?: boolean;
   dim?: boolean;
+  italic?: boolean;
   underline?: boolean;
   inverse?: boolean;
 }
@@ -114,6 +122,10 @@ export interface TableProps extends StormContainerStyleProps {
   editedCells?: TableCellRef[];
   lockedCells?: TableCellRef[];
   stateStyles?: TableStateStyles;
+  /** Predicate-based row style. Merged AFTER per-column style and BEFORE state styles (state always wins). */
+  rowStyle?: (row: Record<string, string | number>, rowIndex: number) => TableCellStyle | undefined;
+  /** Predicate-based per-cell style. Merged AFTER rowStyle and BEFORE state styles. */
+  cellStyle?: (value: string | number, column: TableColumn, rowIndex: number, row: Record<string, string | number>) => TableCellStyle | undefined;
   editable?: boolean;
   onCellEdit?: (rowIndex: number, columnKey: string, newValue: string) => void;
   isCellLocked?: (value: string | number, column: TableColumn, rowIndex: number, row: Record<string, string | number>) => boolean;
@@ -260,6 +272,8 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
     editedCells = [],
     lockedCells = [],
     stateStyles,
+    rowStyle,
+    cellStyle,
     editable = false,
     onCellEdit,
     isCellLocked,
@@ -357,8 +371,39 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
     };
   }
 
-  function getCellStyle(state: TableRenderState): TableCellStyle {
+  function columnToStyle(col: TableColumn): TableCellStyle | undefined {
+    if (
+      col.color === undefined &&
+      col.backgroundColor === undefined &&
+      col.bold === undefined &&
+      col.dim === undefined &&
+      col.italic === undefined &&
+      col.underline === undefined
+    ) return undefined;
+    const out: TableCellStyle = {};
+    if (col.color !== undefined) out.color = col.color;
+    if (col.backgroundColor !== undefined) out.backgroundColor = col.backgroundColor;
+    if (col.bold !== undefined) out.bold = col.bold;
+    if (col.dim !== undefined) out.dim = col.dim;
+    if (col.italic !== undefined) out.italic = col.italic;
+    if (col.underline !== undefined) out.underline = col.underline;
+    return out;
+  }
+
+  const columnStyles: Array<TableCellStyle | undefined> = columns.map(columnToStyle);
+
+  function getCellStyle(
+    state: TableRenderState,
+    row: Record<string, string | number>,
+    rowIndex: number,
+    column: TableColumn,
+    columnIndex: number,
+    value: string | number,
+  ): TableCellStyle {
     return mergeStyles(
+      columnStyles[columnIndex],
+      rowStyle?.(row, rowIndex),
+      cellStyle?.(value, column, rowIndex, row),
       state.isLocked ? resolvedStateStyles.lockedCell : undefined,
       state.isEdited ? resolvedStateStyles.editedCell : undefined,
       state.isSelectedRow ? resolvedStateStyles.selectedRow : undefined,
@@ -655,6 +700,7 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
                   ...(style.color !== undefined ? { color: style.color } : {}),
                   ...(style.bold ? { bold: true } : {}),
                   ...(style.dim ? { dim: true } : {}),
+                  ...(style.italic ? { italic: true } : {}),
                   ...(style.underline ? { underline: true } : {}),
                   ...(style.inverse ? { inverse: true } : {}),
                 },
@@ -699,7 +745,7 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
       const val = row[col.key];
       const displayValue = val !== undefined ? String(val) : "";
       const state = getCellState(row, ri, col, ci);
-      const style = getCellStyle(state);
+      const style = getCellStyle(state, row, ri, col, ci, val !== undefined ? val : "");
       let content: React.ReactNode;
 
       if (state.isEditing && editingRef.current) {
@@ -718,6 +764,7 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
         ...(style.color !== undefined ? { color: style.color } : {}),
         ...(style.bold ? { bold: true } : {}),
         ...(style.dim ? { dim: true } : {}),
+        ...(style.italic ? { italic: true } : {}),
         ...(style.underline ? { underline: true } : {}),
         ...(style.inverse ? { inverse: true } : {}),
       };

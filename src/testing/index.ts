@@ -222,50 +222,62 @@ export function renderForTest(
 
     fireKey(key: string, opts?: { ctrl?: boolean; meta?: boolean; shift?: boolean }): void {
       inner.input.pressKey(key, opts);
+      refresh();
     },
 
     type(text: string): void {
       inner.input.type(text);
+      refresh();
     },
 
     pressEnter(): void {
       inner.input.pressEnter();
+      refresh();
     },
 
     pressEscape(): void {
       inner.input.pressKey("escape");
+      refresh();
     },
 
     pressTab(): void {
       inner.input.pressKey("tab");
+      refresh();
     },
 
     pressUp(): void {
       inner.input.pressKey("up");
+      refresh();
     },
 
     pressDown(): void {
       inner.input.pressKey("down");
+      refresh();
     },
 
     pressLeft(): void {
       inner.input.pressKey("left");
+      refresh();
     },
 
     pressRight(): void {
       inner.input.pressKey("right");
+      refresh();
     },
 
     scroll(direction: "up" | "down", x?: number, y?: number): void {
       inner.input.scroll(direction, x, y);
+      refresh();
     },
 
     click(x?: number, y?: number, button?: MouseEvent["button"]): void {
       inner.input.click(x, y, button);
+      refresh();
     },
 
     paste(text: string): void {
       inner.input.paste(text);
+      refresh();
     },
 
     rerender(el: React.ReactElement): void {

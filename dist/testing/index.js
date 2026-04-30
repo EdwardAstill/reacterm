@@ -161,39 +161,51 @@ export function renderForTest(element, options) {
         height,
         fireKey(key, opts) {
             inner.input.pressKey(key, opts);
+            refresh();
         },
         type(text) {
             inner.input.type(text);
+            refresh();
         },
         pressEnter() {
             inner.input.pressEnter();
+            refresh();
         },
         pressEscape() {
             inner.input.pressKey("escape");
+            refresh();
         },
         pressTab() {
             inner.input.pressKey("tab");
+            refresh();
         },
         pressUp() {
             inner.input.pressKey("up");
+            refresh();
         },
         pressDown() {
             inner.input.pressKey("down");
+            refresh();
         },
         pressLeft() {
             inner.input.pressKey("left");
+            refresh();
         },
         pressRight() {
             inner.input.pressKey("right");
+            refresh();
         },
         scroll(direction, x, y) {
             inner.input.scroll(direction, x, y);
+            refresh();
         },
         click(x, y, button) {
             inner.input.click(x, y, button);
+            refresh();
         },
         paste(text) {
             inner.input.paste(text);
+            refresh();
         },
         rerender(el) {
             element = el;

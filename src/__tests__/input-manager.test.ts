@@ -8,13 +8,16 @@ import type { MouseEvent, KeyEvent } from "../input/types.js";
  */
 function makeFakeStdin() {
   const ee = new EventEmitter();
+  const calls = { pause: 0 };
   const stdin = {
     on: (event: string, handler: (...args: unknown[]) => void) =>
       ee.on(event, handler),
     removeListener: (event: string, handler: (...args: unknown[]) => void) =>
       ee.removeListener(event, handler),
     push: (data: string) => ee.emit("data", data),
-  } as unknown as NodeJS.ReadStream & { push: (data: string) => void };
+    pause: () => { calls.pause++; return stdin; },
+    calls,
+  } as unknown as NodeJS.ReadStream & { push: (data: string) => void; calls: { pause: number } };
   return stdin;
 }
 
@@ -100,6 +103,21 @@ describe("InputManager mouse parsing", () => {
     stdin.push(scroll(64, 1, 1));
     const digitChars = keys.map((k) => k.char).filter((c) => c === "9");
     expect(digitChars).toEqual([]);
+  });
+});
+
+describe("InputManager lifecycle", () => {
+  it("pauses stdin on stop so TTY read handles do not keep the process alive", () => {
+    const stdin = makeFakeStdin();
+    const im = new InputManager(stdin);
+
+    im.start();
+    expect(im.isAttached).toBe(true);
+
+    im.stop();
+
+    expect(im.isAttached).toBe(false);
+    expect(stdin.calls.pause).toBe(1);
   });
 });
 

@@ -367,3 +367,223 @@ What the workaround does NOT fix:
 
 Treat this as a belt-and-braces patch until reacterm exposes a proper
 focus-owner contract at the tree boundary.
+
+## 6. `Modal` shadows lower-priority handlers even when invisible
+
+### What happened
+
+Building `examples/reacterm-demo.tsx` I registered a global app handler
+with `useInput(fn, { priority: 900 })` to handle Tab / `?` / `t` / `q`.
+The demo shell rendered a help `<Modal visible={showHelp}>` that's
+invisible at startup. **Tab did nothing** — the global handler never
+fired.
+
+### Why it fires
+
+`Modal` registers a focus-trap handler unconditionally on mount via
+`useInput(handleInput, { isActive: visible, priority: INPUT_PRIORITY.MODAL })`
+where `MODAL = 1000`. The handler is gated by `isActive` (returns
+early when `visible=false`), but it's still **registered** in the
+prioritized listener set at priority 1000.
+
+`InputManager.emitKey` only iterates handlers at the **max** priority
+found:
+
+```ts
+for (const entry of this.prioritizedKeyListeners) {
+  if (entry.priority === maxPriority) {
+    entry.handler(event);
+    if (event.consumed) break;
+  }
+}
+```
+
+So the priority-900 handler is shadowed forever. When Modal's
+invisible handler returns without consuming, the loop just ends — it
+doesn't fall through to the next-highest priority. Execution
+continues only to the **non-prioritized** listener set; anything
+registered with `priority` strictly less than 1000 evaporates.
+
+### Why it surprises
+
+The semantics most users expect from "priority": higher runs first,
+and if it doesn't consume, the next priority gets a turn. The
+implementation is "highest priority wins, all-or-nothing".
+
+### Workaround
+
+Drop the priority on the global handler — register as a normal
+listener. Modal at 1000 still runs first, returns when invisible
+without consuming, falls through to the normal listener queue. Done.
+
+### Suggested direction for reacterm
+
+One of:
+
+1. **Cascade priorities** — when no max-priority handler consumes,
+   run the next-highest tier, and so on, until a handler consumes or
+   we fall through to normal listeners. Matches the principle of
+   least surprise and lets layered apps stack global > section >
+   widget handlers via priority numbers.
+2. **Skip inactive prioritized handlers when computing max** — i.e.
+   `maxPriority = max(entry.priority for entry where entry.active)`.
+   This keeps the all-or-nothing model but stops invisible Modals
+   from poisoning the max bucket. Requires propagating `isActive`
+   into `PrioritizedKeyHandler` (it currently lives only inside the
+   wrapper closure in `useInput`).
+3. **Document the gotcha** — at a minimum, the warning in
+   `pitfalls.md` should call this out: "if you mount a Modal anywhere
+   in your tree, a `priority` below 1000 on any other handler is
+   effectively dead code."
+
+Option 2 is the smallest change and probably the right semantics —
+an inactive handler shouldn't influence anything.
+
+### Cross-reference
+
+- Emitting site: `src/input/manager.ts:286` (`emitKey`)
+- Modal site: `src/components/core/Modal.tsx:55`
+- Demo bitten by it: `examples/reacterm-demo.tsx` (App's `useInput`)
+- Reproduction: a small App with priority-900 Tab handler + an
+  invisible Modal — Tab evaporates. Removing the priority fixes it.
+
+## 7. `DataGrid` headers are not clickable
+
+### What happened
+
+Building the demo's Data section, I wired `DataGrid`'s `onSort` callback
+expecting that clicking a column header would fire it. It didn't —
+`DataGrid` invokes `onSort` only from its keyboard `s` shortcut. The
+column headers render as plain `<tui-text>`, no `useMouseTarget`, no
+`_focusId`. Same story for `onSelect` and body rows.
+
+### Why it's a gap
+
+Every consumer of `DataGrid` who wants click-sort or click-select has
+to wrap headers/rows themselves, which means re-implementing the
+header layout (sort indicators, alignment, column widths) outside
+the component.
+
+### Workaround in the demo
+
+`examples/reacterm-demo.tsx` ships a small custom grid (~80 lines) in
+the `FileGridPane` component instead of using `DataGrid`. The grid
+wraps each header cell and each body row in the demo's `Clickable`
+helper. It's not a great precedent — the framework should ship this
+out of the box.
+
+### Suggested direction
+
+Inside `DataGrid`:
+
+1. Wrap each header cell in a `useMouseTarget` so a click invokes
+   `onSort(col.key)` — same dispatcher as the `s` shortcut.
+2. Wrap each body row in a `useMouseTarget` so a click invokes
+   `onSelect(rowIndex)`.
+3. Track hover state (the row under the cursor) and offer a hover
+   color in props (`hoverColor`, default `text.primary` over the
+   regular row color).
+
+### Cross-reference
+
+- Site: `src/components/data/DataGrid.tsx` — header rendering at
+  `headerCells = columns.map(...)` (around line 241), no mouse
+  wiring.
+- Demo workaround: `FileGridPane` in `examples/reacterm-demo.tsx`.
+
+## 8. Inline-component definitions thrash focus registrations
+
+### What happened
+
+The demo's `FormsSection` defined a small `Row` helper component INSIDE
+the function body:
+
+```tsx
+function FormsSection() {
+  const Row = ({ label, children, focused }) => ( ... <Clickable>... </Clickable> );
+  return (<>
+    <Row label="Name" focused={field === "name"}><TextInput .../></Row>
+    <Row label="Phone" focused={field === "phone"}><MaskedInput .../></Row>
+    ...
+  </>);
+}
+```
+
+Clicking any field row to change focus emitted:
+
+```
+[storm] Warning: Multiple elements have isFocused={true}.
+Only 'textinput-1' will be focused. Set isFocused={false} on others.
+```
+
+…even though the demo only sets `isFocused={true}` on exactly one
+field at a time.
+
+### Why it fires
+
+React reconciles JSX elements by `element.type` reference equality.
+When `Row` is defined inside `FormsSection`, every render of
+`FormsSection` creates a *new* `Row` function reference. React sees a
+new component type, **unmounts the old subtree, and remounts a fresh
+one.** That cascades into every input the Row wraps — `TextInput`,
+`MaskedInput`, `TextArea`, `ChatInput` — each of which:
+
+- runs `useTextInputBehavior` / `useMaskedInputBehavior` / etc.
+- generates a fresh `idRef` from the module-level counter
+  (`textinput-N`, with N incrementing across mounts)
+- re-runs the `if (!focusRegistered.current) { ... if (focusProp)
+  focus.focus(idRef.current); }` block
+
+If two different inputs end up with `focusProp === true` momentarily
+across a single React commit pass — say, because a transitional
+render leaves the previous "active" field's `isFocused` true while
+the new one also goes true — both call `focus.focus()`, and the
+focus manager's same-cycle detection trips the warning.
+
+### Fix in the demo
+
+Lift the helper to module scope:
+
+```tsx
+function FormRow(props: FormRowProps) { ... }
+
+function FormsSection() {
+  return (<>
+    <FormRow label="Name" focused={field === "name"} onSelect={setField}>
+      <TextInput .../>
+    </FormRow>
+    ...
+  </>);
+}
+```
+
+Stable component reference → no remounts → no focus thrash → no
+warning. Regression test added at `src/__tests__/robustness.test.ts`
+("toggling which sibling input has isFocused does NOT emit the
+multi-handler warning").
+
+### Suggested direction for reacterm
+
+This is purely a React anti-pattern, not a framework bug. But given
+how easy it is to trigger and how confusing the resulting warning
+is, the framework could:
+
+1. **Document it loudly** in `docs/pitfalls.md` — "if you see the
+   multi-isFocused warning despite setting isFocused on exactly one
+   sibling, check that no parent component is defining a wrapper
+   component inline."
+2. **Soften the warning** to mention this as a likely cause:
+   "...this can also happen if a parent component re-creates a
+   wrapper component on each render."
+3. **Add a dev-only assertion** in `useTextInputBehavior` (and
+   peers) that warns when the component remounts > N times within
+   a short window — that's a near-perfect signal of the anti-pattern.
+
+### Cross-reference
+
+- React docs: <https://react.dev/learn/your-first-component#nesting-and-organizing-components>
+- Demo bitten by it: `examples/reacterm-demo.tsx` (`FormsSection` →
+  `FormRow` lifted out)
+- Regression test: `src/__tests__/robustness.test.ts` (search for
+  "Inline-component anti-pattern regression")
+- Warning emitter: `src/core/focus.ts:144`

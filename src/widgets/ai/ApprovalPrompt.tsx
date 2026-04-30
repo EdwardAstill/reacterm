@@ -131,7 +131,7 @@ export const ApprovalPrompt = React.memo(function ApprovalPrompt(rawProps: Appro
     { isActive: props.visible !== false },
   );
 
-  const dividerWidth = Math.max(20, termWidth - 4);
+  const dividerWidth = Math.max(20, props.width ?? termWidth - 4);
   const borderColor = riskBorderColor(risk, colors);
 
   return (

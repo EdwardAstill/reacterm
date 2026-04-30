@@ -57,6 +57,7 @@ export class InputManager {
     if (!this.attached) return;
     this.attached = false;
     this.stdin.removeListener("data", this.dataHandler);
+    this.stdin.pause?.();
     this.mouseBuffer = "";
     this.pasteBuffer = null;
     if (this.escTimer) {

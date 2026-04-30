@@ -9,6 +9,7 @@ import {
   MOUSE_DISABLE,
   RESET,
   CLEAR_SCREEN,
+  CLEAR_LINE,
   CLEAR_DOWN,
   cursorTo,
   cursorUp,
@@ -178,6 +179,11 @@ export class Screen {
       let init = "";
 
       if (this.useAltScreen) {
+        // Clean the shell's current line before it is captured by the
+        // alternate-screen switch. Fish/starship-style prompts can leave
+        // autosuggestion or right-prompt fragments here; without this, those
+        // fragments reappear after the TUI exits.
+        init += CLEAR_LINE;
         init += ALT_SCREEN_ENTER;
         init += CLEAR_SCREEN;
         init += cursorTo(0, 0);

@@ -42,6 +42,14 @@ export class InputWiring {
         processed.button === "scroll-left" ||
         processed.button === "scroll-right"
       ) {
+        const mouseTarget = renderCtx.focus.hitTestInput(processed.x, processed.y);
+        if (mouseTarget?.onMouse) {
+          const localX = processed.x - mouseTarget.bounds.x;
+          const localY = processed.y - mouseTarget.bounds.y;
+          mouseTarget.onMouse(processed, localX, localY);
+          if (processed.consumed) return;
+        }
+
         const target = renderCtx.focus.hitTestScroll(processed.x, processed.y);
         const isHorizontalWheel = processed.button === "scroll-left" || processed.button === "scroll-right";
         const delta = processed.button === "scroll-up" || processed.button === "scroll-left" ? -1 : 1;

@@ -146,11 +146,18 @@ export function renderCanvasNode(
       }
 
       const borderStyle = node.borderStyle ?? "round";
+      const hasTitle = titleElements.length > 0;
+      // When a title is present alongside horizontal children, the outer box
+      // must stack: title rows on top, children in a separate row underneath.
+      // Otherwise the title shares a row with the children and gets clipped.
+      const outerDirection = hasTitle && direction === "horizontal" ? "column" : (direction === "horizontal" ? "row" : "column");
+      const splitForTitle = hasTitle && direction === "horizontal";
+
       const boxProps: Record<string, unknown> = {
         key: node.id,
-        flexDirection: direction === "horizontal" ? "row" : "column",
+        flexDirection: outerDirection,
         ...(borderStyle !== "none" ? { borderStyle, borderColor: nodeColor } : {}),
-        ...(node.gap !== undefined ? { gap: node.gap } : {}),
+        ...(!splitForTitle && node.gap !== undefined ? { gap: node.gap } : {}),
         ...(node.padding !== undefined ? { padding: node.padding } : {}),
         ...(node.paddingX !== undefined ? { paddingX: node.paddingX } : {}),
         ...(node.paddingY !== undefined ? { paddingY: node.paddingY } : {}),
@@ -166,6 +173,16 @@ export function renderCanvasNode(
           if (boxProps.paddingLeft === undefined) boxProps.paddingLeft = 1;
           if (boxProps.paddingRight === undefined) boxProps.paddingRight = 1;
         }
+      }
+
+      if (splitForTitle) {
+        const innerProps: Record<string, unknown> = {
+          key: "__children",
+          flexDirection: "row",
+          ...(node.gap !== undefined ? { gap: node.gap } : {}),
+        };
+        const innerBox = React.createElement("tui-box", innerProps, ...childElements);
+        return React.createElement("tui-box", boxProps, ...titleElements, innerBox);
       }
 
       return React.createElement("tui-box", boxProps,

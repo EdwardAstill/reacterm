@@ -64,6 +64,22 @@ describe("ScrollView", () => {
     expect(result.hasText("Fifth")).toBe(true);
   });
 
+  it("starts at the top by default when content is taller than the viewport", () => {
+    const result = renderForTest(
+      React.createElement(ScrollView, { height: 3 },
+        React.createElement("tui-text", null, "First"),
+        React.createElement("tui-text", null, "Second"),
+        React.createElement("tui-text", null, "Third"),
+        React.createElement("tui-text", null, "Fourth"),
+        React.createElement("tui-text", null, "Fifth"),
+      ),
+      { width: 40, height: 10 },
+    );
+
+    expect(result.hasText("First")).toBe(true);
+    expect(result.hasText("Fifth")).toBe(false);
+  });
+
   it("handles pageup/pagedown keyboard events without crashing", () => {
     const ref = { current: null } as React.MutableRefObject<any>;
     const result = renderForTest(

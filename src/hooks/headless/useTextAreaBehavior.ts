@@ -744,6 +744,7 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
 
       if (event.key === "tab") {
         if (readOnlyRef.current) return;
+        event.consumed = true;
         const spaces = " ".repeat(tabSizeRef.current);
         if (hasSelection()) {
           pushUndo(lines, prevCursor);

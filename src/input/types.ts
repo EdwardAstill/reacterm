@@ -76,6 +76,8 @@ export interface MouseEvent {
   meta: boolean;
   /** The raw escape sequence */
   raw: string;
+  /** Set by a mouse target to stop fallback handling, such as parent scrolling. */
+  consumed?: boolean;
 }
 
 export type KeyHandler = (event: KeyEvent) => void;

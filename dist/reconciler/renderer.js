@@ -970,7 +970,8 @@ function paintScrollView(buffer, element, clip, scrollOffsetX, scrollOffsetY, ct
     // Stick-to-bottom: if user was at bottom, keep them there as content grows.
     // If user scrolled up, stay there. Parent controls jump-to-bottom via scrollTop.
     const prevMaxScroll = scrollState?.maxScroll ?? 0;
-    const wasAtBottom = rawScrollTop >= prevMaxScroll;
+    const stickToBottom = props["stickToBottom"] === true;
+    const wasAtBottom = stickToBottom && rawScrollTop >= prevMaxScroll;
     const scrollTop = wasAtBottom ? maxScroll : Math.max(0, Math.min(maxScroll, rawScrollTop));
     const maxHScroll = hasHBar ? Math.max(0, contentWidth - viewportWidth) : 0;
     const rawScrollLeft = props["scrollLeft"] ?? 0;

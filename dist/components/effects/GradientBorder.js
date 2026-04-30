@@ -15,6 +15,7 @@ export const GradientBorder = React.memo(function GradientBorder(rawProps) {
         ? rawWidth
         : (parseInt(rawWidth, 10) || 40);
     const innerWidth = Math.max(totalWidth - 2, 0); // subtract left+right border
+    const contentWidth = Math.max(innerWidth - padding * 2, 0);
     const [colorFrom, colorTo] = gradientColors;
     // Total border perimeter characters for interpolation
     // top: 1 + innerWidth + 1 = totalWidth
@@ -36,7 +37,7 @@ export const GradientBorder = React.memo(function GradientBorder(rawProps) {
     // ── Content row: │ <pad> content <pad> │ ───────────────────────────
     const padStr = " ".repeat(padding);
     const midIndex = Math.floor(totalChars / 2);
-    const contentRow = React.createElement("tui-box", { key: "mid", flexDirection: "row" }, React.createElement("tui-text", { key: "ml", color: colorAt(midIndex - 2) }, "\u2502"), React.createElement("tui-text", { key: "pl" }, padStr), React.createElement("tui-box", { key: "content", flex: 1 }, children), React.createElement("tui-text", { key: "pr" }, padStr), React.createElement("tui-text", { key: "mr", color: colorAt(midIndex + 2) }, "\u2502"));
+    const contentRow = React.createElement("tui-box", { key: "mid", flexDirection: "row", width: totalWidth }, React.createElement("tui-text", { key: "ml", color: colorAt(midIndex - 2) }, "\u2502"), React.createElement("tui-text", { key: "pl" }, padStr), React.createElement("tui-box", { key: "content", width: contentWidth, overflow: "hidden" }, children), React.createElement("tui-text", { key: "pr" }, padStr), React.createElement("tui-text", { key: "mr", color: colorAt(midIndex + 2) }, "\u2502"));
     // ── Bottom border row: ╰──...──╯ ──────────────────────────────────
     const botElements = [];
     const botStart = totalChars - totalWidth;

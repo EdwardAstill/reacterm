@@ -16,6 +16,7 @@
 
 import { describe, it, expect } from "vitest";
 import React from "react";
+import { App as DemoApp } from "../../examples/reacterm-demo.js";
 import { renderForTest } from "../testing/index.js";
 import {
   Panes,
@@ -27,9 +28,101 @@ import {
   SearchInput,
 } from "../components/index.js";
 import { OptionList } from "../components/extras/OptionList.js";
+import { SearchList } from "../components/extras/SearchList.js";
 import { FocusGroup } from "../components/core/FocusGroup.js";
 
 const T = (p: { children: string }) => React.createElement("tui-text", null, p.children);
+
+// ── Demo global shortcut routing ────────────────────────────────────────
+
+describe("Demo global shortcuts", () => {
+  it("lets Forms text fields receive letters that are also global shortcuts", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 80, height: 24 });
+
+    result.pressTab(); // Layout
+    result.pressTab(); // Forms
+    expect(result.hasText("Form controls")).toBe(true);
+
+    for (const ch of "Quentin") result.type(ch);
+
+    expect(result.hasText("Quentin")).toBe(true);
+    expect(result.hasText("Form controls")).toBe(true);
+  });
+
+  it("lets SearchList consume bare letters before app-level shortcuts", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 80, height: 24 });
+
+    result.pressTab(); // Layout
+    result.pressTab(); // Forms
+    result.pressTab(); // Search
+    expect(result.hasText("SearchList")).toBe(true);
+
+    result.type("q");
+
+    expect(result.hasText("SearchList")).toBe(true);
+    expect(result.hasText("No matches")).toBe(true);
+  });
+
+  it("opens Data at the top and mouse-wheel scroll reveals lower widgets", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 80, height: 24 });
+
+    result.pressTab(); // Layout
+    result.pressTab(); // Forms
+    result.pressTab(); // Search
+    result.pressTab(); // Data
+
+    expect(result.hasText("Data widgets")).toBe(true);
+    expect(result.hasText("Pretty (JSON-like)")).toBe(false);
+
+    for (let i = 0; i < 8; i++) result.scroll("down", 30, 12);
+
+    expect(result.hasText("Pretty (JSON-like)")).toBe(true);
+    expect(result.hasText("reacterm")).toBe(true);
+  });
+
+  it("lets the Scroll-to-edit table consume wheel events to edit a cell", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 100, height: 30 });
+
+    result.pressTab(); // Layout
+    result.pressTab(); // Forms
+    result.pressTab(); // Search
+    result.pressTab(); // Data
+
+    for (let i = 0; i < 9; i++) result.scroll("down", 95, 15);
+
+    expect(result.hasText("Scroll-to-edit table")).toBe(true);
+    expect(result.hasText("Revenue        120")).toBe(true);
+
+    const rowY = result.lines.findIndex((line) => line.includes("Revenue") && line.includes("120"));
+    expect(rowY).toBeGreaterThanOrEqual(0);
+    const revenueLine = result.lines[rowY]!;
+    const x = revenueLine.indexOf("120") + 1;
+    expect(x).toBeGreaterThan(0);
+
+    result.scroll("up", x, rowY);
+
+    expect(result.hasText("Revenue · Q1 = 121")).toBe(true);
+  });
+
+  it("renders the AI section as separated panels without metric collision", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 120, height: 34 });
+
+    for (let i = 0; i < 6; i++) result.pressTab();
+
+    expect(result.hasText("AI agent flow")).toBe(true);
+    expect(result.hasText("Conversation")).toBe(true);
+    expect(result.hasText("Workflow")).toBe(true);
+    expect(result.hasText("Context")).toBe(true);
+    expect(result.hasText("Cost")).toBe(true);
+    expect(result.hasText("Run agent")).toBe(true);
+    expect(result.output).not.toContain("remTotal");
+
+    result.type("r");
+
+    expect(result.hasText("Fix the bug in auth.ts")).toBe(true);
+    expect(result.hasText("Read auth.ts")).toBe(true);
+  });
+});
 
 // ── Panes + Modal ────────────────────────────────────────────────────────
 
@@ -293,7 +386,133 @@ describe("SearchInput + OptionList in Modal (improvements.md §4)", () => {
   });
 });
 
+// ── SearchList compound (ROADMAP A1) ─────────────────────────────────────
+
+describe("SearchList compound", () => {
+  const items = [
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+    { label: "Cherry", value: "cherry" },
+    { label: "Apricot", value: "apricot" },
+  ];
+
+  it("typing filters, arrow navigates filtered, enter selects", () => {
+    let selected = "";
+    const result = renderForTest(
+      React.createElement(SearchList, {
+        items,
+        onSelect: (v: string) => { selected = v; },
+      }),
+      { width: 60, height: 20 },
+    );
+    // Initial render: full list.
+    expect(result.hasText("Apple")).toBe(true);
+    expect(result.hasText("Banana")).toBe(true);
+    // Filter to "ap" — should leave only Apple + Apricot (alphabetical
+    // order, both start with "Ap"). Down → Apricot, enter → "apricot".
+    // We don't read hasText after typing because the test harness doesn't
+    // auto-rerender on key events; we verify the filter through the
+    // selected side effect.
+    result.type("a");
+    result.type("p");
+    result.pressDown();
+    result.pressEnter();
+    expect(selected).toBe("apricot");
+  });
+
+  it("escape clears query first, then calls onCancel", () => {
+    let cancels = 0;
+    const result = renderForTest(
+      React.createElement(SearchList, {
+        items,
+        onCancel: () => { cancels++; },
+      }),
+      { width: 60, height: 20 },
+    );
+    result.type("z");
+    result.pressEscape();
+    expect(cancels).toBe(0);
+    result.pressEscape();
+    expect(cancels).toBe(1);
+  });
+
+  it("does NOT emit the multi-handler warning", () => {
+    const stderrWrites: string[] = [];
+    const originalWrite = process.stderr.write;
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+    process.stderr.write = ((chunk: string | Uint8Array) => {
+      stderrWrites.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as typeof process.stderr.write;
+    try {
+      const result = renderForTest(
+        React.createElement(SearchList, { items, onSelect: () => {} }),
+        { width: 60, height: 20 },
+      );
+      result.type("a");
+      result.pressDown();
+      result.pressEnter();
+      result.unmount();
+    } finally {
+      process.stderr.write = originalWrite;
+      if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = originalNodeEnv;
+    }
+    const warningFired = stderrWrites.some((s) =>
+      s.includes("Multiple components are receiving keyboard input"),
+    );
+    expect(warningFired).toBe(false);
+  });
+});
+
 // ── FocusGroup trap-prop toggle ──────────────────────────────────────────
+
+// ── Inline-component anti-pattern regression ────────────────────────────
+// Reproduces the demo bug where defining a Row component inside the
+// parent caused the entire input subtree to remount on every parent
+// re-render, thrashing focus.register/focus.focus and emitting the
+// "Multiple elements have isFocused={true}" warning when the user
+// changed which field had focus.
+
+describe("Stable parent component (no inline component definitions)", () => {
+  it("toggling which sibling input has isFocused does NOT emit the multi-handler warning", () => {
+    const stderrWrites: string[] = [];
+    const originalWrite = process.stderr.write;
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+    process.stderr.write = ((chunk: string | Uint8Array) => {
+      stderrWrites.push(typeof chunk === "string" ? chunk : chunk.toString());
+      return true;
+    }) as typeof process.stderr.write;
+    try {
+      // Two TextInputs as siblings; only one has isFocused at any time.
+      const layout = (active: "a" | "b") =>
+        React.createElement("tui-box", { flexDirection: "column" },
+          React.createElement(TextInput, {
+            value: "", onChange: () => {}, isFocused: active === "a",
+          }),
+          React.createElement(TextInput, {
+            value: "", onChange: () => {}, isFocused: active === "b",
+          }),
+        );
+      const result = renderForTest(layout("a"), { width: 30, height: 5 });
+      // Toggle the focused input — emulating the demo's setField flow.
+      result.rerender(layout("b"));
+      result.rerender(layout("a"));
+      result.rerender(layout("b"));
+      result.unmount();
+    } finally {
+      process.stderr.write = originalWrite;
+      if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = originalNodeEnv;
+    }
+    const warningFired = stderrWrites.some((s) =>
+      s.includes("Multiple elements have isFocused"),
+    );
+    expect(warningFired).toBe(false);
+  });
+});
 
 describe("FocusGroup trap prop toggle", () => {
   it("trap:true → false after mount releases the trap", () => {

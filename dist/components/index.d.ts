@@ -30,6 +30,8 @@ export { Tag, type TagProps } from "./extras/Tag.js";
 export { Table, type TableProps, type TableColumn, type TableFocusMode, type TableCellRef, type TableCellStyle, type TableStateStyles, type TableRenderState, type TableContextValue, TableContext, useTableContext, type TableRootProps, type TableCompoundHeaderProps, type TableCompoundBodyProps, type TableCompoundRowProps, type TableCompoundCellProps, } from "./table/Table.js";
 export { DataGrid, type DataGridProps, type DataGridColumn, type DataGridContextValue, DataGridContext, useDataGridContext, type DataGridRootProps, type DataGridCompoundColumnProps, type DataGridCompoundRowProps, } from "./data/DataGrid.js";
 export { Tree, type TreeProps, type TreeNode } from "./data/Tree.js";
+export { TreeTable, type TreeTableProps } from "./data/TreeTable.js";
+export type { TreeTableRow } from "./data/TreeTable.flatten.js";
 export { DirectoryTree, type DirectoryTreeProps, type DirNode, type DirChildEntry, type DirectoryTreeContextValue, DirectoryTreeContext, useDirectoryTreeContext, type DirectoryTreeRootProps, type DirectoryTreeCompoundNodeProps, } from "./extras/DirectoryTree.js";
 export { OrderedList, type OrderedListProps, type ListItem } from "./extras/OrderedList.js";
 export { UnorderedList, type UnorderedListProps } from "./extras/UnorderedList.js";

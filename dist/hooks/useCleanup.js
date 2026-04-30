@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useTui } from "../context/TuiContext.js";
 let cleanupId = 0;
 const MAX_CLEANUPS = 10000;
@@ -10,8 +10,18 @@ let _cleanupLeakWarned = false;
 export function useCleanup(fn) {
     const { renderContext } = useTui();
     const idRef = useRef(`cleanup-${cleanupId++}`);
+    const fnRef = useRef(fn);
+    fnRef.current = fn;
     // Always update to latest cleanup function
-    renderContext.cleanups.set(idRef.current, fn);
+    renderContext.cleanups.set(idRef.current, () => fnRef.current());
+    useLayoutEffect(() => {
+        const id = idRef.current;
+        return () => {
+            const cleanup = renderContext.cleanups.get(id);
+            renderContext.cleanups.delete(id);
+            cleanup?.();
+        };
+    }, [renderContext]);
     // Diagnostic: warn if cleanup map grows suspiciously large
     if (!_cleanupLeakWarned && renderContext.cleanups.size > MAX_CLEANUPS) {
         _cleanupLeakWarned = true;

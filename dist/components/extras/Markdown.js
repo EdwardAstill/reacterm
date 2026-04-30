@@ -459,7 +459,7 @@ function renderBlock(block, ctx, key) {
                 borderRight: false,
                 borderTop: false,
                 borderBottom: false,
-                borderStyle: "bold",
+                borderStyle: "heavy",
                 borderColor: ctx.colors.brand.primary,
                 paddingLeft: 1,
                 marginY: 1,

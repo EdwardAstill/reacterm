@@ -30,6 +30,7 @@ export { Tag } from "./extras/Tag.js";
 export { Table, TableContext, useTableContext, } from "./table/Table.js";
 export { DataGrid, DataGridContext, useDataGridContext, } from "./data/DataGrid.js";
 export { Tree } from "./data/Tree.js";
+export { TreeTable } from "./data/TreeTable.js";
 export { DirectoryTree, DirectoryTreeContext, useDirectoryTreeContext, } from "./extras/DirectoryTree.js";
 export { OrderedList } from "./extras/OrderedList.js";
 export { UnorderedList } from "./extras/UnorderedList.js";

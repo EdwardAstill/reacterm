@@ -1,0 +1,94 @@
+version: 1
+plan:
+  slug: reacterm-nvim-file-handoff-plan
+  prose: docs/plans/2026-04-29-reacterm-nvim-file-handoff-plan.md
+  goal: Build the Option A MVP where :ReactermOpen opens the current Neovim file in the playground page, the page loads/saves that file through a guarded local API, and Run keeps using the current editor contents.
+
+nodes:
+  - id: file_api_contract
+    type: implement
+    description: Add the guarded /api/file contract, filesystem helpers, and focused API tests.
+    files:
+      create:
+        - playground/file-api.mjs
+        - src/__tests__/playground-file-api.test.ts
+    verify:
+      - npm test -- src/__tests__/playground-file-api.test.ts
+    on_fail: retry
+
+  - id: server_wiring
+    type: implement
+    depends_on:
+      - file_api_contract
+    description: Refactor playground/server.mjs into a testable factory and route file API requests before static files.
+    files:
+      modify:
+        - playground/server.mjs
+      test:
+        - src/__tests__/playground-file-api.test.ts
+    verify:
+      - npm test -- src/__tests__/playground-file-api.test.ts
+    on_fail: retry
+
+  - id: browser_file_session
+    type: implement
+    depends_on:
+      - server_wiring
+    description: Load files from URL parameters, track dirty/save state, and save loaded files from the playground page.
+    files:
+      modify:
+        - playground/public/index.html
+    verify:
+      - npm test -- src/__tests__/playground-file-api.test.ts
+      - npm run build
+    on_fail: retry
+
+  - id: nvim_plugin_command
+    type: implement
+    depends_on:
+      - server_wiring
+    description: Add reacterm.nvim setup, URL construction, opener injection, and :ReactermOpen command registration.
+    files:
+      create:
+        - integrations/reacterm.nvim/lua/reacterm/init.lua
+        - integrations/reacterm.nvim/plugin/reacterm.lua
+    verify:
+      - nvim --headless -u NONE -c 'set rtp+=integrations/reacterm.nvim' -c 'lua require("reacterm").setup({ token = "test-token", open = function(url) _G.url = url end })' -c 'edit examples/reacterm-demo.tsx' -c 'ReactermOpen' -c 'lua assert(_G.url:match("file=") and _G.url:match("token=test%-token"))' -c 'qa'
+      - nvim --headless -u NONE -c 'set rtp+=integrations/reacterm.nvim' -c 'lua require("reacterm").setup({ open = function(url) _G.url = url end })' -c 'enew' -c 'ReactermOpen' -c 'lua assert(_G.url == nil)' -c 'qa'
+    on_fail: retry
+
+  - id: plugin_documentation
+    type: implement
+    depends_on:
+      - nvim_plugin_command
+    description: Document setup, usage, token configuration, and MVP file-handoff limitations.
+    files:
+      create:
+        - integrations/reacterm.nvim/README.md
+    verify:
+      - sed -n '1,220p' integrations/reacterm.nvim/README.md
+    on_fail: retry
+
+  - id: spec_acceptance
+    type: verify
+    depends_on:
+      - browser_file_session
+      - nvim_plugin_command
+      - plugin_documentation
+    description: Run the spec acceptance checks for file API, build, Neovim URL generation, and manual browser flow.
+    verify:
+      - npm test -- src/__tests__/playground-file-api.test.ts
+      - npm run build
+      - nvim --headless -u NONE -c 'set rtp+=integrations/reacterm.nvim' -c 'lua require("reacterm").setup({ token = "test-token", open = function(url) _G.url = url end })' -c 'edit examples/reacterm-demo.tsx' -c 'ReactermOpen' -c 'lua assert(_G.url:match("file=") and _G.url:match("token=test%-token"))' -c 'qa'
+    on_fail: escalate
+
+  - id: post_implementation_review
+    type: review
+    depends_on:
+      - spec_acceptance
+    description: Fill Known Limitations and Post-Implementation Review in the source spec before claiming completion.
+    reviewer: code_quality
+    files:
+      modify:
+        - docs/specs/2026-04-29-reacterm-nvim-file-handoff-design.md
+    on_fail: escalate

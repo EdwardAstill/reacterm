@@ -5,12 +5,22 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const examplesDir = resolve(rootDir, "examples/ui-terminal");
+const reactermDemoPath = resolve(rootDir, "examples/reacterm-demo.tsx");
 const tsx = resolve(rootDir, "node_modules/.bin/tsx");
 
 const BACK = 99;
 
 function run(relPath) {
   const result = spawnSync(tsx, [resolve(examplesDir, relPath)], { stdio: "inherit" });
+  if (result.error) {
+    process.stderr.write(`${result.error.message}\n`);
+    process.exit(1);
+  }
+  return result.status ?? 1;
+}
+
+function runReactermDemo() {
+  const result = spawnSync(tsx, [reactermDemoPath], { stdio: "inherit" });
   if (result.error) {
     process.stderr.write(`${result.error.message}\n`);
     process.exit(1);
@@ -53,12 +63,12 @@ function usage() {
   process.stdout.write(
     "Usage: reacterm demo [command]\n\n" +
     "Commands:\n" +
-    "  demo                       showcase picker (8 demos, dock is #8)\n" +
-    "  demo horizontal-scroll     terminal horizontal scrolling demo\n" +
-    "  demo showcase              alias for demo\n" +
-    "  demo showcase <name>       open demo directly\n" +
+    "  demo                       interactive showcase — 21 sections, every feature\n" +
+    "  demo showcase              terminal showcase picker (8 themed demos)\n" +
+    "  demo showcase <name>       open showcase demo directly\n" +
     "                             names: feature horizontal-scroll hscroll logbook bios95\n" +
     "                                    brutalist flightdeck posting oxide dock\n" +
+    "  demo horizontal-scroll     terminal horizontal scrolling demo\n" +
     "  demo style                 terminal style guide\n",
   );
 }
@@ -72,7 +82,8 @@ if (cmd !== "demo") { process.stderr.write(`unknown command: ${cmd}\n`); usage()
 const sub = args[1];
 const sub2 = args[2];
 
-if (!sub) { runShowcasePicker(); process.exit(0); }
+// `reacterm demo` with no subcommand → the new interactive demo.
+if (!sub) { process.exit(runReactermDemo()); }
 if (sub === "horizontal-scroll" || sub === "hscroll") {
   runDemo(sub); process.exit(0);
 }
