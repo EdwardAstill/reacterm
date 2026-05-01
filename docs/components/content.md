@@ -551,5 +551,29 @@ Scrollable markdown viewer with syntax-highlighted code blocks. Wraps `Markdown`
 <MarkdownViewer content={readmeText} height={20} />
 ```
 
+### MarkdownEditor
+
+Pairs `Editor` (markdown source) with a live `Markdown` preview pane. Re-parses on a debounce so fast typing does not thrash the renderer. Tab cycles focus between the two panes.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string` | -- | Markdown source (controlled) |
+| `onChange` | `(next: string) => void` | -- | Called on every keystroke |
+| `previewDelayMs` | `number` | `120` | Debounce before re-parsing preview |
+| `rows` | `number` | `16` | Visible editor rows |
+| `previewWidth` | `number` | -- | Preview width in cells; defaults to flex split |
+| `editorTitle` | `string` | `"Editor"` | Editor pane title |
+| `previewTitle` | `string` | `"Preview"` | Preview pane title |
+| `isFocused` | `boolean` | `true` | Keyboard routing active |
+
+```tsx
+<MarkdownEditor
+  value={text}
+  onChange={setText}
+  previewDelayMs={150}
+  rows={20}
+/>
+```
+
 ---
 [Back to Components](README.md)

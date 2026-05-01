@@ -216,6 +216,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `Editor`         | Component | `components/extras/Editor.tsx`         | Multi-line code editor with shortcuts  | —    |
 | `Markdown`       | Component | `components/extras/Markdown.tsx`       | Inline markdown renderer               | —    |
 | `MarkdownViewer` | Component | `components/extras/MarkdownViewer.tsx` | Scrollable markdown document viewer    | —    |
+| `MarkdownEditor` | Component | `components/extras/MarkdownEditor.tsx` | Editor + live debounced preview pair   | —    |
 | `DiffView`       | Component | `components/extras/DiffView.tsx`       | Unified or split-diff with line numbers| —    |
 | `InlineDiff`     | Component | `components/extras/InlineDiff.tsx`     | Word-level inline diff                 | —    |
 

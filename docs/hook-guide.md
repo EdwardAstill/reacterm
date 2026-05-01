@@ -261,6 +261,21 @@ function SplashScreen() {
 }
 ```
 
+### useDebouncedValue()
+
+Returns the input value, trailing-edge debounced. Use when downstream work
+is expensive (re-parse, re-render large content) and the input changes
+faster than the work can complete. Cleans up its timer through `useCleanup`.
+
+```ts
+import { useDebouncedValue } from "reacterm";
+
+function Preview({ text }: { text: string }) {
+  const debounced = useDebouncedValue(text, 150);
+  return <Markdown content={debounced} />;
+}
+```
+
 ### useAnimation()
 
 Frame-based animation using the global AnimationScheduler. All animations share one timer to prevent thrashing.

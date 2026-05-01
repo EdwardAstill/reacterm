@@ -220,6 +220,7 @@ export { Editor, type EditorProps } from "./extras/Editor.js";
 
 export { Markdown, type MarkdownProps } from "./extras/Markdown.js";
 export { MarkdownViewer, type MarkdownViewerProps } from "./extras/MarkdownViewer.js";
+export { MarkdownEditor, type MarkdownEditorProps } from "./extras/MarkdownEditor.js";
 
 export { DatePicker, type DatePickerProps } from "./extras/DatePicker.js";
 
