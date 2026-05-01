@@ -1,0 +1,1 @@
+{"version":3,"file":"tap.d.ts","sourceRoot":"","sources":["../../../src/cli/reporters/tap.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,0BAA0B,CAAC;AAE1D,KAAK,KAAK,GAAG,SAAS,GAAG;IAAE,IAAI,EAAE,MAAM,CAAA;CAAE,CAAC;AAE1C,wBAAgB,WAAW,CAAC,OAAO,EAAE,KAAK,EAAE,GAAG,MAAM,CAQpD"}

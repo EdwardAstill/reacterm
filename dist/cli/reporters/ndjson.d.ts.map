@@ -1,0 +1,1 @@
+{"version":3,"file":"ndjson.d.ts","sourceRoot":"","sources":["../../../src/cli/reporters/ndjson.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,0BAA0B,CAAC;AAC1D,KAAK,KAAK,GAAG,SAAS,GAAG;IAAE,IAAI,EAAE,MAAM,CAAA;CAAE,CAAC;AAE1C,wBAAgB,cAAc,CAAC,OAAO,EAAE,KAAK,EAAE,GAAG,MAAM,CASvD"}

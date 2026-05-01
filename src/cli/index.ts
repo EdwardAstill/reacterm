@@ -6,6 +6,7 @@ import { runDemo } from "./verbs/demo.js";
 import { runRun } from "./verbs/run.js";
 import { formatError } from "./errors.js";
 import { parseDuration } from "./schema/duration.js";
+import { installSignalHandlers } from "./signals/handler.js";
 import type { Step } from "./schema/types.js";
 
 const program = new Command()
@@ -42,12 +43,15 @@ program.command("drive <entry> [script]")
   .option("--out <path>", "output file (default stdout)")
   .option("--size <wxh>", "terminal size", "80x24")
   .option("--timeout <dur>", "timeout", "10s")
+  .option("--keep-alive", "don't auto-quit when script ends")
   .allowUnknownOption(true)
   .action(async (entry: string, _script: string | undefined, opts: any) => {
     const inline: Step[] = parseInlineSteps(process.argv);
-    const code = await runDrive({
+    const driveOpts: Parameters<typeof runDrive>[0] = {
       entry, inline, capture: opts.capture, stdout: process.stdout, stderr: process.stderr,
-    });
+    };
+    if (opts.keepAlive) driveOpts.keepAlive = true;
+    const code = await runDrive(driveOpts);
     process.exit(code);
   });
 
@@ -78,6 +82,11 @@ function parseInlineSteps(argv: string[]): Step[] {
   }
   return steps;
 }
+
+installSignalHandlers({
+  onTeardown: () => {},
+  onExit: (code) => process.exit(code),
+});
 
 program.parseAsync(process.argv).catch((e) => {
   process.stderr.write(formatError(e) + "\n");

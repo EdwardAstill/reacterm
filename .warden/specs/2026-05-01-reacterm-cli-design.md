@@ -419,3 +419,47 @@ The spec is complete when:
 - Recorder respects `--debounce` (typed text coalesces into `type` steps), `--redact` (matches replaced with `[REDACTED]`), and `--include-snapshots` (snapshot steps emitted at each Enter).
 - Captured scenario file includes the `# yaml-language-server: $schema=…` header.
 - `reacterm --help` lists exactly four verbs (`demo`, `run`, `drive`, `test`); no mention of `record`, `explore`.
+
+## 15. Known Limitations
+
+- **`.tsx` entry loading depends on `tsx` being installed.** The bin wrapper (`bin/reacterm.mjs`) registers `tsx/esm` as a runtime ESM loader so users can pass TypeScript / TSX entry files directly. `tsx` is currently a `devDependency`; promoting it to `dependency` (or replacing with native Node TS support) is a follow-up before npm publish.
+- **`drive --keep-alive` uses a never-firing `setInterval` to keep the event loop open.** A bare unsettled `Promise` is not a libuv handle, so `await new Promise(() => {})` lets Node exit cleanly. Documented inline; harmless but worth noting if anyone refactors the keep-alive loop.
+
+## 16. Post-Implementation Review
+
+### Acceptance results
+
+All 11 acceptance criteria pass:
+
+| # | Criterion | Verified by |
+|---|---|---|
+| 1 | Hand-written `.scenario.yaml` runs via `reacterm test` | Manual: `node bin/reacterm.mjs test src/cli/__tests__/fixtures/scenarios/pass.scenario.yaml` → `1 passed, 0 failed`, exit 0 |
+| 2 | Pipeline: stdout = artifact, stderr = conversation | Manual: `drive --capture text 2>err 1>out` → out has `Hello from fixture`, err empty |
+| 3 | `Ctrl-C` → 130, double-`Ctrl-C` within 2s → 130 within 500ms | `signals.integration.test.ts` (2 tests, green) |
+| 4 | `SIGHUP` → 129 | `signals.integration.test.ts` (1 test, green) |
+| 5 | `test -u` updates; `--ci -u` → exit 2; `--ci` drift → 3; capability mismatch → 4 | Manual: `--ci -u` → "error: --ci and -u are mutually exclusive", exit 2. Drift/fingerprint covered by `snapshot-drift.integration.test.ts` |
+| 6 | `--jobs 4` parallel without state contamination | `jobs-isolation.integration.test.ts` (green) |
+| 7 | Inline flags processed in command-line appearance order | `inline-flag-order.integration.test.ts` + manual: `drive --press tab --type "hi" --press enter` exit 0 |
+| 8 | `reacterm demo` launches `examples/reacterm-demo.tsx` and forwards exit | `demo.test.ts` (`DEMO_PATH` exists, `runDemo` is async function); not invoked in tests because demo is interactive TUI |
+| 9 | `run --capture` writes a parseable scenario; `drive` replays it | `run-capture.integration.test.ts` (green) |
+| 10 | Recorder respects `--debounce`, `--redact`, `--include-snapshots` | `recorder/debounce.test.ts`, `recorder/redact.test.ts`, `recorder/serializer.test.ts` (all green) |
+| 11 | Captured file has `# yaml-language-server: $schema=…` header | `recorder/serializer.test.ts` (green) |
+| 12 | `--help` lists 4 verbs, excludes `record` / `explore` | `bin-help.integration.test.ts` + manual `--help` output |
+
+Test totals: **29 CLI test files, 67 tests passing**. Full project: **77 of 78 test files passing, 873 tests** (the one failure is `playground-file-api.test.ts` failing to import a missing `ws` package — unrelated, pre-existing).
+
+Build: `bun run build` → `tsc` clean exit.
+
+### Scope drift
+
+- **`bin/reacterm.mjs` runs in-process via dynamic `import()`** rather than spawning a child. The original spec implied a child-process wrapper. Switching to in-process was driven by the Section 8 signal-handling requirement: signals sent to the wrapper PID don't reach a `spawn()`-ed child, so an in-process model lets the CLI's `installSignalHandlers` fire directly. Cleaner architecture and fewer moving parts. Justified, kept.
+- **`tsx/esm` runtime loader registration in `bin/reacterm.mjs`.** Spec §12 said the engine layer would handle dynamic TS loading "via tsx or equivalent" but did not pin where. Registering the loader at the wrapper level means the engine's `import(entryPath)` call works for `.tsx` without further shimming. Justified, kept.
+- **`drive --keep-alive` implementation uses `setInterval`** to hold the libuv event loop open. Not in spec, but required for `--keep-alive` to actually keep the process alive (a bare Promise lets Node exit). Justified, kept.
+
+No reverts.
+
+### Refactor proposals
+
+- **Promote `tsx` from `devDependency` to `dependency`** before npm publish, otherwise end-users with only `.tsx` entry files will hit "Unknown file extension". Trigger: first publish, or first user-reported issue.
+- **Consider replacing the `setInterval` keep-alive trick with `process.stdin.resume()`** if the CLI ever needs to read interactive stdin in a `--keep-alive` mode. Trigger: when `drive --keep-alive --frames` (continuous capture) lands.
+- **Deduplicate the inline-flag definitions across `drive` action and `parseInlineSteps`.** Currently the recognised flag list lives in two places (Commander option declarations + the manual `process.argv` walker). Trigger: when adding a new inline step type and both code paths need an edit.

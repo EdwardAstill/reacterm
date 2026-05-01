@@ -1,0 +1,1 @@
+{"version":3,"file":"eventSink.d.ts","sourceRoot":"","sources":["../../../src/cli/recorder/eventSink.ts"],"names":[],"mappings":"AAAA,MAAM,MAAM,aAAa,GAAG;IAAE,CAAC,EAAE,MAAM,CAAC;IAAC,IAAI,EAAE,KAAK,CAAC;IAAC,GAAG,EAAE,MAAM,CAAA;CAAE,CAAC;AAEpE,qBAAa,SAAS;IACpB,MAAM,EAAE,aAAa,EAAE,CAAM;IAC7B,KAAK,SAAc;IACnB,IAAI,CAAC,GAAG,EAAE,MAAM;CAGjB"}

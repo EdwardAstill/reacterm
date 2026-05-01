@@ -12,6 +12,7 @@ export interface DriveOpts {
   stderr: NodeJS.WritableStream;
   size?: { cols: number; rows: number };
   timeoutMs?: number;
+  keepAlive?: boolean;
 }
 
 export async function runDrive(opts: DriveOpts): Promise<number> {
@@ -31,5 +32,11 @@ export async function runDrive(opts: DriveOpts): Promise<number> {
   }
   const out = await captureFinal(result.renderer, { as: opts.capture });
   opts.stdout.write(out);
+  if (opts.keepAlive) {
+    // Hold the event loop open until a signal exits the process.
+    const handle = setInterval(() => {}, 1 << 30);
+    await new Promise<void>(() => {});
+    clearInterval(handle);
+  }
   return 0;
 }

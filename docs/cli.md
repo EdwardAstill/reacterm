@@ -4,6 +4,11 @@
 
 The `reacterm` command-line interface exposes the reacterm testing and rendering engine as a shell-level tool. It provides four verbs — `demo`, `run`, `drive`, and `test` — that together cover interactive exploration, session recording, headless artifact capture, and scenario-based CI assertions. All verbs share a single engine; stdout carries artifacts and machine-readable output while stderr carries progress, traces, warnings, and errors.
 
+## Requirements
+
+- **Node 18+.**
+- **`tsx` installed** in the project (currently a `devDependency`). The bin wrapper registers `tsx/esm` at startup so any verb can load `.ts` / `.tsx` entry files directly. Pure `.js` / `.mjs` entries work without `tsx`.
+
 ---
 
 ## Verbs
