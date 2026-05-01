@@ -99,6 +99,7 @@ describe("Demo global shortcuts", () => {
     const x = revenueLine.indexOf("120") + 1;
     expect(x).toBeGreaterThan(0);
 
+    result.click(x, rowY);
     result.scroll("up", x, rowY);
 
     expect(result.hasText("Revenue · Q1 = 121")).toBe(true);

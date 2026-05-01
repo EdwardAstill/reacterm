@@ -1,6 +1,7 @@
 import React from "react";
 import Reconciler from "react-reconciler";
-import { TestInputManager } from "../testing/index.js";
+import { TestInputManager } from "../testing/input-manager.js";
+import { type TestMetadata } from "../testing/metadata.js";
 export declare const TuiReconciler: ReturnType<typeof Reconciler>;
 export declare function syncContainerUpdate(element: React.ReactElement, container: ReturnType<typeof TuiReconciler.createContainer>): void;
 export interface RenderToStringOptions {
@@ -26,6 +27,8 @@ export interface RenderToStringResult {
     rerender: (element: React.ReactElement) => RenderToStringResult;
     /** Mock input manager for simulating key/mouse events */
     input: TestInputManager;
+    /** Test metadata for semantic queries, frame history, focus, and diagnostics. */
+    metadata: TestMetadata;
 }
 /** Synchronous. No terminal needed. Same reconciler + layout as render(), but paints to a string buffer. */
 export declare function renderToString(element: React.ReactElement, options?: RenderToStringOptions): RenderToStringResult;

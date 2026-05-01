@@ -8,9 +8,10 @@ import { ScreenBuffer } from "../core/buffer.js";
 import { DEFAULT_COLOR, Attr } from "../core/types.js";
 import { fullSgr, RESET } from "../core/ansi.js";
 import { TuiProvider, type TuiContextValue } from "../context/TuiContext.js";
-import { TestInputManager } from "../testing/index.js";
+import { TestInputManager } from "../testing/input-manager.js";
 import { PluginManager } from "../core/plugin.js";
 import { InputWiring } from "./input-wiring.js";
+import { collectTestMetadata, createFrame, type TestFrame, type TestMetadata } from "../testing/metadata.js";
 
 export const TuiReconciler: ReturnType<typeof Reconciler> = Reconciler(hostConfig);
 
@@ -69,6 +70,8 @@ export interface RenderToStringResult {
   rerender: (element: React.ReactElement) => RenderToStringResult;
   /** Mock input manager for simulating key/mouse events */
   input: TestInputManager;
+  /** Test metadata for semantic queries, frame history, focus, and diagnostics. */
+  metadata: TestMetadata;
 }
 
 /** Synchronous. No terminal needed. Same reconciler + layout as render(), but paints to a string buffer. */
@@ -115,6 +118,8 @@ export function renderToString(
 
   let currentElement = element;
   const errors: Error[] = [];
+  const warnings: string[] = [];
+  const frames: TestFrame[] = [];
   const inputWiring = new InputWiring(
     testInput as unknown as ConstructorParameters<typeof InputWiring>[0],
     screen as unknown as ConstructorParameters<typeof InputWiring>[1],
@@ -139,12 +144,21 @@ export function renderToString(
     currentElement = el;
 
     const wrapped = React.createElement(TuiProvider, { value: mockContext }, el);
+    const originalWarn = console.warn;
 
     // Synchronously update the React tree — must use updateContainerSync +
     // flushSyncWork to ensure React processes ALL state updates before returning.
     // Plain updateContainer queues the update async, causing paint to see an empty tree.
-    renderCtx.focus.tickRenderCycle();
-    syncContainerUpdate(wrapped, container);
+    try {
+      console.warn = (...args: unknown[]) => {
+        warnings.push(args.map(String).join(" "));
+        originalWarn(...args);
+      };
+      renderCtx.focus.tickRenderCycle();
+      syncContainerUpdate(wrapped, container);
+    } finally {
+      console.warn = originalWarn;
+    }
 
     // Throw if any errors were collected during rendering
     if (errors.length > 0) {
@@ -163,14 +177,26 @@ export function renderToString(
     // Trim trailing empty lines for cleaner output
     const trimmedPlain = trimTrailingEmptyLines(plainLines);
     const trimmedStyled = trimTrailingEmptyLines(styledLines);
+    const output = trimmedPlain.join("\n");
+    const styledOutput = trimmedStyled.join("\n");
+    const frame = createFrame(frames.length, output, styledOutput, width, height);
+    frames.push(frame);
 
     return {
-      output: trimmedPlain.join("\n"),
-      styledOutput: trimmedStyled.join("\n"),
+      output,
+      styledOutput,
       lines: trimmedPlain,
       unmount,
       rerender: (newElement: React.ReactElement) => doRender(newElement),
       input: testInput,
+      metadata: collectTestMetadata({
+        root,
+        renderContext: renderCtx,
+        frames,
+        warnings,
+        errors: errors.map((error) => error.message),
+        screenHash: frame.screenHash,
+      }),
     };
   }
 

@@ -74,6 +74,26 @@ That's 10 lines. You have a running TUI with animated spinner and keyboard input
 
 <br>
 
+## Testing
+
+Storm apps can be tested without spawning a terminal. `reacterm/testing`
+provides `renderForTest` for component output, `renderDriver` for full app
+flows, declarative scenario replay, bounded explorer runs, SVG/text artifacts,
+and optional PTY smoke checks for real terminal lifecycle behavior.
+
+```tsx
+import { renderDriver } from "reacterm/testing";
+
+const driver = renderDriver(<App />, { width: 80, height: 24 });
+await driver.press("tab").expectText("Ready").assertNoWarnings();
+driver.unmount();
+```
+
+See [Testing Storm Apps](docs/testing.md) for driver, scenario, explorer, and
+PTY examples.
+
+<br>
+
 ## Build an AI agent terminal in 30 seconds
 
 ```tsx

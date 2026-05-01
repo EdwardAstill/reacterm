@@ -81,6 +81,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:bench": "vitest run --config vitest.config.ts src/__tests__/benchmarks.test.ts",
+    "test:driver": "vitest run --config vitest.config.ts src/__tests__/testing-driver.test.ts",
+    "test:scenarios": "vitest run --config vitest.config.ts src/__tests__/testing-scenario.test.ts",
+    "test:pty": "vitest run --config vitest.config.ts src/__tests__/testing-pty.test.ts",
+    "test:all": "bun test && bun run test:pty && bun run build",
     "clean": "rm -rf dist",
     "playground": "cd playground && npm install --silent 2>/dev/null && node server.mjs"
   },

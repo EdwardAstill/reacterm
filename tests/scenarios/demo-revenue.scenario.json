@@ -1,0 +1,17 @@
+{
+  "name": "demo edits revenue",
+  "app": "examples/reacterm-demo.tsx#DemoApp",
+  "terminal": {
+    "width": 100,
+    "height": 30
+  },
+  "steps": [
+    { "press": "tab", "repeat": 4 },
+    { "expectText": "Data widgets" },
+    { "expectText": "Scroll-to-edit table" },
+    { "click": { "text": "Revenue" } },
+    { "scroll": "up", "target": { "text": "Revenue" } },
+    { "expectText": "Revenue · Q1 = 121" }
+  ],
+  "artifacts": ["text", "frames", "svg", "trace"]
+}

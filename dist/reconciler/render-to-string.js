@@ -8,9 +8,10 @@ import { ScreenBuffer } from "../core/buffer.js";
 import { DEFAULT_COLOR, Attr } from "../core/types.js";
 import { fullSgr, RESET } from "../core/ansi.js";
 import { TuiProvider } from "../context/TuiContext.js";
-import { TestInputManager } from "../testing/index.js";
+import { TestInputManager } from "../testing/input-manager.js";
 import { PluginManager } from "../core/plugin.js";
 import { InputWiring } from "./input-wiring.js";
+import { collectTestMetadata, createFrame } from "../testing/metadata.js";
 export const TuiReconciler = Reconciler(hostConfig);
 export function syncContainerUpdate(element, container) {
     const reconciler = TuiReconciler; // React private API
@@ -68,6 +69,8 @@ export function renderToString(element, options) {
     };
     let currentElement = element;
     const errors = [];
+    const warnings = [];
+    const frames = [];
     const inputWiring = new InputWiring(testInput, screen, renderCtx, pluginManager);
     // Create root — onCommit is a no-op since we paint synchronously
     const root = createRoot(() => {
@@ -79,11 +82,21 @@ export function renderToString(element, options) {
     function doRender(el) {
         currentElement = el;
         const wrapped = React.createElement(TuiProvider, { value: mockContext }, el);
+        const originalWarn = console.warn;
         // Synchronously update the React tree — must use updateContainerSync +
         // flushSyncWork to ensure React processes ALL state updates before returning.
         // Plain updateContainer queues the update async, causing paint to see an empty tree.
-        renderCtx.focus.tickRenderCycle();
-        syncContainerUpdate(wrapped, container);
+        try {
+            console.warn = (...args) => {
+                warnings.push(args.map(String).join(" "));
+                originalWarn(...args);
+            };
+            renderCtx.focus.tickRenderCycle();
+            syncContainerUpdate(wrapped, container);
+        }
+        finally {
+            console.warn = originalWarn;
+        }
         // Throw if any errors were collected during rendering
         if (errors.length > 0) {
             const err = errors[0];
@@ -98,13 +111,25 @@ export function renderToString(element, options) {
         // Trim trailing empty lines for cleaner output
         const trimmedPlain = trimTrailingEmptyLines(plainLines);
         const trimmedStyled = trimTrailingEmptyLines(styledLines);
+        const output = trimmedPlain.join("\n");
+        const styledOutput = trimmedStyled.join("\n");
+        const frame = createFrame(frames.length, output, styledOutput, width, height);
+        frames.push(frame);
         return {
-            output: trimmedPlain.join("\n"),
-            styledOutput: trimmedStyled.join("\n"),
+            output,
+            styledOutput,
             lines: trimmedPlain,
             unmount,
             rerender: (newElement) => doRender(newElement),
             input: testInput,
+            metadata: collectTestMetadata({
+                root,
+                renderContext: renderCtx,
+                frames,
+                warnings,
+                errors: errors.map((error) => error.message),
+                screenHash: frame.screenHash,
+            }),
         };
     }
     function unmount() {

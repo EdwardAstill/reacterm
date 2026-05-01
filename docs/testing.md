@@ -333,6 +333,147 @@ test("low-level input simulation", () => {
 | `onMouse(handler)` | Register a mouse event handler |
 | `onPaste(handler)` | Register a paste event handler |
 
+## App Driver
+
+Use `renderDriver` when you want to test a full TUI flow instead of one
+component render. It wraps the same in-process renderer as `renderForTest`,
+but adds fluent actions, semantic queries, frame history, and diagnostics.
+
+```tsx
+import { renderDriver } from "reacterm/testing";
+import { Button, TextInput } from "reacterm";
+
+test("submits a name", async () => {
+  const driver = renderDriver(<ProfileForm />, { width: 80, height: 20 });
+
+  await driver
+    .type("Ada")
+    .press("enter")
+    .expectText("Saved Ada")
+    .assertNoWarnings();
+
+  driver.unmount();
+});
+```
+
+Driver actions:
+
+| Method | Description |
+|---|---|
+| `press(key, opts?)` | Press a key, with optional modifiers and `repeat` |
+| `type(text)` | Type text with a render refresh after each character |
+| `paste(text)` | Fire a paste event |
+| `click(target)` | Click coordinates or a semantic target |
+| `scroll(direction, target?)` | Send a wheel event at coordinates or a semantic target |
+| `resize(width, height)` | Re-render at a deterministic terminal size |
+| `expectText(text)` / `expectNoText(text)` | Assert screen text |
+| `waitForText(text)` / `waitForNoText(text)` | Retry-shaped aliases for deterministic in-process tests |
+| `assertNoWarnings()` | Fail if render warnings were captured |
+| `frames()` / `trace()` | Inspect frame history and input trace |
+
+Semantic targets use metadata captured from roles, labels, focus IDs, and
+`testId` props:
+
+```tsx
+await driver.click({ role: "button", name: "Save file" });
+await driver.click({ label: /Search/ });
+await driver.click({ testId: "primary-action" });
+await driver.click({ x: 10, y: 4 }); // coordinate fallback
+```
+
+## Scenario runner
+
+The Scenario runner replays declarative steps against an app. Keep scenarios
+JSON-first for now; the schema is intentionally YAML-friendly.
+
+```tsx
+import { runScenario } from "reacterm/testing";
+
+await runScenario({
+  name: "open command palette",
+  terminal: { width: 100, height: 30 },
+  steps: [
+    { press: "k" },
+    { expectText: "Command Palette" },
+    { assertNoWarnings: true }
+  ]
+}, {
+  app: <App />,
+  artifactDir: "tmp/scenario-open-command-palette"
+});
+```
+
+Example scenario files live under `tests/scenarios/`.
+
+## Explorer
+
+`exploreForTest` performs bounded model-style exploration. It is useful for
+finding crashes, blank screens, warnings, or focus regressions without writing
+every path by hand.
+
+```tsx
+import { exploreForTest } from "reacterm/testing";
+
+const report = await exploreForTest(<App />, {
+  terminal: { width: 100, height: 30 },
+  maxDepth: 40,
+  actions: ["tab", "enter", "escape", "up", "down"]
+});
+
+expect(report.failures).toEqual([]);
+```
+
+The explorer hashes screens to avoid reporting only repeated frames. Keep
+`maxDepth` modest and use explicit actions for the surface under test.
+
+## Failure Artifacts
+
+Use `writeFailureBundle` to persist the state needed to debug a failed app
+flow:
+
+```tsx
+import { renderDriver, writeFailureBundle } from "reacterm/testing";
+
+const driver = renderDriver(<App />, { width: 80, height: 24 });
+try {
+  await driver.expectText("Ready");
+} catch (error) {
+  writeFailureBundle(driver, "tmp/app-failure");
+  throw error;
+}
+```
+
+The bundle includes `screen.txt`, `styled.ansi`, `screen.svg`, `frames.json`,
+and `trace.json`.
+
+## PTY smoke
+
+Most tests should use the in-process driver. Use PTY smoke tests only for
+terminal lifecycle behavior: spawning, raw input, resize, Ctrl+C, alternate
+screen cleanup, and clean exit.
+
+```tsx
+import { runPtySmoke } from "reacterm/testing";
+
+const result = await runPtySmoke({
+  command: process.execPath,
+  args: ["-e", "console.log('ready')"],
+  cols: 80,
+  rows: 24
+});
+
+if (!result.skipped) {
+  expect(result.output).toContain("ready");
+}
+```
+
+`runPtySmoke` skips explicitly when optional `node-pty` is not installed.
+Run PTY checks separately with:
+
+```bash
+bun run test:pty
+```
+
 ## Testing Async Components
 
 ```tsx
@@ -362,3 +503,7 @@ test("loads data", async () => {
 6. **Use `expectOutput` for clear failure messages** -- when a test fails, `expectOutput` shows the actual output in the error, making diagnosis fast.
 
 7. **Prefer `renderForTest` over `renderToString`** -- `renderForTest` wraps `renderToString` with input simulation and query helpers. Use `renderToString` directly only for headless/CI output generation.
+
+8. **Prefer `renderDriver` for full app flows** -- it gives better diagnostics, semantic selectors, frame history, and artifacts than hand-written coordinate scripts.
+
+9. **Keep PTY tests small** -- PTY smoke is for real terminal lifecycle behavior. Use the in-process driver for most interaction coverage.

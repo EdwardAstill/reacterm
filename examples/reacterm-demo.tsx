@@ -843,12 +843,12 @@ function TreeTablePane(): React.ReactElement {
 }
 
 // ── Scroll-to-edit table ────────────────────────────────────────────────
-// Hover a numeric cell, scroll-wheel up/down to bump the value. Click
-// promotes the cell to the keyboard cursor; shift-click resets to baseline.
+// Click a numeric cell to select it, then scroll-wheel over that selected
+// cell to bump the value. Shift-click resets to baseline.
 //
 // Highlight precedence (top → bottom):
 //   1. Mouse hover (brand color, bold)
-//   2. Keyboard cursor (warning color, bold) — only after first arrow nav
+//   2. Selected/keyboard cursor (warning color, bold)
 //   3. Delta-vs-baseline tint (green if higher, red if lower)
 //   4. Plain text color
 //
@@ -886,11 +886,17 @@ function ScrollEditTable(): React.ReactElement {
   const baselineRef = useRef<ScrollRow[]>(JSON.parse(JSON.stringify(SCROLL_INITIAL)));
   // Mouse hover cell — null when not over a numeric cell.
   const hoverRef = useRef<{ row: number; col: number } | null>(null);
-  // Keyboard cursor — null until the user presses an arrow key. Fixes the
-  // phantom "Revenue · Q1 looks selected" issue from the prior version.
+  // Selected/keyboard cursor — null until the user clicks a cell or presses
+  // an arrow key. Fixes the phantom "Revenue · Q1 looks selected" issue from
+  // the prior version.
   const kbRef = useRef<{ row: number; col: number } | null>(null);
   // Header offset: 1 row for column headings before the data rows.
   const HEADER_ROWS = 1;
+
+  const sameCell = (
+    a: { row: number; col: number } | null,
+    b: { row: number; col: number } | null,
+  ): boolean => a?.row === b?.row && a?.col === b?.col;
 
   const cellAt = (localX: number, localY: number): { row: number; col: number } | null => {
     const dataRow = localY - HEADER_ROWS;
@@ -915,8 +921,11 @@ function ScrollEditTable(): React.ReactElement {
 
       if (!cell) return;
 
-      // Wheel scroll bumps the value. Shift-wheel = ×10 step.
+      // Wheel edits only after the user explicitly selects this value. When
+      // the hovered value is not selected, leave the event unconsumed so the
+      // surrounding ScrollView can keep scrolling the page.
       if (event.button === "scroll-up" || event.button === "scroll-down") {
+        if (!sameCell(kbRef.current, cell)) return;
         event.consumed = true;
         const dir = event.button === "scroll-up" ? 1 : -1;
         const step = event.shift ? 10 : 1;
@@ -935,9 +944,8 @@ function ScrollEditTable(): React.ReactElement {
           // Shift-click resets the cell to its baseline value.
           row.values[cell.col] = base.values[cell.col] ?? 0;
         } else {
-          // Plain click promotes the cell to keyboard cursor — useful for
-          // driving with +/- keys after picking a starting cell with the
-          // mouse. Reset is reserved for shift-click.
+          // Plain click selects the cell for wheel and +/- editing. Reset is
+          // reserved for shift-click.
           kbRef.current = { ...cell };
         }
         refreshTable();
@@ -996,7 +1004,7 @@ function ScrollEditTable(): React.ReactElement {
     }
     if (e.char === "0") {
       e.consumed = true;
-      // Reset all values to baseline — also clears kb cursor.
+      // Reset all values to baseline.
       rowsRef.current = JSON.parse(JSON.stringify(baselineRef.current));
       refreshTable();
       return;
@@ -1017,7 +1025,7 @@ function ScrollEditTable(): React.ReactElement {
   const focusedCell = hover ?? kb;
   let status: string;
   if (!focusedCell) {
-    status = "Hover a value, scroll to bump · Shift-click resets · arrows + ± · Esc clears · 0 zeroes all";
+    status = "Click a value to select · wheel edits selected value · Shift-wheel ×10 · Shift-click resets · arrows + ±";
   } else {
     const row = rowsRef.current[focusedCell.row];
     const baseRow = baselineRef.current[focusedCell.row];
@@ -1029,7 +1037,7 @@ function ScrollEditTable(): React.ReactElement {
       const delta = v - baseline;
       const deltaStr = delta === 0 ? "no change" : `${delta > 0 ? "+" : ""}${delta} vs ${baseline}`;
       const colLabel = SCROLL_COL_LABELS[focusedCell.col];
-      const source = hover ? "mouse" : "kb";
+      const source = sameCell(kb, focusedCell) ? "selected" : "click to select";
       status = `${row.label} · ${colLabel} = ${v} (${deltaStr}) [${source}]`;
     }
   }

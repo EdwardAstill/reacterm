@@ -1,0 +1,174 @@
+version: 1
+plan:
+  slug: reacterm-testing-driver-plan
+  prose: .warden/plans/2026-05-01-reacterm-testing-driver-plan.md
+  goal: Build a first-class Reacterm TUI testing driver, declarative scenario runner, bounded explorer, artifacts, and optional PTY smoke harness.
+  status: done
+  created: 2026-05-01T04:48Z
+
+nodes:
+  - id: restore_baseline
+    type: implement
+    skill: warden:systematic-debugging
+    description: Resolve the current scroll-to-edit robustness failure without reverting user changes.
+    files:
+      modify:
+        - examples/reacterm-demo.tsx
+        - src/__tests__/robustness.test.ts
+    verify:
+      - bun test src/__tests__/robustness.test.ts -t "Scroll-to-edit table"
+      - bun x tsc --noEmit
+
+  - id: human_api_scope
+    type: pause
+    skill: warden:ask
+    depends_on: [restore_baseline]
+    description: Confirm the public reacterm/testing API scope before implementation begins.
+    prompt: Approve adding a fluent app driver, semantic selectors, scenario runner, explorer, artifacts, and optional PTY smoke helpers under reacterm/testing while preserving existing renderForTest compatibility.
+
+  - id: metadata
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [human_api_scope]
+    description: Add frame, warning, focus, semantic, bounds, and screen-hash metadata to the headless testing path.
+    files:
+      create:
+        - src/testing/metadata.ts
+        - src/__tests__/testing-driver.test.ts
+      modify:
+        - src/reconciler/render-to-string.ts
+        - src/testing/index.ts
+    verify:
+      - bun test src/__tests__/testing-driver.test.ts -t "metadata"
+      - bun test src/__tests__/integration.test.ts -t "End-to-end rendering"
+      - bun x tsc --noEmit
+
+  - id: driver
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [metadata]
+    description: Build renderDriver/scenario fluent driver over renderForTest with input trace and frame history.
+    files:
+      create:
+        - src/testing/driver.ts
+      modify:
+        - src/testing/index.ts
+    verify:
+      - bun test src/__tests__/testing-driver.test.ts -t "driver"
+      - bun test src/__tests__/textinput.test.ts
+      - bun x tsc --noEmit
+
+  - id: selectors
+    type: implement
+    skill: warden:typescript
+    depends_on: [driver]
+    description: Add semantic selectors and actionability diagnostics for text, role, label, testId, focused, and coordinate fallback queries.
+    files:
+      create:
+        - src/testing/queries.ts
+    verify:
+      - bun test src/__tests__/testing-driver.test.ts -t "selectors"
+      - bun test src/__tests__/components.test.ts -t "Button"
+      - bun x tsc --noEmit
+
+  - id: artifacts
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [selectors]
+    description: Add deterministic text, styled, SVG, frame-log, input-trace, and failure-bundle artifact capture.
+    files:
+      create:
+        - src/testing/artifacts.ts
+    verify:
+      - bun test src/__tests__/testing-driver.test.ts -t "artifacts"
+      - bun test src/__tests__/demo-visual-effects.test.ts
+      - bun x tsc --noEmit
+
+  - id: scenario_runner
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [artifacts]
+    description: Add JSON-first declarative scenario schema, replay engine, and real scenario fixtures.
+    files:
+      create:
+        - src/testing/scenario.ts
+        - src/__tests__/testing-scenario.test.ts
+        - tests/scenarios/demo-revenue.scenario.json
+        - tests/scenarios/demo-navigation.scenario.json
+    verify:
+      - bun test src/__tests__/testing-scenario.test.ts
+      - test -f tests/scenarios/demo-revenue.scenario.json
+      - test -f tests/scenarios/demo-navigation.scenario.json
+      - bun x tsc --noEmit
+
+  - id: explorer
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [scenario_runner]
+    description: Add bounded automated exploration with screen hashing, action inventory, max-depth controls, invariants, reports, and artifacts.
+    files:
+      create:
+        - src/testing/explorer.ts
+        - src/__tests__/testing-explorer.test.ts
+    verify:
+      - bun test src/__tests__/testing-explorer.test.ts
+      - bun test src/__tests__/robustness.test.ts -t "Demo global shortcuts"
+      - bun x tsc --noEmit
+
+  - id: pty_smoke
+    type: implement
+    skill: warden:typescript
+    depends_on: [explorer]
+    description: Add optional node-pty smoke harness, scripts, and tests for real terminal lifecycle behavior.
+    files:
+      create:
+        - src/testing/pty.ts
+        - src/__tests__/testing-pty.test.ts
+      modify:
+        - package.json
+        - vitest.config.ts
+        - src/testing/index.ts
+    verify:
+      - bun test src/__tests__/testing-pty.test.ts
+      - bun run test:pty
+      - bun x tsc --noEmit
+
+  - id: docs_and_scripts
+    type: implement
+    skill: warden:docs-writing
+    depends_on: [pty_smoke]
+    description: Document the driver, scenario runner, explorer, artifacts, PTY smoke layer, and update package scripts.
+    files:
+      modify:
+        - package.json
+        - docs/testing.md
+        - README.md
+    verify:
+      - grep -q "renderDriver" docs/testing.md
+      - grep -q "Scenario runner" docs/testing.md
+      - grep -q "Explorer" docs/testing.md
+      - grep -q "PTY smoke" docs/testing.md
+      - node -e "const p=require('./package.json'); for (const s of ['test','test:driver','test:scenarios','test:pty','test:all']) if (!p.scripts[s]) process.exit(1)"
+      - bun x tsc --noEmit
+
+  - id: api_review
+    type: review
+    skill: warden:code-review
+    depends_on: [docs_and_scripts]
+    description: Review public testing API compatibility, diagnostics, determinism, cleanup, artifact value, and PTY isolation.
+    reviewer: code_quality
+
+  - id: final_verification
+    type: verify
+    skill: warden:verification-before-completion
+    depends_on: [api_review]
+    description: Run full verification gate and summarize residual risk.
+    verify:
+      - git diff --check
+      - bun x tsc --noEmit
+      - bun test
+      - bun test src/__tests__/testing-driver.test.ts
+      - bun test src/__tests__/testing-scenario.test.ts
+      - bun test src/__tests__/testing-explorer.test.ts
+      - bun run test:pty
+      - bun run build

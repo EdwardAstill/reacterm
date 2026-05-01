@@ -1,0 +1,16 @@
+{
+  "name": "demo navigation",
+  "app": "examples/reacterm-demo.tsx#DemoApp",
+  "terminal": {
+    "width": 100,
+    "height": 30
+  },
+  "steps": [
+    { "expectText": "Storm" },
+    { "press": "tab" },
+    { "press": "tab" },
+    { "expectText": "Forms" },
+    { "assertNoWarnings": true }
+  ],
+  "artifacts": ["text", "trace"]
+}
