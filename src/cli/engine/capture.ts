@@ -3,15 +3,25 @@ import { renderToSvg } from "../../testing/svg-renderer.js";
 
 export type CaptureFmt = "text" | "svg" | "json" | "ndjson";
 
+/** Accepts either RenderResult (from renderForTest) or TuiDriver (from renderDriver). */
+export type CaptureSource = Pick<RenderResult, "output" | "lines"> & { metadata: any };
+
 export async function captureFinal(
-  r: RenderResult,
+  r: CaptureSource,
   opts: { as: CaptureFmt },
 ): Promise<string> {
   switch (opts.as) {
     case "text":
       return r.output;
-    case "svg":
-      return renderToSvg(r.lines, r.styledOutput, r.width, r.height);
+    case "svg": {
+      const src = r as any;
+      return renderToSvg(
+        src.lines as string[],
+        src.styledOutput as string,
+        (src.width as number | undefined) ?? 80,
+        (src.height as number | undefined) ?? 24,
+      );
+    }
     case "json":
       return JSON.stringify({ finalText: r.output, lines: r.lines, durationMs: 0 });
     case "ndjson":
