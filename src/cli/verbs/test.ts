@@ -7,6 +7,7 @@ import { jsonReporter } from "../reporters/json.js";
 import { ndjsonReporter } from "../reporters/ndjson.js";
 import { tapReporter } from "../reporters/tap.js";
 import type { Expectation } from "../schema/types.js";
+import { compareSnapshot, writeSnapshot } from "../engine/snapshot.js";
 
 export interface TestOpts {
   paths: string[];
@@ -26,13 +27,19 @@ export async function runTest(opts: TestOpts): Promise<number> {
     return 2;
   }
   const named: Named[] = [];
+  let anyDrift = false, anyCapMismatch = false;
   for (const p of opts.paths) {
     const source = await readFile(p, "utf8");
     const scenario = await parseScenario(source, p);
     if (!scenario.entry) { opts.stderr.write(`error: ${p} has no entry\n`); return 2; }
     const entry = resolve(dirname(p), scenario.entry);
     const result = await runScenarioFromCli({ entry, scenario });
-    const failures = checkExpectations(scenario.expect ?? [], result.finalText);
+    const size = scenario.size ?? { cols: 80, rows: 24 };
+    const { failures, drift, capMismatch } = checkExpectations(
+      scenario.expect ?? [], result.finalText, p, size, !!opts.updateSnapshots,
+    );
+    if (drift) anyDrift = true;
+    if (capMismatch) anyCapMismatch = true;
     const status: "pass" | "fail" = result.status === "pass" && failures.length === 0 ? "pass" : "fail";
     const failure = result.failure ?? (failures.length > 0 ? failures.join("; ") : undefined);
     const { renderer: _r, ...rest } = result;
@@ -53,15 +60,35 @@ export async function runTest(opts: TestOpts): Promise<number> {
     case "tap":    out = tapReporter(reporterInput); break;
   }
   opts.stdout.write(out + "\n");
+  if (opts.ci && anyCapMismatch) return 4;
+  if (opts.ci && anyDrift) return 3;
   return named.some((r) => r.status === "fail") ? 1 : 0;
 }
 
-function checkExpectations(exps: Expectation[], finalText: string): string[] {
+type CheckOutcome = { failures: string[]; drift: boolean; capMismatch: boolean };
+
+function checkExpectations(
+  exps: Expectation[],
+  finalText: string,
+  scenarioPath: string,
+  size: { cols: number; rows: number },
+  updateSnapshots: boolean,
+): CheckOutcome {
   const failures: string[] = [];
+  let drift = false, capMismatch = false;
   for (const e of exps) {
-    if (e.kind === "contains" && !finalText.includes(e.text)) failures.push(`expected text "${e.text}"`);
-    // Other expectation kinds (line, expectSnapshot, exitCode, noWarnings, frameCount) are
-    // handled by Task 26's snapshot extension which replaces this checkExpectations.
+    if (e.kind === "contains") {
+      if (!finalText.includes(e.text)) failures.push(`expected text "${e.text}"`);
+    } else if (e.kind === "expectSnapshot") {
+      const path = resolve(dirname(scenarioPath), e.path);
+      if (updateSnapshots) {
+        writeSnapshot(path, finalText, size);
+        continue;
+      }
+      const r = compareSnapshot(path, finalText, size);
+      if (r.status === "drift") { drift = true; failures.push(`snapshot drift: ${e.path}`); }
+      else if (r.status === "capabilityMismatch") { capMismatch = true; failures.push(`capability mismatch: ${e.path}`); }
+    }
   }
-  return failures;
+  return { failures, drift, capMismatch };
 }
