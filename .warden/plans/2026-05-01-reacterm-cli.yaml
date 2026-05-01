@@ -1,0 +1,293 @@
+version: 1
+plan:
+  slug: 2026-05-01-reacterm-cli
+  prose: .warden/plans/2026-05-01-reacterm-cli.md
+  goal: Build reacterm CLI binary with four v1 verbs (demo / run / drive / test). `run --capture` records sessions into .scenario.yaml files consumable by drive and test.
+
+nodes:
+  - id: deps
+    type: implement
+    description: Add commander/zod/js-yaml CLI dependencies.
+    files:
+      modify: [package.json]
+    verify:
+      - bun run vitest run src/cli/__tests__/deps.test.ts
+
+  - id: schema_duration
+    type: implement
+    depends_on: [deps]
+    description: Duration string parser (ms/s/m, integer-only).
+    files:
+      create: [src/cli/schema/duration.ts]
+      test:   [src/cli/__tests__/schema/duration.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/schema/duration.test.ts
+
+  - id: schema_types
+    type: implement
+    depends_on: [deps]
+    description: Scenario/Step/Expectation TypeScript types.
+    files:
+      create: [src/cli/schema/types.ts]
+      test:   [src/cli/__tests__/schema/types.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/schema/types.test.ts
+      - bun run build
+
+  - id: schema_normalize
+    type: implement
+    depends_on: [schema_duration, schema_types]
+    description: Normalize raw YAML/JSON to engine Scenario shape (expand press arrays, etc.).
+    files:
+      create: [src/cli/schema/normalize.ts]
+      test:   [src/cli/__tests__/schema/normalize.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/schema/normalize.test.ts
+
+  - id: schema_parse
+    type: implement
+    depends_on: [schema_normalize]
+    description: YAML/JSON → validated Scenario via zod (async; lazy js-yaml import).
+    files:
+      create: [src/cli/schema/parse.ts]
+      test:   [src/cli/__tests__/schema/parse.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/schema/parse.test.ts
+
+  - id: errors_context
+    type: implement
+    depends_on: [deps]
+    description: Typed CliError + shared CliContext.
+    files:
+      create: [src/cli/errors.ts, src/cli/context.ts]
+      test:   [src/cli/__tests__/errors.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/errors.test.ts
+
+  - id: engine_loader
+    type: implement
+    depends_on: [errors_context]
+    description: Dynamic entry-file loader (path → React element).
+    files:
+      create: [src/cli/engine/moduleLoader.ts, src/cli/__tests__/fixtures/hello-app.tsx]
+      test:   [src/cli/__tests__/engine/moduleLoader.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/engine/moduleLoader.test.ts
+
+  - id: engine_poll
+    type: implement
+    depends_on: [errors_context]
+    description: Async waitFor polling layer.
+    files:
+      create: [src/cli/engine/pollWaitFor.ts]
+      test:   [src/cli/__tests__/engine/pollWaitFor.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/engine/pollWaitFor.test.ts
+
+  - id: engine_capture
+    type: implement
+    depends_on: [schema_types]
+    description: Capture final frame as text/svg/json.
+    files:
+      create: [src/cli/engine/capture.ts]
+      test:   [src/cli/__tests__/engine/capture.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/engine/capture.test.ts
+
+  - id: engine_runScenario
+    type: implement
+    depends_on: [engine_loader, engine_poll, engine_capture]
+    description: Main engine — loads entry, drives scenario, returns RunResult with renderer handle.
+    files:
+      create: [src/cli/engine/runScenario.ts]
+      test:   [src/cli/__tests__/engine/runScenario.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/engine/runScenario.test.ts
+
+  - id: signal_handler
+    type: implement
+    depends_on: [errors_context]
+    description: SIGINT/SIGTERM/SIGHUP handler with double-tap escalation.
+    files:
+      create: [src/cli/signals/handler.ts]
+      test:   [src/cli/__tests__/signals/handler.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/signals/handler.test.ts
+
+  - id: workers_dispatch
+    type: implement
+    depends_on: [engine_runScenario]
+    description: Child-process scenario worker for --jobs isolation.
+    files:
+      create: [src/cli/workers/scenarioWorker.ts, src/cli/workers/dispatch.ts]
+      test:   [src/cli/__tests__/integration/jobs-isolation.integration.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/integration/jobs-isolation.integration.test.ts
+
+  - id: reporter_pretty
+    type: implement
+    depends_on: [engine_runScenario]
+    description: Pretty reporter.
+    files:
+      create: [src/cli/reporters/pretty.ts]
+      test:   [src/cli/__tests__/reporters/pretty.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/reporters/pretty.test.ts
+
+  - id: reporter_json
+    type: implement
+    depends_on: [engine_runScenario]
+    description: JSON reporter (versioned schema).
+    files:
+      create: [src/cli/reporters/json.ts]
+      test:   [src/cli/__tests__/reporters/json.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/reporters/json.test.ts
+
+  - id: reporter_ndjson
+    type: implement
+    depends_on: [engine_runScenario]
+    description: NDJSON reporter.
+    files:
+      create: [src/cli/reporters/ndjson.ts]
+      test:   [src/cli/__tests__/reporters/ndjson.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/reporters/ndjson.test.ts
+
+  - id: reporter_tap
+    type: implement
+    depends_on: [engine_runScenario]
+    description: TAP 13 reporter.
+    files:
+      create: [src/cli/reporters/tap.ts]
+      test:   [src/cli/__tests__/reporters/tap.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/reporters/tap.test.ts
+
+  - id: verb_drive
+    type: implement
+    depends_on: [engine_runScenario, engine_capture]
+    description: drive verb (single-pass capture from runScenario renderer).
+    files:
+      create: [src/cli/verbs/drive.ts]
+      test:   [src/cli/__tests__/integration/drive.integration.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/integration/drive.integration.test.ts
+
+  - id: verb_test
+    type: implement
+    depends_on: [schema_parse, reporter_pretty, reporter_json, reporter_ndjson, reporter_tap, workers_dispatch]
+    description: test verb (scenario discovery, contains expectation, reporters, --ci/-u rejection).
+    files:
+      create:
+        - src/cli/verbs/test.ts
+        - src/cli/__tests__/fixtures/scenarios/pass.scenario.yaml
+        - src/cli/__tests__/fixtures/scenarios/fail.scenario.yaml
+      test: [src/cli/__tests__/integration/test.integration.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/integration/test.integration.test.ts
+
+  - id: recorder_primitives
+    type: implement
+    depends_on: [schema_types]
+    description: Recorder primitives (debounce + redact + eventSink + serializer with $schema header).
+    files:
+      create:
+        - src/cli/recorder/debounce.ts
+        - src/cli/recorder/redact.ts
+        - src/cli/recorder/eventSink.ts
+        - src/cli/recorder/serializer.ts
+      test:
+        - src/cli/__tests__/recorder/debounce.test.ts
+        - src/cli/__tests__/recorder/redact.test.ts
+        - src/cli/__tests__/recorder/serializer.test.ts
+    verify:
+      - bun run vitest run src/cli/__tests__/recorder/
+
+  - id: verb_run
+    type: implement
+    depends_on: [recorder_primitives, errors_context]
+    description: run verb — interactive launch with optional --capture <path> to record session as scenario YAML.
+    files:
+      create: [src/cli/verbs/run.ts]
+      test:   [src/cli/__tests__/integration/run-capture.integration.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/integration/run-capture.integration.test.ts
+
+  - id: verb_demo
+    type: implement
+    depends_on: [errors_context]
+    description: demo verb (no args, spawns tsx examples/reacterm-demo.tsx directly).
+    files:
+      create: [src/cli/verbs/demo.ts]
+      test:   [src/cli/__tests__/verbs/demo.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/verbs/demo.test.ts
+
+  - id: cli_dispatcher
+    type: implement
+    depends_on: [verb_drive, verb_test, verb_demo, verb_run]
+    description: Commander-based dispatcher (4 verbs) with order-preserving inline flag parsing.
+    files:
+      create: [src/cli/index.ts]
+      test:   [src/cli/__tests__/integration/inline-flag-order.integration.test.ts]
+    verify:
+      - bun run build
+      - bun run vitest run src/cli/__tests__/integration/inline-flag-order.integration.test.ts
+
+  - id: bin_dispatcher
+    type: implement
+    depends_on: [cli_dispatcher]
+    description: Replace bin/reacterm.mjs with thin dispatcher; --help lists demo/run/drive/test, excludes record/explore.
+    files:
+      modify: [bin/reacterm.mjs]
+      test:   [src/cli/__tests__/integration/bin-help.integration.test.ts]
+    verify:
+      - bun run build
+      - bun run vitest run src/cli/__tests__/integration/bin-help.integration.test.ts
+
+  - id: signals_integration
+    type: implement
+    depends_on: [signal_handler, bin_dispatcher]
+    description: Wire signal handlers into CLI entry; --keep-alive on drive; integration tests.
+    files:
+      modify: [src/cli/index.ts, src/cli/verbs/drive.ts]
+      test:   [src/cli/__tests__/integration/signals.integration.test.ts]
+    verify:
+      - bun run build
+      - bun run vitest run src/cli/__tests__/integration/signals.integration.test.ts
+
+  - id: docs
+    type: implement
+    depends_on: [bin_dispatcher]
+    description: Write docs/cli.md, docs/cli-output.md, docs/scenarios.md.
+    files:
+      create: [docs/cli.md, docs/cli-output.md, docs/scenarios.md]
+      test:   [src/cli/__tests__/docs.test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/docs.test.ts
+
+  - id: snapshot_expectation
+    type: implement
+    depends_on: [verb_test]
+    description: expectSnapshot evaluation + capability fingerprint; exit 3 on drift, 4 on capability mismatch under --ci.
+    files:
+      create:
+        - src/cli/engine/snapshot.ts
+        - src/cli/__tests__/engine/snapshot.test.ts
+        - src/cli/__tests__/integration/snapshot-drift.integration.test.ts
+      modify: [src/cli/verbs/test.ts]
+    verify:
+      - bun run vitest run src/cli/__tests__/engine/snapshot.test.ts
+      - bun run vitest run src/cli/__tests__/integration/snapshot-drift.integration.test.ts
+
+  - id: acceptance_review
+    type: review
+    reviewer: spec
+    depends_on: [signals_integration, docs, snapshot_expectation]
+    description: Run all 11 spec acceptance items; fill Post-Implementation Review block.
+    files:
+      modify: [.warden/specs/2026-05-01-reacterm-cli-design.md]
+    verify:
+      - bun run test
+      - bun run build
