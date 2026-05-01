@@ -1,0 +1,7 @@
+version: 1
+name: pass-case
+entry: ../hello-app.tsx
+steps:
+  - press: tab
+expect:
+  - contains: "Hello"

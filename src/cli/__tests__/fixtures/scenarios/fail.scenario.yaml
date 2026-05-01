@@ -1,0 +1,7 @@
+version: 1
+name: fail-case
+entry: ../hello-app.tsx
+steps:
+  - press: tab
+expect:
+  - contains: "Goodbye"
