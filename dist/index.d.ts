@@ -120,6 +120,7 @@ export { Transition, type TransitionProps, type TransitionTimingConfig } from ".
 export { AnimatePresence, type AnimatePresenceProps } from "./components/effects/AnimatePresence.js";
 export { Markdown, type MarkdownProps } from "./components/extras/Markdown.js";
 export { MarkdownViewer, type MarkdownViewerProps } from "./components/extras/MarkdownViewer.js";
+export { MarkdownEditor, type MarkdownEditorProps } from "./components/extras/MarkdownEditor.js";
 export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./components/extras/CommandPalette.js";
 export { DatePicker, type DatePickerProps } from "./components/extras/DatePicker.js";
 export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type LoadingSize } from "./components/extras/LoadingIndicator.js";

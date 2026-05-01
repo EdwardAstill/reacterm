@@ -95,6 +95,7 @@ export { TextArea, type TextAreaProps, type HighlightSpan } from "./core/TextAre
 export { Editor, type EditorProps } from "./extras/Editor.js";
 export { Markdown, type MarkdownProps } from "./extras/Markdown.js";
 export { MarkdownViewer, type MarkdownViewerProps } from "./extras/MarkdownViewer.js";
+export { MarkdownEditor, type MarkdownEditorProps } from "./extras/MarkdownEditor.js";
 export { DatePicker, type DatePickerProps } from "./extras/DatePicker.js";
 export { Welcome, type WelcomeProps, type WelcomeAction, type WelcomeShortcut } from "./extras/Welcome.js";
 export { Transition, type TransitionProps, type TransitionTimingConfig } from "./effects/Transition.js";

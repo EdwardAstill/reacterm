@@ -115,6 +115,7 @@ export { Transition } from "./components/effects/Transition.js";
 export { AnimatePresence } from "./components/effects/AnimatePresence.js";
 export { Markdown } from "./components/extras/Markdown.js";
 export { MarkdownViewer } from "./components/extras/MarkdownViewer.js";
+export { MarkdownEditor } from "./components/extras/MarkdownEditor.js";
 export { CommandPalette } from "./components/extras/CommandPalette.js";
 export { DatePicker } from "./components/extras/DatePicker.js";
 export { LoadingIndicator } from "./components/extras/LoadingIndicator.js";

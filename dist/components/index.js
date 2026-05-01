@@ -94,6 +94,7 @@ export { TextArea } from "./core/TextArea.js";
 export { Editor } from "./extras/Editor.js";
 export { Markdown } from "./extras/Markdown.js";
 export { MarkdownViewer } from "./extras/MarkdownViewer.js";
+export { MarkdownEditor } from "./extras/MarkdownEditor.js";
 export { DatePicker } from "./extras/DatePicker.js";
 export { Welcome } from "./extras/Welcome.js";
 export { Transition } from "./effects/Transition.js";
