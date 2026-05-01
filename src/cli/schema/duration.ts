@@ -7,5 +7,6 @@ export function parseDuration(input: string): number {
     if (/\./.test(input)) throw new Error(`duration must be an integer with a unit suffix: ${input}`);
     throw new Error(`duration must end with a unit (ms|s|m): ${input}`);
   }
-  return Number(m[1]) * UNITS[m[2]];
+  const [, value, unit] = m as unknown as [string, string, string];
+  return Number(value) * UNITS[unit]!;
 }

@@ -3,7 +3,7 @@ export class CliError extends Error {
   exitCode: number;
   constructor(message: string, opts: { hint?: string; exitCode?: number } = {}) {
     super(message);
-    this.hint = opts.hint;
+    if (opts.hint !== undefined) this.hint = opts.hint;
     this.exitCode = opts.exitCode ?? 1;
   }
 }
