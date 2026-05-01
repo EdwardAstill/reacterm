@@ -17,6 +17,7 @@ export { useAnimation, type UseAnimationOptions, type UseAnimationResult } from 
 export { usePaste } from "./usePaste.js";
 export { useInterval } from "./useInterval.js";
 export { useTimeout } from "./useTimeout.js";
+export { useDebouncedValue } from "./useDebouncedValue.js";
 export { useVirtualList, type VirtualListOptions, type VirtualListResult } from "./useVirtualList.js";
 export { useClipboard, type UseClipboardResult } from "./useClipboard.js";
 export { useAccessibility } from "./useAccessibility.js";
