@@ -156,7 +156,7 @@ export const Gauge = React.memo(function Gauge(rawProps) {
     const wrapMeasure = (el) => {
         if (!autoMeasure)
             return el;
-        return React.createElement("tui-box", { _measureId: `gauge-${measureId}`, flex: 1 }, el);
+        return React.createElement("tui-box", { measureId: `gauge-${measureId}`, flex: 1 }, el);
     };
     if (props.renderValue) {
         return wrapMeasure(React.createElement("tui-box", outerBoxProps, props.renderValue(value, label)));

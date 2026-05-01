@@ -12,7 +12,13 @@ export interface UseMouseTargetOptions {
 }
 
 export interface UseMouseTargetResult {
+  /** Raw focus id for advanced integrations. Prefer spreading targetProps. */
   focusId: string;
+  /** Opaque host props for attaching this mouse target to a rendered element. */
+  targetProps: {
+    /** @internal Renderer focus plumbing. Spread targetProps instead of using directly. */
+    _focusId: string;
+  };
 }
 
 export function useMouseTarget(options: UseMouseTargetOptions = {}): UseMouseTargetResult {
@@ -42,5 +48,8 @@ export function useMouseTarget(options: UseMouseTargetOptions = {}): UseMouseTar
     focus.unregister(idRef.current);
   });
 
-  return { focusId: idRef.current };
+  return {
+    focusId: idRef.current,
+    targetProps: { _focusId: idRef.current },
+  };
 }

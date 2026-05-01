@@ -27,6 +27,9 @@ export function useMouseTarget(options = {}) {
     useCleanup(() => {
         focus.unregister(idRef.current);
     });
-    return { focusId: idRef.current };
+    return {
+        focusId: idRef.current,
+        targetProps: { _focusId: idRef.current },
+    };
 }
 //# sourceMappingURL=useMouseTarget.js.map

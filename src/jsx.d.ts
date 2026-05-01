@@ -22,6 +22,11 @@ declare global {
         "aria-label"?: string;
         "aria-hidden"?: boolean;
         userSelect?: boolean;
+        measureId?: string;
+        /** @deprecated Internal compatibility prop. Use measureId. */
+        _measureId?: string;
+        /** @deprecated Internal focus plumbing. Use useMouseTarget().targetProps. */
+        _focusId?: string;
         children?: React.ReactNode;
         key?: React.Key;
       };
@@ -47,7 +52,11 @@ declare global {
         stickToBottom?: boolean;
         _scrollState?: any;
         _hostPropsRef?: React.RefObject<any>;
+        /** @deprecated Internal focus plumbing for ScrollView. */
         _focusId?: string;
+        measureId?: string;
+        /** @deprecated Internal compatibility prop. Use measureId. */
+        _measureId?: string;
         scrollbarThumbColor?: string | number;
         scrollbarTrackColor?: string | number;
         scrollbarChar?: string;
@@ -63,7 +72,10 @@ declare global {
         color?: string | number;
         placeholderColor?: string | number;
         _hostPropsRef?: React.RefObject<any>;
+        /** @deprecated Internal focus plumbing for TextInput. */
         _focusId?: string;
+        measureId?: string;
+        /** @deprecated Internal compatibility prop. Use measureId. */
         _measureId?: string;
         width?: number | string;
         height?: number;

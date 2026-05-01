@@ -104,6 +104,12 @@ interface StormBoxProps {
   zIndex?: number;
   // Selection
   userSelect?: boolean;
+  // Measurement / hit testing
+  measureId?: string;
+  /** @deprecated Internal compatibility prop. Use measureId. */
+  _measureId?: string;
+  /** @deprecated Internal focus plumbing. Use useMouseTarget().targetProps. */
+  _focusId?: string;
   // Accessibility
   role?: AriaRole;
   "aria-label"?: string;
@@ -201,7 +207,11 @@ interface StormScrollViewProps {
   // Internal — used by ScrollView component for imperative mutation
   _scrollState?: unknown;
   _hostPropsRef?: unknown;
+  /** @deprecated Internal focus plumbing for ScrollView. */
   _focusId?: string;
+  measureId?: string;
+  /** @deprecated Internal compatibility prop. Use measureId. */
+  _measureId?: string;
 }
 
 interface StormTextInputProps {
@@ -217,6 +227,9 @@ interface StormTextInputProps {
   flex?: number;
   width?: number | `${number}%`;
   height?: number;
+  measureId?: string;
+  /** @deprecated Internal compatibility prop. Use measureId. */
+  _measureId?: string;
   history?: string[];
   mask?: string;
   // Accessibility

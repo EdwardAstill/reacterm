@@ -88,7 +88,7 @@ const TabsItem = React.memo(function TabsItem({ tab, isActive, isDisabled, onSel
             ...(isActive && activeBackgroundColor !== undefined ? { backgroundColor: activeBackgroundColor } : {}),
             ...(!isActive && !isDisabled && inactiveBackgroundColor !== undefined ? { backgroundColor: inactiveBackgroundColor } : {}),
         }, getTabLabelText(tab, variant));
-    return React.createElement("tui-box", { key: tab.key, _focusId: mouseTarget.focusId, flexDirection: "row" }, child);
+    return React.createElement("tui-box", { key: tab.key, ...mouseTarget.targetProps, flexDirection: "row" }, child);
 });
 const TabsBase = React.memo(function Tabs(rawProps) {
     const colors = useColors();

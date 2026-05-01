@@ -1,7 +1,7 @@
 import type { MeasuredLayout } from "../reconciler/renderer.js";
 
 export interface ResizeObserverEntry {
-  readonly target: string; // element _measureId
+  readonly target: string; // public element measureId
   readonly contentRect: { width: number; height: number };
 }
 

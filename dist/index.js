@@ -133,6 +133,7 @@ export { useTerminal } from "./hooks/useTerminal.js";
 export { useFocus } from "./hooks/useFocus.js";
 export { useScroll } from "./hooks/useScroll.js";
 export { useMeasure } from "./hooks/useMeasure.js";
+export { useLayoutBox, } from "./hooks/useLayoutBox.js";
 export { useApp } from "./hooks/useApp.js";
 export { useStdin } from "./hooks/useStdin.js";
 export { useStdout } from "./hooks/useStdout.js";

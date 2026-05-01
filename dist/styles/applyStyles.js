@@ -1,5 +1,6 @@
 // Keys for each tier
 const LAYOUT_KEYS = new Set([
+    "measureId",
     "width", "height", "minWidth", "minHeight", "maxWidth", "maxHeight",
     "flex", "flexGrow", "flexShrink", "flexBasis", "flexDirection", "flexWrap",
     "gap", "columnGap", "rowGap",

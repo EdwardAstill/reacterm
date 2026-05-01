@@ -89,7 +89,7 @@ export const GradientProgress = React.memo(function GradientProgress(rawProps) {
     };
     const inner = React.createElement("tui-box", outerBoxProps, ...children);
     if (autoMeasure) {
-        return React.createElement("tui-box", { _measureId: `gradientprogress-${measureId}`, flex: 1 }, inner);
+        return React.createElement("tui-box", { measureId: `gradientprogress-${measureId}`, flex: 1 }, inner);
     }
     return inner;
 });

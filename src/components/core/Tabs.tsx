@@ -196,7 +196,7 @@ const TabsItem = React.memo(function TabsItem({
 
   return React.createElement(
     "tui-box",
-    { key: tab.key, _focusId: mouseTarget.focusId, flexDirection: "row" },
+    { key: tab.key, ...mouseTarget.targetProps, flexDirection: "row" },
     child,
   );
 });

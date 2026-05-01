@@ -112,7 +112,7 @@ export const Checkbox = React.memo(function Checkbox(rawProps: CheckboxProps): R
   const outerBoxProps: Record<string, unknown> = {
     role: "checkbox",
     flexDirection: "column",
-    _focusId: mouseTarget.focusId,
+    ...mouseTarget.targetProps,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

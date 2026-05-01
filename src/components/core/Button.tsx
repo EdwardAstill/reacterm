@@ -161,7 +161,7 @@ export const Button = React.memo(function Button(rawProps: ButtonProps): React.R
   const boxProps: Record<string, unknown> = {
     role: "button",
     flexDirection: "row",
-    _focusId: mouseTarget.focusId,
+    ...mouseTarget.targetProps,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

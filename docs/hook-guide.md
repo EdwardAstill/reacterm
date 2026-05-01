@@ -207,6 +207,31 @@ useMouse((event) => {
 
 **Signature:** `useMouse(handler: (event: MouseEvent) => void, options?: { isActive?: boolean }) => void`
 
+### useMouseTarget()
+
+Attach mouse hit-testing bounds to a rendered element and receive local coordinates.
+
+```ts
+import { Box, useMouseTarget } from "reacterm";
+
+function ClickablePane() {
+  const target = useMouseTarget({
+    onMouse: (event, localX, localY) => {
+      if (event.button === "left" && event.action === "press") {
+        console.log(`local click ${localX},${localY}`);
+      }
+    },
+  });
+
+  return <Box {...target.targetProps}>Clickable content</Box>;
+}
+```
+
+`targetProps` is intentionally opaque; spread it onto the element that should
+receive local mouse coordinates.
+
+**Signature:** `useMouseTarget(options?) => { focusId: string; targetProps: object }`
+
 ### useFocusManager()
 
 Programmatic focus control -- cycle through focusable elements, jump to a specific ID, or enable/disable the focus system.
@@ -542,18 +567,43 @@ plugins.hasPlugin("vim-mode"); // boolean
 
 **Signature:** `usePluginManager() => PluginManager`
 
+### useLayoutBox()
+
+Attach a public `measureId` to an element and read its computed layout rectangle.
+Measurements are populated after paint, so the first render normally uses the
+fallback and the measured rect is available on a following render.
+
+```ts
+import { Box, Text, useLayoutBox } from "reacterm";
+
+function ResponsivePane() {
+  const pane = useLayoutBox({ fallback: { innerWidth: 40 } });
+
+  return (
+    <Box {...pane.layoutProps} flex={1}>
+      <Text>Pane width: {pane.rect.innerWidth}</Text>
+    </Box>
+  );
+}
+```
+
+**Signature:** `useLayoutBox(options?) => { id, measured, layout, rect, layoutProps }`
+
 ### useMeasure()
 
 Read layout dimensions of a rendered element by ID.
 
 ```ts
-import { useMeasure } from "reacterm";
+import { Box, useMeasure } from "reacterm";
 
 function Sidebar() {
   const layout = useMeasure("sidebar");
-  // layout: { x, y, width, height, innerX, innerY, innerWidth, innerHeight } | null
+  return <Box measureId="sidebar">Width: {layout?.width ?? "pending"}</Box>;
 }
 ```
+
+Use `useLayoutBox()` for new components that own the measured element. Use
+`useMeasure()` when the ID is assigned elsewhere.
 
 ---
 

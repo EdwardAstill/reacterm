@@ -2,7 +2,7 @@
  * useMeasure — read layout measurements for an element.
  *
  * Returns the computed layout result (x, y, width, height) for an
- * element identified by its `_measureId` prop. The renderer stores
+ * element identified by its public `measureId` prop. The renderer stores
  * layout results in the render context's measureMap after each paint pass.
  *
  * @example
@@ -10,7 +10,7 @@
  * function MyComponent() {
  *   const layout = useMeasure("my-box");
  *   return (
- *     <Box _measureId="my-box">
+ *     <Box measureId="my-box">
  *       {layout && <Text>Size: {layout.width}x{layout.height}</Text>}
  *     </Box>
  *   );
@@ -19,8 +19,11 @@
  */
 import { useTui } from "../context/TuiContext.js";
 /**
- * Read layout results for an element with the given `_measureId`.
+ * Read layout results for an element with the given public `measureId`.
  * Returns null if the element has not been painted yet.
+ *
+ * The legacy `_measureId` host prop is still accepted by the renderer for
+ * compatibility, but new code should attach `measureId` or use `useLayoutBox`.
  *
  * Note: measurements are populated AFTER each paint pass, so the
  * returned value reflects the PREVIOUS frame's layout. The value

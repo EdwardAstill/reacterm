@@ -444,8 +444,8 @@ export const TreeTable = React.memo(function TreeTable(rawProps) {
         overflow: "hidden",
         borderStyle,
         borderColor,
-        ...(visibleWidth === undefined ? { _measureId: `tree-table-${measureId}` } : {}),
-        _focusId: mouseTarget.focusId,
+        ...(visibleWidth === undefined ? { measureId: `tree-table-${measureId}` } : {}),
+        ...mouseTarget.targetProps,
     }, userStyles);
     return React.createElement("tui-box", boxProps, ...elements);
 });

@@ -627,7 +627,7 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
 
   return React.createElement(
     "tui-box",
-    { role: "tree", flexDirection: "column", _focusId: mouseTarget.focusId },
+    { role: "tree", flexDirection: "column", ...mouseTarget.targetProps },
     ...allElements,
   );
 });

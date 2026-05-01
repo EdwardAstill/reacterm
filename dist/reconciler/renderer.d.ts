@@ -14,6 +14,12 @@ export interface MeasuredLayout {
     height: number;
     x: number;
     y: number;
+    innerX?: number;
+    innerY?: number;
+    innerWidth?: number;
+    innerHeight?: number;
+    contentWidth?: number;
+    contentHeight?: number;
 }
 /**
  * Paint a background pattern into an existing buffer.

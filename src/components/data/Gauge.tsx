@@ -299,7 +299,7 @@ export const Gauge = React.memo(function Gauge(rawProps: GaugeProps): React.Reac
     if (!autoMeasure) return el;
     return React.createElement(
       "tui-box",
-      { _measureId: `gauge-${measureId}`, flex: 1 },
+      { measureId: `gauge-${measureId}`, flex: 1 },
       el,
     );
   };

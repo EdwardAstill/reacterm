@@ -83,7 +83,7 @@ export const Sparkline = React.memo(function Sparkline(rawProps) {
     const wrapMeasure = (el) => {
         if (!autoMeasure)
             return el;
-        return React.createElement("tui-box", { _measureId: `sparkline-${measureId}`, flex: 1 }, el);
+        return React.createElement("tui-box", { measureId: `sparkline-${measureId}`, flex: 1 }, el);
     };
     if (data.length === 0) {
         return wrapMeasure(React.createElement("tui-text", null, ""));

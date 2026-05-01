@@ -65,7 +65,7 @@ export const Checkbox = React.memo(function Checkbox(rawProps) {
     const outerBoxProps = {
         role: "checkbox",
         flexDirection: "column",
-        _focusId: mouseTarget.focusId,
+        ...mouseTarget.targetProps,
         "aria-label": props["aria-label"],
         ...pickLayoutProps(props),
     };

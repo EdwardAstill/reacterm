@@ -138,6 +138,7 @@ export { useTerminal, type TerminalInfo } from "./hooks/useTerminal.js";
 export { useFocus, type UseFocusOptions, type UseFocusResult } from "./hooks/useFocus.js";
 export { useScroll, type UseScrollOptions, type UseScrollResult } from "./hooks/useScroll.js";
 export { useMeasure } from "./hooks/useMeasure.js";
+export { useLayoutBox, type LayoutRect, type UseLayoutBoxOptions, type UseLayoutBoxResult, } from "./hooks/useLayoutBox.js";
 export { useApp, type UseAppResult } from "./hooks/useApp.js";
 export { useStdin, type UseStdinResult } from "./hooks/useStdin.js";
 export { useStdout, type UseStdoutResult } from "./hooks/useStdout.js";

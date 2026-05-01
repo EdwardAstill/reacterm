@@ -130,7 +130,7 @@ export const ProgressBar = React.memo(function ProgressBar(rawProps: ProgressBar
     if (autoMeasure) {
       return React.createElement(
         "tui-box",
-        { _measureId: `progressbar-${measureId}`, flex: 1 },
+        { measureId: `progressbar-${measureId}`, flex: 1 },
         React.createElement("tui-box", indBoxProps, ...indChildren),
       );
     }
@@ -233,7 +233,7 @@ export const ProgressBar = React.memo(function ProgressBar(rawProps: ProgressBar
   if (autoMeasure) {
     return React.createElement(
       "tui-box",
-      { _measureId: `progressbar-${measureId}`, flex: 1 },
+      { measureId: `progressbar-${measureId}`, flex: 1 },
       inner,
     );
   }

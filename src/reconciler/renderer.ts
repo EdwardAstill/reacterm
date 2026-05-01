@@ -130,6 +130,12 @@ export interface MeasuredLayout {
   height: number;
   x: number;
   y: number;
+  innerX?: number;
+  innerY?: number;
+  innerWidth?: number;
+  innerHeight?: number;
+  contentWidth?: number;
+  contentHeight?: number;
 }
 
 /**
@@ -413,9 +419,9 @@ function paintElement(
   }
 }
 
-/** Store layout result for elements with _measureId prop. */
+/** Store layout result for elements with public measureId or legacy _measureId prop. */
 function storeMeasureLayout(element: TuiElement, ctx: RenderContext): void {
-  const measureId = element.props["_measureId"] as string | undefined;
+  const measureId = (element.props["measureId"] ?? element.props["_measureId"]) as string | undefined;
   if (measureId) {
     const layout = element.layoutNode.layout;
     ctx.measureMap.set(measureId, {
@@ -423,6 +429,12 @@ function storeMeasureLayout(element: TuiElement, ctx: RenderContext): void {
       height: layout.height,
       x: layout.x,
       y: layout.y,
+      innerX: layout.innerX,
+      innerY: layout.innerY,
+      innerWidth: layout.innerWidth,
+      innerHeight: layout.innerHeight,
+      contentWidth: layout.contentWidth,
+      contentHeight: layout.contentHeight,
     });
   }
 }

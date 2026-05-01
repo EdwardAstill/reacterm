@@ -4,10 +4,17 @@ export { useAsyncCleanup } from "./useAsyncCleanup.js";
 export { useForceUpdate } from "./useForceUpdate.js";
 export { useInput, type UseInputOptions } from "./useInput.js";
 export { useMouse, type UseMouseOptions } from "./useMouse.js";
+export { useMouseTarget, type UseMouseTargetOptions, type UseMouseTargetResult } from "./useMouseTarget.js";
 export { useTerminal, type TerminalInfo } from "./useTerminal.js";
 export { useFocus, type UseFocusOptions, type UseFocusResult } from "./useFocus.js";
 export { useScroll, type UseScrollOptions, type UseScrollResult } from "./useScroll.js";
 export { useMeasure } from "./useMeasure.js";
+export {
+  useLayoutBox,
+  type LayoutRect,
+  type UseLayoutBoxOptions,
+  type UseLayoutBoxResult,
+} from "./useLayoutBox.js";
 export { useApp, type UseAppResult } from "./useApp.js";
 export { useStdin, type UseStdinResult } from "./useStdin.js";
 export { useStdout, type UseStdoutResult } from "./useStdout.js";

@@ -459,6 +459,6 @@ export const Tree = React.memo(function Tree(rawProps) {
     if (useVirtualScroll && visibleEnd < flatNodes.length) {
         allElements.push(React.createElement("tui-text", { key: "__scroll-down", color: colors.text.dim, dim: true }, `  ▼ ${flatNodes.length - visibleEnd} more below`));
     }
-    return React.createElement("tui-box", { role: "tree", flexDirection: "column", _focusId: mouseTarget.focusId }, ...allElements);
+    return React.createElement("tui-box", { role: "tree", flexDirection: "column", ...mouseTarget.targetProps }, ...allElements);
 });
 //# sourceMappingURL=Tree.js.map

@@ -29,6 +29,7 @@ export interface TuiBoxProps extends LayoutProps {
   backgroundColor?: string | number;
   /** Background pattern — painted into the buffer before children. */
   background?: BackgroundProp;
+  measureId?: string;
   opaque?: boolean;
   sticky?: boolean;
   stickyChildren?: boolean;
@@ -57,6 +58,7 @@ export interface TuiScrollViewProps extends LayoutProps {
   borderStyle?: BorderStyle;
   borderColor?: string | number;
   backgroundColor?: string | number;
+  measureId?: string;
   /** Gutter columns between bordered content and the vertical scrollbar.
    *  Default: 1. Set to 0 for legacy compact behavior. */
   scrollbarGutter?: number;
@@ -74,6 +76,7 @@ export interface TuiTextInputProps {
   focus?: boolean;
   color?: string | number;
   placeholderColor?: string | number;
+  measureId?: string;
 }
 
 export interface TuiOverlayProps extends Omit<LayoutProps, "position"> {

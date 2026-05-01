@@ -321,9 +321,9 @@ function paintElement(buffer, element, clip, scrollOffsetX, scrollOffsetY, ctx, 
             break;
     }
 }
-/** Store layout result for elements with _measureId prop. */
+/** Store layout result for elements with public measureId or legacy _measureId prop. */
 function storeMeasureLayout(element, ctx) {
-    const measureId = element.props["_measureId"];
+    const measureId = (element.props["measureId"] ?? element.props["_measureId"]);
     if (measureId) {
         const layout = element.layoutNode.layout;
         ctx.measureMap.set(measureId, {
@@ -331,6 +331,12 @@ function storeMeasureLayout(element, ctx) {
             height: layout.height,
             x: layout.x,
             y: layout.y,
+            innerX: layout.innerX,
+            innerY: layout.innerY,
+            innerWidth: layout.innerWidth,
+            innerHeight: layout.innerHeight,
+            contentWidth: layout.contentWidth,
+            contentHeight: layout.contentHeight,
         });
     }
 }

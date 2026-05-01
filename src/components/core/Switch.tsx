@@ -174,7 +174,7 @@ export const Switch = React.memo(function Switch(rawProps: SwitchProps): React.R
   const outerBoxProps: Record<string, unknown> = {
     role: "switch",
     flexDirection: "row",
-    _focusId: mouseTarget.focusId,
+    ...mouseTarget.targetProps,
     "aria-label": props["aria-label"],
     ...pickLayoutProps(props),
   };

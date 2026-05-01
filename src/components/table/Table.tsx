@@ -821,8 +821,8 @@ const TableBase = React.memo(function Table(rawProps: TableProps): React.ReactEl
       overflow: "hidden",
       borderStyle,
       borderColor,
-      ...(visibleWidth === undefined ? { _measureId: `table-${measureId}` } : {}),
-      _focusId: mouseTarget.focusId,
+      ...(visibleWidth === undefined ? { measureId: `table-${measureId}` } : {}),
+      ...mouseTarget.targetProps,
     },
     userStyles,
   );

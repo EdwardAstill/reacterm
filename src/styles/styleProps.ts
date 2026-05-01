@@ -12,6 +12,8 @@ export interface StormTextStyleProps {
 }
 
 export interface StormLayoutStyleProps extends StormTextStyleProps {
+  /** Public layout measurement ID readable through useMeasure/useLayoutBox. */
+  measureId?: string;
   width?: number | `${number}%`;
   height?: number | `${number}%`;
   minWidth?: number;

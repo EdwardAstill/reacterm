@@ -110,7 +110,7 @@ export const Switch = React.memo(function Switch(rawProps) {
     const outerBoxProps = {
         role: "switch",
         flexDirection: "row",
-        _focusId: mouseTarget.focusId,
+        ...mouseTarget.targetProps,
         "aria-label": props["aria-label"],
         ...pickLayoutProps(props),
     };

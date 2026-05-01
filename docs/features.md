@@ -266,6 +266,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `useInput`         | Hook | `hooks/useInput.ts`             | Keyboard handler with priority         | All sections |
 | `useMouse`         | Hook | `hooks/useMouse.ts`             | Raw mouse events                       | Mouse |
 | `useMousePosition` | Hook | `hooks/useMousePosition.ts`     | Tracked cursor position + isInside     | Mouse |
+| `useMouseTarget`   | Hook | `hooks/useMouseTarget.ts`       | Element hit-test bounds + local coords | Mouse |
 | `useFocus`         | Hook | `hooks/useFocus.ts`             | Manage focus state for a widget        | —    |
 | `useFocusManager`  | Hook | `hooks/useFocusManager.ts`      | Tab-order management                   | —    |
 | `useBuffer`        | Hook | `hooks/useBuffer.ts`            | Direct ScreenBuffer access             | —    |
@@ -330,6 +331,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `useAccessibility`       | Hook | `hooks/useAccessibility.ts`       | Live a11y announcements              | — |
 | `useAnnounce`            | Hook | `hooks/useAnnounce.ts`            | Imperative ARIA-live announce        | — |
 | `useColors`              | Hook | `hooks/useColors.ts`              | Theme.colors shortcut                | All sections |
+| `useLayoutBox`           | Hook | `hooks/useLayoutBox.ts`           | Public measureId + layout rect       | — |
 | `useMeasure`             | Hook | `hooks/useMeasure.ts`             | Live element rect                    | — |
 | `useStyleSheet`          | Hook | `hooks/useStyleSheet.ts`          | Apply parsed `.storm.css`            | — |
 

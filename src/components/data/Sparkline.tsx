@@ -165,7 +165,7 @@ export const Sparkline = React.memo(function Sparkline(rawProps: SparklineProps)
     if (!autoMeasure) return el;
     return React.createElement(
       "tui-box",
-      { _measureId: `sparkline-${measureId}`, flex: 1 },
+      { measureId: `sparkline-${measureId}`, flex: 1 },
       el,
     );
   };

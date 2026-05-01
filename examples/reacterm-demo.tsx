@@ -171,7 +171,7 @@ function Clickable(props: ClickableProps): React.ReactElement {
   });
   return React.createElement(
     "tui-box",
-    { _focusId: target.focusId, ...layout },
+    { ...layout, ...target.targetProps },
     children,
   );
 }
@@ -1048,7 +1048,7 @@ function ScrollEditTable(): React.ReactElement {
 
       {React.createElement(
         "tui-box",
-        { flexDirection: "column", _focusId: target.focusId },
+        { flexDirection: "column", ...target.targetProps },
         // Header row
         <Box key="hdr" flexDirection="row" height={1}>
           <Box width={SCROLL_LABEL_WIDTH}>
