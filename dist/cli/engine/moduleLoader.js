@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { createElement } from "react";
 import { CliError } from "../errors.js";
+import { registerTsx } from "../runtime/registerTsx.js";
 export async function loadEntry(entryPath, env) {
     if (!existsSync(entryPath)) {
         throw new CliError(`could not load entry \`${entryPath}\`: no such file`, {
@@ -11,6 +12,7 @@ export async function loadEntry(entryPath, env) {
     }
     for (const [k, v] of Object.entries(env))
         process.env[k] = v;
+    await registerTsx();
     const url = pathToFileURL(entryPath).href + `?t=${Date.now()}`;
     const mod = await import(url);
     const Default = mod.default;

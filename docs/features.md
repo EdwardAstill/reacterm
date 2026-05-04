@@ -170,8 +170,9 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `Paragraph`       | Component | `components/extras/Paragraph.tsx`      | Word-wrapped body text               | —    |
 | `Card`            | Component | `components/extras/Card.tsx`           | Bordered content block               | —    |
 | `Avatar`          | Component | `components/extras/Avatar.tsx`         | Initials/emoji avatar                | —    |
-| `Calendar`        | Component | `components/extras/Calendar.tsx`       | Month grid with selection            | —    |
-| `DatePicker`      | Component | `components/extras/DatePicker.tsx`     | Date input with calendar popover     | —    |
+| `Calendar`        | Component | `components/extras/Calendar.tsx`       | Picker-style month grid with selection | Calendar |
+| `DatePicker`      | Component | `components/extras/DatePicker.tsx`     | Date input with calendar popover     | Calendar |
+| `EventCalendar`   | Component | `components/extras/EventCalendar.tsx`  | Scheduling calendar with multi-view event layouts | Calendar |
 | `Timer`           | Component | `components/extras/Timer.tsx`          | Live countdown                       | —    |
 | `Stopwatch`       | Component | `components/extras/Stopwatch.tsx`      | Live elapsed-time display            | —    |
 | `Accordion`       | Component | `components/extras/Accordion.tsx`      | Expand/collapse sections             | —    |

@@ -80,6 +80,7 @@ export {
   useToastBehavior, type UseToastBehaviorOptions, type UseToastBehaviorResult, type ToastBehaviorItem,
   useFormBehavior, type UseFormBehaviorOptions, type UseFormBehaviorResult, type FormBehaviorField, type FormBehaviorFieldOption,
   useCalendarBehavior, type UseCalendarBehaviorOptions, type UseCalendarBehaviorResult, type CalendarDayInfo,
+  useEventCalendarBehavior, type UseEventCalendarBehaviorOptions, type EventCalendarController, type EventCalendarEvent, type EventCalendarView,
   useCollapsibleBehavior, type UseCollapsibleBehaviorOptions, type UseCollapsibleBehaviorResult,
 } from "./headless/index.js";
 export { useTick, type UseTickOptions } from "./useTick.js";

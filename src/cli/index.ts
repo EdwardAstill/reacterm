@@ -88,7 +88,7 @@ installSignalHandlers({
   onExit: (code) => process.exit(code),
 });
 
-program.parseAsync(process.argv).catch((e) => {
+program.parseAsync(process.argv).catch((e: unknown) => {
   process.stderr.write(formatError(e) + "\n");
   process.exit(1);
 });

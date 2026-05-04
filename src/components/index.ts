@@ -139,6 +139,9 @@ export {
   type CalendarRootProps, type CalendarCompoundGridProps, type CalendarCompoundDayProps,
 } from "./extras/Calendar.js";
 export {
+  EventCalendar, type EventCalendarProps, type EventCalendarViewRendererProps,
+} from "./extras/EventCalendar.js";
+export {
   ConfirmDialog, type ConfirmDialogProps, type ConfirmDialogAction,
   type ConfirmDialogContextValue, ConfirmDialogContext, useConfirmDialogContext,
   type ConfirmDialogRootProps, type ConfirmDialogCompoundMessageProps, type ConfirmDialogCompoundActionsProps,

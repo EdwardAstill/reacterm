@@ -1,12 +1,7 @@
-import { spawn } from "node:child_process";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { spawnModuleAsMain, resolveSiblingModule } from "../runtime/launch.js";
 import type { RunOptions, RunResult } from "../engine/runScenario.js";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const WORKER = resolve(HERE, "scenarioWorker.ts");
-const ROOT = resolve(HERE, "../../..");
-const TSX = resolve(ROOT, "node_modules/.bin/tsx");
+const WORKER = resolveSiblingModule(import.meta.url, "./scenarioWorker");
 
 export async function dispatchScenarios(scenarios: RunOptions[], opts: { jobs: number }): Promise<RunResult[]> {
   const results: RunResult[] = new Array(scenarios.length);
@@ -15,9 +10,16 @@ export async function dispatchScenarios(scenarios: RunOptions[], opts: { jobs: n
 
   const runOne = (idx: number, job: RunOptions): Promise<void> =>
     new Promise<void>((resolveP) => {
-      const child = spawn(TSX, [WORKER], { stdio: ["pipe", "pipe", "inherit"] });
+      const child = spawnModuleAsMain(WORKER, [], { stdio: ["pipe", "pipe", "inherit"] });
       let out = "";
-      child.stdout.on("data", (c) => { out += c.toString(); });
+      const stdout = child.stdout;
+      const stdin = child.stdin;
+      if (!stdout || !stdin) {
+        results[idx] = { status: "fail", failure: "worker stdio unavailable", finalText: "", durationMs: 0 };
+        resolveP();
+        return;
+      }
+      stdout.on("data", (c) => { out += c.toString(); });
       child.on("close", () => {
         try {
           results[idx] = JSON.parse(out);
@@ -26,8 +28,8 @@ export async function dispatchScenarios(scenarios: RunOptions[], opts: { jobs: n
         }
         resolveP();
       });
-      child.stdin.write(JSON.stringify(job));
-      child.stdin.end();
+      stdin.write(JSON.stringify(job));
+      stdin.end();
     });
 
   while (nextIdx < scenarios.length || inFlight.size > 0) {

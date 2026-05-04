@@ -118,6 +118,7 @@ export { MarkdownViewer } from "./components/extras/MarkdownViewer.js";
 export { MarkdownEditor } from "./components/extras/MarkdownEditor.js";
 export { CommandPalette } from "./components/extras/CommandPalette.js";
 export { DatePicker } from "./components/extras/DatePicker.js";
+export { EventCalendar, } from "./components/extras/EventCalendar.js";
 export { LoadingIndicator } from "./components/extras/LoadingIndicator.js";
 export { Welcome } from "./components/extras/Welcome.js";
 export { OperationTree, StreamingText, SyntaxHighlight, registerLanguage, getLanguage, getSupportedLanguages, ShimmerText, BlinkDot, ApprovalPrompt, CommandDropdown, StatusLine, MessageBubble, PerformanceHUD, TokenStream, ContextWindow, CostTracker, ModelBadge, CommandBlock, } from "./widgets/index.js";

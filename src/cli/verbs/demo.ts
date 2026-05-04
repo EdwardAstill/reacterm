@@ -1,12 +1,8 @@
-import { spawnSync } from "node:child_process";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { runDemoApp } from "../demo/main.js";
+import { resolveSiblingModule } from "../runtime/launch.js";
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-export const DEMO_PATH = resolve(ROOT, "examples/reacterm-demo.tsx");
+export const DEMO_PATH = resolveSiblingModule(import.meta.url, "../demo/main");
 
 export async function runDemo(): Promise<number> {
-  const tsx = resolve(ROOT, "node_modules/.bin/tsx");
-  const result = spawnSync(tsx, [DEMO_PATH], { stdio: "inherit" });
-  return result.status ?? 1;
+  return await runDemoApp();
 }

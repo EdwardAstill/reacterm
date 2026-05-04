@@ -745,7 +745,7 @@ const toasts = useToastBehavior({ maxToasts: 5, defaultDuration: 3000 });
 
 ### useCalendarBehavior
 
-Date navigation and selection (month grid, cursor movement).
+Date navigation and selection for picker-style month grids.
 
 ```ts
 import { useCalendarBehavior } from "reacterm";
@@ -756,6 +756,24 @@ const calendar = useCalendarBehavior({
 });
 // calendar.year, calendar.month, calendar.days, calendar.cursor
 // calendar.nextMonth(), calendar.prevMonth(), calendar.select()
+```
+
+### useEventCalendarBehavior
+
+Shared scheduling controller for event calendars with multiple displays.
+
+```ts
+import { useEventCalendarBehavior } from "reacterm";
+
+const calendar = useEventCalendarBehavior({
+  events,
+  defaultView: "week",
+  defaultAnchorDate: new Date(),
+  weekStartsOn: 1,
+});
+// calendar.view, calendar.title, calendar.visibleStart, calendar.visibleEnd
+// calendar.next(), calendar.prev(), calendar.goToToday(), calendar.setView()
+// calendar.getEventsForDay(date)
 ```
 
 ### Also available
@@ -804,6 +822,7 @@ const calendar = useCalendarBehavior({
 | Build a modal dialog | `useDialogBehavior()` |
 | Build a toast system | `useToastBehavior()` |
 | Build a date picker | `useCalendarBehavior()` |
+| Build a scheduling calendar with multiple views | `useEventCalendarBehavior()` |
 
 ---
 

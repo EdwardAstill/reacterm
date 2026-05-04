@@ -59,6 +59,7 @@ export { Button } from "./core/Button.js";
 export { Form, FormContext, useFormContext, } from "./extras/Form.js";
 export { FilePicker, FilePickerContext, useFilePickerContext, } from "./extras/FilePicker.js";
 export { Calendar, CalendarContext, useCalendarContext, } from "./extras/Calendar.js";
+export { EventCalendar, } from "./extras/EventCalendar.js";
 export { ConfirmDialog, ConfirmDialogContext, useConfirmDialogContext, } from "./extras/ConfirmDialog.js";
 export { Menu, MenuContext, useMenuContext, } from "./extras/Menu.js";
 export { OptionList, OptionListContext, useOptionListContext, } from "./extras/OptionList.js";

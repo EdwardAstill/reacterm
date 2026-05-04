@@ -1210,6 +1210,7 @@ export function measureNaturalHeight(node, availableWidth) {
     }
     const direction = node.props.flexDirection ?? "column";
     const isColumn = direction === "column";
+    const wrap = node.props.flexWrap ?? "nowrap";
     const rawGap = node.props.gap ?? 0;
     const gap = isColumn
         ? (node.props.rowGap ?? rawGap)
@@ -1224,9 +1225,110 @@ export function measureNaturalHeight(node, availableWidth) {
         }
         return total + pad.top + pad.bottom + margin.top + margin.bottom;
     }
+    // Row containers need width-aware measurement. A child's natural height can
+    // change after flex width allocation, so measuring every child at the full
+    // row width underestimates the final cross size.
+    const childEntries = visibleChildren.map((child) => {
+        const childMargin = resolveMargin(child.props);
+        const flexGrow = child.props.flexGrow ?? child.props.flex ?? 0;
+        const flexShrink = child.props.flexShrink ?? (child.measureText ? 0 : 1);
+        const mainMargin = childMargin.left + childMargin.right;
+        let naturalWidth = resolveSize(child.props.width, innerWidth);
+        if (naturalWidth === undefined) {
+            if (child.measureText) {
+                const measured = child.measureText(UNCONSTRAINED);
+                const childPad = resolvePadding(child.props);
+                naturalWidth = measured.width + childPad.left + childPad.right;
+            }
+            else {
+                naturalWidth = measureNaturalWidth(child, 0);
+            }
+        }
+        naturalWidth = clampSize(naturalWidth, child.props.minWidth, child.props.maxWidth);
+        return {
+            child,
+            flexGrow,
+            flexShrink,
+            mainMargin,
+            width: naturalWidth,
+        };
+    });
+    if (wrap === "wrap") {
+        let totalHeight = 0;
+        let currentLineWidth = 0;
+        let currentLineMaxHeight = 0;
+        const flushLine = () => {
+            if (currentLineWidth === 0)
+                return;
+            totalHeight += currentLineMaxHeight;
+            currentLineWidth = 0;
+            currentLineMaxHeight = 0;
+        };
+        for (const entry of childEntries) {
+            const entryWidth = entry.width + entry.mainMargin;
+            const nextWidth = currentLineWidth === 0 ? entryWidth : currentLineWidth + gap + entryWidth;
+            if (currentLineWidth > 0 && nextWidth > innerWidth) {
+                flushLine();
+            }
+            const availableChildWidth = Math.max(0, Math.min(innerWidth, entry.width));
+            currentLineMaxHeight = Math.max(currentLineMaxHeight, measureNaturalHeight(entry.child, availableChildWidth));
+            currentLineWidth = currentLineWidth === 0 ? entryWidth : currentLineWidth + gap + entryWidth;
+        }
+        flushLine();
+        return totalHeight + pad.top + pad.bottom + margin.top + margin.bottom;
+    }
+    const totalMargin = childEntries.reduce((sum, entry) => sum + entry.mainMargin, 0);
+    const totalNaturalWidth = childEntries.reduce((sum, entry) => sum + entry.width, 0);
+    const totalGap = gap * Math.max(0, childEntries.length - 1);
+    const spaceForChildren = Math.max(0, innerWidth - totalMargin - totalGap);
+    const remaining = spaceForChildren - totalNaturalWidth;
+    const lineEntries = childEntries.map((entry) => ({ ...entry, allocatedWidth: entry.width }));
+    if (remaining >= 0) {
+        const totalFlexGrow = lineEntries.reduce((sum, entry) => sum + entry.flexGrow, 0);
+        if (totalFlexGrow > 0) {
+            let distributed = 0;
+            for (const entry of lineEntries) {
+                if (entry.flexGrow <= 0)
+                    continue;
+                const delta = Math.floor((entry.flexGrow / totalFlexGrow) * remaining);
+                entry.allocatedWidth = clampSize(entry.allocatedWidth + delta, entry.child.props.minWidth, entry.child.props.maxWidth);
+                distributed += delta;
+            }
+            let leftover = remaining - distributed;
+            while (leftover > 0) {
+                let changed = false;
+                for (const entry of lineEntries) {
+                    if (entry.flexGrow <= 0)
+                        continue;
+                    const max = entry.child.props.maxWidth;
+                    if (max !== undefined && entry.allocatedWidth >= max)
+                        continue;
+                    entry.allocatedWidth += 1;
+                    leftover -= 1;
+                    changed = true;
+                    if (leftover === 0)
+                        break;
+                }
+                if (!changed)
+                    break;
+            }
+        }
+    }
+    else {
+        const overflow = -remaining;
+        const totalShrinkWeight = lineEntries.reduce((sum, entry) => sum + (entry.flexShrink * entry.allocatedWidth), 0);
+        if (totalShrinkWeight > 0) {
+            for (const entry of lineEntries) {
+                if (entry.flexShrink <= 0 || entry.allocatedWidth <= 0)
+                    continue;
+                const shrink = Math.floor((entry.flexShrink * entry.allocatedWidth / totalShrinkWeight) * overflow);
+                entry.allocatedWidth = clampSize(Math.max(0, entry.allocatedWidth - shrink), entry.child.props.minWidth, entry.child.props.maxWidth);
+            }
+        }
+    }
     let maxH = 0;
-    for (const child of visibleChildren) {
-        maxH = Math.max(maxH, measureNaturalHeight(child, innerWidth));
+    for (const entry of lineEntries) {
+        maxH = Math.max(maxH, measureNaturalHeight(entry.child, Math.max(0, entry.allocatedWidth)));
     }
     return maxH + pad.top + pad.bottom + margin.top + margin.bottom;
 }

@@ -22,7 +22,7 @@ import {
   Tabs, Paginator, Stepper, KeyboardHelp, HelpPanel, Header, Footer,
   Image, VirtualList, Shadow, Card, GlowText, GradientBorder, Kbd,
   FocusGroup, DiffView, InlineDiff, ErrorBoundary, CommandPalette,
-  TextArea, Markdown, MarkdownViewer, DatePicker, Welcome,
+  TextArea, Markdown, MarkdownViewer, DatePicker, EventCalendar, Welcome,
   Transition, AnimatePresence,
 } from "../../src/components/index.js";
 
@@ -51,6 +51,7 @@ import {
   useInfiniteScroll, useCopyPasteBuffer, useLocale,
   useTransition, useStyleSheet, useBuffer,
   useTick, usePhaseTimer, useProfiler, useImperativeAnimation,
+  useEventCalendarBehavior,
 } from "../../src/hooks/index.js";
 
 // ── Headless hooks ──────────────────────────────────────────────────────
@@ -180,6 +181,7 @@ smoke("InlineDiff", () => renderEl(React.createElement(InlineDiff, { before: "he
 smoke("Markdown", () => renderEl(React.createElement(Markdown, { content: "# Hello\n\nWorld" })));
 smoke("MarkdownViewer", () => renderEl(React.createElement(MarkdownViewer, { content: "# Test\n\nBody", isFocused: false })));
 smoke("DatePicker", () => renderEl(React.createElement(DatePicker, { isFocused: false })));
+smoke("EventCalendar", () => renderEl(React.createElement(EventCalendar, { events: [], isFocused: false })));
 smoke("Welcome", () => renderEl(React.createElement(Welcome, { title: "App" })));
 smoke("Transition", () => renderEl(React.createElement(Transition, { show: true }, React.createElement(Text, null, "hi"))));
 smoke("AnimatePresence", () => renderEl(React.createElement(AnimatePresence, null, React.createElement(Text, { key: "a" }, "hi"))));
@@ -309,6 +311,7 @@ renderHook("useTick", () => { useTick(noop, { interval: null }); });
 renderHook("usePhaseTimer", () => { usePhaseTimer({}); });
 renderHook("useProfiler", () => { useProfiler(); });
 renderHook("useImperativeAnimation", () => { useImperativeAnimation({}); });
+renderHook("useEventCalendarBehavior", () => { useEventCalendarBehavior({ events: [] }); });
 
 // ════════════════════════════════════════════════════════════════════════
 // HEADLESS HOOKS

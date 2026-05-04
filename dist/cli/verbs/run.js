@@ -1,17 +1,13 @@
-import { spawn } from "node:child_process";
 import { writeFile } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { coalesceKeystrokes } from "../recorder/debounce.js";
 import { applyRedact } from "../recorder/redact.js";
 import { eventsToScenarioYaml } from "../recorder/serializer.js";
 import { EventSink } from "../recorder/eventSink.js";
+import { spawnModuleAsMain } from "../runtime/launch.js";
 export async function runRun(opts) {
-    const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
-    const tsx = resolve(rootDir, "node_modules/.bin/tsx");
     if (!opts.capture && !opts._testEvents) {
         return await new Promise((res) => {
-            const child = spawn(tsx, [opts.entry], { stdio: "inherit" });
+            const child = spawnModuleAsMain(opts.entry, [], { stdio: "inherit" });
             child.on("exit", (code) => res(code ?? 1));
         });
     }
@@ -25,7 +21,7 @@ export async function runRun(opts) {
         process.stdin.setRawMode?.(true);
         process.stdin.on("data", (buf) => sink.push(buf.toString("utf8")));
         await new Promise((res) => {
-            const child = spawn(tsx, [opts.entry], { stdio: ["pipe", "inherit", "inherit"] });
+            const child = spawnModuleAsMain(opts.entry, [], { stdio: ["pipe", "inherit", "inherit"] });
             process.stdin.pipe(child.stdin);
             child.on("exit", (code) => res(code ?? 1));
         });

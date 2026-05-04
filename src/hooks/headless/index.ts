@@ -113,6 +113,14 @@ export {
 } from "./useCalendarBehavior.js";
 
 export {
+  useEventCalendarBehavior,
+  type UseEventCalendarBehaviorOptions,
+  type EventCalendarController,
+  type EventCalendarEvent,
+  type EventCalendarView,
+} from "./useEventCalendarBehavior.js";
+
+export {
   useCollapsibleBehavior,
   type UseCollapsibleBehaviorOptions,
   type UseCollapsibleBehaviorResult,

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { createElement } from "react";
 import { CliError } from "../errors.js";
+import { registerTsx } from "../runtime/registerTsx.js";
 
 export async function loadEntry(entryPath: string, env: Record<string, string>): Promise<unknown> {
   if (!existsSync(entryPath)) {
@@ -11,6 +12,7 @@ export async function loadEntry(entryPath: string, env: Record<string, string>):
     });
   }
   for (const [k, v] of Object.entries(env)) process.env[k] = v as string;
+  await registerTsx();
   const url = pathToFileURL(entryPath).href + `?t=${Date.now()}`;
   const mod = await import(url);
   const Default = mod.default;

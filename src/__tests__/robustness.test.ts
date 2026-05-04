@@ -108,7 +108,7 @@ describe("Demo global shortcuts", () => {
   it("renders the AI section as separated panels without metric collision", () => {
     const result = renderForTest(React.createElement(DemoApp), { width: 120, height: 34 });
 
-    for (let i = 0; i < 6; i++) result.pressTab();
+    for (let i = 0; i < 7; i++) result.pressTab();
 
     expect(result.hasText("AI agent flow")).toBe(true);
     expect(result.hasText("Conversation")).toBe(true);

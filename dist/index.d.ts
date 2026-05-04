@@ -123,6 +123,7 @@ export { MarkdownViewer, type MarkdownViewerProps } from "./components/extras/Ma
 export { MarkdownEditor, type MarkdownEditorProps } from "./components/extras/MarkdownEditor.js";
 export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./components/extras/CommandPalette.js";
 export { DatePicker, type DatePickerProps } from "./components/extras/DatePicker.js";
+export { EventCalendar, type EventCalendarProps, type EventCalendarViewRendererProps, } from "./components/extras/EventCalendar.js";
 export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type LoadingSize } from "./components/extras/LoadingIndicator.js";
 export { Welcome, type WelcomeProps, type WelcomeAction, type WelcomeShortcut } from "./components/extras/Welcome.js";
 export { OperationTree, type OperationTreeProps, type OpNode, StreamingText, type StreamingTextProps, SyntaxHighlight, type SyntaxHighlightProps, type LanguageDef, registerLanguage, getLanguage, getSupportedLanguages, ShimmerText, type ShimmerTextProps, BlinkDot, type BlinkDotProps, type DotState, ApprovalPrompt, type ApprovalPromptProps, type ApprovalOption, CommandDropdown, type CommandDropdownProps, type CommandItem, StatusLine, type StatusLineProps, MessageBubble, type MessageBubbleProps, PerformanceHUD, type PerformanceHUDProps, TokenStream, type TokenStreamProps, ContextWindow, type ContextWindowProps, CostTracker, type CostTrackerProps, ModelBadge, type ModelBadgeProps, CommandBlock, type CommandBlockProps, } from "./widgets/index.js";

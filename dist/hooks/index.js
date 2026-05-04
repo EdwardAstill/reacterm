@@ -59,7 +59,7 @@ export { useLocale } from "./useLocale.js";
 export { useTransition } from "./useTransition.js";
 export { useStyleSheet } from "./useStyleSheet.js";
 export { useBuffer } from "./useBuffer.js";
-export { useSelectBehavior, useListBehavior, useMenuBehavior, useTreeBehavior, useTabsBehavior, useAccordionBehavior, usePaginatorBehavior, useStepperBehavior, useTableBehavior, useVirtualListBehavior, useDialogBehavior, useToastBehavior, useFormBehavior, useCalendarBehavior, useCollapsibleBehavior, } from "./headless/index.js";
+export { useSelectBehavior, useListBehavior, useMenuBehavior, useTreeBehavior, useTabsBehavior, useAccordionBehavior, usePaginatorBehavior, useStepperBehavior, useTableBehavior, useVirtualListBehavior, useDialogBehavior, useToastBehavior, useFormBehavior, useCalendarBehavior, useEventCalendarBehavior, useCollapsibleBehavior, } from "./headless/index.js";
 export { useTick } from "./useTick.js";
 export { usePhaseTimer } from "./usePhaseTimer.js";
 export { useProfiler } from "./useProfiler.js";

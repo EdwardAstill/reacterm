@@ -1,4 +1,10 @@
 node_modules/
+.worktrees/
+.warden/runtime/
+.warden/research/
+tmp/
+tmp-*.ts
+tmp-*.tsx
 wasm/target/
 *.tsbuildinfo
 .DS_Store

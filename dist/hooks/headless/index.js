@@ -17,6 +17,7 @@ export { useToastBehavior, } from "./useToastBehavior.js";
 // Form behaviors
 export { useFormBehavior, } from "./useFormBehavior.js";
 export { useCalendarBehavior, } from "./useCalendarBehavior.js";
+export { useEventCalendarBehavior, } from "./useEventCalendarBehavior.js";
 export { useCollapsibleBehavior, } from "./useCollapsibleBehavior.js";
 // Text input behavior
 export { useTextInputBehavior, } from "./useTextInputBehavior.js";

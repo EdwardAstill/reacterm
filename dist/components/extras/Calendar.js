@@ -84,63 +84,114 @@ const CalendarBase = React.memo(function Calendar(rawProps) {
         return disabledDatesRef.current(new Date(yearRef.current, monthRef.current - 1, day));
     };
     const handleInput = useCallback((event) => {
-        const cb = onSelectRef.current;
-        const day = selectedDayRef.current;
-        if (!cb || day === undefined)
-            return;
-        const daysInMonth = getDaysInMonth(yearRef.current, monthRef.current);
-        // Helper: find next non-disabled day in direction
-        const findNextDay = (start, direction, step) => {
-            let next = start + step * direction;
-            if (next < 1 || next > daysInMonth)
-                return start; // out of bounds, stay
-            let attempts = 0;
-            while (isDayDisabled(next) && attempts < daysInMonth) {
-                next += direction;
+        if (event.key === "left") {
+            const cb = onSelectRef.current;
+            const day = selectedDayRef.current;
+            if (!cb || day === undefined)
+                return;
+            const daysInMonth = getDaysInMonth(yearRef.current, monthRef.current);
+            const findNextDay = (start, direction, step) => {
+                let next = start + step * direction;
                 if (next < 1 || next > daysInMonth)
                     return start;
-                attempts++;
-            }
-            return next;
-        };
-        const prevMonth = (y, m) => m === 1 ? [y - 1, 12] : [y, m - 1];
-        const nextMonth = (y, m) => m === 12 ? [y + 1, 1] : [y, m + 1];
-        if (event.key === "left") {
+                let attempts = 0;
+                while (isDayDisabled(next) && attempts < daysInMonth) {
+                    next += direction;
+                    if (next < 1 || next > daysInMonth)
+                        return start;
+                    attempts++;
+                }
+                return next;
+            };
             const next = day > 1 ? findNextDay(day, -1, 1) : daysInMonth;
             if (!isDayDisabled(next))
                 cb(next);
         }
         else if (event.key === "right") {
+            const cb = onSelectRef.current;
+            const day = selectedDayRef.current;
+            if (!cb || day === undefined)
+                return;
+            const daysInMonth = getDaysInMonth(yearRef.current, monthRef.current);
+            const findNextDay = (start, direction, step) => {
+                let next = start + step * direction;
+                if (next < 1 || next > daysInMonth)
+                    return start;
+                let attempts = 0;
+                while (isDayDisabled(next) && attempts < daysInMonth) {
+                    next += direction;
+                    if (next < 1 || next > daysInMonth)
+                        return start;
+                    attempts++;
+                }
+                return next;
+            };
             const next = day < daysInMonth ? findNextDay(day, 1, 1) : 1;
             if (!isDayDisabled(next))
                 cb(next);
         }
         else if (event.key === "up") {
+            const cb = onSelectRef.current;
+            const day = selectedDayRef.current;
+            if (!cb || day === undefined)
+                return;
+            const daysInMonth = getDaysInMonth(yearRef.current, monthRef.current);
+            const findNextDay = (start, direction, step) => {
+                let next = start + step * direction;
+                if (next < 1 || next > daysInMonth)
+                    return start;
+                let attempts = 0;
+                while (isDayDisabled(next) && attempts < daysInMonth) {
+                    next += direction;
+                    if (next < 1 || next > daysInMonth)
+                        return start;
+                    attempts++;
+                }
+                return next;
+            };
             if (day > 7) {
                 const next = findNextDay(day, -1, 7);
                 if (!isDayDisabled(next))
                     cb(next);
             }
             else {
-                // In first week — go to previous month if callback exists
                 const mcb = onMonthChangeRef.current;
                 if (mcb) {
-                    const [py, pm] = prevMonth(yearRef.current, monthRef.current);
+                    const py = monthRef.current === 1 ? yearRef.current - 1 : yearRef.current;
+                    const pm = monthRef.current === 1 ? 12 : monthRef.current - 1;
                     mcb(py, pm);
                 }
             }
         }
         else if (event.key === "down") {
+            const cb = onSelectRef.current;
+            const day = selectedDayRef.current;
+            if (!cb || day === undefined)
+                return;
+            const daysInMonth = getDaysInMonth(yearRef.current, monthRef.current);
+            const findNextDay = (start, direction, step) => {
+                let next = start + step * direction;
+                if (next < 1 || next > daysInMonth)
+                    return start;
+                let attempts = 0;
+                while (isDayDisabled(next) && attempts < daysInMonth) {
+                    next += direction;
+                    if (next < 1 || next > daysInMonth)
+                        return start;
+                    attempts++;
+                }
+                return next;
+            };
             if (day + 7 <= daysInMonth) {
                 const next = findNextDay(day, 1, 7);
                 if (!isDayDisabled(next))
                     cb(next);
             }
             else {
-                // Past month end — go to next month if callback exists
                 const mcb = onMonthChangeRef.current;
                 if (mcb) {
-                    const [ny, nm] = nextMonth(yearRef.current, monthRef.current);
+                    const ny = monthRef.current === 12 ? yearRef.current + 1 : yearRef.current;
+                    const nm = monthRef.current === 12 ? 1 : monthRef.current + 1;
                     mcb(ny, nm);
                 }
             }
@@ -148,14 +199,16 @@ const CalendarBase = React.memo(function Calendar(rawProps) {
         else if (event.key === "pageup") {
             const mcb = onMonthChangeRef.current;
             if (mcb) {
-                const [py, pm] = prevMonth(yearRef.current, monthRef.current);
+                const py = monthRef.current === 1 ? yearRef.current - 1 : yearRef.current;
+                const pm = monthRef.current === 1 ? 12 : monthRef.current - 1;
                 mcb(py, pm);
             }
         }
         else if (event.key === "pagedown") {
             const mcb = onMonthChangeRef.current;
             if (mcb) {
-                const [ny, nm] = nextMonth(yearRef.current, monthRef.current);
+                const ny = monthRef.current === 12 ? yearRef.current + 1 : yearRef.current;
+                const nm = monthRef.current === 12 ? 1 : monthRef.current + 1;
                 mcb(ny, nm);
             }
         }
@@ -177,7 +230,6 @@ const CalendarBase = React.memo(function Calendar(rawProps) {
     };
     const daysInMonth = getDaysInMonth(year, month);
     const rawFirstDay = getFirstDayOfWeek(year, month);
-    // Adjust for weekStartsOn
     const firstDay = weekStartsOn === 1
         ? (rawFirstDay === 0 ? 6 : rawFirstDay - 1)
         : rawFirstDay;
@@ -194,7 +246,6 @@ const CalendarBase = React.memo(function Calendar(rawProps) {
         const weekKey = `week-${d}`;
         const weekChildren = [];
         const weekStartDay = d;
-        // Leading spaces for first row
         if (weekStartDay === 1 && firstDay > 0) {
             weekChildren.push(React.createElement("tui-text", { key: "pad" }, "   ".repeat(firstDay)));
         }

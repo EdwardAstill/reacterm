@@ -569,7 +569,7 @@ Side-by-side single-line diff display. Shows removed characters in red strikethr
 
 ### Calendar
 
-Month calendar view with keyboard navigation, date range highlighting, and disabled dates.
+Picker-style month calendar for choosing dates. This is the date-selection primitive, not the scheduling/event calendar.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
@@ -589,6 +589,33 @@ Month calendar view with keyboard navigation, date range highlighting, and disab
 ```tsx
 <Calendar year={2026} month={3} selectedDay={15} onSelect={setDay} />
 ```
+
+---
+
+### EventCalendar
+
+Scheduling calendar backed by a shared event-calendar controller. Supports `month`, `week`, `day`, and `agenda` views over the same event model.
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `events` | `EventCalendarEvent[]` | -- | Events to render |
+| `anchorDate` | `Date` | today | Controlled visible anchor date |
+| `defaultAnchorDate` | `Date` | today | Uncontrolled visible anchor date |
+| `view` | `"month" \| "week" \| "day" \| "agenda"` | `month` | Controlled active view |
+| `defaultView` | `"month" \| "week" \| "day" \| "agenda"` | `month` | Uncontrolled initial view |
+| `weekStartsOn` | `0 \| 1` | `0` | Week start: 0=Sunday, 1=Monday |
+| `agendaDays` | `number` | `14` | Number of days shown in agenda view |
+| `maxVisibleEventsPerDay` | `number` | `1` | Month-view event rows before compact overflow summary |
+
+```tsx
+<EventCalendar
+  events={events}
+  defaultView="week"
+  defaultAnchorDate={new Date(2026, 2, 15)}
+/>
+```
+
+Use `Calendar` / `DatePicker` for picking dates. Use `EventCalendar` when you need event blocks, time navigation, and multiple displays over one calendar object.
 
 ---
 

@@ -13,6 +13,7 @@ export { useDialogBehavior, type UseDialogBehaviorOptions, type UseDialogBehavio
 export { useToastBehavior, type UseToastBehaviorOptions, type UseToastBehaviorResult, type ToastBehaviorItem, } from "./useToastBehavior.js";
 export { useFormBehavior, type UseFormBehaviorOptions, type UseFormBehaviorResult, type FormBehaviorField, type FormBehaviorFieldOption, type FormFieldState, } from "./useFormBehavior.js";
 export { useCalendarBehavior, type UseCalendarBehaviorOptions, type UseCalendarBehaviorResult, type CalendarDayInfo, } from "./useCalendarBehavior.js";
+export { useEventCalendarBehavior, type UseEventCalendarBehaviorOptions, type EventCalendarController, type EventCalendarEvent, type EventCalendarView, } from "./useEventCalendarBehavior.js";
 export { useCollapsibleBehavior, type UseCollapsibleBehaviorOptions, type UseCollapsibleBehaviorResult, } from "./useCollapsibleBehavior.js";
 export { useTextInputBehavior, type UseTextInputBehaviorOptions, type UseTextInputBehaviorResult, } from "./useTextInputBehavior.js";
 export { useChatInputBehavior, type UseChatInputBehaviorOptions, type UseChatInputBehaviorResult, } from "./useChatInputBehavior.js";

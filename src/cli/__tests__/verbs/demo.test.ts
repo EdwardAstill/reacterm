@@ -3,8 +3,8 @@ import { existsSync } from "node:fs";
 import { runDemo, DEMO_PATH } from "../../verbs/demo.js";
 
 describe("demo verb", () => {
-  it("DEMO_PATH points to examples/reacterm-demo.tsx and that file exists", () => {
-    expect(DEMO_PATH).toMatch(/examples\/reacterm-demo\.tsx$/);
+  it("DEMO_PATH points to the packaged demo entry and that file exists", () => {
+    expect(DEMO_PATH).toMatch(/(?:src|dist)\/cli\/demo\/main\.(?:ts|js)$/);
     expect(existsSync(DEMO_PATH)).toBe(true);
   });
 
