@@ -21,7 +21,7 @@ Launch the bundled showcase. No arguments required.
 USAGE: reacterm demo
 ```
 
-`reacterm demo` opens `examples/reacterm-demo.tsx`, a comprehensive interactive demonstration that exercises every reacterm feature across 21 sections. It is the one-keystroke entry point for discovering what reacterm can do.
+`reacterm demo` opens the bundled published demo app, a comprehensive interactive demonstration that exercises every reacterm feature across 22 sections. The installed CLI does not depend on repo-local `examples/` files to launch it.
 
 **Options:** none.
 
