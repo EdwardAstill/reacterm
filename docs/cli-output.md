@@ -1,12 +1,12 @@
 # reacterm CLI Output Schema
 
-This document is the versioned contract for all machine-readable output produced by `reacterm`. It covers `drive --capture json`, `test --reporter json`, `test --reporter ndjson`, and the placeholder `drive --capture ndjson` frame stream.
+This document is the versioned contract for machine-readable output produced by the current `reacterm` CLI. It covers `drive --capture json`, `test --reporter json`, and `test --reporter ndjson`.
 
 ---
 
 ## Schema Versioning Policy
 
-All machine-readable output produced by `reacterm` carries a `schemaVersion` field (integer). The current version is **1**.
+Versioned reporter output carries a `schemaVersion` field (integer). The current version is **1**. `drive --capture json` does not currently include this field.
 
 Rules:
 - A `schemaVersion` bump is a **breaking change**. Consumers must gate on this field.
@@ -24,10 +24,9 @@ When `reacterm drive` is invoked with `--capture json`, it writes a single JSON 
 
 ```json
 {
-  "schemaVersion": 1,
   "finalText": "string — full plain-text content of the final frame",
   "lines": ["array of strings, one per terminal row"],
-  "durationMs": 340
+  "durationMs": 0
 }
 ```
 
@@ -35,10 +34,9 @@ When `reacterm drive` is invoked with `--capture json`, it writes a single JSON 
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `schemaVersion` | `number` | Always `1` in the current release. |
 | `finalText` | `string` | The full plain-text content of the terminal's final rendered frame, rows joined with `\n`. |
 | `lines` | `string[]` | One element per terminal row. Length equals the configured terminal height (`--size` rows). Trailing whitespace within each line is preserved. |
-| `durationMs` | `number` | Wall-clock time in milliseconds from script start to final frame capture. |
+| `durationMs` | `number` | Currently emitted as `0`. |
 
 ### Example
 
@@ -48,10 +46,9 @@ reacterm drive src/App.tsx --press q --capture json
 
 ```json
 {
-  "schemaVersion": 1,
   "finalText": " Welcome to MyApp \n Press q to quit \n",
   "lines": [" Welcome to MyApp ", " Press q to quit ", ""],
-  "durationMs": 183
+  "durationMs": 0
 }
 ```
 
@@ -69,16 +66,14 @@ When `reacterm test` is invoked with `--reporter json`, it writes a single JSON 
   "scenarios": [
     {
       "name": "string",
-      "file": "string — path to scenario file",
-      "status": "pass | fail | skip",
+      "status": "pass | fail",
       "durationMs": 340,
-      "error": "string | null — present and non-null on failure"
+      "failure": "string — present on failure"
     }
   ],
   "summary": {
     "passed": 3,
     "failed": 1,
-    "skipped": 0,
     "total": 4
   }
 }
@@ -89,16 +84,14 @@ When `reacterm test` is invoked with `--reporter json`, it writes a single JSON 
 | Field | Type | Description |
 |-------|------|-------------|
 | `schemaVersion` | `number` | Always `1`. |
-| `scenarios` | `ScenarioResult[]` | One entry per discovered (and optionally filtered) scenario. |
+| `scenarios` | `ScenarioResult[]` | One entry per scenario path passed to `reacterm test`. |
 | `scenarios[].name` | `string` | Scenario name from the `name:` field in the YAML/JSON file. |
-| `scenarios[].file` | `string` | Absolute path to the scenario file. |
-| `scenarios[].status` | `"pass" \| "fail" \| "skip"` | Outcome. `"skip"` when `--only-failed` is active and the scenario passed last time. |
+| `scenarios[].status` | `"pass" \| "fail"` | Outcome. |
 | `scenarios[].durationMs` | `number` | Wall-clock time in milliseconds for this scenario. |
-| `scenarios[].error` | `string \| null` | Human-readable error message when `status` is `"fail"`. `null` otherwise. |
+| `scenarios[].failure` | `string \| undefined` | Human-readable error message when `status` is `"fail"`. |
 | `summary.passed` | `number` | Count of scenarios with `status === "pass"`. |
 | `summary.failed` | `number` | Count of scenarios with `status === "fail"`. |
-| `summary.skipped` | `number` | Count of scenarios with `status === "skip"`. |
-| `summary.total` | `number` | Total count of scenarios considered (passed + failed + skipped). |
+| `summary.total` | `number` | Total count of scenarios considered. |
 
 ### Example
 
@@ -112,23 +105,19 @@ reacterm test --reporter json
   "scenarios": [
     {
       "name": "smoke-check",
-      "file": "/app/__scenarios__/smoke.scenario.yaml",
       "status": "pass",
-      "durationMs": 210,
-      "error": null
+      "durationMs": 210
     },
     {
       "name": "login-flow",
-      "file": "/app/__scenarios__/login.scenario.yaml",
       "status": "fail",
       "durationMs": 5001,
-      "error": "step 3: waitFor \"Welcome\" did not match within 2s"
+      "failure": "step waitFor: waitFor \"Welcome\" did not match within 2000ms"
     }
   ],
   "summary": {
     "passed": 1,
     "failed": 1,
-    "skipped": 0,
     "total": 2
   }
 }
@@ -138,7 +127,7 @@ reacterm test --reporter json
 
 ## `test --reporter ndjson`
 
-When `reacterm test` is invoked with `--reporter ndjson`, it writes one JSON object per line to stdout as scenarios execute. Consumers can stream results in real time.
+When `reacterm test` is invoked with `--reporter ndjson`, it writes one JSON object per line to stdout after all scenarios complete.
 
 ### Event types
 
@@ -146,14 +135,12 @@ Each line is a valid JSON object with a `type` field.
 
 #### `start` event
 
-Emitted once before any scenarios run.
+Emitted once before scenario results in the buffered output.
 
 ```json
 {
   "type": "start",
-  "schemaVersion": 1,
-  "total": 4,
-  "timestamp": "2026-05-01T15:48:00.000Z"
+  "schemaVersion": 1
 }
 ```
 
@@ -161,8 +148,6 @@ Emitted once before any scenarios run.
 |-------|------|-------------|
 | `type` | `"start"` | Discriminant. |
 | `schemaVersion` | `number` | Always `1`. Present in the first event so consumers can reject incompatible versions early. |
-| `total` | `number` | Total number of scenarios that will run. |
-| `timestamp` | `string` | ISO 8601 UTC timestamp. |
 
 #### `pass` event
 
@@ -172,7 +157,6 @@ Emitted once per scenario that passes all assertions.
 {
   "type": "pass",
   "name": "smoke-check",
-  "file": "/app/__scenarios__/smoke.scenario.yaml",
   "durationMs": 210
 }
 ```
@@ -181,7 +165,6 @@ Emitted once per scenario that passes all assertions.
 |-------|------|-------------|
 | `type` | `"pass"` | Discriminant. |
 | `name` | `string` | Scenario name. |
-| `file` | `string` | Absolute path to the scenario file. |
 | `durationMs` | `number` | Wall-clock time for this scenario. |
 
 #### `fail` event
@@ -192,9 +175,8 @@ Emitted once per scenario that fails any assertion or encounters a runtime error
 {
   "type": "fail",
   "name": "login-flow",
-  "file": "/app/__scenarios__/login.scenario.yaml",
   "durationMs": 5001,
-  "error": "step 3: waitFor \"Welcome\" did not match within 2s"
+  "failure": "step waitFor: waitFor \"Welcome\" did not match within 2000ms"
 }
 ```
 
@@ -202,9 +184,8 @@ Emitted once per scenario that fails any assertion or encounters a runtime error
 |-------|------|-------------|
 | `type` | `"fail"` | Discriminant. |
 | `name` | `string` | Scenario name. |
-| `file` | `string` | Absolute path to the scenario file. |
 | `durationMs` | `number` | Wall-clock time for this scenario. |
-| `error` | `string` | Human-readable error describing the failure. |
+| `failure` | `string` | Human-readable error describing the failure. |
 
 #### `summary` event
 
@@ -215,9 +196,7 @@ Emitted once after all scenarios have run, immediately before the process exits.
   "type": "summary",
   "passed": 3,
   "failed": 1,
-  "skipped": 0,
-  "total": 4,
-  "durationMs": 1840
+  "total": 4
 }
 ```
 
@@ -226,30 +205,28 @@ Emitted once after all scenarios have run, immediately before the process exits.
 | `type` | `"summary"` | Discriminant. |
 | `passed` | `number` | Scenarios that passed. |
 | `failed` | `number` | Scenarios that failed. |
-| `skipped` | `number` | Scenarios that were skipped (e.g. via `--only-failed`). |
 | `total` | `number` | Total scenarios considered. |
-| `durationMs` | `number` | Total wall-clock time from `start` to `summary`. |
 
 ### Full example stream
 
 ```bash
-reacterm test --reporter ndjson
+reacterm test --reporter ndjson __scenarios__/smoke.scenario.yaml __scenarios__/login.scenario.yaml
 ```
 
 ```ndjson
-{"type":"start","schemaVersion":1,"total":2,"timestamp":"2026-05-01T15:48:00.000Z"}
-{"type":"pass","name":"smoke-check","file":"/app/__scenarios__/smoke.scenario.yaml","durationMs":210}
-{"type":"fail","name":"login-flow","file":"/app/__scenarios__/login.scenario.yaml","durationMs":5001,"error":"step 3: waitFor \"Welcome\" did not match within 2s"}
-{"type":"summary","passed":1,"failed":1,"skipped":0,"total":2,"durationMs":5211}
+{"type":"start","schemaVersion":1}
+{"type":"pass","name":"smoke-check","durationMs":210}
+{"type":"fail","name":"login-flow","durationMs":5001,"failure":"step waitFor: waitFor \"Welcome\" did not match within 2000ms"}
+{"type":"summary","passed":1,"failed":1,"total":2}
 ```
 
 ---
 
 ## `drive --capture ndjson` — Frame Stream
 
-> **Status: placeholder — implementation pending in v1.1.**
+> **Status: not implemented.** The current CLI throws for `drive --capture ndjson`.
 
-When `reacterm drive` is invoked with `--capture ndjson` (with or without `--frames`), it will emit a stream of frame events to stdout. This format is reserved for live frame capture pipelines and is not fully implemented in v1. The shape is documented here as a forward declaration.
+The shape below is a forward declaration for live frame capture pipelines. Do not depend on it in the current CLI.
 
 ### Planned event types
 
@@ -267,7 +244,7 @@ When `reacterm drive` is invoked with `--capture ndjson` (with or without `--fra
 
 #### `frame` event
 
-Emitted once per distinct rendered frame (when `--frames` is active) or once for the final frame (without `--frames`).
+Emitted once per distinct rendered frame in the planned stream.
 
 ```json
 {
@@ -289,6 +266,6 @@ Emitted once per distinct rendered frame (when `--frames` is active) or once for
 }
 ```
 
-### Note for v1 consumers
+### Note for current consumers
 
-In v1, `--capture ndjson` without `--frames` emits a single-frame stream (one `start`, one `frame`, one `end`), which is equivalent to the `--capture json` output wrapped in NDJSON events. Full frame streaming via `--frames` requires `--keep-alive` to hold the process open and is deferred to v1.1.
+Use `--capture json`, `--capture text`, or `--capture svg` for implemented `drive` capture formats.

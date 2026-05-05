@@ -6,7 +6,7 @@ The `reacterm` command-line interface exposes the reacterm testing and rendering
 
 ## Requirements
 
-- **Node 18+.**
+- **Node 20+.**
 - **`tsx` installed** in the project (currently a `devDependency`). The bin wrapper registers `tsx/esm` at startup so any verb can load `.ts` / `.tsx` entry files directly. Pure `.js` / `.mjs` entries work without `tsx`.
 
 ---
@@ -110,7 +110,9 @@ Scripted, headless execution that captures an artifact. No assertions.
 USAGE: reacterm drive [OPTIONS] <entry> [script.yaml]
 ```
 
-`drive` replays a scenario or an inline script against a reacterm app and writes the resulting artifact to stdout (or `--out`). It is designed for pipelines: stdout is always the pure artifact, stderr carries progress traces.
+`drive` replays inline command-line steps against a reacterm app and writes the resulting artifact to stdout. It is designed for pipelines: stdout is the artifact and stderr is reserved for errors.
+
+The optional `[script.yaml]` argument, `--out`, `--size`, `--timeout`, and `--keep-alive` are present in the current help output but are not fully wired into execution yet. Use scenario files with `reacterm test` for file-backed scripts.
 
 **Inline script flags** (repeatable; processed in command-line appearance order):
 
@@ -120,7 +122,6 @@ USAGE: reacterm drive [OPTIONS] <entry> [script.yaml]
 | `--type <text>` | Type a string as character keystrokes. |
 | `--paste <text>` | Send text as a bracketed-paste sequence. |
 | `--wait-for <text>` | Poll frames until the given text appears. |
-| `--resize <WxH>` | Resize the virtual terminal. |
 | `--sleep <duration>` | Pause for a duration (e.g. `100ms`, `2s`). |
 
 > **Ordering contract:** inline flags are processed in the order they appear on the command line. Any argument parser that normalizes or groups repeated flags by name breaks this contract.
@@ -130,27 +131,27 @@ USAGE: reacterm drive [OPTIONS] <entry> [script.yaml]
 | Flag | Description |
 |------|-------------|
 | `--capture <fmt>` | Output format: `text` (default), `svg`, `json`, `ndjson`. |
-| `--frames` | Capture every rendered frame, not just the final one. Forces `ndjson` output. |
-| `--out <path>` | Write artifact to a file instead of stdout. Use `--out -` to force stdout explicitly. |
-| `--size <WxH>` | Initial virtual terminal size (default: `80x24`). |
+| `--frames` | Not currently exposed by `drive --help`. |
+| `--out <path>` | Reserved; currently ignored. |
+| `--size <WxH>` | Reserved; current execution uses default or scenario-provided dimensions. |
 
 **Lifecycle flags:**
 
 | Flag | Description |
 |------|-------------|
-| `--timeout <duration>` | Hard cap on total run time (default: `10s`). |
-| `--keep-alive` | Do not auto-quit when the script ends (needed with `--frames`). |
+| `--timeout <duration>` | Reserved; currently ignored. |
+| `--keep-alive` | Holds the process open after capture. |
 
 **Verbosity:**
 
 | Flag | Effect |
 |------|--------|
-| `--quiet` / `-q` | Suppress progress traces on stderr; errors still print. |
-| `--verbose` / `-v` | Add per-step trace to stderr. `-vv` adds frame diffs. |
+| `--quiet` / `-q` | Not currently exposed by `drive --help`. |
+| `--verbose` / `-v` | Not currently exposed by `drive --help`. |
 
-**Stdout:** the captured artifact (text dump, SVG markup, JSON object, or NDJSON event stream).
+**Stdout:** the captured artifact (text dump, SVG markup, or JSON object). `ndjson` is reserved but currently throws.
 
-**Stderr:** progress traces (e.g. `> press tab`, `> wait-for "Saved" matched in 130ms`), warnings, errors.
+**Stderr:** errors.
 
 **Exit codes:**
 
@@ -166,14 +167,11 @@ USAGE: reacterm drive [OPTIONS] <entry> [script.yaml]
 **Examples:**
 
 ```bash
-# Press q, capture final frame as SVG, write to file
-reacterm drive src/App.tsx --press q --capture svg --out app.svg
+# Press q and capture the final frame as SVG
+reacterm drive src/App.tsx --press q --capture svg > app.svg
 
 # Capture final text to stdout and pipe it
 reacterm drive src/App.tsx --press q --capture text | grep "Goodbye"
-
-# Replay a recorded scenario file
-reacterm drive src/App.tsx __scenarios__/login.scenario.yaml
 
 # Inline multi-step script: tab, type, enter
 reacterm drive src/App.tsx \
@@ -182,8 +180,8 @@ reacterm drive src/App.tsx \
   --press enter \
   --capture json
 
-# Capture every frame as NDJSON (live frame stream)
-reacterm drive src/App.tsx --press tab --capture ndjson --frames --out frames.ndjson
+# Capture final text to a file through shell redirection
+reacterm drive src/App.tsx --press tab --capture text > final-frame.txt
 ```
 
 ---
@@ -196,16 +194,16 @@ Discover and run scenario files; emit structured output; exit non-zero on any fa
 USAGE: reacterm test [OPTIONS] [paths]
 ```
 
-`reacterm test` is the CI entry point. It discovers `.scenario.yaml` / `.scenario.json` files, runs each one against its declared entry point, checks assertions in the `expect:` block, and exits non-zero on any failure. It runs independently of vitest — no test framework is required.
+`reacterm test` is the CI entry point. It runs the `.scenario.yaml` / `.scenario.json` files passed on the command line against their declared entry points, checks implemented assertions in the `expect:` block, and exits non-zero on any failure. It runs independently of vitest — no test framework is required.
 
-Default discovery pattern: `__scenarios__/**/*.scenario.{yaml,json}`.
+Pass scenario files explicitly. Automatic discovery is not implemented yet.
 
 **Selection flags:**
 
 | Flag | Description |
 |------|-------------|
-| `-t, --grep <pattern>` | Run only scenarios whose name matches the given regex. |
-| `--only-failed` | Re-run only scenarios that failed in the last invocation. |
+| `-t, --grep <pattern>` | Not currently exposed. |
+| `--only-failed` | Not currently exposed. |
 
 **Snapshot flags:**
 
@@ -219,8 +217,8 @@ Default discovery pattern: `__scenarios__/**/*.scenario.{yaml,json}`.
 | Flag | Description |
 |------|-------------|
 | `--reporter <name>` | `pretty` (default), `tap`, `json`, `ndjson`. |
-| `--quiet` / `-q` | Print errors only. |
-| `--verbose` / `-v` | Per-step trace on stderr. |
+| `--quiet` / `-q` | Not currently exposed. |
+| `--verbose` / `-v` | Not currently exposed. |
 
 **Concurrency:**
 
@@ -248,35 +246,27 @@ Default discovery pattern: `__scenarios__/**/*.scenario.{yaml,json}`.
 **Examples:**
 
 ```bash
-# Run all discovered scenarios
-reacterm test
+# Run one scenario file
+reacterm test __scenarios__/smoke.scenario.yaml
 
 # Run with JSON reporter (suitable for CI artifact upload)
 reacterm test --reporter json > results.json
 
-# Run scenarios matching "login"
-reacterm test -t login
-
 # Update snapshots locally after intentional UI change
-reacterm test -u
+reacterm test -u __scenarios__/dashboard.scenario.yaml
 
 # CI mode: fail on drift without allowing -u
-reacterm test --ci --reporter ndjson
-
-# Run a specific file
-reacterm test __scenarios__/login.scenario.yaml
+reacterm test --ci --reporter ndjson __scenarios__/dashboard.scenario.yaml
 ```
 
 ---
 
 ## Global Options
 
-These flags apply to every verb and must appear before the verb name.
+These flags apply to the top-level command and must appear before the verb name.
 
 | Flag | Description |
 |------|-------------|
-| `-v, --verbose` | Increase verbosity. Repeat for more detail (`-vv`, `-vvv`). |
-| `-q, --quiet` | Print errors only; suppress all progress output. |
 | `--version` | Print the reacterm version and exit. |
 | `-h, --help` | Show the top-level help text and exit. |
 
@@ -288,10 +278,9 @@ Each verb also accepts `--help` for verb-specific usage.
 
 | Variable | Description |
 |----------|-------------|
-| `NO_COLOR` | Disable ANSI color output in all verbs (per [no-color.org](https://no-color.org)). |
-| `REACTERM_DEFAULT_SIZE` | Default virtual terminal size for `drive` and `test`, e.g. `80x24`. |
+| `NO_COLOR` | Recognized by CLI context helpers. Reporter output is currently emitted without color. |
 
-When stdout is not a TTY (i.e. piped), reacterm automatically suppresses progress bars and color in the data stream even without `NO_COLOR`.
+Machine-readable output is written without progress bars.
 
 ---
 

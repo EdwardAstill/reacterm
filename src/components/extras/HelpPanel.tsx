@@ -136,10 +136,22 @@ export const HelpPanel = React.memo(function HelpPanel(rawProps: HelpPanelProps)
     }
   }, [triggerKey, selfManaged, isVisible, forceUpdate]);
 
-  useInput(handleInput, {
-    isActive: true,
-    priority: mode === "modal" ? INPUT_PRIORITY.FLOATING_PANEL : INPUT_PRIORITY.DEFAULT,
-  });
+  // Only claim a prioritized slot while the panel is actually open (or in
+  // selfManaged mode, where it owns the trigger key in both states). Without
+  // this gate, a host-controlled HelpPanel squats at FLOATING_PANEL priority
+  // even when `visible={false}` and collides with any other prioritized
+  // useInput at the same level — see docs/pitfalls.md#14.
+  const wantsPriority = selfManaged || isVisible;
+  useInput(
+    handleInput,
+    wantsPriority
+      ? {
+          isActive: true,
+          priority:
+            mode === "modal" ? INPUT_PRIORITY.FLOATING_PANEL : INPUT_PRIORITY.DEFAULT,
+        }
+      : { isActive: false },
+  );
 
   if (!isVisible) return null;
 

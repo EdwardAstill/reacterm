@@ -312,7 +312,7 @@ export class InputManager {
         && countAtMax > 1
       ) {
         this.warnedMultipleHandlers = true;
-        process.stderr.write("[storm] Warning: Multiple components are receiving keyboard input simultaneously. This usually means multiple isFocused={true} props on sibling components. Use a focus state to control which component is active. See docs/pitfalls.md#7\n");
+        process.stderr.write("[storm] Warning: Multiple components are receiving keyboard input simultaneously. This usually means multiple isFocused={true} props on sibling components OR two useInput hooks at the same priority. Use a focus state, raise/lower one priority, or set event.consumed=true. See docs/pitfalls.md#14 (priority) and #7 (focus).\n");
       }
       // If a prioritized handler consumed the event, suppress normal listeners.
       // Otherwise, let it propagate — the handler chose not to intercept this key.

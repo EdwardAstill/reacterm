@@ -1,6 +1,6 @@
 # reacterm Scenario Reference
 
-Scenario files are the primary way to author black-box regression checks for reacterm applications. A scenario describes a sequence of user interactions (steps) and the expected state of the terminal at the end (expect). The same file can be replayed headlessly with `reacterm drive`, executed with assertions by `reacterm test`, and produced automatically by `reacterm run --capture`.
+Scenario files are the primary way to author black-box regression checks for reacterm applications. A scenario describes a sequence of user interactions (steps) and the expected state of the terminal at the end (expect). Scenario files are executed with assertions by `reacterm test` and can be produced automatically by `reacterm run --capture`.
 
 ---
 
@@ -13,7 +13,7 @@ Scenario files are the primary way to author black-box regression checks for rea
 
 **Convention:** place scenario files in a `__scenarios__/` directory at the project root or alongside the entry point they test. This mirrors the `__tests__/` convention and keeps scenario files close to the code they exercise.
 
-**Discovery:** `reacterm test` discovers `__scenarios__/**/*.scenario.{yaml,json}` by default. Pass explicit paths or globs to override.
+**Execution:** pass scenario files explicitly to `reacterm test`. Automatic discovery is not implemented yet.
 
 **IDE autocomplete:** files recorded by `reacterm run --capture` include a header for IDE YAML validation:
 
@@ -42,11 +42,11 @@ expect: [...]
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `version` | `number` | Yes | Schema version. Always `1` for the current release. |
-| `name` | `string` | Yes | Human-readable scenario name. Appears in reporter output and used by `--grep` filtering. |
+| `name` | `string` | Yes | Human-readable scenario name. Appears in reporter output. |
 | `entry` | `string` | Yes | Path to the reacterm app entry point (TypeScript/TSX file). Relative paths resolve from the scenario file's directory. |
-| `size` | `{ cols, rows }` | No | Virtual terminal dimensions. Defaults to `80x24` or the value of `REACTERM_DEFAULT_SIZE`. |
+| `size` | `{ cols, rows }` | No | Virtual terminal dimensions. Defaults to `80x24`. |
 | `env` | `Record<string, string>` | No | Environment variables to inject into the app process. Merged on top of the parent environment. |
-| `timeout` | duration string | No | Hard cap on total scenario run time. Defaults to `10s`. Format: integer + unit suffix (`ms`, `s`, `m`). |
+| `timeout` | duration string | No | Parsed by the schema. A scenario-level hard timeout is not enforced yet. Format: integer + unit suffix (`ms`, `s`, `m`). |
 | `steps` | `Step[]` | No | Ordered list of user interaction steps. See step type reference below. |
 | `expect` | `Expectation[]` | No | Assertions checked after all steps complete. Files without an `expect:` block run as smoke checks — the scenario passes as long as it does not time out or crash. |
 
@@ -66,7 +66,7 @@ Steps are processed in the order they appear in the `steps:` array. Each step is
 | `resize` | `{ cols, rows }` | Resize the virtual terminal to the given dimensions and trigger the app's resize handler. |
 | `waitFor` | `string` or `{ text: string, timeout?: duration }` | Poll rendered frames every 16ms until the given text appears anywhere in the terminal. Fails the scenario if the text does not appear before the step timeout (or the scenario-level `timeout`). |
 | `sleep` | duration string | Pause execution for the given duration. Useful for letting animations settle or for timing-sensitive scenarios. |
-| `snapshot` | `{ as: "svg" \| "text" \| "json", path: string }` | Capture the current terminal frame to a file. `path` is relative to the scenario file. Used in combination with `expectSnapshot` assertions to detect drift. |
+| `snapshot` | `{ as: "svg" \| "text" \| "json", path: string }` | Parsed by the schema but currently a no-op during execution. Use `expectSnapshot` with `reacterm test -u` to create or update the final-frame snapshot. |
 
 ### Duration string format
 
@@ -84,16 +84,16 @@ Valid: `100ms`, `2s`, `1m`, `500ms`. Invalid: `1.5s`, `2 s`, `100`.
 
 ## Expectation Types
 
-Expectations in the `expect:` block are checked after all steps complete. All expectations must pass for the scenario to pass. They are evaluated against the final rendered terminal frame (and the app's exit code where applicable).
+Expectations in the `expect:` block are checked after all steps complete. In the current CLI implementation, `contains` and `expectSnapshot` are enforced against the final rendered terminal frame. The other expectation shapes are parsed but not enforced yet.
 
 | Expectation | Shape | Description |
 |-------------|-------|-------------|
 | `contains` | `string` | Passes if the given text appears anywhere in the final terminal frame. |
-| `line` | `{ at: number, equals?: string, contains?: string, matches?: string }` | Assert about a specific row (0-indexed). `equals` requires an exact match; `contains` requires a substring; `matches` evaluates the value as a regular expression. |
+| `line` | `{ at: number, equals?: string, contains?: string, matches?: string }` | Parsed but not enforced yet. |
 | `expectSnapshot` | `string` (path) | Compare the current final frame to a stored snapshot file. Fails if they differ (drift). Path is relative to the scenario file. Use `-u` to update on intentional change; use `--ci` to treat drift as exit code `3`. |
-| `exitCode` | `number` | The app's `process.exit()` code must match this value. |
-| `noWarnings` | `boolean` | When `true`, fails if any driver warnings were emitted during the scenario run. |
-| `frameCount` | `{ min?: number, max?: number }` | The number of distinct rendered frames must fall within the given bounds. Useful for ensuring animations completed (or did not run unexpectedly). |
+| `exitCode` | `number` | Parsed but not enforced yet. |
+| `noWarnings` | `boolean` | Parsed but not enforced yet. |
+| `frameCount` | `{ min?: number, max?: number }` | Parsed but not enforced yet. |
 
 ---
 
@@ -117,10 +117,9 @@ steps:
 
 expect:
   - contains: "Bye"
-  - exitCode: 0
 ```
 
-This scenario waits for the app to render its initial "Welcome" text (confirming the app started and drew its first frame), then presses `q` to trigger the quit flow. The `expect:` block confirms that the final frame contains "Bye" and the app exited with code `0`. If the app hangs or crashes before printing "Welcome", the `waitFor` step times out and the scenario fails with a clear error.
+This scenario waits for the app to render its initial "Welcome" text (confirming the app started and drew its first frame), then presses `q` to trigger the quit flow. The `expect:` block confirms that the final frame contains "Bye". If the app hangs or crashes before printing "Welcome", the `waitFor` step times out and the scenario fails with a clear error.
 
 ---
 
@@ -173,19 +172,15 @@ timeout: 5s
 
 steps:
   - waitFor: "Dashboard"
-  - snapshot:
-      as: svg
-      path: __snapshots__/dashboard.svg
-
 expect:
   - expectSnapshot: __snapshots__/dashboard.svg
 ```
 
-**Initial setup:** run `reacterm test -u` once to create `__snapshots__/dashboard.svg`. Commit the file alongside the scenario.
+**Initial setup:** run `reacterm test -u __scenarios__/dashboard.scenario.yaml` once to create `__snapshots__/dashboard.svg`. Commit the file alongside the scenario.
 
 **Day-to-day:** run `reacterm test` (or `reacterm test --ci` in CI). If the rendered output matches the stored SVG, the scenario passes. If it differs (drift), the scenario fails with exit code `1` (or `3` under `--ci`).
 
-**Accepting an intentional change:** run `reacterm test -u` locally after confirming the change is correct. Commit the updated snapshot file. In CI, `--ci` prevents `-u` from running (exits `2` if both are passed), ensuring snapshots can only be updated by a developer with local access.
+**Accepting an intentional change:** run `reacterm test -u __scenarios__/dashboard.scenario.yaml` locally after confirming the change is correct. Commit the updated snapshot file. In CI, `--ci` prevents `-u` from running (exits `2` if both are passed), ensuring snapshots can only be updated by a developer with local access.
 
 **Capability fingerprint:** snapshot files include a terminal capability hash. If the hash in the stored snapshot does not match the current environment (e.g. after a system font change), `reacterm test --ci` exits `4` rather than `3`, distinguishing environment drift from a real UI regression.
 
@@ -212,25 +207,14 @@ steps:
   - waitFor:
       text: "Saved"
       timeout: 2s
-  - snapshot:
-      as: svg
-      path: __snapshots__/after-save.svg
   - press: q
 
 expect:
   - contains: "Bye"
   - expectSnapshot: __snapshots__/after-save.svg
-  - exitCode: 0
-  - noWarnings: true
-  - frameCount: { min: 3 }
 ```
 
-This scenario verifies four distinct properties simultaneously:
+This scenario verifies two implemented properties simultaneously:
 
 1. **`contains: "Bye"`** — the quit flow completed and the final frame includes the expected farewell text.
-2. **`expectSnapshot`** — the terminal state immediately after saving matches the stored SVG, catching any visual regression in the save-confirmation UI.
-3. **`exitCode: 0`** — the editor exited cleanly, with no crash or unexpected `process.exit` call.
-4. **`noWarnings: true`** — no driver warnings were emitted during the run, catching subtle reacterm API misuse.
-5. **`frameCount: { min: 3 }`** — at least three distinct frames were rendered (initial, post-type, post-save), confirming the app is actively updating its UI rather than showing a static screen.
-
-The `snapshot:` step captures the frame mid-scenario (after save, before quit) so the `expectSnapshot` assertion can compare against that precise moment rather than the final "Bye" frame.
+2. **`expectSnapshot`** — the final terminal state matches the stored snapshot, catching visual regression in the completed save-and-quit flow.

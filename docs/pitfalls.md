@@ -534,3 +534,32 @@ const handleSubmit = (text: string) => {
 ```
 
 **Rule of thumb:** If you're changing what's ON screen (text content, colors), use refs + `requestRender()`. If you're changing what EXISTS on screen (adding/removing components, conditional rendering), use `flushSync`.
+
+---
+
+## 14. useInput priority collisions (the multi-focus warning)
+
+The "Multiple components are receiving keyboard input simultaneously" warning fires when two or more `useInput` handlers register at the **same max priority** and none of them set `event.consumed = true` for the key that just arrived. The warning text mentions `isFocused={true}`, but the underlying mechanism is priority — any two prioritized hooks at the same level will trigger it once a non-consumed key flows through.
+
+**Where this bites:** framework components claim a `priority` even when they look idle. `HelpPanel` sat at `INPUT_PRIORITY.FLOATING_PANEL` (900) regardless of `visible={false}` until the gate landed; before that, any host `useInput((e) => ..., { priority: 900 })` quietly competed with it and tripped the warning on the first non-`?` key.
+
+**Rules of thumb:**
+
+1. **Don't share priority with framework components.** If you're writing a host-app `useInput`, look in `src/input/priorities.ts` (`INPUT_PRIORITY.FLOATING_PANEL`, `INPUT_PRIORITY.MODAL`, `INPUT_PRIORITY.CONFIRM_DIALOG`) and pick a level that no built-in component squats on. Background app handlers should be **non-prioritized** (omit the `priority` option) so they only run after every prioritized component has decided not to consume.
+
+2. **Set `event.consumed = true` when you handle a key.** Without it, the loop keeps going at the same priority. That's how the warning fires even when the order looks right.
+
+3. **Gate prioritized registrations on visibility.** Components that own a hot priority slot (modal/help panels) should only register at that priority while they're actually open. The current `HelpPanel` gates on `selfManaged || isVisible`; mirror that pattern in custom prioritized components.
+
+4. **Reading the warning.** `countAtMax > 1` means: the highest-priority bucket had two or more handlers run for the same key, and none of them consumed it. If you only have one handler at that priority but still see the warning, look for a built-in component whose `useInput` is `isActive: true` unconditionally — that's the second handler.
+
+**Diagnosing in tests.** The in-process testing harness (`reacterm/testing`) tracks the unconsumed count on the InputManager:
+
+```ts
+const driver = renderDriver(<App />, { width: 120, height: 34 });
+driver.press("a");
+const im = (driver as unknown as { inner: { input: { lastUnconsumedCountAtMax: number } } }).inner.input;
+expect(im.lastUnconsumedCountAtMax).toBeLessThanOrEqual(1);
+```
+
+Anything `> 1` would have fired the stderr warning in production.
