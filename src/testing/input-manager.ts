@@ -110,6 +110,41 @@ export class TestInputManager {
     for (const h of this.mouseHandlers) h(event);
   }
 
+  /** Simulate mouse press without release (use with mouseMove/mouseUp for drag). */
+  mouseDown(x = 0, y = 0, button: MouseEvent["button"] = "left"): void {
+    this.click(x, y, button);
+  }
+
+  /** Simulate mouse move (no button state change). */
+  mouseMove(x = 0, y = 0): void {
+    const event: MouseEvent = {
+      button: "left",
+      action: "move",
+      x,
+      y,
+      shift: false,
+      ctrl: false,
+      meta: false,
+      raw: "",
+    };
+    for (const h of this.mouseHandlers) h(event);
+  }
+
+  /** Simulate mouse release at coordinates. */
+  mouseUp(x = 0, y = 0, button: MouseEvent["button"] = "left"): void {
+    const event: MouseEvent = {
+      button,
+      action: "release",
+      x,
+      y,
+      shift: false,
+      ctrl: false,
+      meta: false,
+      raw: "",
+    };
+    for (const h of this.mouseHandlers) h(event);
+  }
+
   /** Simulate paste event */
   paste(text: string): void {
     const event: PasteEvent = { text };

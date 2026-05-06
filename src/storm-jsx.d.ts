@@ -242,7 +242,10 @@ interface StormOverlayProps {
   key?: string | number;
   children?: React.ReactNode;
   visible?: boolean;
-  position?: "center" | "bottom" | "top" | "center-left" | "center-right";
+  position?: "center" | "bottom" | "top" | "center-left" | "center-right" | "free";
+  /** Used when position === "free". Cell coordinates from screen origin. Clamped to screen. */
+  top?: number;
+  left?: number;
   width?: number | `${number}%`;
   height?: number;
   minWidth?: number;

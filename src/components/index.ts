@@ -4,7 +4,7 @@ export { Text, type TextProps } from "./core/Text.js";
 export { Newline, type NewlineProps } from "./core/Newline.js";
 export { Spacer } from "./core/Spacer.js";
 export { Static, type StaticProps } from "./core/Static.js";
-export { Overlay, type OverlayProps } from "./core/Overlay.js";
+export { Overlay, OverlayProvider, type OverlayProps, type OverlayManagerValue } from "./core/Overlay.js";
 
 export { ScrollView, type ScrollViewProps } from "./core/ScrollView.js";
 export {
