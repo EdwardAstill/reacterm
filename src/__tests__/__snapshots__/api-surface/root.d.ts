@@ -1,132 +1,23 @@
 /** @packageDocumentation */
-export {
-  type Cell,
-  type Style,
-  type Rect,
-  type BorderStyle,
-  type BorderChars,
-  EMPTY_CELL,
-  DEFAULT_COLOR,
-  Attr,
-  rgb,
-  parseColor,
-  cellEquals,
-  makeCell,
-  styleToAttrs,
-  styleToCellProps,
-  BORDER_CHARS,
-} from "./core/types.js";
-
+export { type Cell, type Style, type Rect, type BorderStyle, type BorderChars, EMPTY_CELL, DEFAULT_COLOR, Attr, rgb, parseColor, cellEquals, makeCell, styleToAttrs, styleToCellProps, BORDER_CHARS, } from "./core/types.js";
 export { ScreenBuffer, WIDE_CHAR_PLACEHOLDER } from "./core/buffer.js";
 export { DiffRenderer, type DiffResult, isWasmAccelerated } from "./core/diff.js";
 export { Screen, type ScreenOptions } from "./core/screen.js";
 export { ease, spring, type EasingFunction } from "./core/easing.js";
-export {
-  detectTerminal,
-  terminalInfo,
-  type TerminalCapabilities,
-} from "./core/terminal-detect.js";
-export {
-  detectImageCaps,
-  bestImageProtocolDetailed,
-  type TerminalImageCaps,
-  type ImageProtocol,
-} from "./core/terminal-caps.js";
-export {
-  createAdaptiveConfig,
-  bestImageProtocol,
-  bestKeyboardProtocol,
-  bestColorDepth,
-  enableKittyKeyboard,
-  enableSyncOutput,
-  adaptiveChar,
-  adaptiveBorder,
-  type AdaptiveConfig,
-} from "./core/adaptive.js";
-
-export {
-  RenderErrorBoundary,
-  type RenderError,
-  type ErrorBoundaryOptions,
-} from "./core/error-boundary.js";
-export {
-  OutputBuffer,
-  type BackpressureOptions,
-} from "./core/backpressure.js";
-export {
-  MAX_LAYOUT_DEPTH,
-  MAX_CHILDREN,
-  MAX_BUFFER_WIDTH,
-  MAX_BUFFER_HEIGHT,
-  clampDimension,
-  validateLayoutProps,
-  isTerminalAlive,
-} from "./core/guards.js";
-export {
-  ESC,
-  CSI,
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CURSOR_SAVE,
-  CURSOR_RESTORE,
-  CLEAR_SCREEN,
-  CLEAR_LINE,
-  ALT_SCREEN_ENTER,
-  ALT_SCREEN_EXIT,
-  MOUSE_ENABLE,
-  MOUSE_DISABLE,
-  RESET,
-  cursorTo,
-  fgColor,
-  bgColor,
-  fullSgr,
-  diffSgr,
-  setScrollRegion,
-  RESET_SCROLL_REGION,
-  setColorDepth,
-  getColorDepth,
-  rgbTo256,
-  rgbTo16,
-  type ColorDepth,
-} from "./core/ansi.js";
-export type {
-  KeyEvent,
-  KeyName,
-  KeyHandler,
-  MouseEvent,
-  MouseButton,
-  MouseAction,
-  MouseHandler,
-  PasteEvent,
-  PasteHandler,
-} from "./input/types.js";
-
+export { detectTerminal, terminalInfo, type TerminalCapabilities, } from "./core/terminal-detect.js";
+export { detectImageCaps, bestImageProtocolDetailed, type TerminalImageCaps, type ImageProtocol, } from "./core/terminal-caps.js";
+export { createAdaptiveConfig, bestImageProtocol, bestKeyboardProtocol, bestColorDepth, enableKittyKeyboard, enableSyncOutput, adaptiveChar, adaptiveBorder, type AdaptiveConfig, } from "./core/adaptive.js";
+export { RenderErrorBoundary, type RenderError, type ErrorBoundaryOptions, } from "./core/error-boundary.js";
+export { OutputBuffer, type BackpressureOptions, } from "./core/backpressure.js";
+export { MAX_LAYOUT_DEPTH, MAX_CHILDREN, MAX_BUFFER_WIDTH, MAX_BUFFER_HEIGHT, clampDimension, validateLayoutProps, isTerminalAlive, } from "./core/guards.js";
+export { ESC, CSI, CURSOR_HIDE, CURSOR_SHOW, CURSOR_SAVE, CURSOR_RESTORE, CLEAR_SCREEN, CLEAR_LINE, ALT_SCREEN_ENTER, ALT_SCREEN_EXIT, MOUSE_ENABLE, MOUSE_DISABLE, RESET, cursorTo, fgColor, bgColor, fullSgr, diffSgr, setScrollRegion, RESET_SCROLL_REGION, setColorDepth, getColorDepth, rgbTo256, rgbTo16, type ColorDepth, } from "./core/ansi.js";
+export type { KeyEvent, KeyName, KeyHandler, MouseEvent, MouseButton, MouseAction, MouseHandler, PasteEvent, PasteHandler, } from "./input/types.js";
 export { parseMouseEvent, isIncompleteMouseSequence } from "./input/mouse.js";
 export { parseKeys } from "./input/keyboard.js";
 export { InputManager } from "./input/manager.js";
-export {
-  computeLayout,
-  measureNaturalHeight,
-  measureNaturalWidth,
-  type LayoutProps,
-  type LayoutResult,
-  type LayoutNode,
-  type FlexDirection,
-  type FlexWrap,
-  type Align,
-  type AlignSelf,
-  type Justify,
-  type Overflow,
-  type Display,
-  type GridAutoFlow,
-  type Position,
-} from "./layout/engine.js";
+export { computeLayout, measureNaturalHeight, measureNaturalWidth, type LayoutProps, type LayoutResult, type LayoutNode, type FlexDirection, type FlexWrap, type Align, type AlignSelf, type Justify, type Overflow, type Display, type GridAutoFlow, type Position, } from "./layout/engine.js";
 export { render, type RenderOptions, type RenderMetrics, type FullRenderMetrics, type TuiApp } from "./reconciler/render.js";
-export {
-  renderToString,
-  type RenderToStringOptions,
-  type RenderToStringResult,
-} from "./reconciler/render-to-string.js";
+export { renderToString, type RenderToStringOptions, type RenderToStringResult, } from "./reconciler/render-to-string.js";
 export type { BackgroundPreset, BackgroundPattern, BackgroundProp, HostTextNode } from "./reconciler/types.js";
 export { Box, type BoxProps } from "./components/core/Box.js";
 export { Panes, type PanesProps, Pane, type PaneProps } from "./components/core/Panes.js";
@@ -232,29 +123,10 @@ export { MarkdownViewer, type MarkdownViewerProps } from "./components/extras/Ma
 export { MarkdownEditor, type MarkdownEditorProps } from "./components/extras/MarkdownEditor.js";
 export { CommandPalette, type CommandPaletteProps, type PaletteCommand } from "./components/extras/CommandPalette.js";
 export { DatePicker, type DatePickerProps } from "./components/extras/DatePicker.js";
-export {
-  EventCalendar, type EventCalendarProps, type EventCalendarViewRendererProps,
-} from "./components/extras/EventCalendar.js";
+export { EventCalendar, type EventCalendarProps, type EventCalendarViewRendererProps, } from "./components/extras/EventCalendar.js";
 export { LoadingIndicator, type LoadingIndicatorProps, type LoadingStyle, type LoadingSize } from "./components/extras/LoadingIndicator.js";
 export { Welcome, type WelcomeProps, type WelcomeAction, type WelcomeShortcut } from "./components/extras/Welcome.js";
-export {
-  OperationTree, type OperationTreeProps, type OpNode,
-  StreamingText, type StreamingTextProps,
-  SyntaxHighlight, type SyntaxHighlightProps, type LanguageDef,
-  registerLanguage, getLanguage, getSupportedLanguages,
-  ShimmerText, type ShimmerTextProps,
-  BlinkDot, type BlinkDotProps, type DotState,
-  ApprovalPrompt, type ApprovalPromptProps, type ApprovalOption,
-  CommandDropdown, type CommandDropdownProps, type CommandItem,
-  StatusLine, type StatusLineProps,
-  MessageBubble, type MessageBubbleProps,
-  PerformanceHUD, type PerformanceHUDProps,
-  TokenStream, type TokenStreamProps,
-  ContextWindow, type ContextWindowProps,
-  CostTracker, type CostTrackerProps,
-  ModelBadge, type ModelBadgeProps,
-  CommandBlock, type CommandBlockProps,
-} from "./widgets/index.js";
+export { OperationTree, type OperationTreeProps, type OpNode, StreamingText, type StreamingTextProps, SyntaxHighlight, type SyntaxHighlightProps, type LanguageDef, registerLanguage, getLanguage, getSupportedLanguages, ShimmerText, type ShimmerTextProps, BlinkDot, type BlinkDotProps, type DotState, ApprovalPrompt, type ApprovalPromptProps, type ApprovalOption, CommandDropdown, type CommandDropdownProps, type CommandItem, StatusLine, type StatusLineProps, MessageBubble, type MessageBubbleProps, PerformanceHUD, type PerformanceHUDProps, TokenStream, type TokenStreamProps, ContextWindow, type ContextWindowProps, CostTracker, type CostTrackerProps, ModelBadge, type ModelBadgeProps, CommandBlock, type CommandBlockProps, } from "./widgets/index.js";
 export { useColors } from "./hooks/useColors.js";
 export { useCleanup } from "./hooks/useCleanup.js";
 export { useAsyncCleanup } from "./hooks/useAsyncCleanup.js";
@@ -267,12 +139,7 @@ export { useTerminal, type TerminalInfo } from "./hooks/useTerminal.js";
 export { useFocus, type UseFocusOptions, type UseFocusResult } from "./hooks/useFocus.js";
 export { useScroll, type UseScrollOptions, type UseScrollResult } from "./hooks/useScroll.js";
 export { useMeasure } from "./hooks/useMeasure.js";
-export {
-  useLayoutBox,
-  type LayoutRect,
-  type UseLayoutBoxOptions,
-  type UseLayoutBoxResult,
-} from "./hooks/useLayoutBox.js";
+export { useLayoutBox, type LayoutRect, type UseLayoutBoxOptions, type UseLayoutBoxResult, } from "./hooks/useLayoutBox.js";
 export { useApp, type UseAppResult } from "./hooks/useApp.js";
 export { useStdin, type UseStdinResult } from "./hooks/useStdin.js";
 export { useStdout, type UseStdoutResult } from "./hooks/useStdout.js";
@@ -321,236 +188,51 @@ export { useInfiniteScroll, type UseInfiniteScrollOptions, type UseInfiniteScrol
 export { useCopyPasteBuffer, type UseCopyPasteBufferOptions, type UseCopyPasteBufferResult } from "./hooks/useCopyPasteBuffer.js";
 export { useLocale } from "./hooks/useLocale.js";
 export { type MeasuredLayout, paintBackgroundToBuffer } from "./reconciler/renderer.js";
-
-export {
-  useSelectBehavior, type UseSelectBehaviorOptions, type UseSelectBehaviorResult, type SelectBehaviorOption,
-  useListBehavior, type UseListBehaviorOptions, type UseListBehaviorResult, type ListBehaviorItem,
-  useMenuBehavior, type UseMenuBehaviorOptions, type UseMenuBehaviorResult, type MenuBehaviorItem, type SubmenuFrame,
-  useTreeBehavior, type UseTreeBehaviorOptions, type UseTreeBehaviorResult, type TreeBehaviorNode, type FlatTreeNode,
-  useTabsBehavior, type UseTabsBehaviorOptions, type UseTabsBehaviorResult, type TabBehaviorItem,
-  useAccordionBehavior, type UseAccordionBehaviorOptions, type UseAccordionBehaviorResult, type AccordionBehaviorSection,
-  usePaginatorBehavior, type UsePaginatorBehaviorOptions, type UsePaginatorBehaviorResult,
-  useStepperBehavior, type UseStepperBehaviorOptions, type UseStepperBehaviorResult, type StepBehaviorDef, type StepStatus,
-  useTableBehavior, type UseTableBehaviorOptions, type UseTableBehaviorResult, type TableBehaviorColumn, type TableBehaviorEditing,
-  useVirtualListBehavior, type UseVirtualListBehaviorOptions, type UseVirtualListBehaviorResult,
-  useDialogBehavior, type UseDialogBehaviorOptions, type UseDialogBehaviorResult, type DialogSize,
-  useToastBehavior, type UseToastBehaviorOptions, type UseToastBehaviorResult, type ToastBehaviorItem,
-  useFormBehavior, type UseFormBehaviorOptions, type UseFormBehaviorResult, type FormBehaviorField, type FormBehaviorFieldOption,
-  useCalendarBehavior, type UseCalendarBehaviorOptions, type UseCalendarBehaviorResult, type CalendarDayInfo,
-  useCollapsibleBehavior, type UseCollapsibleBehaviorOptions, type UseCollapsibleBehaviorResult,
-} from "./hooks/headless/index.js";
-export {
-  detectAccessibility,
-  meetsContrast,
-  relativeLuminance,
-  contrastRatio,
-  announce,
-  type AccessibilityOptions,
-} from "./core/accessibility.js";
-
-export {
-  ariaToAnnouncement,
-  describeButton,
-  describeCheckbox,
-  describeTextInput,
-  describeProgressBar,
-  describeTab,
-  describeMenuItem,
-  describeTreeItem,
-  describeListItem,
-  describeDialog,
-  describeAlert,
-  type AriaRole,
-  type AriaLive,
-  type AriaProps,
-} from "./core/aria.js";
-export {
-  getBoundingBox,
-  getWidth,
-  getHeight,
-  hitTest,
-} from "./core/measurement.js";
-export {
-  type Locale,
-  type NumberFormat,
-  type PluralCategory,
-  type PluralRule,
-  EN,
-  PLURAL_EN,
-  PLURAL_AR,
-  PLURAL_FR,
-  PLURAL_RU,
-  PLURAL_JA,
-  registerLocale,
-  getLocale,
-  getRegisteredLocales,
-  formatNumber,
-  t,
-  plural,
-  LocaleContext,
-  LocaleProvider,
-} from "./core/i18n.js";
+export { useSelectBehavior, type UseSelectBehaviorOptions, type UseSelectBehaviorResult, type SelectBehaviorOption, useListBehavior, type UseListBehaviorOptions, type UseListBehaviorResult, type ListBehaviorItem, useMenuBehavior, type UseMenuBehaviorOptions, type UseMenuBehaviorResult, type MenuBehaviorItem, type SubmenuFrame, useTreeBehavior, type UseTreeBehaviorOptions, type UseTreeBehaviorResult, type TreeBehaviorNode, type FlatTreeNode, useTabsBehavior, type UseTabsBehaviorOptions, type UseTabsBehaviorResult, type TabBehaviorItem, useAccordionBehavior, type UseAccordionBehaviorOptions, type UseAccordionBehaviorResult, type AccordionBehaviorSection, usePaginatorBehavior, type UsePaginatorBehaviorOptions, type UsePaginatorBehaviorResult, useStepperBehavior, type UseStepperBehaviorOptions, type UseStepperBehaviorResult, type StepBehaviorDef, type StepStatus, useTableBehavior, type UseTableBehaviorOptions, type UseTableBehaviorResult, type TableBehaviorColumn, type TableBehaviorEditing, useVirtualListBehavior, type UseVirtualListBehaviorOptions, type UseVirtualListBehaviorResult, useDialogBehavior, type UseDialogBehaviorOptions, type UseDialogBehaviorResult, type DialogSize, useToastBehavior, type UseToastBehaviorOptions, type UseToastBehaviorResult, type ToastBehaviorItem, useFormBehavior, type UseFormBehaviorOptions, type UseFormBehaviorResult, type FormBehaviorField, type FormBehaviorFieldOption, useCalendarBehavior, type UseCalendarBehaviorOptions, type UseCalendarBehaviorResult, type CalendarDayInfo, useCollapsibleBehavior, type UseCollapsibleBehaviorOptions, type UseCollapsibleBehaviorResult, } from "./hooks/headless/index.js";
+export { detectAccessibility, meetsContrast, relativeLuminance, contrastRatio, announce, type AccessibilityOptions, } from "./core/accessibility.js";
+export { ariaToAnnouncement, describeButton, describeCheckbox, describeTextInput, describeProgressBar, describeTab, describeMenuItem, describeTreeItem, describeListItem, describeDialog, describeAlert, type AriaRole, type AriaLive, type AriaProps, } from "./core/aria.js";
+export { getBoundingBox, getWidth, getHeight, hitTest, } from "./core/measurement.js";
+export { type Locale, type NumberFormat, type PluralCategory, type PluralRule, EN, PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA, registerLocale, getLocale, getRegisteredLocales, formatNumber, t, plural, LocaleContext, LocaleProvider, } from "./core/i18n.js";
 export { useTui, TuiContext, type TuiContextValue } from "./context/TuiContext.js";
-export {
-  colors, type StormColors, useTheme, ThemeProvider, ThemeContext, type ThemeWithShades, extendTheme, createTheme, type DeepPartial,
-  extractThemeOverrides,
-  spacing, type SpacingToken,
-  arcticTheme, midnightTheme, emberTheme, mistTheme,
-  voltageTheme, duskTheme, horizonTheme,
-  neonTheme, calmTheme, highContrastTheme, monochromeTheme,
-  loadTheme, parseTheme, saveTheme, serializeTheme,
-  validateTheme, validateContrast,
-  type ThemeValidationResult, type ThemeValidationError, type ThemeValidationWarning,
-  generateShades, generateThemeShades, type ColorShades, type ThemeShades,
-} from "./theme/index.js";
-export {
-  type StormPersonality,
-  type DeepPartialPersonality,
-  defaultPersonality,
-  createPersonality,
-  mergePersonality,
-  PersonalityProvider,
-  usePersonality,
-  PersonalityContext,
-} from "./core/personality.js";
-
-export {
-  defaultPreset,
-  minimalPreset,
-  hackerPreset,
-  playfulPreset,
-} from "./core/personality-presets.js";
+export { colors, type StormColors, useTheme, ThemeProvider, ThemeContext, type ThemeWithShades, extendTheme, createTheme, type DeepPartial, extractThemeOverrides, spacing, type SpacingToken, arcticTheme, midnightTheme, emberTheme, mistTheme, voltageTheme, duskTheme, horizonTheme, neonTheme, calmTheme, highContrastTheme, monochromeTheme, loadTheme, parseTheme, saveTheme, serializeTheme, validateTheme, validateContrast, type ThemeValidationResult, type ThemeValidationError, type ThemeValidationWarning, generateShades, generateThemeShades, type ColorShades, type ThemeShades, } from "./theme/index.js";
+export { type StormPersonality, type DeepPartialPersonality, defaultPersonality, createPersonality, mergePersonality, PersonalityProvider, usePersonality, PersonalityContext, } from "./core/personality.js";
+export { defaultPreset, minimalPreset, hackerPreset, playfulPreset, } from "./core/personality-presets.js";
 export type { StormTextStyleProps, StormLayoutStyleProps, StormContainerStyleProps } from "./styles/index.js";
 export { mergeBoxStyles, pickStyleProps, pickLayoutProps, DEFAULTS, type ComponentDefaults } from "./styles/index.js";
 export { createStyleSheet, StyleSheet, type StyleRule } from "./core/stylesheet.js";
 export { StyleProvider, StyleContext, useStyles } from "./core/style-provider.js";
-export {
-  parseStormCSS,
-  createStyleSheetLoader,
-  type StyleSheetLoaderOptions,
-  type ParsedStyleSheet,
-  type StyleRule as ParsedStyleRule,
-} from "./core/stylesheet-loader.js";
+export { parseStormCSS, createStyleSheetLoader, type StyleSheetLoaderOptions, type ParsedStyleSheet, type StyleRule as ParsedStyleRule, } from "./core/stylesheet-loader.js";
 export { useStyleSheet, type UseStyleSheetResult } from "./hooks/useStyleSheet.js";
 export { FocusManager, type FocusableEntry, type FocusChangeCallback, type FocusRingStyle, type FocusRingMode } from "./core/focus.js";
 export { RenderContext, type DirtyRegion, type RenderMetrics as RenderContextMetrics } from "./core/render-context.js";
 export { AnimationScheduler, type AnimationCallback } from "./core/animation-scheduler.js";
-export {
-  PluginManager,
-  PluginBus,
-  type StormPlugin,
-  type PluginContext,
-  type CustomElementHandler,
-} from "./core/plugin.js";
+export { PluginManager, PluginBus, type StormPlugin, type PluginContext, type CustomElementHandler, } from "./core/plugin.js";
 export { vimModePlugin } from "./plugins/vim-mode.js";
 export { compactModePlugin } from "./plugins/compact-mode.js";
 export { autoScrollPlugin } from "./plugins/auto-scroll.js";
 export { screenshotPlugin, type ScreenshotPluginOptions } from "./plugins/screenshot.js";
 export { statusBarPlugin, type StatusBarPluginOptions, type StatusBarSegment } from "./plugins/status-bar.js";
-export {
-  MiddlewarePipeline,
-  type RenderMiddleware,
-  scanlineMiddleware,
-  fpsCounterMiddleware,
-  debugBorderMiddleware,
-  darkenColor,
-} from "./core/middleware.js";
-export {
-  createInspectorMiddleware,
-  type InspectorState,
-} from "./devtools/inspector.js";
+export { MiddlewarePipeline, type RenderMiddleware, scanlineMiddleware, fpsCounterMiddleware, debugBorderMiddleware, darkenColor, } from "./core/middleware.js";
+export { createInspectorMiddleware, type InspectorState, } from "./devtools/inspector.js";
 export { serializeTree } from "./devtools/tree-view.js";
-export {
-  createPerformanceMonitor,
-  type PerformanceMetrics,
-} from "./devtools/performance-monitor.js";
-export {
-  createEventLogger,
-  type LoggedEvent,
-} from "./devtools/event-logger.js";
-export {
-  createDevToolsOverlay,
-  type DevToolsOverlayOptions,
-  type DevToolsPanel,
-} from "./devtools/devtools-overlay.js";
-export {
-  createTimeTravel,
-  type FrameSnapshot,
-  type TimeTravelState,
-} from "./devtools/time-travel.js";
-export {
-  createRenderHeatmap,
-  type HeatmapOptions,
-} from "./devtools/render-heatmap.js";
-export {
-  createAccessibilityAudit,
-  type AccessibilityViolation,
-  type AuditOptions,
-  type AuditReport,
-} from "./devtools/accessibility-audit.js";
-export {
-  enableDevTools,
-  type EnableDevToolsOptions,
-  type DevToolsHandle,
-} from "./devtools/enable.js";
-export {
-  createProfiler,
-  type Profiler,
-  type ProfilerSnapshot,
-  type FrameTiming,
-  type ProfilerAlertCallback,
-} from "./devtools/profiler.js";
-export {
-  setActiveProfiler,
-  getActiveProfiler,
-} from "./devtools/profiler-registry.js";
-export {
-  enableCrashLog,
-  type CrashLogOptions,
-  type CrashLogData,
-} from "./devtools/crash-log.js";
+export { createPerformanceMonitor, type PerformanceMetrics, } from "./devtools/performance-monitor.js";
+export { createEventLogger, type LoggedEvent, } from "./devtools/event-logger.js";
+export { createDevToolsOverlay, type DevToolsOverlayOptions, type DevToolsPanel, } from "./devtools/devtools-overlay.js";
+export { createTimeTravel, type FrameSnapshot, type TimeTravelState, } from "./devtools/time-travel.js";
+export { createRenderHeatmap, type HeatmapOptions, } from "./devtools/render-heatmap.js";
+export { createAccessibilityAudit, type AccessibilityViolation, type AuditOptions, type AuditReport, } from "./devtools/accessibility-audit.js";
+export { enableDevTools, type EnableDevToolsOptions, type DevToolsHandle, } from "./devtools/enable.js";
+export { createProfiler, type Profiler, type ProfilerSnapshot, type FrameTiming, type ProfilerAlertCallback, } from "./devtools/profiler.js";
+export { setActiveProfiler, getActiveProfiler, } from "./devtools/profiler-registry.js";
+export { enableCrashLog, type CrashLogOptions, type CrashLogData, } from "./devtools/crash-log.js";
 export { BrailleCanvas, BRAILLE_BASE } from "./utils/braille-canvas.js";
-export {
-  createAnimation,
-  tickAnimation,
-  easings,
-  type EasingFn,
-  type AnimationRef,
-} from "./utils/animate.js";
-export {
-  enableTreeSitter,
-  getTreeSitter,
-  type TreeSitterToken,
-  type TreeSitterTokenizer,
-} from "./utils/tree-sitter.js";
+export { createAnimation, tickAnimation, easings, type EasingFn, type AnimationRef, } from "./utils/animate.js";
+export { enableTreeSitter, getTreeSitter, type TreeSitterToken, type TreeSitterTokenizer, } from "./utils/tree-sitter.js";
 export { charWidth, stringWidth, padEndCells, padStartCells, iterGraphemes, type Grapheme } from "./core/unicode.js";
 export { WebRenderer, type WebRendererOptions } from "./core/web-renderer.js";
-export {
-  ResizeObserver,
-  notifyResizeObservers,
-  type ResizeObserverEntry,
-} from "./core/resize-observer.js";
+export { ResizeObserver, notifyResizeObservers, type ResizeObserverEntry, } from "./core/resize-observer.js";
 export { StormSSHServer, type StormSSHOptions, type SSHSession, type SSHEvent } from "./ssh/index.js";
-export {
-  TestInputManager,
-  MockInputManager,
-  renderForTest,
-  expectOutput,
-  createSnapshot,
-  compareSnapshot,
-  clearSnapshots,
-  saveSnapshot,
-  compareFileSnapshot,
-  saveSvgSnapshot,
-  compareSvgSnapshot,
-  createStormMatchers,
-  renderToSvg,
-  type RenderResult,
-  type OutputAssertions,
-  type LineAssertions,
-  type SvgOptions,
-} from "./testing/index.js";
-// Animation & timing hooks
+export { TestInputManager, MockInputManager, renderForTest, expectOutput, createSnapshot, compareSnapshot, clearSnapshots, saveSnapshot, compareFileSnapshot, saveSvgSnapshot, compareSvgSnapshot, createStormMatchers, renderToSvg, type RenderResult, type OutputAssertions, type LineAssertions, type SvgOptions, } from "./testing/index.js";
 export { useTick, type UseTickOptions } from "./hooks/useTick.js";
 export { usePhaseTimer, type PhaseEntry, type UsePhaseTimerOptions, type UsePhaseTimerResult } from "./hooks/usePhaseTimer.js";
 export { useProfiler, type UseProfilerResult } from "./hooks/useProfiler.js";

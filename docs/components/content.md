@@ -481,6 +481,8 @@ Terminal hyperlink using OSC 8 escape sequences. Clickable in supporting termina
 <Link url="https://example.com">Visit Example</Link>
 ```
 
+**URL scheme allowlist.** `<Link>` only emits an OSC 8 hyperlink when `url` begins with one of: `http:`, `https:`, `mailto:`, `ftp:`, `ftps:`, `tel:`, `ssh:`. Disallowed schemes (e.g. `javascript:`, `file:`, `data:`) and relative URLs render the children as plain text and emit a one-time `console.warn` in development. Use `isAllowedLinkScheme(url)` (re-exported from `reacterm/components`) if you need to pre-validate an URL before passing it in.
+
 ---
 
 ### Newline

@@ -209,7 +209,7 @@ bun examples/devtools-demo.tsx       # DevTools showcase
 bun examples/storm-website.tsx       # This README's demo
 ```
 
-There is no compile step. Edit `src/`, run `bun run typecheck` for type errors, `bun test` to run the test suite. `bun link` makes the in-repo build available globally for `reacterm demo`.
+There is no compile step. Edit `src/`, run `bun run typecheck` for type errors, `bun run test` to run the test suite. `bun link` makes the in-repo build available globally for `reacterm demo`.
 
 <br>
 

@@ -46,7 +46,8 @@
     "test:scenarios": "vitest run --config vitest.config.ts src/__tests__/testing-scenario.test.ts",
     "test:pty": "vitest run --config vitest.config.ts src/__tests__/testing-pty.test.ts",
     "test:package": "vitest run --config vitest.package.config.ts",
-    "test:all": "bun test && bun run test:pty && bun run typecheck",
+    "test:api": "vitest run --config vitest.config.ts src/__tests__/api-surface.test.ts",
+    "test:all": "bun run test && bun run test:pty && bun run test:api && bun run typecheck",
     "clean": "rm -rf dist",
     "playground": "cd playground && bun install --silent 2>/dev/null && node server.mjs"
   },

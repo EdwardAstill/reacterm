@@ -484,11 +484,19 @@ Read and write the system clipboard via OSC 52 escape sequences.
 ```ts
 import { useClipboard } from "reacterm";
 
-const { copy, read, content } = useClipboard();
-copy("text to copy");
+function CopyButton({ value }: { value: string }) {
+  const { copy } = useClipboard();
+  return (
+    <Button onSelect={() => copy(value)}>Copy</Button>
+  );
+}
 ```
 
 **Signature:** `useClipboard() => { copy: (text: string) => void; read: () => void; content: string | null }`
+
+> **Sensitive — only call `copy` from a user-triggered event handler.** Do not call from auto-firing effects, polling, or background work. The hook emits raw OSC 52 sequences; many terminals disable OSC 52 by default (xterm `disallowedWindowOps`, tmux `set -g set-clipboard on`) and some surface a confirmation prompt. The terminal owns the final decision. `read()` is best-effort; Reacterm does not currently parse the response, so `content` only reflects the last value passed to `copy()`. See the "Sensitive hooks" subsection below.
+
+
 
 ### usePaste()
 
@@ -891,3 +899,27 @@ useAsyncCleanup(async () => {
 ```
 
 Async cleanups run after sync cleanups and complete before `waitUntilExit()` resolves.
+
+## Sensitive hooks
+
+A few hooks emit terminal escape sequences with side effects that reach beyond the live render area. Treat the call sites as user-initiated actions — wire them through buttons, keyboard shortcuts, or menus, not background effects or polling.
+
+### `useClipboard`
+
+Emits OSC 52 sequences. The host terminal decides whether to honor them; many terminals require the user to opt in (xterm `disallowedWindowOps`, tmux `set -g set-clipboard on`). Calling `copy` from an auto-firing effect can trip terminal anti-abuse heuristics or surface unexpected confirmation dialogs. The right call site:
+
+```tsx
+function CopyButton({ value }: { value: string }) {
+  const { copy } = useClipboard();
+  return <Button onSelect={() => copy(value)}>Copy</Button>;
+}
+```
+
+The wrong call site:
+
+```tsx
+// Don't — fires every render, terminal may disable OSC 52 entirely.
+useEffect(() => { copy(currentSelection); }, [currentSelection]);
+```
+
+If your app needs unattended clipboard writes (e.g. snapshotting the visible frame on a timer), consider a system-level clipboard library instead and surface OSC 52 only as a fallback.

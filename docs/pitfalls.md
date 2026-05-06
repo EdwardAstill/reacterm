@@ -563,3 +563,21 @@ expect(im.lastUnconsumedCountAtMax).toBeLessThanOrEqual(1);
 ```
 
 Anything `> 1` would have fired the stderr warning in production.
+
+## 15. Text injection safety: structural guarantee
+
+Reacterm renders text through a virtual cell grid, not by concatenating strings into the terminal output stream. ESC bytes (`\x1b`), CSI sequences, and OSC sequences in user-supplied text props are stripped at ingestion (in the reconciler) before characters land in the cell buffer. As a result, `<Text>{userInput}</Text>` cannot inject active control sequences — color, hyperlinks, clipboard writes, or anything else gated on OSC/CSI — even if `userInput` is fully attacker-controlled.
+
+This guarantee covers:
+
+- `<Text>`, `<Heading>`, `<Paragraph>`, `<Badge>`, and any component that ultimately renders through `tui-text`.
+- `<TextInput>` and `<TextArea>` text content.
+- Any custom component built on top of these primitives.
+
+This guarantee does **not** cover:
+
+- Hypothetical future components that intentionally render raw ANSI (e.g. a log viewer that wants to preserve embedded color codes). If you build one, sanitize at the component boundary; do not rely on the cell-grid layer.
+- The `url` prop on `<Link>`, which is consumed structurally, not as text. `<Link>` validates the URL scheme against an allowlist (see `docs/components.md`); URLs with unsupported schemes render as plain text.
+- Direct calls to `screen.write(...)` from custom hooks (e.g. `useClipboard` emits OSC 52 explicitly). These are opt-in APIs the host app must trigger; they are not reachable from text props.
+
+The invariant is locked by `src/__tests__/text-injection-safety.test.ts`. If a refactor regresses the cell-grid or strip-on-ingestion path, that test fails.

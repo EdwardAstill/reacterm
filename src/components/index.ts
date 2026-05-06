@@ -35,7 +35,7 @@ export { Tooltip, type TooltipProps } from "./extras/Tooltip.js";
 export { Heading, type HeadingProps } from "./extras/Heading.js";
 export { Paragraph, type ParagraphProps } from "./extras/Paragraph.js";
 
-export { Link, type LinkProps } from "./extras/Link.js";
+export { Link, ALLOWED_LINK_SCHEMES, isAllowedLinkScheme, type LinkProps } from "./extras/Link.js";
 export { Divider, type DividerProps } from "./core/Divider.js";
 export { Badge, type BadgeProps } from "./extras/Badge.js";
 export { StatusMessage, type StatusMessageProps } from "./extras/StatusMessage.js";
