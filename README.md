@@ -45,10 +45,14 @@ Most terminal frameworks treat your terminal like a string printer. Storm treats
 
 <br>
 
+## Requirements
+
+Reacterm requires the [Bun](https://bun.sh) runtime (≥1.3). It is **not** compatible with plain Node — the package ships TypeScript source directly via `package.json` `exports`, so consumers need a runtime that executes `.ts` files natively. Install Bun, then `bun add reacterm react`.
+
 ## Quick start
 
 ```bash
-npm install reacterm react
+bun add reacterm react
 ```
 
 ```tsx
@@ -199,11 +203,13 @@ All four run as render middleware — non-blocking, the app keeps running.
 ## Get started
 
 ```bash
-npx tsx examples/storm-code/index.tsx    # AI coding agent
-npx tsx examples/storm-ops/index.tsx     # Operations dashboard
-npx tsx examples/devtools-demo.tsx       # DevTools showcase
-npx tsx examples/storm-website.tsx       # This README's demo
+bun examples/storm-code/index.tsx    # AI coding agent
+bun examples/storm-ops/index.tsx     # Operations dashboard
+bun examples/devtools-demo.tsx       # DevTools showcase
+bun examples/storm-website.tsx       # This README's demo
 ```
+
+There is no compile step. Edit `src/`, run `bun run typecheck` for type errors, `bun test` to run the test suite. `bun link` makes the in-repo build available globally for `reacterm demo`.
 
 <br>
 

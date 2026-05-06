@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -7,22 +7,18 @@ import { spawnSync } from "node:child_process";
 const ROOT = resolve(__dirname, "../..");
 
 describe("published package runtime", () => {
-  it("packs a self-contained CLI that can run help and the bundled demo", () => {
+  it("packs a bun-native source-only CLI and runs help via bun", () => {
     const tempRoot = mkdtempSync(join(tmpdir(), "reacterm-pack-"));
     try {
-      const build = spawnSync("bun", ["run", "build"], {
-        cwd: ROOT,
-        encoding: "utf8",
-      });
-      expect(build.status).toBe(0);
-
-      const pack = spawnSync("npm", ["pack", "--json", "--pack-destination", tempRoot], {
+      const pack = spawnSync("bun", ["pm", "pack", "--destination", tempRoot], {
         cwd: ROOT,
         encoding: "utf8",
       });
       expect(pack.status).toBe(0);
-      const packed = JSON.parse(pack.stdout) as Array<{ filename: string }>;
-      const tarball = join(tempRoot, packed[0]!.filename);
+
+      const tarballName = readdirSync(tempRoot).find((f) => f.endsWith(".tgz"));
+      expect(tarballName).toBeDefined();
+      const tarball = join(tempRoot, tarballName!);
 
       const installRoot = join(tempRoot, "install-root");
       mkdirSync(installRoot);
@@ -31,26 +27,27 @@ describe("published package runtime", () => {
         private: true,
       }));
 
-      const install = spawnSync("npm", ["install", "--no-package-lock", tarball], {
+      const install = spawnSync("bun", ["add", tarball], {
         cwd: installRoot,
         encoding: "utf8",
       });
       expect(install.status).toBe(0);
 
       const packageDir = join(installRoot, "node_modules", "reacterm");
-      expect(existsSync(join(packageDir, "bin", "reacterm.mjs"))).toBe(true);
-      expect(existsSync(join(packageDir, "bin", "reacterm-run-module.mjs"))).toBe(true);
-      expect(existsSync(join(packageDir, "dist", "cli", "demo", "main.js"))).toBe(true);
+      expect(existsSync(join(packageDir, "bin", "reacterm.ts"))).toBe(true);
+      expect(existsSync(join(packageDir, "src", "index.ts"))).toBe(true);
+      expect(existsSync(join(packageDir, "src", "cli", "index.ts"))).toBe(true);
+      expect(existsSync(join(packageDir, "dist"))).toBe(false);
       expect(existsSync(join(packageDir, "examples"))).toBe(false);
 
-      const help = spawnSync("node", [join(packageDir, "bin", "reacterm.mjs"), "--help"], {
+      const help = spawnSync("bun", [join(packageDir, "bin", "reacterm.ts"), "--help"], {
         cwd: packageDir,
         encoding: "utf8",
       });
       expect(help.status).toBe(0);
       expect(help.stdout).toMatch(/\bdemo\b/);
 
-      const demo = spawnSync("node", [join(packageDir, "bin", "reacterm.mjs"), "demo"], {
+      const demo = spawnSync("bun", [join(packageDir, "bin", "reacterm.ts"), "demo"], {
         cwd: packageDir,
         encoding: "utf8",
         env: {

@@ -4,11 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "noEmit": true,
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "esModuleInterop": true,
@@ -17,8 +13,8 @@
     "jsx": "react-jsx",
     "isolatedModules": true,
     "noUncheckedIndexedAccess": true,
-    "noEmitOnError": true
+    "allowImportingTsExtensions": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "src/__tests__"]
+  "include": ["src", "bin"],
+  "exclude": ["node_modules", "src/__tests__"]
 }

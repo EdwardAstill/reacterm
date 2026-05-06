@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 
-const BIN = resolve(__dirname, "../../../../bin/reacterm.mjs");
+const BIN = resolve(__dirname, "../../../../bin/reacterm.ts");
 const FIXTURE = resolve(__dirname, "../fixtures/hello-app.tsx");
 
 const run = (args: string[], signal: NodeJS.Signals, afterMs = 1500) => new Promise<{ code: number | null; stderr: string }>((res) => {
-  const child = spawn("node", [BIN, ...args]);
+  const child = spawn("bun", [BIN, ...args]);
   let stderr = "";
   child.stderr.on("data", (c) => { stderr += c.toString(); });
   setTimeout(() => child.kill(signal), afterMs);
@@ -14,7 +14,7 @@ const run = (args: string[], signal: NodeJS.Signals, afterMs = 1500) => new Prom
 });
 
 const runDouble = (args: string[], firstAfterMs = 1500, gapMs = 100) => new Promise<{ code: number | null; elapsedMs: number }>((res) => {
-  const child = spawn("node", [BIN, ...args]);
+  const child = spawn("bun", [BIN, ...args]);
   const start = Date.now();
   setTimeout(() => child.kill("SIGINT"), firstAfterMs);
   setTimeout(() => child.kill("SIGINT"), firstAfterMs + gapMs);

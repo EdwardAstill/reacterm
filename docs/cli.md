@@ -6,8 +6,7 @@ The `reacterm` command-line interface exposes the reacterm testing and rendering
 
 ## Requirements
 
-- **Node 20+.**
-- **`tsx` installed** in the project (currently a `devDependency`). The bin wrapper registers `tsx/esm` at startup so any verb can load `.ts` / `.tsx` entry files directly. Pure `.js` / `.mjs` entries work without `tsx`.
+- **Bun 1.3+.** Reacterm is bun-native — the bin entry (`bin/reacterm.ts`) runs under the bun runtime and imports source TypeScript directly. Node is not supported.
 
 ---
 
@@ -58,7 +57,7 @@ Launch a reacterm app interactively with optional session recording.
 USAGE: reacterm run [OPTIONS] <entry>
 ```
 
-`run` is a thin wrapper over `tsx <entry>` that adds reacterm-specific terminal hygiene. Its primary purpose is hosting `--capture`, which records the interactive session into a replayable `.scenario.yaml` file.
+`run` is a thin wrapper over `bun <entry>` that adds reacterm-specific terminal hygiene. Its primary purpose is hosting `--capture`, which records the interactive session into a replayable `.scenario.yaml` file.
 
 **Options:**
 
