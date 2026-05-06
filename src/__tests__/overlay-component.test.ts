@@ -74,7 +74,7 @@ describe("Overlay component", () => {
     let handleCol = -1;
     for (let y = 0; y < result.lines.length; y++) {
       const line = result.lines[y] ?? "";
-      const idx = line.indexOf("+");
+      const idx = line.indexOf("\\");
       if (idx >= 0) {
         handleRow = y;
         handleCol = idx;
@@ -118,7 +118,7 @@ describe("Overlay component", () => {
 
     let handleRow = -1;
     for (let y = 0; y < result.lines.length; y++) {
-      if ((result.lines[y] ?? "").indexOf("+") >= 0) { handleRow = y; break; }
+      if ((result.lines[y] ?? "").indexOf("\\") >= 0) { handleRow = y; break; }
     }
     expect(handleRow).toBeGreaterThan(0);
 

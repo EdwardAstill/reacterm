@@ -810,7 +810,7 @@ function OverlaysSection(): React.ReactElement {
       <Box flexDirection="column" padding={1}>
         <Text bold color={theme.colors.text.primary}>Movable / resizable overlays</Text>
         <Text color={theme.colors.text.dim}>
-          Drag titles to move (A, B). Drag the + corner to resize (A, C). Click any overlay to bring it forward.
+          Drag titles to move (A, B). Drag the \ corner to resize (A, C). Click any overlay to bring it forward.
         </Text>
         <Box marginTop={1}>
           <Button label="Spawn overlay" onPress={spawn} />
@@ -832,7 +832,7 @@ function OverlaysSection(): React.ReactElement {
           <Box flexDirection="column" padding={1}>
             <Text>This overlay accepts both gestures.</Text>
             <Text color={theme.colors.text.dim}>Drag my title to move me.</Text>
-            <Text color={theme.colors.text.dim}>Drag the + glyph to resize.</Text>
+            <Text color={theme.colors.text.dim}>Drag the \ glyph to resize.</Text>
           </Box>
         </Overlay>
 
@@ -890,7 +890,7 @@ function OverlaysSection(): React.ReactElement {
             <Box flexDirection="column" padding={1}>
               <Text bold>Spawned overlay #{s.n}</Text>
               <Text color={theme.colors.text.dim}>Click [×] (top-right) or press Esc to close.</Text>
-              <Text color={theme.colors.text.dim}>Drag the title to move. Drag the + corner to resize.</Text>
+              <Text color={theme.colors.text.dim}>Drag the title to move. Drag the \ corner to resize.</Text>
             </Box>
           </Overlay>
         ))}

@@ -97,7 +97,7 @@ export interface OverlayProps {
    * Defaults to `true` when `resizable` is true. Set to `false` for a flush look —
    * resize still works (drag the bottom-right region), the glyph just isn't drawn. */
   showResizeHandle?: boolean;
-  /** Glyph used for the resize handle. Default: `"+"`. Avoid East Asian Ambiguous-width
+  /** Glyph used for the resize handle. Default: `"\\"`. Avoid East Asian Ambiguous-width
    * characters (e.g. `⇲`, `↘`, `◢`) — terminals like Kitty / WezTerm with EAA=wide will
    * render them as 2 cells, painting over the right border. Stick to ASCII or
    * Box-Drawing block (U+2500..U+25FF) for cross-terminal reliability. */
@@ -134,7 +134,7 @@ export const Overlay = React.memo(function Overlay(props: OverlayProps): React.R
     movable = false,
     resizable = false,
     showResizeHandle,
-    resizeHandleGlyph = "+",
+    resizeHandleGlyph = "\\",
     onClose,
     onMove,
     onResize,

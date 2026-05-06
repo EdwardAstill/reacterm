@@ -21,7 +21,7 @@ it("resize handle renders at the bottom-right interior cell", () => {
   );
 
   const row = result.lines[6] ?? "";
-  const idx = row.indexOf("+");
+  const idx = row.indexOf("\\");
   expect(idx).toBe(23);
 });
 
@@ -101,7 +101,7 @@ it("showResizeHandle={false} hides the glyph but resize still works via the bott
   );
 
   // Glyph absent.
-  expect(result.hasText("+")).toBe(false);
+  expect(result.hasText("\\")).toBe(false);
 
   // Resize still functional — the row spans cols 6..23 at row 6.
   result.mouseDown(23, 6);

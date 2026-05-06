@@ -281,9 +281,9 @@ For modal dialogs (focus-trapped, single-instance, fixed-position), prefer `Moda
 | `defaultWidth` / `defaultHeight` | `number` | -- | Initial size for free mode |
 | `onResize` | `(size: { width: number; height: number }) => void` | -- | Fired on each resize tick |
 | `movable` | `boolean` | `false` | Drag the title bar to move |
-| `resizable` | `boolean` | `false` | Drag the bottom-right corner (`+`) to resize |
+| `resizable` | `boolean` | `false` | Drag the bottom-right corner (`\`) to resize |
 | `showResizeHandle` | `boolean` | `true` (when `resizable`) | Whether to draw the visible resize-handle glyph. When `false`, the bottom-right row is still a resize zone — only the marker is hidden |
-| `resizeHandleGlyph` | `string` | `"+"` | Override the glyph. Avoid East Asian Ambiguous-width chars (`⇲`, `↘`, `◢`) — Kitty / WezTerm render them as 2 cells and overdraw the right border |
+| `resizeHandleGlyph` | `string` | `"\\"` | Override the glyph. Avoid East Asian Ambiguous-width chars (`⇲`, `↘`, `◢`) — Kitty / WezTerm render them as 2 cells and overdraw the right border |
 | `minSize` | `{ width: number; height: number }` | `{ width: 10, height: 3 }` | Lower bound during resize |
 | `maxSize` | `{ width: number; height: number }` | screen size | Upper bound during resize |
 | `id` | `string` | auto | Stable id used by `OverlayProvider` for z-order |
