@@ -10,6 +10,10 @@ Bordered table with headers, auto-sized columns, optional zebra striping, and ro
 
 Auto-sized columns now fit the available table width by default. If the table has an explicit `width` or lives inside a constrained layout pane, wide columns shrink with ellipsis instead of pushing the whole table wider. Use `visibleWidth` when you want a custom horizontal scroll window.
 
+Columns are compact by default. Add `flex` to the column that should absorb
+unused horizontal space, and pair it with `minWidth` / `maxWidth` when the
+column needs bounds.
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `columns` | `TableColumn[]` | -- | Column definitions (required) |
@@ -28,7 +32,10 @@ Auto-sized columns now fit the available table width by default. If the table ha
 |---|---|---|---|
 | `key` | `string` | -- | Data field key |
 | `header` | `string` | -- | Column header text |
-| `width` | `number` | Auto | Fixed column width |
+| `width` | `number` | Auto | Fixed column width, or starting width when `flex` is set |
+| `minWidth` | `number` | `1` | Minimum content width when fitting or flexing |
+| `maxWidth` | `number` | -- | Maximum content width when fitting or flexing |
+| `flex` | `number` | -- | Proportional share of leftover width |
 | `align` | `"left" \| "center" \| "right"` | `"left"` | Cell alignment |
 
 **Basic: Simple data table**
@@ -90,6 +97,25 @@ import { Table } from "reacterm";
 ```
 
 The first column truncates with an ellipsis so the other columns stay visible in the pane.
+
+**Pattern: Flexible main column**
+
+```tsx
+<Table
+  width={100}
+  borderStyle="none"
+  columns={[
+    { key: "priority", header: "Pri", width: 5 },
+    { key: "task", header: "Task", flex: 1, minWidth: 24 },
+    { key: "due", header: "Due", width: 11 },
+    { key: "status", header: "Status", width: 6 },
+  ]}
+  data={tasks}
+/>
+```
+
+The `task` column receives the remaining width after the fixed columns are
+reserved. Without `flex`, tables keep their compact intrinsic width.
 
 ---
 
@@ -356,9 +382,21 @@ The component does not own hierarchy state. Pass each row's `expanded` flag in; 
 | `sortable` | `boolean` | `false` | Enable header-row navigation + sort cycle |
 | `stripe` | `boolean` | `false` | Zebra-striped body rows |
 | `maxVisibleRows` | `number` | `100` | Virtualize the flat-visible list past this count |
+| `editable` | `boolean` | `false` | Enter edits editable cells inline |
+| `onCellEdit` | `(rowKey, columnKey, value, row) => void` | -- | Commit handler for inline edits |
+| `isCellEditable` | `(value, col, row) => boolean` | -- | Per-cell edit predicate |
+| `isCellLocked` | `(value, col, row) => boolean` | -- | Per-cell lock predicate |
+| `isCellFocusable` | `(value, col, row) => boolean` | -- | Per-cell focus predicate |
+| `reorderable` | `boolean` | `false` | Enable Ctrl+Arrow hierarchy reordering |
+| `canMove` | `(ctx) => boolean` | -- | Optional reorder guard; returning `false` rejects a move |
+| `onReorder` | `(change) => void` | -- | Receives move metadata plus `nextData` |
 | `renderTreeCell` | `(value, row, depth, state) => ReactNode` | -- | Replace tree-column cell content |
 | `renderCell` | `(value, col, row, state) => ReactNode` | -- | Replace non-tree-column cells |
 | `renderHeader` | `(col) => ReactNode` | -- | Replace the default header cell |
+
+`renderCell` and `renderTreeCell` receive tree metadata on `state`: `rowKey`,
+`columnKey`, `depth`, `siblingIndex`, `path`, `parentKey`, `hasChildren`, and
+`isExpanded`, plus the normal table focus/edit flags.
 
 **TreeTableRow type:**
 
@@ -374,8 +412,11 @@ Keyboard:
 - `↑` / `↓` move cursor; from row 0 with `sortable`, `↑` enters the header row.
 - `←` collapses the cursor row if expanded; otherwise moves the column cursor left.
 - `→` expands the cursor row if it has hidden children; otherwise moves the column cursor right.
-- `Enter` selects on body row, cycles sort on header row.
+- `Enter` edits editable body cells; otherwise selects on body row. On the header row, it cycles sort.
 - `s` cycles sort on the cursor column (when `sortable`).
+- `Ctrl+↑` / `Ctrl+↓` move the cursor row among siblings when `reorderable`.
+- `Ctrl+→` indents the cursor row into its previous sibling when `reorderable`.
+- `Ctrl+←` outdents the cursor row after its parent when `reorderable`.
 
 Mouse:
 - Click a ▸/▾ marker → `onToggle`.
@@ -401,7 +442,7 @@ const tasks: TreeTableRow[] = [
 
 <TreeTable
   columns={[
-    { key: "name", header: "Task" },
+    { key: "name", header: "Task", flex: 1, minWidth: 24 },
     { key: "owner", header: "Owner", width: 10 },
     { key: "priority", header: "Pri", width: 5, align: "center" },
   ]}
@@ -411,6 +452,32 @@ const tasks: TreeTableRow[] = [
   onToggle={(key) => setTasks((prev) => toggleExpanded(prev, key))}
 />
 ```
+
+**Pattern: Editable and reorderable rows**
+
+```tsx
+<TreeTable
+  columns={[
+    { key: "name", header: "Task", flex: 1, minWidth: 24, editable: true },
+    { key: "owner", header: "Owner", width: 10, editable: true },
+    { key: "priority", header: "Pri", width: 5, align: "center" },
+  ]}
+  data={tasks}
+  isFocused
+  rowHighlight
+  editable
+  reorderable
+  onCellEdit={(rowKey, columnKey, value) =>
+    setTasks((prev) => updateTreeTableCell(prev, rowKey, columnKey, value))
+  }
+  onReorder={(change) => setTasks(change.nextData)}
+/>
+```
+
+`onReorder` is already shaped for controlled state updates: use
+`change.nextData` as the next `data` value, or inspect `movedKeys`,
+`targetParentKey`, `targetIndex`, `previousParents`, and `previousIndices` when
+you need audit or validation behavior.
 
 See [`docs/recipes.md`](../recipes.md) for the `toggleExpanded` and `sortRecursive` helpers, and the full "Task list with subtasks" recipe.
 

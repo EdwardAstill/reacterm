@@ -139,6 +139,25 @@ describe("TreeTable — tree column", () => {
     );
     expect(result.hasText("📄")).toBe(true);
   });
+
+  it("allocates leftover explicit width to a flex tree column", () => {
+    const result = renderForTest(
+      React.createElement(TreeTable, {
+        width: 70,
+        borderStyle: "none",
+        columns: [
+          { key: "name", header: "Name", flex: 1, minWidth: 10 },
+          { key: "owner", header: "Owner", width: 8 },
+        ],
+        data: [{ key: "a", values: { name: "Long flexible tree row", owner: "Eve" } }],
+      }),
+      { width: 80, height: 10 },
+    );
+
+    const header = result.lines.find((line) => line.includes("Name") && line.includes("Owner")) ?? "";
+    expect(header.indexOf("Owner")).toBeGreaterThan(55);
+    expect(result.hasText("Long flexible tree row")).toBe(true);
+  });
 });
 
 describe("TreeTable — keyboard", () => {
@@ -194,6 +213,110 @@ describe("TreeTable — keyboard", () => {
     expect(onSort).toHaveBeenLastCalledWith("name", "asc");
     result.pressEnter();
     expect(onSort).toHaveBeenLastCalledWith("name", "desc");
+  });
+
+  it("edits the focused cell and reports row key, column key, value, and row", () => {
+    const onCellEdit = vi.fn();
+    const result = renderForTest(
+      React.createElement(TreeTable, {
+        columns: cols,
+        data,
+        isFocused: true,
+        editable: true,
+        onCellEdit,
+      }),
+      { width: 60, height: 10 },
+    );
+
+    result.pressEnter();
+    result.type(" updated");
+    result.pressEnter();
+
+    expect(onCellEdit).toHaveBeenCalledWith(
+      "p",
+      "name",
+      "Parent updated",
+      expect.objectContaining({ key: "p" }),
+    );
+  });
+
+  it("uses Ctrl+Arrow reorder shortcuts and emits replaceable nextData", () => {
+    const onReorder = vi.fn();
+    const rows: TreeTableRow[] = [
+      { key: "a", values: { name: "A", owner: "" } },
+      { key: "b", values: { name: "B", owner: "" } },
+      { key: "c", values: { name: "C", owner: "" } },
+    ];
+    const result = renderForTest(
+      React.createElement(TreeTable, {
+        columns: cols,
+        data: rows,
+        isFocused: true,
+        reorderable: true,
+        onReorder,
+      }),
+      { width: 60, height: 10 },
+    );
+
+    result.pressDown();
+    result.fireKey("up", { ctrl: true });
+
+    expect(onReorder).toHaveBeenCalledTimes(1);
+    expect(onReorder.mock.calls[0]![0].movedKeys).toEqual(["b"]);
+    expect(onReorder.mock.calls[0]![0].nextData.map((row: TreeTableRow) => row.key)).toEqual(["b", "a", "c"]);
+  });
+
+  it("supports Ctrl+Right indent and Ctrl+Left outdent reorders", () => {
+    const onIndent = vi.fn();
+    const rows: TreeTableRow[] = [
+      { key: "a", values: { name: "A", owner: "" } },
+      { key: "b", values: { name: "B", owner: "" } },
+    ];
+    const indentResult = renderForTest(
+      React.createElement(TreeTable, {
+        columns: cols,
+        data: rows,
+        isFocused: true,
+        reorderable: true,
+        onReorder: onIndent,
+      }),
+      { width: 60, height: 10 },
+    );
+
+    indentResult.pressDown();
+    indentResult.fireKey("right", { ctrl: true });
+
+    expect(onIndent).toHaveBeenCalledTimes(1);
+    const indented = onIndent.mock.calls[0]![0].nextData as TreeTableRow[];
+    expect(indented.map((row) => row.key)).toEqual(["a"]);
+    expect(indented[0]!.children?.map((row) => row.key)).toEqual(["b"]);
+
+    const onOutdent = vi.fn();
+    const outdentRows: TreeTableRow[] = [
+      {
+        key: "a",
+        values: { name: "A", owner: "" },
+        expanded: true,
+        children: [{ key: "b", values: { name: "B", owner: "" } }],
+      },
+      { key: "c", values: { name: "C", owner: "" } },
+    ];
+    const outdentResult = renderForTest(
+      React.createElement(TreeTable, {
+        columns: cols,
+        data: outdentRows,
+        isFocused: true,
+        reorderable: true,
+        onReorder: onOutdent,
+      }),
+      { width: 60, height: 10 },
+    );
+
+    outdentResult.pressDown();
+    outdentResult.fireKey("left", { ctrl: true });
+
+    expect(onOutdent).toHaveBeenCalledTimes(1);
+    expect(onOutdent.mock.calls[0]![0].nextData.map((row: TreeTableRow) => row.key)).toEqual(["a", "b", "c"]);
   });
 });
 
@@ -333,6 +456,41 @@ describe("TreeTable — renderers + style", () => {
     );
     expect(result.hasText("@Alice")).toBe(true);
     expect(result.hasText("Task")).toBe(true);
+  });
+
+  it("renderCell receives stable tree row metadata", () => {
+    const seen: Array<{
+      rowKey?: string;
+      depth?: number;
+      siblingIndex?: number;
+      path?: number[];
+      parentKey?: string | null;
+    }> = [];
+    renderForTest(
+      React.createElement(TreeTable, {
+        columns: cols,
+        data: hierarchy,
+        renderCell: (value, _col, _row, state) => {
+          seen.push({
+            rowKey: state.rowKey,
+            depth: state.depth,
+            siblingIndex: state.siblingIndex,
+            path: state.path,
+            parentKey: state.parentKey,
+          });
+          return String(value);
+        },
+      }),
+      { width: 80, height: 10 },
+    );
+
+    expect(seen).toContainEqual({
+      rowKey: "c2",
+      depth: 1,
+      siblingIndex: 1,
+      path: [0, 1],
+      parentKey: "p",
+    });
   });
 });
 

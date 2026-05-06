@@ -75,7 +75,7 @@ export {
   type DataGridRootProps, type DataGridCompoundColumnProps, type DataGridCompoundRowProps,
 } from "./data/DataGrid.js";
 export { Tree, type TreeProps, type TreeNode } from "./data/Tree.js";
-export { TreeTable, type TreeTableProps } from "./data/TreeTable.js";
+export { TreeTable, type TreeTableProps, type TreeTableRenderState, type TreeTableReorderChange } from "./data/TreeTable.js";
 export type { TreeTableRow } from "./data/TreeTable.flatten.js";
 export {
   DirectoryTree, type DirectoryTreeProps, type DirNode, type DirChildEntry,

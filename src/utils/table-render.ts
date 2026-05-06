@@ -1,3 +1,4 @@
+import { stringWidth } from "../core/unicode.js";
 import { COL_WIDTH_SAMPLE_SIZE, padCell } from "./format.js";
 
 // ─── Column width auto-sizing ───────────────────────────────────────────
@@ -6,6 +7,9 @@ export interface ColumnWidthInput {
   key: string;
   header: string;
   width?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  flex?: number;
 }
 
 /**
@@ -27,25 +31,123 @@ export function computeColumnWidths<C extends { key: string; width?: number }>(
   return columns.map((col) => {
     if (col.width !== undefined) return col.width;
     const headerText = String((col as Record<string, unknown>)[headerField] ?? "");
-    let max = headerText.length + extraPadding;
+    let max = stringWidth(headerText) + extraPadding;
     for (let i = 0; i < sampleCount; i++) {
       const row = data[i]!;
       const val = row[col.key];
-      const len = val !== undefined ? String(val).length : 0;
+      const len = val !== undefined ? stringWidth(String(val)) : 0;
       if (len > max) max = len;
     }
     return max;
   });
 }
 
+function tableChromeWidth(columnCount: number): number {
+  if (columnCount <= 0) return 0;
+  const separatorWidth = Math.max(0, columnCount - 1);
+  const paddingWidth = columnCount * 2;
+  return separatorWidth + paddingWidth;
+}
+
+function clampColumnWidth<C extends { minWidth?: number; maxWidth?: number }>(
+  width: number,
+  column: C,
+  fallbackMinWidth: number,
+): number {
+  const min = Math.max(1, column.minWidth ?? fallbackMinWidth);
+  const max = column.maxWidth !== undefined ? Math.max(min, column.maxWidth) : Number.POSITIVE_INFINITY;
+  return Math.max(min, Math.min(max, width));
+}
+
+function shrinkColumnWidths<C extends { width?: number; minWidth?: number; flex?: number }>(
+  columns: ReadonlyArray<C>,
+  widths: number[],
+  targetContentWidth: number,
+  minColumnWidth: number,
+): number[] {
+  let currentContentWidth = widths.reduce((sum, width) => sum + width, 0);
+  if (currentContentWidth <= targetContentWidth) return widths;
+
+  const hasFlexColumns = columns.some((column) => (column.flex ?? 0) > 0);
+  const shrinkableIndices = columns
+    .map((column, index) => {
+      if ((column.flex ?? 0) > 0) return index;
+      if (!hasFlexColumns && column.width === undefined) return index;
+      return -1;
+    })
+    .filter((index) => index >= 0);
+
+  if (shrinkableIndices.length === 0) return widths;
+
+  while (currentContentWidth > targetContentWidth) {
+    let widestShrinkable = -1;
+    for (const index of shrinkableIndices) {
+      const min = Math.max(1, columns[index]?.minWidth ?? minColumnWidth);
+      if (widths[index]! <= min) continue;
+      if (widestShrinkable === -1 || widths[index]! > widths[widestShrinkable]!) {
+        widestShrinkable = index;
+      }
+    }
+
+    if (widestShrinkable === -1) break;
+
+    widths[widestShrinkable] = widths[widestShrinkable]! - 1;
+    currentContentWidth -= 1;
+  }
+
+  return widths;
+}
+
+function growFlexColumnWidths<C extends { flex?: number; minWidth?: number; maxWidth?: number }>(
+  columns: ReadonlyArray<C>,
+  widths: number[],
+  targetContentWidth: number,
+  minColumnWidth: number,
+): number[] {
+  let currentContentWidth = widths.reduce((sum, width) => sum + width, 0);
+  if (currentContentWidth >= targetContentWidth) return widths;
+
+  const flexIndices = columns
+    .map((column, index) => ((column.flex ?? 0) > 0 ? index : -1))
+    .filter((index) => index >= 0);
+  if (flexIndices.length === 0) return widths;
+
+  let remaining = targetContentWidth - currentContentWidth;
+  const active = new Set(flexIndices);
+
+  while (remaining > 0 && active.size > 0) {
+    const totalFlex = [...active].reduce((sum, index) => sum + Math.max(0, columns[index]?.flex ?? 0), 0);
+    if (totalFlex <= 0) break;
+
+    let distributed = 0;
+    for (const index of [...active]) {
+      const column = columns[index]!;
+      const share = Math.max(1, Math.floor((remaining * Math.max(0, column.flex ?? 0)) / totalFlex));
+      const before = widths[index]!;
+      const after = clampColumnWidth(before + share, column, minColumnWidth);
+      widths[index] = after;
+      const delta = after - before;
+      distributed += delta;
+      if (delta < share || after === column.maxWidth) active.delete(index);
+      if (distributed >= remaining) break;
+    }
+
+    if (distributed <= 0) break;
+    remaining -= distributed;
+    currentContentWidth += distributed;
+  }
+
+  return widths;
+}
+
 /**
- * Shrink auto-sized columns so the full table fits inside the available width.
+ * Resolve column widths against available table width.
  *
- * Fixed-width columns (`column.width`) are preserved. Auto-sized columns are
- * reduced one character at a time, widest-first, until the table fits or every
- * auto-sized column is already at the minimum width.
+ * Fixed-width columns (`column.width`) are preserved unless they also declare
+ * `flex`. Auto-sized columns shrink to fit legacy compact tables. Columns with
+ * `flex` receive leftover space proportionally and shrink before fixed columns.
  */
-export function fitColumnWidthsToAvailableWidth<C extends { width?: number }>(
+export function fitColumnWidthsToAvailableWidth<C extends { width?: number; minWidth?: number; maxWidth?: number; flex?: number }>(
   columns: ReadonlyArray<C>,
   widths: ReadonlyArray<number>,
   availableWidth: number,
@@ -55,44 +157,14 @@ export function fitColumnWidthsToAvailableWidth<C extends { width?: number }>(
     return [...widths];
   }
 
-  const separatorWidth = Math.max(0, columns.length - 1);
-  const paddingWidth = columns.length * 2;
   const maxContentWidth = Math.max(
     minColumnWidth * columns.length,
-    availableWidth - separatorWidth - paddingWidth,
+    availableWidth - tableChromeWidth(columns.length),
   );
 
-  const next = [...widths];
-  let currentContentWidth = next.reduce((sum, width) => sum + width, 0);
-  if (currentContentWidth <= maxContentWidth) {
-    return next;
-  }
-
-  const shrinkableIndices = columns
-    .map((column, index) => (column.width === undefined ? index : -1))
-    .filter((index) => index >= 0);
-
-  if (shrinkableIndices.length === 0) {
-    return next;
-  }
-
-  while (currentContentWidth > maxContentWidth) {
-    let widestShrinkable = -1;
-    for (const index of shrinkableIndices) {
-      if (next[index]! <= minColumnWidth) continue;
-      if (widestShrinkable === -1 || next[index]! > next[widestShrinkable]!) {
-        widestShrinkable = index;
-      }
-    }
-
-    if (widestShrinkable === -1) {
-      break;
-    }
-
-    next[widestShrinkable] = next[widestShrinkable]! - 1;
-    currentContentWidth -= 1;
-  }
-
+  const next = widths.map((width, index) => clampColumnWidth(width, columns[index]!, minColumnWidth));
+  shrinkColumnWidths(columns, next, maxContentWidth, minColumnWidth);
+  growFlexColumnWidths(columns, next, maxContentWidth, minColumnWidth);
   return next;
 }
 

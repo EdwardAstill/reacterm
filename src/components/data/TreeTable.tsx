@@ -11,6 +11,7 @@ import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { padCell } from "../../utils/format.js";
 import { padEndCells, stringWidth } from "../../core/unicode.js";
+import { handleCellEdit, type CellEditState } from "../../hooks/headless/cell-edit.js";
 import {
   computeColumnWidths,
   fitColumnWidthsToAvailableWidth,
@@ -26,9 +27,31 @@ import {
   type FlatTreeTableRow,
   type TreeTableRow,
 } from "./TreeTable.flatten.js";
+import type { TreeNode } from "./Tree.js";
+import {
+  initialReorderState,
+  reorderReducer,
+} from "./treeReorderReducer.js";
+import type { MoveContext, ReorderChange } from "./Tree.types.js";
 import type { TableColumn, TableCellStyle, TableStateStyles, TableRenderState } from "../table/Table.js";
 
 export type { TreeTableRow } from "./TreeTable.flatten.js";
+
+export interface TreeTableRenderState extends TableRenderState {
+  rowKey: string;
+  columnKey: string;
+  depth: number;
+  siblingIndex: number;
+  path: number[];
+  parentKey: string | null;
+  hasChildren: boolean;
+  isExpanded: boolean;
+}
+
+export interface TreeTableReorderChange extends ReorderChange {
+  /** The reordered TreeTable rows, ready to pass back as `data`. */
+  nextData: TreeTableRow[];
+}
 
 export interface TreeTableProps extends StormContainerStyleProps {
   columns: TableColumn[];
@@ -49,19 +72,53 @@ export interface TreeTableProps extends StormContainerStyleProps {
   onScrollChange?: (offset: number) => void;
   visibleWidth?: number;
   stateStyles?: TableStateStyles;
+  editable?: boolean;
+  onCellEdit?: (rowKey: string, columnKey: string, newValue: string, row: TreeTableRow) => void;
+  isCellLocked?: (value: string | number, column: TableColumn, row: TreeTableRow) => boolean;
+  isCellEditable?: (value: string | number, column: TableColumn, row: TreeTableRow) => boolean;
+  isCellFocusable?: (value: string | number, column: TableColumn, row: TreeTableRow) => boolean;
+  reorderable?: boolean;
+  canMove?: (ctx: MoveContext) => boolean;
+  onReorder?: (change: TreeTableReorderChange) => void;
   renderCell?: (
     value: string | number,
     column: TableColumn,
     row: TreeTableRow,
-    state: TableRenderState,
+    state: TreeTableRenderState,
   ) => React.ReactNode;
   renderHeader?: (column: TableColumn) => React.ReactNode;
   renderTreeCell?: (
     value: string | number,
     row: TreeTableRow,
     depth: number,
-    state: TableRenderState & { isExpanded: boolean; hasChildren: boolean },
+    state: TreeTableRenderState,
   ) => React.ReactNode;
+}
+
+type ReorderTreeTableNode = TreeNode & {
+  values: TreeTableRow["values"];
+  children?: ReorderTreeTableNode[];
+};
+
+function rowToReorderNode(row: TreeTableRow): ReorderTreeTableNode {
+  return {
+    key: row.key,
+    label: String(row.values.name ?? row.key),
+    values: row.values,
+    ...(row.expanded !== undefined ? { expanded: row.expanded } : {}),
+    ...(row.icon !== undefined ? { icon: row.icon } : {}),
+    ...(row.children !== undefined ? { children: row.children.map(rowToReorderNode) } : {}),
+  };
+}
+
+function reorderNodeToRow(node: ReorderTreeTableNode): TreeTableRow {
+  return {
+    key: node.key,
+    values: node.values,
+    ...(node.expanded !== undefined ? { expanded: node.expanded } : {}),
+    ...(node.icon !== undefined ? { icon: node.icon } : {}),
+    ...(node.children !== undefined ? { children: node.children.map(reorderNodeToRow) } : {}),
+  };
 }
 
 function buildTreePrefix(entry: FlatTreeTableRow): string {
@@ -107,6 +164,14 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
     onScrollChange,
     visibleWidth,
     stateStyles,
+    editable = false,
+    onCellEdit,
+    isCellLocked,
+    isCellEditable,
+    isCellFocusable,
+    reorderable = false,
+    canMove,
+    onReorder,
     renderCell,
     renderHeader,
     renderTreeCell,
@@ -118,6 +183,7 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
   const onHeaderRowRef = useRef(false);
   const scrollOffsetRef = useRef(scrollOffset);
   const sortStateRef = useRef<{ column: string; direction: "asc" | "desc" } | null>(null);
+  const editingRef = useRef<CellEditState | null>(null);
   const warnedTreeColumnRef = useRef(false);
 
   scrollOffsetRef.current = scrollOffset;
@@ -225,12 +291,125 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
     onSort?.(columnKey, dir);
   }, [onSort]);
 
+  function buildCellState(
+    entry: FlatTreeTableRow,
+    rowIndex: number,
+    column: TableColumn,
+    columnIndex: number,
+    isFocusedRow: boolean,
+    isFocusedCell: boolean,
+  ): TreeTableRenderState {
+    const value = entry.row.values[column.key] ?? "";
+    const locked = column.locked === true || isCellLocked?.(value, column, entry.row) === true;
+    const editableCell = !locked
+      && (isCellEditable ? isCellEditable(value, column, entry.row) : (column.editable ?? editable));
+    const focusableCell = isCellFocusable
+      ? isCellFocusable(value, column, entry.row)
+      : (column.focusable ?? true);
+
+    return {
+      isFocusedRow,
+      isFocusedColumn: false,
+      isFocusedCell,
+      isSelectedRow: false,
+      isSelectedCell: false,
+      isEdited: false,
+      isLocked: locked,
+      isEditable: editableCell,
+      isFocusable: focusableCell,
+      isEditing: editingRef.current?.row === rowIndex && editingRef.current?.col === columnIndex,
+      rowKey: entry.row.key,
+      columnKey: column.key,
+      depth: entry.depth,
+      siblingIndex: entry.siblingIndex,
+      path: entry.path,
+      parentKey: entry.parentKey,
+      hasChildren: entry.hasChildren,
+      isExpanded: !!entry.row.expanded,
+    };
+  }
+
+  function didMove(change: ReorderChange): boolean {
+    return change.movedKeys.some((key) =>
+      change.previousParents[key] !== change.targetParentKey
+      || change.previousIndices[key] !== change.targetIndex,
+    );
+  }
+
+  function performReorder(action: "moveUp" | "moveDown" | "indent" | "outdent", rowKey: string): void {
+    if (!reorderable || !onReorder) return;
+    const nodes = data.map(rowToReorderNode);
+    const grabbed = reorderReducer(initialReorderState, { type: "grabLive", key: rowKey }, nodes, canMove);
+    if (grabbed.rejected) return;
+    const moved = reorderReducer(
+      grabbed.state,
+      { type: action },
+      nodes,
+      canMove,
+      grabbed.scratchNodes,
+      grabbed.ephemeralExpanded,
+    );
+    const committed = reorderReducer(
+      moved.state,
+      { type: "commit", cursorKey: rowKey },
+      nodes,
+      canMove,
+      moved.scratchNodes,
+      moved.ephemeralExpanded,
+    );
+    if (!committed.change || !didMove(committed.change)) return;
+    const nextData = (committed.change.nextNodes as ReorderTreeTableNode[]).map(reorderNodeToRow);
+    onReorder({ ...committed.change, nextData });
+    requestRender();
+  }
+
   const handleInput = useCallback(
     (event: KeyEvent) => {
+      if (editingRef.current !== null) {
+        handleCellEdit(
+          event,
+          editingRef.current,
+          (rowIndex, colIndex, nextValue) => {
+            const entry = flat[rowIndex];
+            const column = columns[colIndex];
+            if (entry && column) {
+              onCellEdit?.(entry.row.key, column.key, nextValue, entry.row);
+            }
+            editingRef.current = null;
+            requestRender();
+          },
+          () => {
+            editingRef.current = null;
+            requestRender();
+          },
+          requestRender,
+        );
+        return;
+      }
+
       const prevOffset = scrollOffsetRef.current;
       const cursor = cursorRowRef.current;
       const flatEntry = flat[cursor];
       const onHeader = onHeaderRowRef.current;
+
+      if (reorderable && event.ctrl && !onHeader && flatEntry) {
+        if (event.key === "up") {
+          performReorder("moveUp", flatEntry.row.key);
+          return;
+        }
+        if (event.key === "down") {
+          performReorder("moveDown", flatEntry.row.key);
+          return;
+        }
+        if (event.key === "right") {
+          performReorder("indent", flatEntry.row.key);
+          return;
+        }
+        if (event.key === "left") {
+          performReorder("outdent", flatEntry.row.key);
+          return;
+        }
+      }
 
       if (event.key === "up") {
         if (onHeader) {
@@ -288,6 +467,31 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
           const col = columns[cursorColRef.current];
           if (col) cycleSort(col.key);
         } else if (flatEntry) {
+          const colIndex = cursorColRef.current;
+          const column = columns[colIndex];
+          if (column) {
+            const state = buildCellState(
+              flatEntry,
+              cursor,
+              column,
+              colIndex,
+              isFocused && rowHighlight,
+              isFocused,
+            );
+            if (state.isEditable && !state.isLocked) {
+              const nextValue = flatEntry.row.values[column.key] !== undefined
+                ? String(flatEntry.row.values[column.key])
+                : "";
+              editingRef.current = {
+                row: cursor,
+                col: colIndex,
+                value: nextValue,
+                cursor: nextValue.length,
+              };
+              requestRender();
+              return;
+            }
+          }
           onRowSelect?.(flatEntry.row.key, flatEntry.row);
         }
       } else if (sortable && !onHeader && (event.char === "s" || event.char === "S")) {
@@ -299,7 +503,7 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
         onScrollChange(scrollOffsetRef.current);
       }
     },
-    [flat, totalFlat, sortable, columns, maxVisibleRows, onToggle, onRowSelect, cycleSort, requestRender, onScrollChange],
+    [flat, totalFlat, sortable, columns, maxVisibleRows, onToggle, onRowSelect, cycleSort, requestRender, onScrollChange, reorderable, onCellEdit, isFocused, rowHighlight, data, canMove, onReorder],
   );
 
   useInput(handleInput, { isActive: isFocused });
@@ -474,18 +678,7 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
       const colWidth = colWidths[ci] ?? 0;
       const value = row.values[col.key] ?? "";
       const isFocusedCell = isFocused && isCursorRow && ci === cursorColRef.current;
-      const state: TableRenderState = {
-        isFocusedRow,
-        isFocusedColumn: false,
-        isFocusedCell,
-        isSelectedRow: false,
-        isSelectedCell: false,
-        isEdited: false,
-        isLocked: false,
-        isEditable: false,
-        isFocusable: true,
-        isEditing: false,
-      };
+      const state = buildCellState(entry, i, col, ci, isFocusedRow, isFocusedCell);
 
       const style = mergeStyles(
         col.color !== undefined || col.bold !== undefined || col.dim !== undefined
@@ -498,20 +691,25 @@ export const TreeTable = React.memo(function TreeTable(rawProps: TreeTableProps)
               ...(col.underline ? { underline: true } : {}),
             }
           : undefined,
+        state.isLocked ? resolvedStateStyles.lockedCell : undefined,
         state.isFocusedRow ? resolvedStateStyles.focusedRow : undefined,
         state.isFocusedCell ? resolvedStateStyles.focusedCell : undefined,
       );
 
       const valueStr = String(value);
       let content: React.ReactNode;
-      if (ci === treeColumnIndex) {
+      if (state.isEditing && editingRef.current) {
+        const edit = editingRef.current;
+        const before = edit.value.slice(0, edit.cursor);
+        const after = edit.value.slice(edit.cursor + 1);
+        content = before + "█" + after;
+      } else if (ci === treeColumnIndex) {
         const prefix = buildTreePrefix(entry);
         const marker = entry.hasChildren ? (row.expanded ? "▾" : "▸") : " ";
         const iconText = row.icon !== undefined ? padEndCells(row.icon, 2) + " " : "";
 
         if (renderTreeCell) {
-          const treeState = { ...state, isExpanded: !!row.expanded, hasChildren: entry.hasChildren };
-          content = renderTreeCell(value, row, entry.depth, treeState);
+          content = renderTreeCell(value, row, entry.depth, state);
         } else {
           const head = prefix + marker + " " + iconText;
           const headWidth = stringWidth(head);

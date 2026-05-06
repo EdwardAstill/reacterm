@@ -24,7 +24,14 @@ import {
 export interface TableColumn {
   key: string;
   header: string;
+  /** Fixed/intrinsic content width in terminal cells. With `flex`, this is the starting width. */
   width?: number;
+  /** Minimum content width when fitting or flexing columns. */
+  minWidth?: number;
+  /** Maximum content width when fitting or flexing columns. */
+  maxWidth?: number;
+  /** Proportional share of leftover width after fixed/intrinsic columns are measured. */
+  flex?: number;
   align?: "left" | "center" | "right";
   focusable?: boolean;
   editable?: boolean;

@@ -225,6 +225,62 @@ describe("Table", () => {
     expect(result.hasText("Live load ele…")).toBe(true);
   });
 
+  it("keeps compact intrinsic width without flex columns", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        width: 60,
+        borderStyle: "none",
+        columns: [
+          { key: "name", header: "Name" },
+          { key: "score", header: "Score" },
+        ],
+        data: [{ name: "Alice", score: 95 }],
+      }),
+      { width: 80, height: 10 },
+    );
+
+    const header = result.lines.find((line) => line.includes("Name") && line.includes("Score")) ?? "";
+    expect(header.indexOf("Score")).toBeLessThan(20);
+  });
+
+  it("allocates leftover explicit width to flex columns", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        width: 60,
+        borderStyle: "none",
+        columns: [
+          { key: "priority", header: "Pri", width: 5 },
+          { key: "task", header: "Task", flex: 1, minWidth: 10 },
+          { key: "due", header: "Due", width: 8 },
+        ],
+        data: [{ priority: "HIGH", task: "Flexible task name", due: "May 7" }],
+      }),
+      { width: 80, height: 10 },
+    );
+
+    const header = result.lines.find((line) => line.includes("Pri") && line.includes("Task")) ?? "";
+    expect(header.indexOf("Due")).toBeGreaterThan(45);
+    expect(result.hasText("Flexible task name")).toBe(true);
+  });
+
+  it("honors flex maxWidth and leaves the table compact after the cap", () => {
+    const result = renderForTest(
+      React.createElement(Table, {
+        width: 80,
+        borderStyle: "none",
+        columns: [
+          { key: "task", header: "Task", flex: 1, maxWidth: 20 },
+          { key: "status", header: "Status", width: 6 },
+        ],
+        data: [{ task: "Flexible task name", status: "open" }],
+      }),
+      { width: 90, height: 10 },
+    );
+
+    const header = result.lines.find((line) => line.includes("Task") && line.includes("Status")) ?? "";
+    expect(header.indexOf("Status")).toBeLessThan(30);
+  });
+
   // ── Styling: predicate row/cell + per-column ────────────────────────
 
   /** True if any of the preceding 80 bytes before `text` in `styled` contain the SGR sequence `sgr`. */
