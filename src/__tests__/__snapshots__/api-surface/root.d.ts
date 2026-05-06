@@ -30,7 +30,7 @@ export { Newline, type NewlineProps } from "./components/core/Newline.js";
 export { Link, ALLOWED_LINK_SCHEMES, isAllowedLinkScheme, type LinkProps } from "./components/extras/Link.js";
 export { Static, type StaticProps } from "./components/core/Static.js";
 export { SelectInput, type SelectInputItem, type SelectInputProps } from "./components/core/SelectInput.js";
-export { Overlay, type OverlayProps } from "./components/core/Overlay.js";
+export { Overlay, OverlayProvider, type OverlayProps, type OverlayManagerValue } from "./components/core/Overlay.js";
 export { Divider, type DividerProps } from "./components/core/Divider.js";
 export { Table, type TableProps, type TableColumn } from "./components/table/Table.js";
 export { ProgressBar, type ProgressBarProps } from "./components/core/ProgressBar.js";

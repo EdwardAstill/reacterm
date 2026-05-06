@@ -54,6 +54,12 @@ export interface RenderResult {
     scroll: (direction: "up" | "down", x?: number, y?: number) => void;
     /** Fire mouse click */
     click: (x?: number, y?: number, button?: MouseEvent["button"]) => void;
+    /** Fire mouse press (no release) — use with mouseMove and mouseUp for drag. */
+    mouseDown: (x?: number, y?: number, button?: MouseEvent["button"]) => void;
+    /** Fire mouse move (no button change). */
+    mouseMove: (x?: number, y?: number) => void;
+    /** Fire mouse release. */
+    mouseUp: (x?: number, y?: number, button?: MouseEvent["button"]) => void;
     /** Fire paste event */
     paste: (text: string) => void;
     /** Re-render with new props */
