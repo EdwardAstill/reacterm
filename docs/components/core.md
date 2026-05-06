@@ -262,22 +262,37 @@ See [Common Pitfalls](../pitfalls.md#2-scrollview-needs-a-height-constraint) for
 
 Positioned overlay rendered on top of all other content. Overlays are painted in a second pass, overwriting cells from the normal element tree.
 
+`Overlay` supports two modes:
+
+- **Static positioning** via `position` (`"center"`, `"top"`, `"bottom"`, `"center-left"`, `"center-right"`). The overlay is painted at the named anchor with no user interaction.
+- **Free positioning** via `defaultTop` / `defaultLeft` (or controlled `top` / `left`). Combine with `movable`, `resizable`, and `OverlayProvider` to get a draggable, layerable window. Multiple overlays inside the same provider share a z-counter — clicking one brings it to the front.
+
+For modal dialogs (focus-trapped, single-instance, fixed-position), prefer `Modal`.
+
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | -- | Overlay content |
 | `visible` | `boolean` | `true` | Whether overlay is shown |
-| `position` | `"center" \| "bottom" \| "top" \| "center-left" \| "center-right"` | `"center"` | Screen position |
-| `width` | `number \| \`${number}%\`` | -- | Overlay width |
-| `height` | `number` | -- | Overlay height |
-| `minWidth` | `number` | -- | Minimum width |
-| `maxWidth` | `number` | -- | Maximum width |
-| `minHeight` | `number` | -- | Minimum height |
-| `maxHeight` | `number` | -- | Maximum height |
-| `borderStyle` | `"single" \| "double" \| "round" \| "bold" \| "classic"` | -- | Border style |
+| `title` | `string` | -- | Optional title bar (required for `movable` to surface a drag handle) |
+| `position` | `"center" \| "bottom" \| "top" \| "center-left" \| "center-right" \| "free"` | `"center"` | Anchor preset |
+| `defaultTop` / `defaultLeft` | `number` | -- | Initial top/left in cells. Setting either forces free positioning |
+| `top` / `left` | `number` | -- | Controlled coords. Drag fires `onMove` but the overlay only moves when the parent re-renders with new values |
+| `onMove` | `(pos: { top: number; left: number }) => void` | -- | Fired on each drag tick |
+| `defaultWidth` / `defaultHeight` | `number` | -- | Initial size for free mode |
+| `onResize` | `(size: { width: number; height: number }) => void` | -- | Fired on each resize tick |
+| `movable` | `boolean` | `false` | Drag the title bar to move |
+| `resizable` | `boolean` | `false` | Drag the bottom-right corner (`\`) to resize |
+| `showResizeHandle` | `boolean` | `true` (when `resizable`) | Whether to draw the visible resize-handle glyph. When `false`, the bottom-right row is still a resize zone — only the marker is hidden |
+| `resizeHandleGlyph` | `string` | `"\\"` | Override the glyph. Avoid East Asian Ambiguous-width chars (`⇲`, `↘`, `◢`) — Kitty / WezTerm render them as 2 cells and overdraw the right border |
+| `minSize` | `{ width: number; height: number }` | `{ width: 10, height: 3 }` | Lower bound during resize |
+| `maxSize` | `{ width: number; height: number }` | screen size | Upper bound during resize |
+| `id` | `string` | auto | Stable id used by `OverlayProvider` for z-order |
+| `width` / `height` | `number \| \`${number}%\`` / `number` | -- | Static-mode overrides (also valid as controlled values in free mode) |
+| `minWidth` / `maxWidth` / `minHeight` / `maxHeight` | `number` | -- | Tui-overlay-level bounds |
+| `borderStyle` | `"single" \| "double" \| "round" \| "bold" \| "classic"` | `"single"` | Border style |
 | `borderColor` | `string \| number` | -- | Border color |
-| `padding` | `number` | -- | Padding on all sides |
-| `paddingX` | `number` | -- | Horizontal padding |
-| `paddingY` | `number` | -- | Vertical padding |
+| `padding` / `paddingX` / `paddingY` | `number` | -- | Padding |
+| `onClose` | `() => void` | -- | When set, renders a `[×]` close button in the title bar and binds Escape to fire it |
 
 **Basic: Centered notification**
 
@@ -296,6 +311,42 @@ import { Overlay, Text } from "reacterm";
   <Text color="#FBBF24" bold>WARNING</Text>
   <Text> Connection unstable. Retrying in {countdown}s...</Text>
 </Overlay>
+```
+
+**Movable + resizable, single instance**
+
+```tsx
+import { Overlay, Text } from "reacterm";
+
+<Overlay
+  title="Inspector"
+  movable
+  resizable
+  defaultTop={5}
+  defaultLeft={10}
+  defaultWidth={36}
+  defaultHeight={10}
+  borderStyle="single"
+>
+  <Text>Drag the title to move me. Drag the corner to resize.</Text>
+</Overlay>
+```
+
+**Multiple overlays with shared z-order**
+
+Wrap movable/resizable overlays in `<OverlayProvider>` so click-to-front uses a shared counter. Without a provider, each overlay manages its own z-order independently.
+
+```tsx
+import { Overlay, OverlayProvider, Text } from "reacterm";
+
+<OverlayProvider>
+  <Overlay id="A" title="A" movable defaultTop={4}  defaultLeft={6}  defaultWidth={28} defaultHeight={6}>
+    <Text>First panel</Text>
+  </Overlay>
+  <Overlay id="B" title="B" movable defaultTop={10} defaultLeft={30} defaultWidth={28} defaultHeight={6}>
+    <Text>Second panel</Text>
+  </Overlay>
+</OverlayProvider>
 ```
 
 ---

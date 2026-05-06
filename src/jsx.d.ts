@@ -87,7 +87,9 @@ declare global {
       };
       "tui-overlay": {
         visible?: boolean;
-        position?: "center" | "bottom" | "top";
+        position?: "center" | "bottom" | "top" | "free";
+        top?: number;
+        left?: number;
         width?: number | string;
         height?: number;
         borderStyle?: BorderStyle;

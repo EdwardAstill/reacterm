@@ -463,7 +463,7 @@ function paintOverlay(
   ctx: RenderContext,
 ): void {
   const props = element.props;
-  const position = (props["position"] as "center" | "bottom" | "top" | undefined) ?? "center";
+  const position = (props["position"] as "center" | "bottom" | "top" | "free" | undefined) ?? "center";
 
   const rawWidth = props["width"] as number | `${number}%` | undefined;
   let overlayWidth: number;
@@ -479,23 +479,27 @@ function paintOverlay(
   const rawHeight = (props["height"] as number | undefined) ?? Math.min(screenHeight, 20);
   const overlayHeight = Math.min(rawHeight, screenHeight);
 
-  // Position overlay on screen
-  let overlayX: number;
-  let overlayY: number;
+  // Position overlay on screen. Unknown / unimplemented presets fall back to "center".
+  let overlayX: number = Math.floor((screenWidth - overlayWidth) / 2);
+  let overlayY: number = Math.floor((screenHeight - overlayHeight) / 2);
 
   switch (position) {
     case "center":
-      overlayX = Math.floor((screenWidth - overlayWidth) / 2);
-      overlayY = Math.floor((screenHeight - overlayHeight) / 2);
       break;
     case "top":
-      overlayX = Math.floor((screenWidth - overlayWidth) / 2);
       overlayY = 0;
       break;
     case "bottom":
-      overlayX = Math.floor((screenWidth - overlayWidth) / 2);
       overlayY = screenHeight - overlayHeight;
       break;
+    case "free": {
+      const top = (props["top"] as number | undefined) ?? 0;
+      const left = (props["left"] as number | undefined) ?? 0;
+      overlayX = Math.max(0, Math.min(left, screenWidth - overlayWidth));
+      overlayY = Math.max(0, Math.min(top, screenHeight - overlayHeight));
+      break;
+    }
+    // center-left, center-right, and any future unknowns default to center coords above.
   }
 
   // Rebuild and compute layout for overlay subtree at the computed position

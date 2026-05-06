@@ -43,7 +43,7 @@ import {
   TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
   MaskedInput, ChatInput, Select, type SelectOption,
   // composites
-  ScrollView, ListView, Modal, KeyboardHelp, Toast,
+  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
   Stepper, Heading, Calendar, DatePicker, EventCalendar,
   // personality
   PersonalityProvider, defaultPreset, minimalPreset, hackerPreset, playfulPreset,
@@ -114,6 +114,7 @@ const SECTIONS = [
   { key: "search",  label: "Search",  icon: "⌕", group: "Build" },
   { key: "data",    label: "Data",    icon: "▦", group: "Build" },
   { key: "calendar",label: "Calendar",icon: "▣", group: "Build" },
+  { key: "overlays",label: "Overlays",icon: "▢", group: "Build" },
   // Visualize
   { key: "charts",  label: "Charts",  icon: "▁", group: "Visualize" },
   { key: "ai",      label: "AI",      icon: "◆", group: "Visualize" },
@@ -782,6 +783,119 @@ function DataSection({ focused }: { focused: "tree" | "grid" }): React.ReactElem
       <TreeTablePane />
     </Box>
     </ScrollView>
+  );
+}
+
+// ── Overlays ────────────────────────────────────────────────────────────
+let nextSpawnId = 1;
+
+function OverlaysSection(): React.ReactElement {
+  const theme = useTheme();
+  const [spawned, setSpawned] = useState<{ id: string; n: number; top: number; left: number }[]>([]);
+
+  const spawn = (): void => {
+    const n = nextSpawnId++;
+    // Cascade each spawned overlay down-and-right so they don't all stack on the same coords.
+    const top = 6 + ((n - 1) % 6) * 2;
+    const left = 8 + ((n - 1) % 6) * 4;
+    setSpawned((prev) => [...prev, { id: `spawn-${n}`, n, top, left }]);
+  };
+
+  const close = (id: string): void => {
+    setSpawned((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  return (
+    <OverlayProvider>
+      <Box flexDirection="column" padding={1}>
+        <Text bold color={theme.colors.text.primary}>Movable / resizable overlays</Text>
+        <Text color={theme.colors.text.dim}>
+          Drag titles to move (A, B). Drag the \ corner to resize (A, C). Click any overlay to bring it forward.
+        </Text>
+        <Box marginTop={1}>
+          <Button label="Spawn overlay" onPress={spawn} />
+          <Text color={theme.colors.text.dim}>  Spawned: {spawned.length}</Text>
+        </Box>
+
+        <Overlay
+          id="overlay-A"
+          title="A — movable + resizable"
+          movable
+          resizable
+          defaultTop={8}
+          defaultLeft={10}
+          defaultWidth={36}
+          defaultHeight={9}
+          borderStyle="single"
+          borderColor={theme.colors.brand?.primary ?? theme.colors.text.primary}
+        >
+          <Box flexDirection="column" padding={1}>
+            <Text>This overlay accepts both gestures.</Text>
+            <Text color={theme.colors.text.dim}>Drag my title to move me.</Text>
+            <Text color={theme.colors.text.dim}>Drag the \ glyph to resize.</Text>
+          </Box>
+        </Overlay>
+
+        <Overlay
+          id="overlay-B"
+          title="B — movable only"
+          movable
+          defaultTop={4}
+          defaultLeft={50}
+          defaultWidth={28}
+          defaultHeight={7}
+          borderStyle="round"
+          borderColor={theme.colors.text.primary}
+        >
+          <Box flexDirection="column" padding={1}>
+            <Text>This one moves but does not resize.</Text>
+            <Text color={theme.colors.text.dim}>Click my body to bring me forward.</Text>
+          </Box>
+        </Overlay>
+
+        <Overlay
+          id="overlay-C"
+          title="C — resize only"
+          resizable
+          defaultTop={18}
+          defaultLeft={20}
+          defaultWidth={42}
+          defaultHeight={6}
+          borderStyle="single"
+          borderColor={theme.colors.text.dim}
+        >
+          <Box flexDirection="column" padding={1}>
+            <Text>
+              This overlay is locked in place but the corner handle still resizes the box.
+              Reflow happens automatically as the width changes.
+            </Text>
+          </Box>
+        </Overlay>
+
+        {spawned.map((s) => (
+          <Overlay
+            key={s.id}
+            id={s.id}
+            title={`Spawned #${s.n}`}
+            movable
+            resizable
+            onClose={() => close(s.id)}
+            defaultTop={s.top}
+            defaultLeft={s.left}
+            defaultWidth={32}
+            defaultHeight={8}
+            borderStyle="single"
+            borderColor={theme.colors.brand?.primary ?? theme.colors.text.primary}
+          >
+            <Box flexDirection="column" padding={1}>
+              <Text bold>Spawned overlay #{s.n}</Text>
+              <Text color={theme.colors.text.dim}>Click [×] (top-right) or press Esc to close.</Text>
+              <Text color={theme.colors.text.dim}>Drag the title to move. Drag the \ corner to resize.</Text>
+            </Box>
+          </Overlay>
+        ))}
+      </Box>
+    </OverlayProvider>
   );
 }
 
@@ -2908,6 +3022,7 @@ export function App(): React.ReactElement {
       case "search":   return <SearchSection pushToast={toast} />;
       case "data":     return <DataSection focused={dataFocus} />;
       case "calendar": return <CalendarSection />;
+      case "overlays": return <OverlaysSection />;
       case "charts":   return <ChartsSection />;
       case "ai":       return <AiSection pushToast={toast} />;
       case "editor":   return <EditorSection inputFocused={editorInputFocused} setInputFocused={setEditorInputFocused} />;
