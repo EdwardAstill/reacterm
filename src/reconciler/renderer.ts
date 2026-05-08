@@ -1,6 +1,6 @@
 import { ScreenBuffer } from "../core/buffer.js";
 import type { RenderContext } from "../core/render-context.js";
-import { charWidth, stringWidth, iterGraphemes } from "../core/unicode.js";
+import { stringWidth, iterGraphemes } from "../core/unicode.js";
 import {
   type Cell,
   DEFAULT_COLOR,
@@ -11,6 +11,7 @@ import {
   type BorderStyle,
 } from "../core/types.js";
 import { computeLayout, type LayoutNode, type Overflow } from "../layout/engine.js";
+import { resolveScrollbarGutter } from "../layout/box-model.js";
 import {
   type TuiElement,
   type TuiTextNode,
@@ -25,93 +26,12 @@ import {
   type BackgroundProp,
   type BackgroundPattern,
 } from "./types.js";
+import { type ClipRect, intersectClip, isClipEmpty } from "./paint/clip.js";
+import { stripAnsi, wrapText } from "./paint/text.js";
 import { notifyResizeObservers, setResizeObserverMeasureMap } from "../core/resize-observer.js";
 
 /** Module-level start time for background animations — no timers needed. */
 const bgAnimStartTime = Date.now();
-
-interface ClipRect {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-}
-
-function intersectClip(a: ClipRect, b: ClipRect): ClipRect {
-  return {
-    x1: Math.max(a.x1, b.x1),
-    y1: Math.max(a.y1, b.y1),
-    x2: Math.min(a.x2, b.x2),
-    y2: Math.min(a.y2, b.y2),
-  };
-}
-
-function isClipEmpty(c: ClipRect): boolean {
-  return c.x1 >= c.x2 || c.y1 >= c.y2;
-}
-
-function resolveScrollbarGutter(value: unknown): number {
-  if (value === undefined || value === null) return 1;
-  const gutter = Number(value);
-  if (!Number.isFinite(gutter)) return 1;
-  return Math.max(0, Math.floor(gutter));
-}
-
-/** Strip ANSI escape sequences from text to prevent injection into cell buffer. */
-function stripAnsi(text: string): string {
-  if (text.indexOf('\x1b') < 0) return text;
-  return text.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "").replace(/\x1b\][^\x07]*\x07/g, "");
-}
-
-function wrapText(text: string, width: number): string[] {
-  if (width <= 0) return [];
-  const lines: string[] = [];
-
-  for (const rawLine of text.split("\n")) {
-    if (rawLine.length === 0) {
-      lines.push("");
-      continue;
-    }
-
-    const graphemes: { offset: number; len: number; width: number; text: string }[] = [];
-    let pos = 0;
-    for (const g of iterGraphemes(rawLine)) {
-      graphemes.push({ offset: pos, len: g.text.length, width: g.width, text: g.text });
-      pos += g.text.length;
-    }
-
-    let lineStartIdx = 0; // index into graphemes[]
-    let lineWidth = 0;
-    let lastSpaceIdx = -1; // index into graphemes[]
-
-    for (let gi = 0; gi < graphemes.length; gi++) {
-      const g = graphemes[gi]!;
-      if (g.text === " ") lastSpaceIdx = gi;
-      lineWidth += g.width;
-
-      if (lineWidth > width) {
-        const breakIdx = lastSpaceIdx > lineStartIdx ? lastSpaceIdx : gi;
-        const startOffset = graphemes[lineStartIdx]!.offset;
-        const endOffset = graphemes[breakIdx]!.offset;
-        lines.push(rawLine.slice(startOffset, endOffset));
-        const skipSpace = lastSpaceIdx > lineStartIdx ? 1 : 0;
-        lineStartIdx = breakIdx + skipSpace;
-        // Re-measure from lineStartIdx to current position
-        lineWidth = 0;
-        for (let j = lineStartIdx; j <= gi; j++) {
-          lineWidth += graphemes[j]!.width;
-        }
-        lastSpaceIdx = -1;
-      }
-    }
-    if (lineStartIdx < graphemes.length) {
-      const startOffset = graphemes[lineStartIdx]!.offset;
-      lines.push(rawLine.slice(startOffset));
-    }
-  }
-
-  return lines;
-}
 
 /** Bump the runs version on a RenderContext so all styled-run caches are stale. */
 export function invalidateStyledRunsCache(ctx: RenderContext): void {

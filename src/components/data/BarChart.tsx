@@ -7,6 +7,7 @@ import { useCleanup } from "../../hooks/useCleanup.js";
 import type { BarData, StackedBarData } from "./chart-types.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getSeriesPalette } from "../../utils/chart-helpers.js";
+import { formatFixedChartValue } from "./chart-core/format.js";
 
 const VBLOCK = [" ", "\u2581", "\u2582", "\u2583", "\u2584", "\u2585", "\u2586", "\u2587", "\u2588"];
 const VBLOCK_NEG = [" ", "\u2594", "\u2594", "\u2580", "\u2580", "\u2580", "\u2580", "\u2580", "\u2588"];
@@ -44,28 +45,8 @@ export interface BarChartProps {
   renderTooltip?: (bar: { label: string; value: number; color: string }, index: number) => React.ReactNode;
 }
 
-// Not replaced by formatAxisLabel: uses toFixed(1) for decimals (not toFixed(2)), omits exponential notation for tiny values, and does not padStart.
 function formatValue(value: number, maxWidth: number): string {
-  let str: string;
-
-  if (value === 0) {
-    str = "0";
-  } else if (Math.abs(value) >= 1_000_000) {
-    str = (value / 1_000_000).toFixed(1) + "M";
-  } else if (Math.abs(value) >= 10_000) {
-    str = (value / 1_000).toFixed(1) + "k";
-  } else if (Math.abs(value) >= 1_000) {
-    str = (value / 1_000).toFixed(2) + "k";
-  } else if (Number.isInteger(value)) {
-    str = String(value);
-  } else {
-    str = value.toFixed(1);
-  }
-
-  if (str.length > maxWidth) {
-    str = str.slice(0, maxWidth);
-  }
-  return str;
+  return formatFixedChartValue(value, maxWidth);
 }
 
 function padCenter(text: string, width: number): string {

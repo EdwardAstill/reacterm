@@ -6,110 +6,40 @@
  * Pure TypeScript, fast and predictable.
  */
 
-export type FlexDirection = "column" | "row";
-export type FlexWrap = "nowrap" | "wrap";
-export type Align = "start" | "center" | "end" | "stretch" | "baseline";
-export type AlignSelf = Align | "auto";
-export type Justify = "start" | "center" | "end" | "space-between" | "space-around" | "space-evenly";
-export type AlignContent = "flex-start" | "flex-end" | "center" | "stretch" | "space-between" | "space-around";
-export type Overflow = "visible" | "hidden" | "scroll";
-export type Display = "flex" | "grid" | "none";
-export type GridAutoFlow = "row" | "column" | "dense";
-export type Position = "relative" | "absolute";
+import {
+  resolveMargin,
+  resolveMarginAuto,
+  resolvePadding,
+  resolveScrollbarGutter,
+  type Margin,
+  type MarginAuto,
+} from "./box-model.js";
+import type {
+  Align,
+  AlignContent,
+  AlignSelf,
+  FlexWrap,
+  Justify,
+  LayoutNode,
+  LayoutProps,
+  Overflow,
+} from "./types.js";
 
-export interface LayoutProps {
-  width?: number | `${number}%` | "auto" | "min-content" | "max-content";
-  height?: number | `${number}%` | "auto" | "min-content" | "max-content";
-  minWidth?: number;
-  minHeight?: number;
-  maxWidth?: number;
-  maxHeight?: number;
-  flex?: number;
-  flexGrow?: number;
-  flexShrink?: number;
-  flexBasis?: number | `${number}%`;
-  flexDirection?: FlexDirection;
-  flexWrap?: FlexWrap;
-  padding?: number;
-  paddingX?: number;
-  paddingY?: number;
-  paddingTop?: number;
-  paddingBottom?: number;
-  paddingLeft?: number;
-  paddingRight?: number;
-  margin?: number | "auto";
-  marginX?: number | "auto";
-  marginY?: number | "auto";
-  marginTop?: number | "auto";
-  marginBottom?: number | "auto";
-  marginLeft?: number | "auto";
-  marginRight?: number | "auto";
-  gap?: number;
-  columnGap?: number;
-  rowGap?: number;
-  alignItems?: Align;
-  alignContent?: AlignContent;
-  alignSelf?: AlignSelf;
-  justifyContent?: Justify;
-  overflow?: Overflow;
-  overflowX?: Overflow;
-  overflowY?: Overflow;
-  scrollbarGutter?: number;
-  display?: Display;
-  position?: Position;
-  top?: number;
-  left?: number;
-  right?: number;
-  bottom?: number;
-  order?: number;
-  aspectRatio?: number;
-  direction?: "ltr" | "rtl";
-
-  /** Grid layout properties */
-  gridTemplateColumns?: string;
-  gridTemplateRows?: string;
-  gridColumn?: string;
-  gridRow?: string;
-  gridGap?: number;
-  gridAutoFlow?: GridAutoFlow;
-}
-
-export interface LayoutResult {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  innerX: number;
-  innerY: number;
-  innerWidth: number;
-  innerHeight: number;
-  /** Total content height (may exceed innerHeight for scroll) */
-  contentHeight: number;
-  /** Total content width */
-  contentWidth: number;
-}
-
-export interface LayoutNode {
-  props: LayoutProps;
-  children: LayoutNode[];
-  /** Set by layout computation */
-  layout: LayoutResult;
-  /** For text nodes: measured height given a width */
-  measureText?: (availableWidth: number) => { width: number; height: number };
-
-  // ── Incremental layout caching ───────────────────────────────────
-  /** Whether this node needs re-layout. Set by buildLayoutTree, cleared by computeLayout. */
-  dirty?: boolean;
-  /** Cached props reference from the last layout pass. */
-  _prevProps?: LayoutProps;
-  /** Cached available width from the last layout pass. */
-  _prevWidth?: number;
-  /** Cached available height from the last layout pass. */
-  _prevHeight?: number;
-  /** Cached child count from the last buildLayoutTree pass. */
-  _prevChildCount?: number;
-  _prevChildren?: LayoutNode[];
-}
+export type {
+  Align,
+  AlignContent,
+  AlignSelf,
+  Display,
+  FlexDirection,
+  FlexWrap,
+  GridAutoFlow,
+  Justify,
+  LayoutNode,
+  LayoutProps,
+  LayoutResult,
+  Overflow,
+  Position,
+} from "./types.js";
 
 /** Sentinel value for unconstrained space in scroll containers.
  *  Children of overflow:scroll containers get this as available height/width
@@ -118,76 +48,6 @@ const UNCONSTRAINED = 100000;
 
 /** Dev-mode: warn once when percentage sizes are used inside a scroll container. */
 let _warnedPercentInScroll = false;
-
-interface Padding {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
-
-function resolvePadding(p: LayoutProps): Padding {
-  const base = p.padding ?? 0;
-  const px = p.paddingX ?? base;
-  const py = p.paddingY ?? base;
-  return {
-    top: p.paddingTop ?? py,
-    bottom: p.paddingBottom ?? py,
-    left: p.paddingLeft ?? px,
-    right: p.paddingRight ?? px,
-  };
-}
-
-interface Margin {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
-
-interface MarginAuto {
-  top: boolean;
-  bottom: boolean;
-  left: boolean;
-  right: boolean;
-}
-
-function resolveMarginValue(specific: number | "auto" | undefined, fallback: number | "auto"): { value: number; isAuto: boolean } {
-  const v = specific ?? fallback;
-  if (v === "auto") return { value: 0, isAuto: true };
-  return { value: v, isAuto: false };
-}
-
-function resolveMargin(p: LayoutProps): Margin {
-  const base = p.margin ?? 0;
-  const mx = p.marginX ?? base;
-  const my = p.marginY ?? base;
-  return {
-    top: resolveMarginValue(p.marginTop, my).value,
-    bottom: resolveMarginValue(p.marginBottom, my).value,
-    left: resolveMarginValue(p.marginLeft, mx).value,
-    right: resolveMarginValue(p.marginRight, mx).value,
-  };
-}
-
-function resolveMarginAuto(p: LayoutProps): MarginAuto {
-  const base = p.margin ?? 0;
-  const mx = p.marginX ?? base;
-  const my = p.marginY ?? base;
-  return {
-    top: resolveMarginValue(p.marginTop, my).isAuto,
-    bottom: resolveMarginValue(p.marginBottom, my).isAuto,
-    left: resolveMarginValue(p.marginLeft, mx).isAuto,
-    right: resolveMarginValue(p.marginRight, mx).isAuto,
-  };
-}
-
-function resolveScrollbarGutter(value: unknown): number {
-  if (value === undefined || value === null) return 1;
-  const gutter = Number(value);
-  if (!Number.isFinite(gutter)) return 1;
-  return Math.max(0, Math.floor(gutter));
-}
 
 function resolveSize(
   value: number | `${number}%` | "auto" | "min-content" | "max-content" | undefined,

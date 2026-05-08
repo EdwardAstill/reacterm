@@ -7,6 +7,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { padEndCells } from "../../core/unicode.js";
+import { flattenVisibleTree } from "../../utils/tree-flatten.js";
 import {
   reorderReducer,
   initialReorderState,
@@ -18,8 +19,6 @@ import type {
   ReorderState,
   TreeController,
 } from "./Tree.types.js";
-
-const MAX_TREE_DEPTH = 100;
 
 export interface TreeNode {
   key: string;
@@ -76,22 +75,6 @@ interface FlatNode {
   depth: number;
   isLast: boolean;
   parentIsLast: boolean[];
-}
-
-/** Collect visible nodes in display order, flattened with depth/position info. */
-function flattenVisible(nodes: TreeNode[], depth: number, parentIsLast: boolean[]): FlatNode[] {
-  if (depth >= MAX_TREE_DEPTH) return [];
-  const result: FlatNode[] = [];
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]!;
-    const isLast = i === nodes.length - 1;
-    result.push({ node, depth, isLast, parentIsLast: [...parentIsLast] });
-    const hasChildren = node.children !== undefined && node.children.length > 0;
-    if (hasChildren && node.expanded) {
-      result.push(...flattenVisible(node.children!, depth + 1, [...parentIsLast, isLast]));
-    }
-  }
-  return result;
 }
 
 /** Derive visible keys from a flat node list. */
@@ -202,7 +185,12 @@ export const Tree = React.memo(function Tree(rawProps: TreeProps): React.ReactEl
       : nodes;
 
   // Flat + derived structures (computed every render; cheap for typical trees).
-  const flatNodes = flattenVisible(effectiveNodes, 0, []);
+  const flatNodes = flattenVisibleTree(effectiveNodes).map(({ node, depth, isLast, parentIsLast }) => ({
+    node,
+    depth,
+    isLast,
+    parentIsLast,
+  }));
   const visibleKeys = collectVisibleKeysFromFlat(flatNodes);
   const nodeMap = buildNodeMap(flatNodes);
   const selectedIndex = selectedKey !== undefined

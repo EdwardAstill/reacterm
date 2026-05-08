@@ -2,6 +2,7 @@ import { useRef, useCallback } from "react";
 import { useInput } from "../useInput.js";
 import { useForceUpdate } from "../useForceUpdate.js";
 import type { KeyEvent } from "../../input/types.js";
+import { flattenVisibleTree } from "../../utils/tree-flatten.js";
 
 const MAX_TREE_DEPTH = 100;
 
@@ -60,22 +61,6 @@ export interface UseTreeBehaviorResult {
     depth: number;
     node: TreeBehaviorNode;
   };
-}
-
-/** Collect visible nodes in display order, flattened with depth/position info. */
-function flattenVisible(nodes: TreeBehaviorNode[], depth: number, parentIsLast: boolean[]): FlatTreeNode[] {
-  if (depth >= MAX_TREE_DEPTH) return [];
-  const result: FlatTreeNode[] = [];
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]!;
-    const isLast = i === nodes.length - 1;
-    const hasChildren = node.children !== undefined && node.children.length > 0;
-    result.push({ node, depth, isLast, parentIsLast: [...parentIsLast], hasChildren });
-    if (hasChildren && node.expanded) {
-      result.push(...flattenVisible(node.children!, depth + 1, [...parentIsLast, isLast]));
-    }
-  }
-  return result;
 }
 
 /** Collect visible keys in display order for keyboard navigation. */
@@ -142,7 +127,13 @@ export function useTreeBehavior(options: UseTreeBehaviorOptions): UseTreeBehavio
   const onHighlightChangeRef = useRef(onHighlightChange);
   onHighlightChangeRef.current = onHighlightChange;
 
-  const flatNodes = flattenVisible(nodes, 0, []);
+  const flatNodes = flattenVisibleTree(nodes, { maxDepth: MAX_TREE_DEPTH }).map((entry) => ({
+    node: entry.node,
+    depth: entry.depth,
+    isLast: entry.isLast,
+    parentIsLast: entry.parentIsLast,
+    hasChildren: entry.hasChildren,
+  }));
   const selectedIndex = selectedKey !== undefined
     ? flatNodes.findIndex((entry) => entry.node.key === selectedKey)
     : -1;

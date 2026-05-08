@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { useInput } from "../useInput.js";
 import { useForceUpdate } from "../useForceUpdate.js";
 import type { KeyEvent } from "../../input/types.js";
-import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav } from "../../utils/navigation.js";
+import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav, isNavigableItem } from "../../utils/navigation.js";
 
 export interface MenuBehaviorItem {
   label: string;
@@ -56,16 +56,12 @@ export interface UseMenuBehaviorResult {
   };
 }
 
-function isNavigable(item: MenuBehaviorItem): boolean {
-  return !item.separator && !item.disabled;
-}
-
 function findNextItem(items: MenuBehaviorItem[], from: number, direction: 1 | -1): number {
-  return findNextNav(items.length, from, direction, (i) => isNavigable(items[i]!));
+  return findNextNav(items.length, from, direction, (i) => isNavigableItem(items[i]));
 }
 
 function findFirstItem(items: MenuBehaviorItem[]): number {
-  return findFirstNav(items.length, (i) => isNavigable(items[i]!));
+  return findFirstNav(items.length, (i) => isNavigableItem(items[i]));
 }
 
 export function useMenuBehavior(options: UseMenuBehaviorOptions): UseMenuBehaviorResult {
@@ -101,7 +97,7 @@ export function useMenuBehavior(options: UseMenuBehaviorOptions): UseMenuBehavio
   if (activeRef.current >= currentItems.length) {
     activeRef.current = findFirstItem(currentItems);
   }
-  if (currentItems[activeRef.current] && !isNavigable(currentItems[activeRef.current]!)) {
+  if (currentItems[activeRef.current] && !isNavigableItem(currentItems[activeRef.current])) {
     activeRef.current = findNextItem(currentItems, activeRef.current, 1);
   }
 
@@ -119,7 +115,7 @@ export function useMenuBehavior(options: UseMenuBehaviorOptions): UseMenuBehavio
         forceUpdate();
       } else if (event.key === "return") {
         const item = itms[aRef.current];
-        if (item && isNavigable(item)) {
+        if (isNavigableItem(item)) {
           if (item.children && item.children.length > 0) {
             submenuStackRef.current.push({ items: itms, activeIndex: aRef.current });
             currentItemsRef.current = item.children;
@@ -131,7 +127,7 @@ export function useMenuBehavior(options: UseMenuBehaviorOptions): UseMenuBehavio
         }
       } else if (event.key === "right") {
         const item = itms[aRef.current];
-        if (item && item.children && item.children.length > 0 && isNavigable(item)) {
+        if (item && item.children && item.children.length > 0 && isNavigableItem(item)) {
           submenuStackRef.current.push({ items: itms, activeIndex: aRef.current });
           currentItemsRef.current = item.children;
           subActiveIndexRef.current = findFirstItem(item.children);

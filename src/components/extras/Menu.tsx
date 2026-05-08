@@ -7,7 +7,7 @@ import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
-import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav, computeScrollWindow } from "../../utils/navigation.js";
+import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav, computeScrollWindow, isNavigableItem } from "../../utils/navigation.js";
 
 export interface MenuItem {
   label: string;
@@ -161,16 +161,12 @@ const INDICATOR = "\u25B8"; // ▸
 const SEPARATOR_LINE = "\u2500\u2500\u2500";
 const SUBMENU_ARROW = "\u25B6"; // ▶
 
-function isNavigable(item: MenuItem): boolean {
-  return !item.separator && !item.disabled;
-}
-
 function findNextItem(items: MenuItem[], from: number, direction: 1 | -1): number {
-  return findNextNav(items.length, from, direction, (i) => isNavigable(items[i]!));
+  return findNextNav(items.length, from, direction, (i) => isNavigableItem(items[i]));
 }
 
 function findFirstItem(items: MenuItem[]): number {
-  return findFirstNav(items.length, (i) => isNavigable(items[i]!));
+  return findFirstNav(items.length, (i) => isNavigableItem(items[i]));
 }
 
 const MenuBase = React.memo(function Menu(rawProps: MenuProps): React.ReactElement {
@@ -213,7 +209,7 @@ const MenuBase = React.memo(function Menu(rawProps: MenuProps): React.ReactEleme
   if (activeRef.current >= currentItems.length) {
     activeRef.current = findFirstItem(currentItems);
   }
-  if (currentItems[activeRef.current] && !isNavigable(currentItems[activeRef.current]!)) {
+  if (currentItems[activeRef.current] && !isNavigableItem(currentItems[activeRef.current])) {
     activeRef.current = findNextItem(currentItems, activeRef.current, 1);
   }
 
@@ -231,7 +227,7 @@ const MenuBase = React.memo(function Menu(rawProps: MenuProps): React.ReactEleme
         requestRender();
       } else if (event.key === "return") {
         const item = itms[aRef.current];
-        if (item && isNavigable(item)) {
+        if (isNavigableItem(item)) {
           // If item has children, open submenu
           if (item.children && item.children.length > 0) {
             submenuStackRef.current.push({ items: itms, activeIndex: aRef.current });
@@ -245,7 +241,7 @@ const MenuBase = React.memo(function Menu(rawProps: MenuProps): React.ReactEleme
       } else if (event.key === "right") {
         // Open submenu if current item has children
         const item = itms[aRef.current];
-        if (item && item.children && item.children.length > 0 && isNavigable(item)) {
+        if (item && item.children && item.children.length > 0 && isNavigableItem(item)) {
           submenuStackRef.current.push({ items: itms, activeIndex: aRef.current });
           currentItemsRef.current = item.children;
           subActiveIndexRef.current = findFirstItem(item.children);

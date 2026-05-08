@@ -8,6 +8,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { batchColorRuns } from "../../utils/color.js";
+import { getBrailleChartMetrics } from "./chart-core/format.js";
 
 export interface ScatterPlotSeries {
   data: [number, number][];
@@ -136,11 +137,8 @@ export const ScatterPlot = React.memo(function ScatterPlot(rawProps: ScatterPlot
 
   // ── Compute chart area dimensions ─────────────────────────────
 
-  const gutterWidth = showAxes ? Y_GUTTER_WIDTH : 0;
-  const chartCols = Math.max(1, cellWidth - gutterWidth);
-  const chartRows = Math.max(1, cellHeight);
-  const pixelWidth = chartCols * 2;
-  const pixelHeight = chartRows * 4;
+  const { gutterWidth, chartCols, chartRows, pixelWidth, pixelHeight } =
+    getBrailleChartMetrics(cellWidth, cellHeight, showAxes ? Y_GUTTER_WIDTH : 0);
 
   // ── Determine X and Y ranges across all series ────────────────
 

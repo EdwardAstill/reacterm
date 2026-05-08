@@ -213,6 +213,59 @@ describe("Panes edge cases", () => {
     expect(result.output.includes("││")).toBe(false);
   });
 
+  it("row: nested column plus siblings has connected separators", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "row", borderStyle: "single", width: 60, height: 12 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "A")),
+        React.createElement(
+          Panes,
+          { direction: "column", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "B")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "C")),
+        ),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "D")),
+      ),
+      { width: 60, height: 12 },
+    );
+    expect(result.hasText("A")).toBe(true);
+    expect(result.hasText("B")).toBe(true);
+    expect(result.hasText("C")).toBe(true);
+    expect(result.hasText("D")).toBe(true);
+    expect(result.output).toContain("├");
+    expect(result.output).toContain("┤");
+    expect(result.output.includes("││")).toBe(false);
+  });
+
+  it("row: adjacent nested columns share crossing junctions", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "row", borderStyle: "single", width: 60, height: 12 },
+        React.createElement(
+          Panes,
+          { direction: "column", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "A")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "B")),
+        ),
+        React.createElement(
+          Panes,
+          { direction: "column", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "C")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "D")),
+        ),
+      ),
+      { width: 60, height: 12 },
+    );
+    expect(result.hasText("A")).toBe(true);
+    expect(result.hasText("B")).toBe(true);
+    expect(result.hasText("C")).toBe(true);
+    expect(result.hasText("D")).toBe(true);
+    expect(result.output).toContain("┼");
+    expect(result.output.includes("││")).toBe(false);
+  });
+
   it("column: 4 children all render", () => {
     const result = renderForTest(
       React.createElement(
@@ -229,6 +282,31 @@ describe("Panes edge cases", () => {
     expect(result.hasText("B1")).toBe(true);
     expect(result.hasText("C1")).toBe(true);
     expect(result.hasText("D1")).toBe(true);
+  });
+
+  it("column: nested row plus siblings has connected separators", () => {
+    const result = renderForTest(
+      React.createElement(
+        Panes,
+        { direction: "column", borderStyle: "single", width: 42, height: 18 },
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "A")),
+        React.createElement(
+          Panes,
+          { direction: "row", flex: 1 },
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "B")),
+          React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "C")),
+        ),
+        React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "D")),
+      ),
+      { width: 42, height: 18 },
+    );
+    expect(result.hasText("A")).toBe(true);
+    expect(result.hasText("B")).toBe(true);
+    expect(result.hasText("C")).toBe(true);
+    expect(result.hasText("D")).toBe(true);
+    expect(result.output).toContain("┬");
+    expect(result.output).toContain("┴");
+    expect(result.lines.some(line => /^│─+/.test(line))).toBe(false);
   });
 
   it("borderStyle=none: labels render, no border chars", () => {

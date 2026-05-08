@@ -6,6 +6,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { DEFAULT_MAX_TREE_DEPTH, flattenVisibleTree } from "../../utils/tree-flatten.js";
 
 export interface DirNode {
   name: string;
@@ -203,18 +204,17 @@ function flattenVisible(
   depth: number,
   parentIsLast: boolean[],
 ): FlatEntry[] {
-  const result: FlatEntry[] = [];
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]!;
-    const isLast = i === nodes.length - 1;
-    result.push({ node, depth, isLast, parentIsLast: [...parentIsLast] });
-    if (node.isDir && node.expanded && node.children) {
-      result.push(
-        ...flattenVisible(node.children, depth + 1, [...parentIsLast, isLast]),
-      );
-    }
-  }
-  return result;
+  if (depth >= DEFAULT_MAX_TREE_DEPTH) return [];
+  return flattenVisibleTree(nodes, {
+    maxDepth: DEFAULT_MAX_TREE_DEPTH - depth,
+    getChildren: node => node.children,
+    isExpanded: node => Boolean(node.isDir && node.expanded),
+  }).map(entry => ({
+    node: entry.node,
+    depth: depth + entry.depth,
+    isLast: entry.isLast,
+    parentIsLast: [...parentIsLast, ...entry.parentIsLast],
+  }));
 }
 
 const DirectoryTreeBase = React.memo(function DirectoryTree(rawProps: DirectoryTreeProps): React.ReactElement {

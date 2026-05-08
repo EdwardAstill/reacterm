@@ -2,6 +2,11 @@ import { useRef } from "react";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../useCleanup.js";
 import { stringWidth, charWidth, iterGraphemes } from "../../core/unicode.js";
+import {
+  deleteLinearSelection,
+  wordLeftBySpace,
+  wordRightBySpace,
+} from "./text-edit/linear.js";
 
 // ── Text wrapping utilities ─────────────────────────────────────────
 
@@ -271,10 +276,9 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
 
     // Helper: delete selected text
     const deleteSelection = (val: string): { val: string; cursor: number } => {
-      const s = Math.min(selectionStartRef.current!, selectionEndRef.current!);
-      const e = Math.max(selectionStartRef.current!, selectionEndRef.current!);
+      const result = deleteLinearSelection(val, selectionStartRef.current!, selectionEndRef.current!);
       clearSelection();
-      return { val: val.slice(0, s) + val.slice(e), cursor: s };
+      return { val: result.value, cursor: result.cursor };
     };
 
     // Helper: set selection and notify
@@ -345,11 +349,9 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         }
 
         if (event.key === "left") {
-          while (cursor > 0 && val[cursor - 1] === " ") cursor--;
-          while (cursor > 0 && val[cursor - 1] !== " ") cursor--;
+          cursor = wordLeftBySpace(cursor, val);
         } else if (event.key === "right") {
-          while (cursor < val.length && val[cursor] !== " ") cursor++;
-          while (cursor < val.length && val[cursor] === " ") cursor++;
+          cursor = wordRightBySpace(cursor, val);
         } else {
           return;
         }
@@ -382,21 +384,15 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         clearSelection();
 
         if (event.key === "left") {
-          while (cursor > 0 && val[cursor - 1] === " ") cursor--;
-          while (cursor > 0 && val[cursor - 1] !== " ") cursor--;
+          cursor = wordLeftBySpace(cursor, val);
         } else if (event.key === "right") {
-          while (cursor < val.length && val[cursor] !== " ") cursor++;
-          while (cursor < val.length && val[cursor] === " ") cursor++;
+          cursor = wordRightBySpace(cursor, val);
         } else if (event.key === "backspace") {
-          let newCursor = cursor;
-          while (newCursor > 0 && val[newCursor - 1] === " ") newCursor--;
-          while (newCursor > 0 && val[newCursor - 1] !== " ") newCursor--;
+          const newCursor = wordLeftBySpace(cursor, val);
           val = val.slice(0, newCursor) + val.slice(cursor);
           cursor = newCursor;
         } else if (event.key === "delete") {
-          let end = cursor;
-          while (end < val.length && val[end] !== " ") end++;
-          while (end < val.length && val[end] === " ") end++;
+          const end = wordRightBySpace(cursor, val);
           val = val.slice(0, cursor) + val.slice(end);
         } else {
           return;

@@ -1,3 +1,15 @@
+export interface NavigableItemLike {
+  disabled?: boolean;
+  separator?: boolean;
+}
+
+/** Return true when an option/menu item can receive keyboard focus. */
+export function isNavigableItem<TItem extends NavigableItemLike>(
+  item: TItem | undefined,
+): item is TItem {
+  return item !== undefined && !item.disabled && !item.separator;
+}
+
 /**
  * Find the next navigable index in the given direction, wrapping around.
  *

@@ -3,6 +3,7 @@ import { useColors } from "../../hooks/useColors.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
+import { formatFixedChartValue } from "./chart-core/format.js";
 
 export interface HistogramProps extends StormLayoutStyleProps {
   /** Raw data values to bin */
@@ -74,26 +75,7 @@ function computeBins(data: number[], binCount: number): Bin[] {
 }
 
 function formatLabel(value: number, width: number): string {
-  let str: string;
-
-  if (value === 0) {
-    str = "0";
-  } else if (Math.abs(value) >= 1_000_000) {
-    str = (value / 1_000_000).toFixed(1) + "M";
-  } else if (Math.abs(value) >= 10_000) {
-    str = (value / 1_000).toFixed(1) + "k";
-  } else if (Math.abs(value) >= 1_000) {
-    str = (value / 1_000).toFixed(2) + "k";
-  } else if (Number.isInteger(value)) {
-    str = String(value);
-  } else {
-    str = value.toFixed(1);
-  }
-
-  if (str.length > width) {
-    str = str.slice(0, width);
-  }
-  return str.padStart(width);
+  return formatFixedChartValue(value, width, { padStart: true });
 }
 
 function computeMean(data: number[]): number {

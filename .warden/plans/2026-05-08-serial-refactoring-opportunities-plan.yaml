@@ -1,0 +1,278 @@
+version: 1
+plan:
+  slug: serial-refactoring-opportunities-plan
+  prose: .warden/plans/2026-05-08-serial-refactoring-opportunities-plan.md
+  goal: Address the code-map refactoring opportunities one at a time, with fresh research before each phase and verification plus code-map refresh before proceeding.
+  status: draft
+  created: 2026-05-08T17:35Z
+  shape: serial-research-execute-review
+  worktree: .worktrees/serial-refactors
+  refinement_passes: 1
+
+gates:
+  serial: true
+  no_parallel_implementation: true
+  before_each_phase:
+    - write_research_report
+    - confirm_current_code_map
+    - read_target_tests
+  after_each_phase:
+    - focused_tests
+    - bun_x_tsc_no_emit
+    - bun_test
+    - git_diff_check
+    - code_map_rebuild
+    - code_map_status_fresh
+
+nodes:
+  - id: setup
+    type: implement
+    skill: warden:git
+    description: Create or enter the serial-refactors worktree and confirm clean baseline plus fresh code map.
+    verify:
+      - pwd | grep -q '/.worktrees/serial-refactors$'
+      - git status --short
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_cli_demo
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [setup]
+    description: Research the best split for src/cli/demo/App.tsx and write report 01-cli-demo.md.
+
+  - id: split_cli_demo
+    type: implement
+    skill: warden:refactoring
+    depends_on: [research_cli_demo]
+    description: Split src/cli/demo/App.tsx into focused section/helper modules with behavior unchanged.
+    files:
+      modify:
+        - src/cli/demo/App.tsx
+      create:
+        - src/cli/demo/sections/*
+        - src/cli/demo/*.ts
+    verify:
+      - bun run test -- src/__tests__/robustness.test.ts src/__tests__/demo-calendar.test.ts src/__tests__/overlay-demo-no-warn.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_panes
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [split_cli_demo]
+    description: Re-read the Panes spec, implementation, and tests after Phase 1 and write report 02-panes.md.
+
+  - id: refactor_panes
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_panes]
+    description: Implement the normalized-tree Panes refactor behind the existing public API.
+    files:
+      modify:
+        - src/components/core/Panes.tsx
+        - src/__tests__/panes.test.ts
+    verify:
+      - bun run test -- src/__tests__/panes.test.ts src/__tests__/layout.test.ts src/__tests__/robustness.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_tree_flatten
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_panes]
+    description: Research flattenVisible duplication and write report 03-tree-flatten.md.
+
+  - id: refactor_tree_flatten
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_tree_flatten]
+    description: Extract and migrate a shared internal tree-flattening utility.
+    files:
+      modify:
+        - src/components/data/Tree.tsx
+        - src/hooks/headless/useTreeBehavior.ts
+        - src/components/data/TreeTable.flatten.ts
+        - src/components/extras/DirectoryTree.tsx
+      create:
+        - src/utils/tree-flatten.ts
+        - src/__tests__/tree-flatten.test.ts
+    verify:
+      - bun run test -- src/__tests__/tree.test.ts src/__tests__/tree-table.test.ts src/__tests__/layout-box-api.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_navigation
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_tree_flatten]
+    description: Research repeated isNavigable predicates and write report 04-navigation.md.
+
+  - id: refactor_navigation
+    type: implement
+    skill: warden:refactoring
+    depends_on: [research_navigation]
+    description: Consolidate repeated navigability predicates while preserving component semantics.
+    files:
+      modify:
+        - src/utils/navigation.ts
+        - src/components/extras/Menu.tsx
+        - src/components/extras/OptionList.tsx
+        - src/components/extras/SearchList.tsx
+        - src/hooks/headless/useMenuBehavior.ts
+    verify:
+      - bun run test -- src/__tests__/select.test.ts src/__tests__/search-table.test.ts src/__tests__/components.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_text_editing
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_navigation]
+    description: Research text editing primitive extraction and write report 05-text-editing.md.
+
+  - id: refactor_text_editing
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_text_editing]
+    description: Extract pure text-editing helpers from headless input hooks.
+    files:
+      modify:
+        - src/hooks/headless/useTextInputBehavior.ts
+        - src/hooks/headless/useTextAreaBehavior.ts
+        - src/hooks/headless/useChatInputBehavior.ts
+      create:
+        - src/hooks/headless/text-edit/*
+    verify:
+      - bun run test -- src/__tests__/textinput.test.ts src/__tests__/testing-driver.test.ts src/__tests__/robustness.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_layout_engine
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_text_editing]
+    description: Research layout engine module split and write report 06-layout-engine.md.
+
+  - id: refactor_layout_engine
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_layout_engine]
+    description: Split layout engine internals while keeping src/layout/engine.ts as the public facade.
+    files:
+      modify:
+        - src/layout/engine.ts
+      create:
+        - src/layout/*.ts
+    verify:
+      - bun run test -- src/__tests__/layout.test.ts src/__tests__/layout-properties.test.ts src/__tests__/layout-engine-scroll.test.ts src/__tests__/component-boundary-layout.test.ts
+      - bun run test:api
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_renderer
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_layout_engine]
+    description: Research renderer paint module boundaries and write report 07-renderer.md.
+
+  - id: refactor_renderer
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_renderer]
+    description: Split renderer paint helpers behind the current public renderer surface.
+    files:
+      modify:
+        - src/reconciler/renderer.ts
+      create:
+        - src/reconciler/paint/*
+    verify:
+      - bun run test -- src/__tests__/integration.test.ts src/__tests__/overlay-free-position.test.ts src/__tests__/overlay-component.test.ts src/__tests__/scrollview.test.ts src/__tests__/text-injection-safety.test.ts
+      - bun run test:api
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_web_renderer
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_renderer]
+    description: Research WebRenderer page builder extraction and write report 08-web-renderer.md.
+
+  - id: refactor_web_renderer
+    type: implement
+    skill: warden:refactoring
+    depends_on: [research_web_renderer]
+    description: Extract WebRenderer static HTML/page builder without changing WebRenderer options.
+    files:
+      modify:
+        - src/core/web-renderer.ts
+      create:
+        - src/core/web-renderer-page.ts
+    verify:
+      - bun run test -- src/__tests__/integration.test.ts src/__tests__/render-context.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: research_charts
+    type: implement
+    skill: warden:codebase-explainer
+    depends_on: [refactor_web_renderer]
+    description: Research shared chart helper extraction and write report 09-charts.md.
+
+  - id: refactor_charts
+    type: implement
+    skill: warden:test-driven-development
+    depends_on: [research_charts]
+    description: Extract the smallest shared chart helper slice selected by research.
+    files:
+      modify:
+        - src/components/data/BarChart.tsx
+        - src/components/data/LineChart.tsx
+        - src/components/data/Histogram.tsx
+        - src/components/data/AreaChart.tsx
+        - src/components/data/Heatmap.tsx
+        - src/components/data/ScatterPlot.tsx
+      create:
+        - src/components/data/chart-core/*
+    verify:
+      - bun run test -- src/__tests__/linechart.test.ts src/__tests__/components.test.ts
+      - bun run typecheck
+      - bun run test
+      - git diff --check
+      - code-map build --repo . --map-tokens 4000
+      - code-map status --format json | grep -q '"stale": false'
+
+  - id: final_review
+    type: verify
+    skill: warden:verification-before-completion
+    depends_on: [refactor_charts]
+    description: Run the final full verification gate for the serial refactor branch.
+    verify:
+      - bun run typecheck
+      - bun run test
+      - bun run test:api
+      - git diff --check
+      - code-map status --format json | grep -q '"stale": false'
