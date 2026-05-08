@@ -430,7 +430,6 @@
 - `MenuSubmenuProps` (class) — `Menu.MenuSubmenuProps`
 - `findFirstItem` (function) — `Menu.findFirstItem`
 - `findNextItem` (function) — `Menu.findNextItem`
-- `isNavigable` (function) — `Menu.isNavigable`
 - `useMenuContext` (function) — `Menu.useMenuContext`
 
 ## `src/components/extras/OptionList.tsx`
@@ -449,7 +448,6 @@
 - `OptionListSeparatorProps` (class) — `OptionList.OptionListSeparatorProps`
 - `findFirstItem` (function) — `OptionList.findFirstItem`
 - `findNextItem` (function) — `OptionList.findNextItem`
-- `isNavigable` (function) — `OptionList.isNavigable`
 - `useOptionListContext` (function) — `OptionList.useOptionListContext`
 
 ## `src/components/extras/OrderedList.tsx`
@@ -496,7 +494,6 @@
 - `SearchListProps` (class) — `SearchList.SearchListProps`
 - `applyFilter` (function) — `SearchList.applyFilter`
 - `defaultMatch` (function) — `SearchList.defaultMatch`
-- `isNavigable` (function) — `SearchList.isNavigable`
 
 ## `src/components/extras/SearchTable.tsx`
 

@@ -2,6 +2,11 @@ import { useRef } from "react";
 import type { HostTextNode } from "../../reconciler/types.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../useCleanup.js";
+import {
+  deleteLinearSelection,
+  wordLeftBySpace,
+  wordRightBySpace,
+} from "./text-edit/linear.js";
 
 export interface UseTextInputBehaviorOptions {
   value: string;
@@ -118,10 +123,9 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
 
     // Helper: delete selected text, returns {val, cursor}
     const deleteSelection = (val: string): { val: string; cursor: number } => {
-      const s = Math.min(selectionStartRef.current!, selectionEndRef.current!);
-      const e = Math.max(selectionStartRef.current!, selectionEndRef.current!);
+      const result = deleteLinearSelection(val, selectionStartRef.current!, selectionEndRef.current!);
       clearSelection();
-      return { val: val.slice(0, s) + val.slice(e), cursor: s };
+      return { val: result.value, cursor: result.cursor };
     };
 
     // Helper: update selection and notify
@@ -155,20 +159,6 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
         selectionStartRef.current = cursorRef.current;
         selectionEndRef.current = cursorRef.current;
       }
-    };
-
-    // Helper: move cursor word-left
-    const wordLeft = (cursor: number, val: string): number => {
-      while (cursor > 0 && val[cursor - 1] === " ") cursor--;
-      while (cursor > 0 && val[cursor - 1] !== " ") cursor--;
-      return cursor;
-    };
-
-    // Helper: move cursor word-right
-    const wordRight = (cursor: number, val: string): number => {
-      while (cursor < val.length && val[cursor] !== " ") cursor++;
-      while (cursor < val.length && val[cursor] === " ") cursor++;
-      return cursor;
     };
 
     /**
@@ -220,11 +210,11 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
         clearSelection();
 
         if (event.key === "backspace") {
-          const newCursor = wordLeft(cursor, val);
+          const newCursor = wordLeftBySpace(cursor, val);
           val = val.slice(0, newCursor) + val.slice(cursor);
           cursor = newCursor;
         } else {
-          const end = wordRight(cursor, val);
+          const end = wordRightBySpace(cursor, val);
           val = val.slice(0, cursor) + val.slice(end);
         }
 
@@ -321,9 +311,9 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
         ensureSelectionAnchor();
 
         if (event.key === "left") {
-          cursor = wordLeft(cursor, val);
+          cursor = wordLeftBySpace(cursor, val);
         } else {
-          cursor = wordRight(cursor, val);
+          cursor = wordRightBySpace(cursor, val);
         }
 
         cursorRef.current = cursor;
@@ -380,9 +370,9 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
         clearSelection();
 
         if (event.key === "left") {
-          cursor = wordLeft(cursor, val);
+          cursor = wordLeftBySpace(cursor, val);
         } else {
-          cursor = wordRight(cursor, val);
+          cursor = wordRightBySpace(cursor, val);
         }
 
         cursorRef.current = cursor;

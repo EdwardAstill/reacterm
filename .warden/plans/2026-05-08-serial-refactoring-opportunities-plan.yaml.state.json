@@ -1,0 +1,292 @@
+{
+  "__meta": {
+    "events": [
+      {
+        "from": "pending",
+        "node_id": "setup",
+        "note": "Created .worktrees/serial-refactors, copied plan artifacts, built fresh worktree code map. git status contains expected untracked plan/map artifacts.",
+        "timestamp": "2026-05-08T09:28:40.144833Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_cli_demo",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/01-cli-demo.md; selected grouped section modules plus catalog/shared/shell extraction.",
+        "timestamp": "2026-05-08T09:31:35.982695Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "split_cli_demo",
+        "note": "Split src/cli/demo/App.tsx into catalog, shared, shell, demo-kit, and grouped section modules. Verified with bun run test -- src/cli/__tests__/integration/inline-flag-order.integration.test.ts, bun run typecheck, git diff --check, bun run test after installing playground/ws in the worktree, and refreshed code map.",
+        "timestamp": "2026-05-08T09:38:47.191011Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_panes",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/02-panes.md. Decision: add characterization tests, marker-based normalized child metadata, and generalize existing compound Panes renderer beyond the two-child special case without a full post-layout compositor rewrite.",
+        "timestamp": "2026-05-08T09:42:36.710092Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_panes",
+        "note": "Adding characterization tests for unsupported nested Panes shapes before changing renderer internals.",
+        "timestamp": "2026-05-08T09:42:48.495843Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_panes",
+        "note": "Implemented marker-based normalized Panes metadata and generalized compound row/column renderer beyond the exact two-child nested special case. Added failing-then-passing tests for nested-column siblings, adjacent nested columns, and nested-row siblings. Verified targeted suite, typecheck, full Vitest, diff check, and refreshed code map.",
+        "timestamp": "2026-05-08T09:46:30.125425Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_tree_flatten",
+        "note": "Researching existing flattenVisible implementations and affected Tree-related tests before implementation.",
+        "timestamp": "2026-05-08T09:46:41.164683Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_tree_flatten",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/03-tree-flatten.md. Decision: add generic internal flattenVisibleTree utility and adapters that keep Tree, useTreeBehavior, TreeTable, and DirectoryTree public shapes stable.",
+        "timestamp": "2026-05-08T09:47:57.042741Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_tree_flatten",
+        "note": "Adding tree-flatten utility tests before creating the shared utility and migrating call sites.",
+        "timestamp": "2026-05-08T09:48:04.591548Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_tree_flatten",
+        "note": "Created src/utils/tree-flatten.ts and src/__tests__/tree-flatten.test.ts, then migrated Tree, useTreeBehavior, TreeTable.flatten, and DirectoryTree through stable adapters. Verified focused tree/table suite, typecheck, full Vitest, diff check, and refreshed code map.",
+        "timestamp": "2026-05-08T09:50:36.501127Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_navigation",
+        "note": "Researching duplicated isNavigable/navigation helper logic and affected tests before implementation.",
+        "timestamp": "2026-05-08T09:50:52.174738Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_navigation",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/04-navigation.md. Decision: add isNavigableItem to utils/navigation and replace four repeated local predicates without changing public APIs.",
+        "timestamp": "2026-05-08T09:51:28.401590Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_navigation",
+        "note": "Extracting isNavigableItem into utils/navigation and replacing local isNavigable predicates.",
+        "timestamp": "2026-05-08T09:51:34.143004Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_navigation",
+        "note": "Added isNavigableItem type guard to utils/navigation and migrated Menu, OptionList, SearchList, and useMenuBehavior. Verified focused tests, typecheck, full Vitest, diff check, and refreshed code map.",
+        "timestamp": "2026-05-08T09:53:45.086751Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_text_editing",
+        "note": "Researching duplicated text editing operations across input hooks/components before implementation.",
+        "timestamp": "2026-05-08T09:53:53.969716Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_text_editing",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/05-text-editing.md. Decision: extract only pure linear and multiline text-edit helpers; leave event-handler orchestration in the hooks.",
+        "timestamp": "2026-05-08T09:54:51.740082Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_text_editing",
+        "note": "Adding pure text-edit helper tests, then extracting linear and multiline helpers into src/hooks/headless/text-edit/.",
+        "timestamp": "2026-05-08T09:55:04.309932Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_text_editing",
+        "note": "Extracted pure linear and multiline text-edit helpers into src/hooks/headless/text-edit, added direct helper tests, and migrated TextInput/TextArea/ChatInput without changing hook APIs. Verified text-focused suite, typecheck, full Vitest, diff check, and refreshed code map.",
+        "timestamp": "2026-05-08T09:58:02.185157Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_layout_engine",
+        "note": "Researching layout engine split boundaries, exports, and tests before implementation.",
+        "timestamp": "2026-05-08T09:58:20.609966Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_layout_engine",
+        "note": "Wrote .warden/research/2026-05-08-serial-refactors/06-layout-engine.md. Decision: keep engine.ts as facade; extract public layout types and box-model helpers first, leaving mutually coupled grid/flex/measurement logic in place.",
+        "timestamp": "2026-05-08T09:59:04.614059Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_layout_engine",
+        "note": "Extracting layout public types and box-model helpers while preserving engine.ts imports/exports.",
+        "timestamp": "2026-05-08T09:59:10.301211Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_layout_engine",
+        "note": "Split layout public types into src/layout/types.ts and box-model helpers into src/layout/box-model.ts while keeping engine.ts as facade. Verified layout-focused suite, API surface via bun run test:api, typecheck, full Vitest, diff check, and refreshed code map.",
+        "timestamp": "2026-05-08T10:01:38.325040Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_renderer",
+        "note": "Researching renderer.ts paint-helper boundaries and affected tests before implementation.",
+        "timestamp": "2026-05-08T10:01:47.288230Z",
+        "to": "running"
+      },
+      {
+        "from": "done",
+        "node_id": "refactor_layout_engine",
+        "note": "Split layout public types into src/layout/types.ts and box-model helpers into src/layout/box-model.ts while keeping engine.ts as facade. Verified layout-focused suite, API surface via bun run test:api, typecheck, full Vitest, diff check, and refreshed unstale code map.",
+        "timestamp": "2026-05-08T10:03:24.079316Z",
+        "to": "done"
+      },
+      {
+        "from": "running",
+        "node_id": "research_renderer",
+        "note": "Researching renderer paint module boundaries with code-map and source/test evidence before implementation.",
+        "timestamp": "2026-05-08T10:03:47.142247Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_renderer",
+        "note": "Wrote 07-renderer.md. Selected a conservative first renderer split: clip helpers, text ingestion/wrapping helpers, and reuse of layout resolveScrollbarGutter; deferred stateful background/border/scrollbar extractions.",
+        "timestamp": "2026-05-08T10:05:50.632907Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_renderer",
+        "note": "Implementing the conservative renderer helper extraction chosen in 07-renderer.md.",
+        "timestamp": "2026-05-08T10:05:56.088111Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_renderer",
+        "note": "Extracted renderer clip helpers to src/reconciler/paint/clip.ts and text helpers to src/reconciler/paint/text.ts; reused layout resolveScrollbarGutter; added renderer-paint-helpers tests. Verified focused renderer suite, bun run test:api, typecheck, full Vitest, diff check, and refreshed unstale code map.",
+        "timestamp": "2026-05-08T10:08:20.755386Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_web_renderer",
+        "note": "Researching WebRenderer static page builder extraction before implementation.",
+        "timestamp": "2026-05-08T10:08:25.882028Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_web_renderer",
+        "note": "Wrote 08-web-renderer.md. Selected single-responsibility extraction of the static HTML/page builder to src/core/web-renderer-page.ts; deferred WebSocket protocol and frame diffing splits.",
+        "timestamp": "2026-05-08T10:09:18.074772Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_web_renderer",
+        "note": "Implementing static WebRenderer page-builder extraction selected in 08-web-renderer.md.",
+        "timestamp": "2026-05-08T10:09:37.392259Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_web_renderer",
+        "note": "Extracted the static WebRenderer browser page into src/core/web-renderer-page.ts and wired handleHttp to buildWebRendererPage without changing WebRenderer options/API. Added page-builder tests. Verified focused suite, typecheck, full Vitest, diff check, and refreshed unstale code map.",
+        "timestamp": "2026-05-08T10:12:31.151007Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "research_charts",
+        "note": "Researching shared chart helper extraction surface before implementation.",
+        "timestamp": "2026-05-08T10:12:37.156913Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "research_charts",
+        "note": "Wrote 09-charts.md. Selected pure chart-core helpers for braille metrics and compact number formatting; deferred component-specific range, legend, binning, color, and interaction refactors.",
+        "timestamp": "2026-05-08T10:14:03.111593Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "refactor_charts",
+        "note": "Implementing chart-core braille metrics and compact formatting helper extraction selected in 09-charts.md.",
+        "timestamp": "2026-05-08T10:14:10.451957Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "refactor_charts",
+        "note": "Added src/components/data/chart-core/format.ts for braille chart metrics and compact chart formatting; wired LineChart/AreaChart/ScatterPlot metrics and BarChart/Histogram/Heatmap formatting; added chart-core tests. Verified focused chart suite, typecheck, full Vitest, diff check, and refreshed unstale code map.",
+        "timestamp": "2026-05-08T10:16:28.359105Z",
+        "to": "done"
+      },
+      {
+        "from": "pending",
+        "node_id": "final_review",
+        "note": "Running final verification gate for serial refactor branch.",
+        "timestamp": "2026-05-08T10:17:18.444987Z",
+        "to": "running"
+      },
+      {
+        "from": "running",
+        "node_id": "final_review",
+        "note": "Final gate complete: local research artifacts were generated but remain ignored; bun run typecheck passed, bun run test passed (94 files, 964 tests), bun run test:api passed (9 tests), git diff --check passed, and code-map status stale=false.",
+        "timestamp": "2026-05-08T10:18:19.286276Z",
+        "to": "done"
+      }
+    ]
+  },
+  "final_review": "done",
+  "refactor_charts": "done",
+  "refactor_layout_engine": "done",
+  "refactor_navigation": "done",
+  "refactor_panes": "done",
+  "refactor_renderer": "done",
+  "refactor_text_editing": "done",
+  "refactor_tree_flatten": "done",
+  "refactor_web_renderer": "done",
+  "research_charts": "done",
+  "research_cli_demo": "done",
+  "research_layout_engine": "done",
+  "research_navigation": "done",
+  "research_panes": "done",
+  "research_renderer": "done",
+  "research_text_editing": "done",
+  "research_tree_flatten": "done",
+  "research_web_renderer": "done",
+  "setup": "done",
+  "split_cli_demo": "done"
+}

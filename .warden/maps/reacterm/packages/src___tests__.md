@@ -20,6 +20,10 @@
 
 - `<module>` (module) — `src/__tests__/buffer.test.ts:<module>`
 
+## `src/__tests__/chart-core.test.ts`
+
+- `<module>` (module) — `src/__tests__/chart-core.test.ts:<module>`
+
 ## `src/__tests__/component-boundary-layout.test.ts`
 
 - `<module>` (module) — `src/__tests__/component-boundary-layout.test.ts:<module>`
@@ -175,6 +179,10 @@
 
 - `<module>` (module) — `src/__tests__/render-context.test.ts:<module>`
 
+## `src/__tests__/renderer-paint-helpers.test.ts`
+
+- `<module>` (module) — `src/__tests__/renderer-paint-helpers.test.ts:<module>`
+
 ## `src/__tests__/robustness.test.ts`
 
 - `<module>` (module) — `src/__tests__/robustness.test.ts:<module>`
@@ -241,6 +249,10 @@
 
 - `<module>` (module) — `src/__tests__/testing-scenario.test.ts:<module>`
 
+## `src/__tests__/text-edit.test.ts`
+
+- `<module>` (module) — `src/__tests__/text-edit.test.ts:<module>`
+
 ## `src/__tests__/text-injection-safety.test.ts`
 
 - `<module>` (module) — `src/__tests__/text-injection-safety.test.ts:<module>`
@@ -259,6 +271,11 @@
 - `Capture` (function) — `theme.test.Capture`
 - `Capture` (function) — `theme.test.Capture`
 - `Capture` (function) — `theme.test.Capture`
+
+## `src/__tests__/tree-flatten.test.ts`
+
+- `<module>` (module) — `src/__tests__/tree-flatten.test.ts:<module>`
+- `Node` (class) — `tree-flatten.test.Node`
 
 ## `src/__tests__/tree-reorder.test.ts`
 
@@ -290,3 +307,7 @@
 
 - `<module>` (module) — `src/__tests__/use-debounced-value.test.ts:<module>`
 - `Probe` (function) — `use-debounced-value.test.Probe`
+
+## `src/__tests__/web-renderer-page.test.ts`
+
+- `<module>` (module) — `src/__tests__/web-renderer-page.test.ts:<module>`

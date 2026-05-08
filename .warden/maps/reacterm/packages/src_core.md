@@ -540,6 +540,12 @@
 - `isWasmTokenizerAvailable` (function) — `wasm-tokenizer.isWasmTokenizerAvailable`
 - `wasmTokenizeLine` (function) — `wasm-tokenizer.wasmTokenizeLine`
 
+## `src/core/web-renderer-page.ts`
+
+- `<module>` (module) — `src/core/web-renderer-page.ts:<module>`
+- `WebRendererPageOptions` (class) — `web-renderer-page.WebRendererPageOptions`
+- `buildWebRendererPage` (function) — `web-renderer-page.buildWebRendererPage`
+
 ## `src/core/web-renderer.ts`
 
 - `<module>` (module) — `src/core/web-renderer.ts:<module>`
@@ -549,7 +555,6 @@
 - `WebRendererOptions` (class) — `web-renderer.WebRendererOptions`
 - `WsClient` (class) — `web-renderer.WsClient`
 - `buildAnsi256Palette` (function) — `web-renderer.buildAnsi256Palette`
-- `buildHtmlPage` (method) — `web-renderer.WebRenderer.buildHtmlPage`
 - `clientCount` (method) — `web-renderer.WebRenderer.clientCount`
 - `colorToCSS` (function) — `web-renderer.colorToCSS`
 - `constructor` (method) — `web-renderer.WebRenderer.constructor`

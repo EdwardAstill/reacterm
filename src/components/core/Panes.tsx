@@ -7,17 +7,19 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 // T-junction characters for each border style (not stored in BORDER_CHARS)
 const JUNCTIONS: Record<Exclude<BorderStyle, "none">, {
-  top: string; bottom: string; left: string; right: string;
+  top: string; bottom: string; left: string; right: string; center: string;
 }> = {
-  single: { top: "┬", bottom: "┴", left: "├", right: "┤" },
-  double: { top: "╦", bottom: "╩", left: "╠", right: "╣" },
-  heavy:  { top: "┳", bottom: "┻", left: "┣", right: "┫" },
-  round:  { top: "┬", bottom: "┴", left: "├", right: "┤" },
-  ascii:  { top: "+", bottom: "+", left: "+", right: "+" },
-  storm:  { top: "┳", bottom: "┻", left: "┣", right: "┫" },
+  single: { top: "┬", bottom: "┴", left: "├", right: "┤", center: "┼" },
+  double: { top: "╦", bottom: "╩", left: "╠", right: "╣", center: "╬" },
+  heavy:  { top: "┳", bottom: "┻", left: "┣", right: "┫", center: "╋" },
+  round:  { top: "┬", bottom: "┴", left: "├", right: "┤", center: "┼" },
+  ascii:  { top: "+", bottom: "+", left: "+", right: "+", center: "+" },
+  storm:  { top: "┳", bottom: "┻", left: "┣", right: "┫", center: "╋" },
 };
 
 const FILL = 500;
+const PANES_MARKER = Symbol.for("reacterm.Panes");
+const PANE_MARKER = Symbol.for("reacterm.Pane");
 
 // ── Module-scope builders ──────────────────────────────────────────────────
 // Hoisted out of PanesImpl's render body so they aren't redefined per render.
@@ -208,6 +210,59 @@ const stripPanesProps = (child: React.ReactElement<Record<string, unknown>>) => 
   return layoutProps;
 };
 
+type MarkedElementType = {
+  [PANES_MARKER]?: true;
+  [PANE_MARKER]?: true;
+  type?: MarkedElementType;
+};
+
+type PaneNode =
+  | {
+      kind: "leaf";
+      element: React.ReactElement<Record<string, unknown>>;
+      layoutProps: Record<string, unknown>;
+      isPane: boolean;
+    }
+  | {
+      kind: "split";
+      element: React.ReactElement<Record<string, unknown>>;
+      direction: "row" | "column";
+      children: PaneNode[];
+      layoutProps: Record<string, unknown>;
+    };
+
+const hasMarker = (elementType: unknown, marker: typeof PANES_MARKER | typeof PANE_MARKER): boolean => {
+  const marked = elementType as MarkedElementType | undefined;
+  return Boolean(marked?.[marker] || marked?.type?.[marker]);
+};
+
+const isPanesElement = (element: React.ReactElement<Record<string, unknown>>): boolean =>
+  hasMarker(element.type, PANES_MARKER);
+
+const isPaneElement = (element: React.ReactElement<Record<string, unknown>>): boolean =>
+  hasMarker(element.type, PANE_MARKER);
+
+const extractLayoutProps = stripPanesProps;
+
+const normalizePaneTree = (element: React.ReactElement<Record<string, unknown>>): PaneNode => {
+  const layoutProps = extractLayoutProps(element);
+  if (!isPanesElement(element)) {
+    return { kind: "leaf", element, layoutProps, isPane: isPaneElement(element) };
+  }
+
+  const children = React.Children.toArray(element.props["children"] as React.ReactNode).filter(
+    React.isValidElement,
+  ) as React.ReactElement<Record<string, unknown>>[];
+
+  return {
+    kind: "split",
+    element,
+    direction: (element.props["direction"] as "row" | "column" | undefined) ?? "row",
+    children: children.map(normalizePaneTree),
+    layoutProps,
+  };
+};
+
 const WRAPPER_LAYOUT_KEYS = [
   "width", "height", "minWidth", "minHeight", "maxWidth", "maxHeight",
   "flex", "flexGrow", "flexShrink", "flexBasis", "alignSelf",
@@ -250,6 +305,7 @@ export const Pane = React.memo(function Pane(props: PaneProps): React.ReactEleme
   const { children, ...rest } = props;
   return React.createElement("tui-box", rest as any, children);
 });
+(Pane as any)[PANE_MARKER] = true;
 
 /**
  * Lays out children side-by-side (row) or stacked (column) with proper T-junction
@@ -291,6 +347,7 @@ function PanesImpl(rawProps: PanesProps): React.ReactElement {
   const kids = React.Children.toArray(children).filter(
     React.isValidElement,
   ) as React.ReactElement<Record<string, unknown>>[];
+  const nodes = kids.map(normalizePaneTree);
 
   if (borderStyle === "none" || kids.length === 0) {
     return React.createElement(
@@ -471,110 +528,140 @@ function PanesImpl(rawProps: PanesProps): React.ReactElement {
     vertCol(ctx, bc.vertical, bc.vertical, "__right"),
   );
 
-  // ── Compound: column-direction with a nested row-direction Panes ────────
-  // Symmetric to the row+nested-column case below. Caps and seps are
-  // height-1 compound horizontal rows with ┬/┴ junctions at each nested
-  // pane's vertical boundary.
-  if (direction === "column" && kids.length === 2) {
-    const nestedIndex = kids.findIndex(child =>
-      child.type === Panes && (child.props["direction"] ?? "row") === "row",
-    );
-    if (nestedIndex !== -1) {
-      const nestedChild = kids[nestedIndex]!;
-      const otherChild = kids[1 - nestedIndex]!;
-      const nestedKids = React.Children.toArray(nestedChild.props["children"] as React.ReactNode).filter(
-        React.isValidElement,
-      ) as React.ReactElement<Record<string, unknown>>[];
-      if (nestedKids.length > 1) {
-        const nestedOnTop = nestedIndex === 0;
-        const elements: React.ReactNode[] = [
-          compoundHorizRow(
-            ctx,
-            bc.topLeft,
-            nestedOnTop ? jc.top : undefined,
-            bc.topRight,
-            nestedKids,
-            "__top",
-          ),
-        ];
+  const nestedColumnKidsFor = (node: PaneNode): React.ReactElement<Record<string, unknown>>[] | undefined =>
+    node.kind === "split" && node.direction === "column" && node.children.length > 1
+      ? node.children.map(child => child.element)
+      : undefined;
 
-        if (nestedOnTop) {
-          elements.push(renderNestedRowContent(nestedChild, nestedKids, "p0"));
-          elements.push(compoundHorizRow(ctx, jc.left, jc.bottom, jc.right, nestedKids, "__sep0"));
-          elements.push(renderSinglePaneRowContent(otherChild, "p1"));
-        } else {
-          elements.push(renderSinglePaneRowContent(otherChild, "p0"));
-          elements.push(compoundHorizRow(ctx, jc.left, jc.top, jc.right, nestedKids, "__sep0"));
-          elements.push(renderNestedRowContent(nestedChild, nestedKids, "p1"));
-        }
+  const nestedRowKidsFor = (node: PaneNode): React.ReactElement<Record<string, unknown>>[] | undefined =>
+    node.kind === "split" && node.direction === "row" && node.children.length > 1
+      ? node.children.map(child => child.element)
+      : undefined;
 
-        elements.push(compoundHorizRow(
-          ctx,
-          bc.bottomLeft,
-          nestedOnTop ? undefined : jc.bottom,
-          bc.bottomRight,
-          nestedKids,
-          "__bot",
-        ));
+  const renderRowCompoundChild = (node: PaneNode, index: number): React.ReactElement => {
+    const nestedKids = nestedColumnKidsFor(node);
+    return nestedKids
+      ? renderNestedColumnContent(node.element, nestedKids, `p${index}`)
+      : renderSinglePaneContent(node.element, `p${index}`);
+  };
 
-        return React.createElement(
-          "tui-box",
-          { flexDirection: "column" as const, overflow: "hidden" as const, ...containerProps },
-          ...elements,
-        );
-      }
+  const renderColumnCompoundChild = (node: PaneNode, index: number): React.ReactElement => {
+    const nestedKids = nestedRowKidsFor(node);
+    return nestedKids
+      ? renderNestedRowContent(node.element, nestedKids, `p${index}`)
+      : renderSinglePaneRowContent(node.element, `p${index}`);
+  };
+
+  const compoundVertColFor = (
+    leftNode: PaneNode | undefined,
+    rightNode: PaneNode | undefined,
+    topChar: string,
+    bottomChar: string,
+    key: React.Key,
+  ) => {
+    const leftKids = leftNode ? nestedColumnKidsFor(leftNode) : undefined;
+    const rightKids = rightNode ? nestedColumnKidsFor(rightNode) : undefined;
+    const nestedKids = leftKids ?? rightKids;
+    if (!nestedKids) return vertCol(ctx, topChar, bottomChar, key);
+    const separatorChar = leftKids && rightKids ? jc.center : leftKids ? jc.right : jc.left;
+    return compoundVertCol(ctx, topChar, separatorChar, bottomChar, nestedKids, key);
+  };
+
+  const compoundHorizRowFor = (
+    topNode: PaneNode | undefined,
+    bottomNode: PaneNode | undefined,
+    leftChar: string,
+    rightChar: string,
+    key: React.Key,
+  ) => {
+    const topKids = topNode ? nestedRowKidsFor(topNode) : undefined;
+    const bottomKids = bottomNode ? nestedRowKidsFor(bottomNode) : undefined;
+    const nestedKids = topKids ?? bottomKids;
+    if (!nestedKids) return horizRow(ctx, leftChar, rightChar, key);
+    const separatorChar = topKids && bottomKids ? jc.center : topKids ? jc.bottom : jc.top;
+    return compoundHorizRow(ctx, leftChar, separatorChar, rightChar, nestedKids, key);
+  };
+
+  // ── Compound row layout with any nested column children ─────────────────
+  if (direction === "row" && nodes.some(node => nestedColumnKidsFor(node))) {
+    const elements: React.ReactNode[] = [];
+    if (borderLeft) {
+      elements.push(compoundVertColFor(
+        undefined,
+        nodes[0],
+        borderTop ? bc.topLeft : bc.vertical,
+        borderBottom ? bc.bottomLeft : bc.vertical,
+        "__left",
+      ));
     }
+    nodes.forEach((node, i) => {
+      elements.push(renderRowCompoundChild(node, i));
+      if (i < nodes.length - 1) {
+        elements.push(compoundVertColFor(
+          node,
+          nodes[i + 1],
+          borderTop ? jc.top : bc.vertical,
+          borderBottom ? jc.bottom : bc.vertical,
+          `__sep${i}`,
+        ));
+      }
+    });
+    if (borderRight) {
+      elements.push(compoundVertColFor(
+        nodes[nodes.length - 1],
+        undefined,
+        borderTop ? bc.topRight : bc.vertical,
+        borderBottom ? bc.bottomRight : bc.vertical,
+        "__right",
+      ));
+    }
+
+    return React.createElement(
+      "tui-box",
+      { flexDirection: "row" as const, overflow: "hidden" as const, ...containerProps },
+      ...elements,
+    );
   }
 
-  if (direction === "row" && kids.length === 2) {
-    const nestedIndex = kids.findIndex(child =>
-      child.type === Panes && (child.props["direction"] ?? "row") === "column",
-    );
-    if (nestedIndex !== -1) {
-      const nestedChild = kids[nestedIndex]!;
-      const otherChild = kids[1 - nestedIndex]!;
-      const nestedKids = React.Children.toArray(nestedChild.props["children"] as React.ReactNode).filter(
-        React.isValidElement,
-      ) as React.ReactElement<Record<string, unknown>>[];
-      if (nestedKids.length > 1) {
-        const nestedOnLeft = nestedIndex === 0;
-        const elements: React.ReactNode[] = [
-          compoundVertCol(
-            ctx,
-            bc.topLeft,
-            nestedOnLeft ? jc.left : undefined,
-            bc.bottomLeft,
-            nestedKids,
-            "__left",
-          ),
-        ];
-
-        if (nestedOnLeft) {
-          elements.push(renderNestedColumnContent(nestedChild, nestedKids, "p0"));
-          elements.push(compoundVertCol(ctx, jc.top, jc.right, jc.bottom, nestedKids, "__sep0"));
-          elements.push(renderSinglePaneContent(otherChild, "p1"));
-        } else {
-          elements.push(renderSinglePaneContent(otherChild, "p0"));
-          elements.push(compoundVertCol(ctx, jc.top, jc.left, jc.bottom, nestedKids, "__sep0"));
-          elements.push(renderNestedColumnContent(nestedChild, nestedKids, "p1"));
-        }
-
-        elements.push(compoundVertCol(
-          ctx,
-          bc.topRight,
-          nestedOnLeft ? undefined : jc.right,
-          bc.bottomRight,
-          nestedKids,
-          "__right",
-        ));
-
-        return React.createElement(
-          "tui-box",
-          { flexDirection: "row" as const, overflow: "hidden" as const, ...containerProps },
-          ...elements,
-        );
-      }
+  // ── Compound column layout with any nested row children ─────────────────
+  if (direction === "column" && nodes.some(node => nestedRowKidsFor(node))) {
+    const elements: React.ReactNode[] = [];
+    if (borderTop) {
+      elements.push(compoundHorizRowFor(
+        undefined,
+        nodes[0],
+        borderLeft ? bc.topLeft : bc.horizontal,
+        borderRight ? bc.topRight : bc.horizontal,
+        "__top",
+      ));
     }
+    nodes.forEach((node, i) => {
+      elements.push(renderColumnCompoundChild(node, i));
+      if (i < nodes.length - 1) {
+        elements.push(compoundHorizRowFor(
+          node,
+          nodes[i + 1],
+          borderLeft ? jc.left : bc.horizontal,
+          borderRight ? jc.right : bc.horizontal,
+          `__sep${i}`,
+        ));
+      }
+    });
+    if (borderBottom) {
+      elements.push(compoundHorizRowFor(
+        nodes[nodes.length - 1],
+        undefined,
+        borderLeft ? bc.bottomLeft : bc.horizontal,
+        borderRight ? bc.bottomRight : bc.horizontal,
+        "__bot",
+      ));
+    }
+
+    return React.createElement(
+      "tui-box",
+      { flexDirection: "column" as const, overflow: "hidden" as const, ...containerProps },
+      ...elements,
+    );
   }
 
   // ── Column layout ─────────────────────────────────────────────────────────
@@ -666,7 +753,7 @@ function PanesImpl(rawProps: PanesProps): React.ReactElement {
   );
 }
 
-(PanesImpl as any).__reactermPanes = true;
+(PanesImpl as any)[PANES_MARKER] = true;
 
 export const Panes = React.memo(PanesImpl);
-(Panes as any).__reactermPanes = true;
+(Panes as any)[PANES_MARKER] = true;

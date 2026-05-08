@@ -120,7 +120,6 @@
 - `UseMenuBehaviorResult` (class) — `useMenuBehavior.UseMenuBehaviorResult`
 - `findFirstItem` (function) — `useMenuBehavior.findFirstItem`
 - `findNextItem` (function) — `useMenuBehavior.findNextItem`
-- `isNavigable` (function) — `useMenuBehavior.isNavigable`
 - `useMenuBehavior` (function) — `useMenuBehavior.useMenuBehavior`
 
 ## `src/hooks/headless/usePaginatorBehavior.ts`
@@ -171,19 +170,11 @@
 ## `src/hooks/headless/useTextAreaBehavior.ts`
 
 - `<module>` (module) — `src/hooks/headless/useTextAreaBehavior.ts:<module>`
-- `Pos` (class) — `useTextAreaBehavior.Pos`
 - `TextAreaPos` (class) — `useTextAreaBehavior.TextAreaPos`
 - `TextAreaSelectionRange` (class) — `useTextAreaBehavior.TextAreaSelectionRange`
 - `UseTextAreaBehaviorOptions` (class) — `useTextAreaBehavior.UseTextAreaBehaviorOptions`
 - `UseTextAreaBehaviorResult` (class) — `useTextAreaBehavior.UseTextAreaBehaviorResult`
-- `clampPos` (function) — `useTextAreaBehavior.clampPos`
-- `comparePos` (function) — `useTextAreaBehavior.comparePos`
-- `joinLines` (function) — `useTextAreaBehavior.joinLines`
-- `orderedSelection` (function) — `useTextAreaBehavior.orderedSelection`
-- `splitLines` (function) — `useTextAreaBehavior.splitLines`
 - `useTextAreaBehavior` (function) — `useTextAreaBehavior.useTextAreaBehavior`
-- `wordLeft` (function) — `useTextAreaBehavior.wordLeft`
-- `wordRight` (function) — `useTextAreaBehavior.wordRight`
 
 ## `src/hooks/headless/useTextInputBehavior.ts`
 
@@ -210,7 +201,6 @@
 - `collectExpandedKeys` (function) — `useTreeBehavior.collectExpandedKeys`
 - `collectVisibleKeys` (function) — `useTreeBehavior.collectVisibleKeys`
 - `findNode` (function) — `useTreeBehavior.findNode`
-- `flattenVisible` (function) — `useTreeBehavior.flattenVisible`
 - `useTreeBehavior` (function) — `useTreeBehavior.useTreeBehavior`
 
 ## `src/hooks/headless/useVirtualListBehavior.ts`

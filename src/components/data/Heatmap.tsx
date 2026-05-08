@@ -7,6 +7,7 @@ import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getColorAt } from "../../utils/color.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
+import { formatLegendNumber } from "./chart-core/format.js";
 
 export interface HeatmapProps extends StormLayoutStyleProps {
   /** 2D data: rows of values. data[row][col] */
@@ -51,11 +52,7 @@ function brightness(hex: string): number {
 }
 
 function formatLegendValue(value: number): string {
-  if (value === 0) return "0";
-  if (Math.abs(value) >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
-  if (Math.abs(value) >= 1_000) return (value / 1_000).toFixed(1) + "k";
-  if (Number.isInteger(value)) return String(value);
-  return value.toFixed(1);
+  return formatLegendNumber(value);
 }
 
 export const Heatmap = React.memo(function Heatmap(rawProps: HeatmapProps): React.ReactElement {

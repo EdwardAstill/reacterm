@@ -1,3 +1,5 @@
+import { flattenVisibleTree } from "../../utils/tree-flatten.js";
+
 export const MAX_TREE_DEPTH = 100;
 
 export interface TreeTableRow {
@@ -27,25 +29,14 @@ export function flattenVisible(
   parentKey: string | null = null,
 ): FlatTreeTableRow[] {
   if (depth >= MAX_TREE_DEPTH) return [];
-  const out: FlatTreeTableRow[] = [];
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]!;
-    const isLast = i === rows.length - 1;
-    const hasChildren = row.children !== undefined && row.children.length > 0;
-    const path = [...pathPrefix, i];
-    out.push({
-      row,
-      depth,
-      isLast,
-      parentIsLast: [...parentIsLast],
-      hasChildren,
-      siblingIndex: i,
-      path,
-      parentKey,
-    });
-    if (hasChildren && row.expanded) {
-      out.push(...flattenVisible(row.children!, depth + 1, [...parentIsLast, isLast], path, row.key));
-    }
-  }
-  return out;
+  return flattenVisibleTree(rows, { maxDepth: MAX_TREE_DEPTH - depth }).map((entry) => ({
+    row: entry.node,
+    depth: depth + entry.depth,
+    isLast: entry.isLast,
+    parentIsLast: [...parentIsLast, ...entry.parentIsLast],
+    hasChildren: entry.hasChildren,
+    siblingIndex: entry.siblingIndex,
+    path: [...pathPrefix, ...entry.path],
+    parentKey: entry.parent?.key ?? parentKey,
+  }));
 }

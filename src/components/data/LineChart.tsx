@@ -7,6 +7,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 import { resample, formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
+import { getBrailleChartMetrics } from "./chart-core/format.js";
 
 export interface LineChartSeries {
   data: number[];
@@ -157,11 +158,8 @@ export const LineChart = React.memo(function LineChart(rawProps: LineChartProps)
 
   // ── Compute chart area dimensions ─────────────────────────────
 
-  const gutterWidth = showAxes ? Y_GUTTER_WIDTH : 0;
-  const chartCols = Math.max(1, cellWidth - gutterWidth);
-  const chartRows = Math.max(1, cellHeight);
-  const pixelWidth = chartCols * 2;
-  const pixelHeight = chartRows * 4;
+  const { gutterWidth, chartCols, chartRows, pixelWidth, pixelHeight } =
+    getBrailleChartMetrics(cellWidth, cellHeight, showAxes ? Y_GUTTER_WIDTH : 0);
 
   // ── Slice data to zoom window ─────────────────────────────────
 

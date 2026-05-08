@@ -11,6 +11,7 @@ import {
   computeScrollWindow,
   findFirstNavigable,
   findNextNavigable,
+  isNavigableItem,
 } from "../../utils/navigation.js";
 import type { KeyEvent } from "../../input/types.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
@@ -70,10 +71,6 @@ function defaultMatch<T extends SearchListItem>(item: T, q: string): boolean {
   if (q === "") return true;
   const haystack = (item.searchableText ?? item.label).toLowerCase();
   return haystack.includes(q);
-}
-
-function isNavigable(item: SearchListItem | undefined): boolean {
-  return !!item && !item.disabled;
 }
 
 function applyFilter<T extends SearchListItem>(
@@ -151,7 +148,7 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
   const queryRef = useRef("");
   const filteredRef = useRef<TItem[]>(items);
   const activeIndexRef = useRef(
-    findFirstNavigable(items.length, (i) => isNavigable(items[i])),
+    findFirstNavigable(items.length, (i) => isNavigableItem(items[i])),
   );
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -163,7 +160,7 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
     if (activeIndexRef.current >= filteredRef.current.length) {
       activeIndexRef.current = findFirstNavigable(
         filteredRef.current.length,
-        (i) => isNavigable(filteredRef.current[i]),
+        (i) => isNavigableItem(filteredRef.current[i]),
       );
     }
   }
@@ -180,14 +177,14 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
     } else if (activeIndexRef.current >= filteredRef.current.length) {
       activeIndexRef.current = findFirstNavigable(
         filteredRef.current.length,
-        (i) => isNavigable(filteredRef.current[i]),
+        (i) => isNavigableItem(filteredRef.current[i]),
       );
-    } else if (!isNavigable(filteredRef.current[activeIndexRef.current])) {
+    } else if (!isNavigableItem(filteredRef.current[activeIndexRef.current])) {
       activeIndexRef.current = findNextNavigable(
         filteredRef.current.length,
         activeIndexRef.current,
         1,
-        (i) => isNavigable(filteredRef.current[i]),
+        (i) => isNavigableItem(filteredRef.current[i]),
       );
     }
   }, []);
@@ -231,7 +228,7 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
         list.length,
         activeIndexRef.current,
         -1,
-        (i) => isNavigable(list[i]),
+        (i) => isNavigableItem(list[i]),
       );
       if (next !== activeIndexRef.current) {
         activeIndexRef.current = next;
@@ -250,7 +247,7 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
         list.length,
         activeIndexRef.current,
         1,
-        (i) => isNavigable(list[i]),
+        (i) => isNavigableItem(list[i]),
       );
       if (next !== activeIndexRef.current) {
         activeIndexRef.current = next;
@@ -264,7 +261,7 @@ export function SearchList<TItem extends SearchListItem = SearchListItem>(
     if (event.key === "return") {
       event.consumed = true;
       const item = filteredRef.current[activeIndexRef.current];
-      if (item && isNavigable(item)) {
+      if (isNavigableItem(item)) {
         onSelectRef.current?.(item.value, item);
       }
       return;

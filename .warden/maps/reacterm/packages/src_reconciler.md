@@ -142,7 +142,6 @@
 - `<module>` (module) — `src/reconciler/renderer.ts:<module>`
 - `BorderDimFlags` (class) — `renderer.BorderDimFlags`
 - `BorderSideFlags` (class) — `renderer.BorderSideFlags`
-- `ClipRect` (class) — `renderer.ClipRect`
 - `MeasuredLayout` (class) — `renderer.MeasuredLayout`
 - `PaintResult` (class) — `renderer.PaintResult`
 - `blendBg` (function) — `renderer.blendBg`
@@ -157,9 +156,7 @@
 - `gradientT` (function) — `renderer.gradientT`
 - `hasAnyDirty` (function) — `renderer.hasAnyDirty`
 - `hasAnyDirtyElement` (function) — `renderer.hasAnyDirtyElement`
-- `intersectClip` (function) — `renderer.intersectClip`
 - `invalidateStyledRunsCache` (function) — `renderer.invalidateStyledRunsCache`
-- `isClipEmpty` (function) — `renderer.isClipEmpty`
 - `lerpColor` (function) — `renderer.lerpColor`
 - `paint` (function) — `renderer.paint`
 - `paintBackgroundPattern` (function) — `renderer.paintBackgroundPattern`
@@ -174,10 +171,7 @@
 - `paintText` (function) — `renderer.paintText`
 - `paintTextInput` (function) — `renderer.paintTextInput`
 - `repaint` (function) — `renderer.repaint`
-- `resolveScrollbarGutter` (function) — `renderer.resolveScrollbarGutter`
 - `storeMeasureLayout` (function) — `renderer.storeMeasureLayout`
-- `stripAnsi` (function) — `renderer.stripAnsi`
-- `wrapText` (function) — `renderer.wrapText`
 
 ## `src/reconciler/types.ts`
 

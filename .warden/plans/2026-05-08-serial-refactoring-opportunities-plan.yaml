@@ -52,9 +52,9 @@ nodes:
         - src/cli/demo/sections/*
         - src/cli/demo/*.ts
     verify:
-      - bun test src/__tests__/robustness.test.ts src/__tests__/demo-calendar.test.ts src/__tests__/overlay-demo-no-warn.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/robustness.test.ts src/__tests__/demo-calendar.test.ts src/__tests__/overlay-demo-no-warn.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -75,9 +75,9 @@ nodes:
         - src/components/core/Panes.tsx
         - src/__tests__/panes.test.ts
     verify:
-      - bun test src/__tests__/panes.test.ts src/__tests__/layout.test.ts src/__tests__/robustness.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/panes.test.ts src/__tests__/layout.test.ts src/__tests__/robustness.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -103,9 +103,9 @@ nodes:
         - src/utils/tree-flatten.ts
         - src/__tests__/tree-flatten.test.ts
     verify:
-      - bun test src/__tests__/tree.test.ts src/__tests__/tree-table.test.ts src/__tests__/layout-box-api.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/tree.test.ts src/__tests__/tree-table.test.ts src/__tests__/layout-box-api.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -129,9 +129,9 @@ nodes:
         - src/components/extras/SearchList.tsx
         - src/hooks/headless/useMenuBehavior.ts
     verify:
-      - bun test src/__tests__/select.test.ts src/__tests__/search-table.test.ts src/__tests__/components.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/select.test.ts src/__tests__/search-table.test.ts src/__tests__/components.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -155,9 +155,9 @@ nodes:
       create:
         - src/hooks/headless/text-edit/*
     verify:
-      - bun test src/__tests__/textinput.test.ts src/__tests__/testing-driver.test.ts src/__tests__/robustness.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/textinput.test.ts src/__tests__/testing-driver.test.ts src/__tests__/robustness.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -179,10 +179,10 @@ nodes:
       create:
         - src/layout/*.ts
     verify:
-      - bun test src/__tests__/layout.test.ts src/__tests__/layout-properties.test.ts src/__tests__/layout-engine-scroll.test.ts src/__tests__/component-boundary-layout.test.ts
-      - bun test src/__tests__/api-surface.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/layout.test.ts src/__tests__/layout-properties.test.ts src/__tests__/layout-engine-scroll.test.ts src/__tests__/component-boundary-layout.test.ts
+      - bun run test:api
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -204,10 +204,10 @@ nodes:
       create:
         - src/reconciler/paint/*
     verify:
-      - bun test src/__tests__/integration.test.ts src/__tests__/overlay-free-position.test.ts src/__tests__/overlay-component.test.ts src/__tests__/scrollview.test.ts src/__tests__/text-injection-safety.test.ts
-      - bun test src/__tests__/api-surface.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/integration.test.ts src/__tests__/overlay-free-position.test.ts src/__tests__/overlay-component.test.ts src/__tests__/scrollview.test.ts src/__tests__/text-injection-safety.test.ts
+      - bun run test:api
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -229,9 +229,9 @@ nodes:
       create:
         - src/core/web-renderer-page.ts
     verify:
-      - bun test src/__tests__/integration.test.ts src/__tests__/render-context.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/integration.test.ts src/__tests__/render-context.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -258,9 +258,9 @@ nodes:
       create:
         - src/components/data/chart-core/*
     verify:
-      - bun test src/__tests__/linechart.test.ts src/__tests__/components.test.ts
-      - bun x tsc --noEmit
-      - bun test
+      - bun run test -- src/__tests__/linechart.test.ts src/__tests__/components.test.ts
+      - bun run typecheck
+      - bun run test
       - git diff --check
       - code-map build --repo . --map-tokens 4000
       - code-map status --format json | grep -q '"stale": false'
@@ -271,11 +271,8 @@ nodes:
     depends_on: [refactor_charts]
     description: Run the final full verification gate for the serial refactor branch.
     verify:
-      - test -f .warden/research/2026-05-08-serial-refactors/01-cli-demo.md
-      - test -f .warden/research/2026-05-08-serial-refactors/09-charts.md
-      - bun x tsc --noEmit
-      - bun test
-      - bun run build
-      - bun test src/__tests__/api-surface.test.ts
+      - bun run typecheck
+      - bun run test
+      - bun run test:api
       - git diff --check
       - code-map status --format json | grep -q '"stale": false'

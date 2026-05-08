@@ -76,9 +76,11 @@
 ## `src/utils/navigation.ts`
 
 - `<module>` (module) — `src/utils/navigation.ts:<module>`
+- `NavigableItemLike` (class) — `navigation.NavigableItemLike`
 - `computeScrollWindow` (function) — `navigation.computeScrollWindow`
 - `findFirstNavigable` (function) — `navigation.findFirstNavigable`
 - `findNextNavigable` (function) — `navigation.findNextNavigable`
+- `isNavigableItem` (function) — `navigation.isNavigableItem`
 
 ## `src/utils/pretty-format.ts`
 
@@ -117,6 +119,15 @@
 - `getDialogVariantColors` (function) — `theme-maps.getDialogVariantColors`
 - `getTypeColors` (function) — `theme-maps.getTypeColors`
 - `getVariantColors` (function) — `theme-maps.getVariantColors`
+
+## `src/utils/tree-flatten.ts`
+
+- `<module>` (module) — `src/utils/tree-flatten.ts:<module>`
+- `DEFAULT_MAX_TREE_DEPTH` (constant) — `tree-flatten.DEFAULT_MAX_TREE_DEPTH`
+- `FlatVisibleTreeEntry` (class) — `tree-flatten.FlatVisibleTreeEntry`
+- `FlattenVisibleTreeOptions` (class) — `tree-flatten.FlattenVisibleTreeOptions`
+- `flattenVisibleTree` (function) — `tree-flatten.flattenVisibleTree`
+- `visit` (function) — `tree-flatten.visit`
 
 ## `src/utils/tree-sitter.ts`
 

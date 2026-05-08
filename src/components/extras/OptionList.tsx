@@ -7,7 +7,7 @@ import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
-import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav, computeScrollWindow } from "../../utils/navigation.js";
+import { findNextNavigable as findNextNav, findFirstNavigable as findFirstNav, computeScrollWindow, isNavigableItem } from "../../utils/navigation.js";
 
 export interface OptionListItem {
   /** Display text for the option. */
@@ -138,16 +138,12 @@ function OptionListSeparator({ children }: OptionListSeparatorProps): React.Reac
 
 const SEPARATOR_LINE = "\u2500\u2500\u2500";
 
-function isNavigable(item: OptionListItem): boolean {
-  return !item.separator && !item.disabled;
-}
-
 function findNextItem(items: OptionListItem[], from: number, direction: 1 | -1): number {
-  return findNextNav(items.length, from, direction, (i) => isNavigable(items[i]!));
+  return findNextNav(items.length, from, direction, (i) => isNavigableItem(items[i]));
 }
 
 function findFirstItem(items: OptionListItem[]): number {
-  return findFirstNav(items.length, (i) => isNavigable(items[i]!));
+  return findFirstNav(items.length, (i) => isNavigableItem(items[i]));
 }
 
 const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps): React.ReactElement {
@@ -182,7 +178,7 @@ const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps)
   if (activeIndexRef.current >= items.length) {
     activeIndexRef.current = findFirstItem(items);
   }
-  if (items[activeIndexRef.current] && !isNavigable(items[activeIndexRef.current]!)) {
+  if (items[activeIndexRef.current] && !isNavigableItem(items[activeIndexRef.current])) {
     activeIndexRef.current = findNextItem(items, activeIndexRef.current, 1);
   }
 
@@ -213,7 +209,7 @@ const OptionListBase = React.memo(function OptionList(rawProps: OptionListProps)
       } else if (event.key === "return") {
         event.consumed = true;
         const item = itms[activeIndexRef.current];
-        if (item && isNavigable(item) && cb) {
+        if (isNavigableItem(item) && cb) {
           cb(item.value);
         }
       }

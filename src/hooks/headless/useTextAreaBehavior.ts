@@ -1,6 +1,16 @@
 import { useRef } from "react";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../useCleanup.js";
+import {
+  clampPos,
+  comparePos,
+  joinLines,
+  orderedSelection,
+  splitLines,
+  wordLeftInLine,
+  wordRightInLine,
+  type TextEditPos,
+} from "./text-edit/multiline.js";
 
 /** A 2D cursor position within the text area. */
 export interface TextAreaPos {
@@ -60,55 +70,7 @@ export interface UseTextAreaBehaviorResult {
   focusId: string;
 }
 
-// ── Pure utility functions ────────────────────────────────────────
-
-interface Pos {
-  row: number;
-  col: number;
-}
-
-function splitLines(text: string): string[] {
-  const lines = text.split("\n");
-  return lines.length === 0 ? [""] : lines;
-}
-
-function joinLines(lines: string[]): string {
-  return lines.join("\n");
-}
-
-/** Clamp a position to valid bounds within the given lines array. */
-function clampPos(pos: Pos, lines: string[]): Pos {
-  const row = Math.max(0, Math.min(pos.row, lines.length - 1));
-  const col = Math.max(0, Math.min(pos.col, lines[row]!.length));
-  return { row, col };
-}
-
-/** Compare two positions. Returns <0 if a before b, 0 if equal, >0 if a after b. */
-function comparePos(a: Pos, b: Pos): number {
-  if (a.row !== b.row) return a.row - b.row;
-  return a.col - b.col;
-}
-
-/** Return the earlier and later of two positions (selection-order independent). */
-function orderedSelection(a: Pos, b: Pos): { start: Pos; end: Pos } {
-  return comparePos(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a };
-}
-
-/** Find the start of the current word (for ctrl+left). */
-function wordLeft(line: string, col: number): number {
-  let c = col;
-  while (c > 0 && /\s/.test(line[c - 1]!)) c--;
-  while (c > 0 && !/\s/.test(line[c - 1]!)) c--;
-  return c;
-}
-
-/** Find the end of the current word (for ctrl+right). */
-function wordRight(line: string, col: number): number {
-  let c = col;
-  while (c < line.length && !/\s/.test(line[c]!)) c++;
-  while (c < line.length && /\s/.test(line[c]!)) c++;
-  return c;
-}
+type Pos = TextEditPos;
 
 let textAreaCounter = 0;
 
@@ -370,14 +332,14 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
         }
 
         if (event.key === "left") {
-          cur.col = wordLeft(lines[cur.row]!, cur.col);
+          cur.col = wordLeftInLine(lines[cur.row]!, cur.col);
           if (cur.col === 0 && prevCursor.col === 0 && cur.row > 0) {
             cur.row--;
             cur.col = lines[cur.row]!.length;
           }
         } else if (event.key === "right") {
           const lineLen = lines[cur.row]!.length;
-          cur.col = wordRight(lines[cur.row]!, cur.col);
+          cur.col = wordRightInLine(lines[cur.row]!, cur.col);
           if (cur.col === lineLen && prevCursor.col === lineLen && cur.row < lines.length - 1) {
             cur.row++;
             cur.col = 0;
@@ -424,14 +386,14 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
         clearSelection();
 
         if (event.key === "left") {
-          cur.col = wordLeft(lines[cur.row]!, cur.col);
+          cur.col = wordLeftInLine(lines[cur.row]!, cur.col);
           if (cur.col === 0 && prevCursor.col === 0 && cur.row > 0) {
             cur.row--;
             cur.col = lines[cur.row]!.length;
           }
         } else if (event.key === "right") {
           const lineLen = lines[cur.row]!.length;
-          cur.col = wordRight(lines[cur.row]!, cur.col);
+          cur.col = wordRightInLine(lines[cur.row]!, cur.col);
           if (cur.col === lineLen && prevCursor.col === lineLen && cur.row < lines.length - 1) {
             cur.row++;
             cur.col = 0;
@@ -439,7 +401,7 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
         } else if (event.key === "backspace") {
           if (readOnlyRef.current) return;
           pushUndo(lines, prevCursor);
-          const newCol = wordLeft(lines[cur.row]!, cur.col);
+          const newCol = wordLeftInLine(lines[cur.row]!, cur.col);
           if (newCol < cur.col) {
             const line = lines[cur.row]!;
             lines = [...lines];
@@ -464,7 +426,7 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
         } else if (event.key === "delete") {
           if (readOnlyRef.current) return;
           pushUndo(lines, prevCursor);
-          const newCol = wordRight(lines[cur.row]!, cur.col);
+          const newCol = wordRightInLine(lines[cur.row]!, cur.col);
           if (newCol > cur.col) {
             const line = lines[cur.row]!;
             lines = [...lines];

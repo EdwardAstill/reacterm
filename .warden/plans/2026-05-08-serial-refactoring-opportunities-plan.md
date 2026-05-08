@@ -40,7 +40,7 @@ Every implementation phase follows this gate:
    and pause. Do not force the old approach.
 3. **Implement only that phase.** Do not opportunistically refactor the next
    phase.
-4. **Verify.** Run focused tests, `bun x tsc --noEmit`, full `bun test`, and
+4. **Verify.** Run focused tests, `bun run typecheck`, full `bun run test`, and
    `git diff --check`.
 5. **Refresh map.** Run `code-map build --repo . --map-tokens 4000`, then
    `code-map status --format json` and confirm `"stale": false`.
@@ -82,7 +82,7 @@ No parallel implementation. No batching adjacent phases.
   - Owner: each research gate.
 
 - `A4`
-  - Statement: Full `bun test` after each phase is acceptable because these are
+  - Statement: Full `bun run test` after each phase is acceptable because these are
     structural changes that can silently affect shared behavior.
   - Type: policy
   - Source: user requested one-at-a-time implementation due interaction risk.
@@ -146,9 +146,9 @@ Split `src/cli/demo/App.tsx` into focused section/helper modules under
 core framework behavior.
 
 **Acceptance:**
-- `bun test src/__tests__/robustness.test.ts src/__tests__/demo-calendar.test.ts src/__tests__/overlay-demo-no-warn.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/robustness.test.ts src/__tests__/demo-calendar.test.ts src/__tests__/overlay-demo-no-warn.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -181,9 +181,9 @@ Implement the Panes normalized-tree refactor behind the existing `Panes` and
 cover current supported shapes.
 
 **Acceptance:**
-- `bun test src/__tests__/panes.test.ts src/__tests__/layout.test.ts src/__tests__/robustness.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/panes.test.ts src/__tests__/layout.test.ts src/__tests__/robustness.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -215,9 +215,9 @@ Extract a small internal tree-flattening utility and migrate consumers one at a
 time. Preserve exported types and visual output.
 
 **Acceptance:**
-- `bun test src/__tests__/tree.test.ts src/__tests__/tree-table.test.ts src/__tests__/layout-box-api.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/tree.test.ts src/__tests__/tree-table.test.ts src/__tests__/layout-box-api.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -249,9 +249,9 @@ Introduce the narrowest internal helper that removes duplicated navigability
 logic without hiding component-specific disabled/separator rules.
 
 **Acceptance:**
-- `bun test src/__tests__/select.test.ts src/__tests__/search-table.test.ts src/__tests__/components.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/select.test.ts src/__tests__/search-table.test.ts src/__tests__/components.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -285,9 +285,9 @@ tests before hook migration. Do not rewrite all hooks at once if research shows
 separate slices are safer.
 
 **Acceptance:**
-- `bun test src/__tests__/textinput.test.ts src/__tests__/testing-driver.test.ts src/__tests__/robustness.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/textinput.test.ts src/__tests__/testing-driver.test.ts src/__tests__/robustness.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -319,10 +319,10 @@ Move spacing, grid, flex, and measurement internals into focused modules while
 preserving imports from `src/layout/engine.ts`. Do not change layout semantics.
 
 **Acceptance:**
-- `bun test src/__tests__/layout.test.ts src/__tests__/layout-properties.test.ts src/__tests__/layout-engine-scroll.test.ts src/__tests__/component-boundary-layout.test.ts` -> exit 0
-- `bun test src/__tests__/api-surface.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/layout.test.ts src/__tests__/layout-properties.test.ts src/__tests__/layout-engine-scroll.test.ts src/__tests__/component-boundary-layout.test.ts` -> exit 0
+- `bun run test -- src/__tests__/api-surface.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -355,10 +355,10 @@ Keep orchestration in `renderer.ts`. Avoid behavior changes to clipping,
 overlays, scrollbars, ANSI stripping, and image sequencing.
 
 **Acceptance:**
-- `bun test src/__tests__/integration.test.ts src/__tests__/overlay-free-position.test.ts src/__tests__/overlay-component.test.ts src/__tests__/scrollview.test.ts src/__tests__/text-injection-safety.test.ts` -> exit 0
-- `bun test src/__tests__/api-surface.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/integration.test.ts src/__tests__/overlay-free-position.test.ts src/__tests__/overlay-component.test.ts src/__tests__/scrollview.test.ts src/__tests__/text-injection-safety.test.ts` -> exit 0
+- `bun run test -- src/__tests__/api-surface.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -390,9 +390,9 @@ Extract the static browser page/script builder from `WebRenderer` into an
 internal module. Keep `WebRenderer` construction and public options unchanged.
 
 **Acceptance:**
-- `bun test src/__tests__/integration.test.ts src/__tests__/render-context.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/integration.test.ts src/__tests__/render-context.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -425,9 +425,9 @@ pure helpers and tests; migrate chart components one by one. Do not rewrite the
 chart rendering architecture in a single pass.
 
 **Acceptance:**
-- `bun test src/__tests__/linechart.test.ts src/__tests__/components.test.ts` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
+- `bun run test -- src/__tests__/linechart.test.ts src/__tests__/components.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map build --repo . --map-tokens 4000` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
@@ -441,17 +441,14 @@ chart rendering architecture in a single pass.
 
 **Instruction:**
 
-Run the final verification gate across the whole serial branch. Confirm every
-phase research report exists, all maps are current, and no public API surface
-changed unexpectedly.
+Run the final verification gate across the whole serial branch. Confirm maps
+are current and no public API surface changed unexpectedly. Phase research
+reports are local-only evidence because `.warden/research/` is ignored.
 
 **Acceptance:**
-- `test -f .warden/research/2026-05-08-serial-refactors/01-cli-demo.md` -> exit 0
-- `test -f .warden/research/2026-05-08-serial-refactors/09-charts.md` -> exit 0
-- `bun x tsc --noEmit` -> exit 0
-- `bun test` -> exit 0
-- `bun run build` -> exit 0
-- `bun test src/__tests__/api-surface.test.ts` -> exit 0
+- `bun run typecheck` -> exit 0
+- `bun run test` -> exit 0
+- `bun run test:api` -> exit 0
 - `git diff --check` -> exit 0
 - `code-map status --format json | grep -q '"stale": false'` -> exit 0
 

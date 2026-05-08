@@ -161,7 +161,6 @@
 - `clearMarks` (method) — `Tree.clearMarks`
 - `collectVisibleKeysFromFlat` (function) — `Tree.collectVisibleKeysFromFlat`
 - `commit` (method) — `Tree.commit`
-- `flattenVisible` (function) — `Tree.flattenVisible`
 - `getMarked` (method) — `Tree.getMarked`
 - `grabLive` (method) — `Tree.grabLive`
 - `grabStash` (method) — `Tree.grabStash`

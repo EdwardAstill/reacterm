@@ -6,6 +6,7 @@ import type { ChartSeries } from "./chart-types.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { resample, formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
+import { getBrailleChartMetrics } from "./chart-core/format.js";
 
 export interface AreaChartProps extends StormLayoutStyleProps {
   series: ChartSeries[];
@@ -60,11 +61,8 @@ export const AreaChart = React.memo(function AreaChart(rawProps: AreaChartProps)
 
   // ── Compute chart area dimensions ─────────────────────────────
 
-  const gutterWidth = showAxes ? Y_GUTTER_WIDTH : 0;
-  const chartCols = Math.max(1, cellWidth - gutterWidth);
-  const chartRows = Math.max(1, cellHeight);
-  const pixelWidth = chartCols * 2;
-  const pixelHeight = chartRows * 4;
+  const { gutterWidth, chartCols, chartRows, pixelWidth, pixelHeight } =
+    getBrailleChartMetrics(cellWidth, cellHeight, showAxes ? Y_GUTTER_WIDTH : 0);
 
   // ── Pre-compute stacked data ──────────────────────────────────
   // When stacked, each series' Y values are cumulative sums of all

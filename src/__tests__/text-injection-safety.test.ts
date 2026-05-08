@@ -3,7 +3,7 @@
  * active terminal control sequences via <Text> rendering.
  *
  * Reacterm's renderer strips ANSI from text props at ingestion (see
- * src/reconciler/renderer.ts stripAnsi call) and stores characters as
+ * src/reconciler/paint/text.ts stripAnsi call) and stores characters as
  * codepoints in a cell grid (Uint32Array in src/core/buffer.ts). These tests
  * fail loudly if a future refactor regresses either guarantee.
  */
