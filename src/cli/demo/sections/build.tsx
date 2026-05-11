@@ -909,6 +909,25 @@ function OverlaysSection(): React.ReactElement {
 
         <NavigationFeedbackShowcase />
 
+        <Overlay
+          id="overlay-A"
+          title="A — movable + resizable"
+          movable
+          resizable
+          defaultTop={8}
+          defaultLeft={10}
+          defaultWidth={36}
+          defaultHeight={9}
+          borderStyle="single"
+          borderColor={theme.colors.brand?.primary ?? theme.colors.text.primary}
+        >
+          <Box flexDirection="column" padding={1}>
+            <Text>This overlay accepts both gestures.</Text>
+            <Text color={theme.colors.text.dim}>Drag my title to move me.</Text>
+            <Text color={theme.colors.text.dim}>Drag the \ glyph to resize.</Text>
+          </Box>
+        </Overlay>
+
         {showWorkbench ? (
           <Overlay
             id="overlay-workbench"
