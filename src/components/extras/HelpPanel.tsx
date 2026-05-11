@@ -103,19 +103,20 @@ export const HelpPanel = React.memo(function HelpPanel(rawProps: HelpPanelProps)
       return;
     }
 
-    // Search filter: printable characters
-    if (event.raw && event.raw.length === 1 && !event.ctrl && !event.meta) {
+    // Backspace clears last filter char
+    if (event.key === "backspace") {
       event.consumed = true;
-      filterRef.current += event.raw;
+      filterRef.current = filterRef.current.slice(0, -1);
       scrollOffsetRef.current = 0;
       forceUpdate();
       return;
     }
 
-    // Backspace clears last filter char
-    if (event.key === "backspace") {
+    // Search filter: printable characters. Use `char`, not `raw`: real
+    // Backspace arrives with a one-byte raw control character.
+    if (event.char && event.char.length === 1 && !event.ctrl && !event.meta) {
       event.consumed = true;
-      filterRef.current = filterRef.current.slice(0, -1);
+      filterRef.current += event.char;
       scrollOffsetRef.current = 0;
       forceUpdate();
       return;

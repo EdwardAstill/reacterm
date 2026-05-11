@@ -39,7 +39,7 @@ export interface RenderResult {
   /** Semantic, focus, frame, and diagnostic metadata for advanced tests. */
   metadata: TestMetadata;
   /** Fire a key event */
-  fireKey: (key: string, options?: { ctrl?: boolean; meta?: boolean; shift?: boolean }) => void;
+  fireKey: (key: string, options?: { ctrl?: boolean; meta?: boolean; shift?: boolean; char?: string; raw?: string }) => void;
   /** Type a string (fires individual key events) */
   type: (text: string) => void;
   /** Fire enter */
@@ -113,7 +113,7 @@ export function renderForTest(
     width,
     height,
 
-    fireKey(key: string, opts?: { ctrl?: boolean; meta?: boolean; shift?: boolean }): void {
+    fireKey(key: string, opts?: { ctrl?: boolean; meta?: boolean; shift?: boolean; char?: string; raw?: string }): void {
       inner.input.pressKey(key, opts);
       refresh();
     },

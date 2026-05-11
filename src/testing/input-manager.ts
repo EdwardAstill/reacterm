@@ -38,11 +38,11 @@ export class TestInputManager {
   }
 
   /** Simulate a key press */
-  pressKey(key: string, options?: { ctrl?: boolean; shift?: boolean; meta?: boolean; char?: string }): void {
+  pressKey(key: string, options?: { ctrl?: boolean; shift?: boolean; meta?: boolean; char?: string; raw?: string }): void {
     const event: KeyEvent = {
       key,
       char: options?.char ?? (key.length === 1 ? key : ""),
-      raw: key,
+      raw: options?.raw ?? key,
       ctrl: options?.ctrl ?? false,
       shift: options?.shift ?? false,
       meta: options?.meta ?? false,

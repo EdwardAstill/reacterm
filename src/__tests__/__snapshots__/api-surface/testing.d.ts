@@ -36,6 +36,8 @@ export interface RenderResult {
         ctrl?: boolean;
         meta?: boolean;
         shift?: boolean;
+        char?: string;
+        raw?: string;
     }) => void;
     /** Type a string (fires individual key events) */
     type: (text: string) => void;

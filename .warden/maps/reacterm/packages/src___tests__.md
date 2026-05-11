@@ -73,6 +73,10 @@
 
 - `<module>` (module) — `src/__tests__/form.test.ts:<module>`
 
+## `src/__tests__/help-panel.test.ts`
+
+- `<module>` (module) — `src/__tests__/help-panel.test.ts:<module>`
+
 ## `src/__tests__/input-manager.test.ts`
 
 - `<module>` (module) — `src/__tests__/input-manager.test.ts:<module>`
