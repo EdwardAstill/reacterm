@@ -13,6 +13,14 @@
 - `SECTIONS` (constant) — `catalog.SECTIONS`
 - `THEMES` (constant) — `catalog.THEMES`
 
+## `src/cli/demo/coverage.ts`
+
+- `<module>` (module) — `src/cli/demo/coverage.ts:<module>`
+- `DEMO_COVERAGE` (constant) — `coverage.DEMO_COVERAGE`
+- `DEMO_COVERAGE_STATUSES` (constant) — `coverage.DEMO_COVERAGE_STATUSES`
+- `DemoCoverageEntry` (class) — `coverage.DemoCoverageEntry`
+- `getDemoCoverage` (function) — `coverage.getDemoCoverage`
+
 ## `src/cli/demo/demo-kit.ts`
 
 - `<module>` (module) — `src/cli/demo/demo-kit.ts:<module>`

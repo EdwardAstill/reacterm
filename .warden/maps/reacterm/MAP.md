@@ -1,13 +1,13 @@
 # Code Map
 
-- files: 625
-- symbols: 3587
-- edges: 1087
+- files: 627
+- symbols: 3588
+- edges: 1071
 - languages: rust, typescript
-- last built: 2026-05-08T10:50:10+00:00
+- last built: 2026-05-11T00:48:42+00:00
 
 ## Top files (by PageRank)
-- `examples/ui-terminal/themes.ts` [typescript, 245 loc, rank 0.0057, in 8 / out 0] — `<module>` (module), `THEMES` (constant), `TuiPalette` (class), `TuiTheme` (class), `renderButton` (function)
+- `examples/ui-terminal/themes.ts` [typescript, 245 loc, rank 0.0056, in 8 / out 0] — `<module>` (module), `THEMES` (constant), `TuiPalette` (class), `TuiTheme` (class), `renderButton` (function)
 - `benchmarks/optimization/bench-render-internal.ts` [typescript, 163 loc, rank 0.0016, in 4 / out 4] — `<module>` (module), `fmt` (function), `median` (function), `p5` (function), `run` (function)
 - `bin/reacterm.ts` [typescript, 15 loc, rank 0.0016, in 0 / out 0] — `<module>` (module)
 - `demo-panes.ts` [typescript, 64 loc, rank 0.0016, in 0 / out 0] — `<module>` (module)

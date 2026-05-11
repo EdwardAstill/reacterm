@@ -6,6 +6,7 @@
 - `<module>` (module) — `src/cli/demo/sections/build.tsx:<module>`
 - `CalendarSection` (function) — `build.CalendarSection`
 - `ConfigPretty` (function) — `build.ConfigPretty`
+- `DataCoverageShowcase` (function) — `build.DataCoverageShowcase`
 - `DataSection` (function) — `build.DataSection`
 - `FileGridPane` (function) — `build.FileGridPane`
 - `FileTreePane` (function) — `build.FileTreePane`
@@ -14,6 +15,7 @@
 - `FormsSection` (function) — `build.FormsSection`
 - `GridColumn` (class) — `build.GridColumn`
 - `LayoutSection` (function) — `build.LayoutSection`
+- `NavigationFeedbackShowcase` (function) — `build.NavigationFeedbackShowcase`
 - `OverlaysSection` (function) — `build.OverlaysSection`
 - `ScrollEditTable` (function) — `build.ScrollEditTable`
 - `ScrollRow` (class) — `build.ScrollRow`

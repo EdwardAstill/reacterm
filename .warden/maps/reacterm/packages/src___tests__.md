@@ -42,6 +42,11 @@
 - `openCalendarSection` (function) — `demo-calendar.test.openCalendarSection`
 - `scrollToEventCalendar` (function) — `demo-calendar.test.scrollToEventCalendar`
 
+## `src/__tests__/demo-coverage.test.ts`
+
+- `<module>` (module) — `src/__tests__/demo-coverage.test.ts:<module>`
+- `publicComponentAndWidgetExports` (function) — `demo-coverage.test.publicComponentAndWidgetExports`
+
 ## `src/__tests__/demo-visual-effects.test.ts`
 
 - `<module>` (module) — `src/__tests__/demo-visual-effects.test.ts:<module>`
