@@ -15,10 +15,10 @@ export class InputWiring {
   private lastCtrlC = 0;
 
   constructor(
-    private readonly input: InputManager,
-    private readonly screen: Screen,
-    private readonly renderCtx: RenderContext,
-    private readonly pluginManager: PluginManager,
+    input: InputManager,
+    screen: Screen,
+    renderCtx: RenderContext,
+    pluginManager: PluginManager,
   ) {
     // ── Scroll: 1:1 pass-through ────────────────────────────────────
     // Each event = 1 line. Speed matches finger speed.

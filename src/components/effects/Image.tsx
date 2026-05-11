@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
 import { useTui } from "../../context/TuiContext.js";
-import { detectImageCaps, type ImageProtocol } from "../../core/terminal-caps.js";
+import { detectImageCaps } from "../../core/terminal-caps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 // If chafa-wasm is installed, use it for dramatically better image quality
@@ -275,130 +275,6 @@ function sampleArea(
   }
   if (count === 0) return { r: 0, g: 0, b: 0 };
   return { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) };
-}
-
-/** Luminance of an RGB color (perceived brightness). */
-function luminance(c: RGB): number {
-  return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
-}
-
-/** Squared Euclidean distance in RGB space. */
-function colorDistSq(a: RGB, b: RGB): number {
-  const dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
-  return dr * dr + dg * dg + db * db;
-}
-
-/** Average of an array of colors. */
-function avgColor(colors: RGB[]): RGB {
-  if (colors.length === 0) return { r: 0, g: 0, b: 0 };
-  let r = 0, g = 0, b = 0;
-  for (const c of colors) { r += c.r; g += c.g; b += c.b; }
-  const n = colors.length;
-  return { r: Math.round(r / n), g: Math.round(g / n), b: Math.round(b / n) };
-}
-
-/**
- * Find optimal 2-color partition of 4 pixels.
- * Sort by luminance, try 3 split points, pick minimum variance.
- * Returns [fg (brighter cluster mean), bg (darker cluster mean)].
- */
-function findPartition(quads: RGB[]): { fg: RGB; bg: RGB } {
-  const sorted = quads
-    .map((c, i) => ({ c, l: luminance(c), i }))
-    .sort((a, b) => a.l - b.l);
-
-  let bestCost = Infinity;
-  let bestFg: RGB = sorted[sorted.length - 1]!.c;
-  let bestBg: RGB = sorted[0]!.c;
-
-  // Try each split: [0..split-1] = dark cluster, [split..3] = bright cluster
-  for (let split = 1; split < sorted.length; split++) {
-    const darkGroup = sorted.slice(0, split).map(s => s.c);
-    const brightGroup = sorted.slice(split).map(s => s.c);
-    const darkMean = avgColor(darkGroup);
-    const brightMean = avgColor(brightGroup);
-
-    // Total within-cluster variance
-    let cost = 0;
-    for (const c of darkGroup) cost += colorDistSq(c, darkMean);
-    for (const c of brightGroup) cost += colorDistSq(c, brightMean);
-
-    if (cost < bestCost) {
-      bestCost = cost;
-      bestFg = brightMean;
-      bestBg = darkMean;
-    }
-  }
-
-  return { fg: bestFg, bg: bestBg };
-}
-
-function renderBlockImage(
-  img: { width: number; height: number; pixels: RGB[] },
-  targetWidth: number,
-  targetHeight: number,
-): React.ReactElement[] {
-  // Each cell maps to a 2x2 grid of sub-pixels
-  const subPixelCols = targetWidth * 2;
-  const subPixelRows = targetHeight * 2;
-  const scaleX = img.width / subPixelCols;
-  const scaleY = img.height / subPixelRows;
-
-  const rows: React.ReactElement[] = [];
-
-  for (let ty = 0; ty < targetHeight; ty++) {
-    const parts: React.ReactElement[] = [];
-
-    for (let tx = 0; tx < targetWidth; tx++) {
-      // Sample 4 sub-pixels with area averaging
-      // TL = sub-pixel (tx*2, ty*2), TR = (tx*2+1, ty*2)
-      // BL = (tx*2, ty*2+1), BR = (tx*2+1, ty*2+1)
-      const sx = tx * 2;
-      const sy = ty * 2;
-
-      const tl = sampleArea(img.pixels, img.width, img.height,
-        sx * scaleX, sy * scaleY, (sx + 1) * scaleX, (sy + 1) * scaleY);
-      const tr = sampleArea(img.pixels, img.width, img.height,
-        (sx + 1) * scaleX, sy * scaleY, (sx + 2) * scaleX, (sy + 1) * scaleY);
-      const bl = sampleArea(img.pixels, img.width, img.height,
-        sx * scaleX, (sy + 1) * scaleY, (sx + 1) * scaleX, (sy + 2) * scaleY);
-      const br = sampleArea(img.pixels, img.width, img.height,
-        (sx + 1) * scaleX, (sy + 1) * scaleY, (sx + 2) * scaleX, (sy + 2) * scaleY);
-
-      const quads = [tl, tr, bl, br];
-
-      const { fg, bg } = findPartition(quads);
-
-      // Assign each sub-pixel to fg or bg
-      const distTL = colorDistSq(tl, fg) <= colorDistSq(tl, bg);
-      const distTR = colorDistSq(tr, fg) <= colorDistSq(tr, bg);
-      const distBL = colorDistSq(bl, fg) <= colorDistSq(bl, bg);
-      const distBR = colorDistSq(br, fg) <= colorDistSq(br, bg);
-
-      const pattern =
-        (distTL ? 0b1000 : 0) |
-        (distTR ? 0b0100 : 0) |
-        (distBL ? 0b0010 : 0) |
-        (distBR ? 0b0001 : 0);
-
-      const ch = QUARTER_CHARS[pattern] ?? " ";
-      const fgHex = `#${hex(fg.r)}${hex(fg.g)}${hex(fg.b)}`;
-      const bgHex = `#${hex(bg.r)}${hex(bg.g)}${hex(bg.b)}`;
-
-      parts.push(React.createElement("tui-text", {
-        key: tx,
-        color: fgHex,
-        backgroundColor: bgHex,
-      }, ch));
-    }
-
-    rows.push(React.createElement("tui-box", {
-      key: `row-${ty}`,
-      flexDirection: "row",
-    }, ...parts));
-  }
-
-  return rows;
 }
 
 function hex(n: number): string {
@@ -694,161 +570,6 @@ function renderPerceptualImage(
   return rows;
 }
 
-// Sextant characters (Unicode 13, U+1FB00-U+1FB3B) encode a 2×3 sub-pixel
-// grid per cell. 6 sub-pixels = 64 patterns.
-// Pattern 0 (all bg) = space, pattern 63 (all fg) = full block U+2588.
-// Patterns 1-62 map to U+1FB00 + (pattern - 1).
-//
-// Sub-pixel layout and bit assignments:
-//   [bit0][bit1]  (top row)
-//   [bit2][bit3]  (middle row)
-//   [bit4][bit5]  (bottom row)
-
-function sextantChar(pattern: number): string {
-  if (pattern === 0) return " ";
-  if (pattern === 63) return "\u2588"; // █
-  return String.fromCodePoint(0x1FB00 + pattern - 1);
-}
-
-function findPartitionN(colors: RGB[]): { fg: RGB; bg: RGB } {
-  if (colors.length === 0) return { fg: { r: 0, g: 0, b: 0 }, bg: { r: 0, g: 0, b: 0 } };
-  if (colors.length === 1) return { fg: colors[0]!, bg: colors[0]! };
-
-  const sorted = colors
-    .map((c, i) => ({ c, l: luminance(c), i }))
-    .sort((a, b) => a.l - b.l);
-
-  let bestCost = Infinity;
-  let bestFg: RGB = sorted[sorted.length - 1]!.c;
-  let bestBg: RGB = sorted[0]!.c;
-
-  for (let split = 1; split < sorted.length; split++) {
-    const darkGroup = sorted.slice(0, split).map(s => s.c);
-    const brightGroup = sorted.slice(split).map(s => s.c);
-    const darkMean = avgColor(darkGroup);
-    const brightMean = avgColor(brightGroup);
-
-    let cost = 0;
-    for (const c of darkGroup) cost += colorDistSq(c, darkMean);
-    for (const c of brightGroup) cost += colorDistSq(c, brightMean);
-
-    if (cost < bestCost) {
-      bestCost = cost;
-      bestFg = brightMean;
-      bestBg = darkMean;
-    }
-  }
-
-  return { fg: bestFg, bg: bestBg };
-}
-
-//
-// Each terminal cell is a 2×3 sub-pixel grid (sextant).
-// Standard rendering uses 2 colors (fg + bg). The 3-color variant adds
-// a colored underline (CSI 58;2;R;G;Bm) that paints a thin stripe over
-// the bottom sub-pixel row, effectively introducing a 3rd color channel.
-//
-// Algorithm:
-// 1. Sample 6 sub-pixels (2 cols × 3 rows) via area averaging
-// 2. Partition the top 4 sub-pixels into fg/bg clusters
-// 3. Assign all 6 sub-pixels to fg or bg → build sextant pattern
-// 4. Check if a 3rd color for the bottom 2 sub-pixels reduces error:
-//    - Compute error of bottom 2 under current fg/bg assignment
-//    - Compute error if we use the average of bottom 2 as underline color
-//    - If underline reduces total error by a meaningful threshold, emit it
-
-function renderSextantWithUnderline(
-  img: { width: number; height: number; pixels: RGB[] },
-  targetWidth: number,
-  targetHeight: number,
-  useUnderline: boolean,
-): React.ReactElement[] {
-  // Each cell maps to a 2×3 grid of sub-pixels
-  const subPixelCols = targetWidth * 2;
-  const subPixelRows = targetHeight * 3;
-  const scaleX = img.width / subPixelCols;
-  const scaleY = img.height / subPixelRows;
-
-  const rows: React.ReactElement[] = [];
-
-  for (let ty = 0; ty < targetHeight; ty++) {
-    const parts: React.ReactElement[] = [];
-
-    for (let tx = 0; tx < targetWidth; tx++) {
-      const sx = tx * 2;
-      const sy = ty * 3;
-
-      // Sample 6 sub-pixels: [row0: TL, TR] [row1: ML, MR] [row2: BL, BR]
-      const sp: RGB[] = [];
-      for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 2; col++) {
-          sp.push(sampleArea(
-            img.pixels, img.width, img.height,
-            (sx + col) * scaleX, (sy + row) * scaleY,
-            (sx + col + 1) * scaleX, (sy + row + 1) * scaleY,
-          ));
-        }
-      }
-
-      // Partition the top 4 sub-pixels to find fg/bg
-      const top4 = [sp[0]!, sp[1]!, sp[2]!, sp[3]!];
-      const { fg, bg } = findPartitionN(top4);
-
-      // Assign all 6 sub-pixels to fg (1) or bg (0) and build sextant pattern
-      let pattern = 0;
-      for (let i = 0; i < 6; i++) {
-        if (colorDistSq(sp[i]!, fg) <= colorDistSq(sp[i]!, bg)) {
-          pattern |= (1 << i);
-        }
-      }
-
-      const ch = sextantChar(pattern);
-      const fgHex = `#${hex(fg.r)}${hex(fg.g)}${hex(fg.b)}`;
-      const bgHex = `#${hex(bg.r)}${hex(bg.g)}${hex(bg.b)}`;
-
-      // 3-color underline optimization for bottom 2 sub-pixels
-      let ulColor: string | undefined;
-      if (useUnderline) {
-        const bl = sp[4]!;
-        const br = sp[5]!;
-
-        // Error of bottom 2 sub-pixels under current fg/bg assignment
-        const blAssigned = colorDistSq(bl, fg) <= colorDistSq(bl, bg) ? fg : bg;
-        const brAssigned = colorDistSq(br, fg) <= colorDistSq(br, bg) ? fg : bg;
-        const currentError = colorDistSq(bl, blAssigned) + colorDistSq(br, brAssigned);
-
-        // Candidate underline color: average of the two bottom sub-pixels
-        const ulCandidate = avgColor([bl, br]);
-        const ulError = colorDistSq(bl, ulCandidate) + colorDistSq(br, ulCandidate);
-
-        // Use underline if it meaningfully reduces error.
-        // The underline is a thin stripe, so it only partially covers the bottom
-        // sub-pixels. We require a substantial improvement (>30% error reduction
-        // AND absolute threshold) to avoid adding underline noise on smooth areas.
-        const errorReduction = currentError - ulError;
-        const ERROR_THRESHOLD = 800; // ~10 intensity units squared × 2 pixels × 3 channels
-        if (errorReduction > ERROR_THRESHOLD && currentError > 0 && errorReduction / currentError > 0.3) {
-          ulColor = `#${hex(ulCandidate.r)}${hex(ulCandidate.g)}${hex(ulCandidate.b)}`;
-        }
-      }
-
-      parts.push(React.createElement("tui-text", {
-        key: tx,
-        color: fgHex,
-        backgroundColor: bgHex,
-        ...(ulColor ? { underline: true, underlineColor: ulColor } : {}),
-      }, ch));
-    }
-
-    rows.push(React.createElement("tui-box", {
-      key: `row-${ty}`,
-      flexDirection: "row",
-    }, ...parts));
-  }
-
-  return rows;
-}
-
 //
 // Kitty's Unicode placeholder protocol solves the fundamental problem with
 // graphics protocols in scrollable containers: normal Kitty graphics render
@@ -986,7 +707,7 @@ export const Image = React.memo(function Image(rawProps: ImageProps): React.Reac
 
   // ── Cache layer ───────────────────────────────────────────────────
   // This eliminates: fs.readFileSync (2-5ms), decodePNG (3-10ms), and
-  // renderBlockImage (15-30ms) from running on every re-render.
+  // the perceptual block renderer (15-30ms) from running on every re-render.
   // For graphics protocols (kitty/iterm2/kitty-placeholder), also caches
   // the escape sequence to avoid re-reading the file and re-encoding base64.
   const cacheRef = useRef<{
@@ -1102,7 +823,7 @@ export const Image = React.memo(function Image(rawProps: ImageProps): React.Reac
     // Built-in block character renderer.
     // Uses renderPerceptualImage (OKLab chroma subsampling + Floyd-Steinberg
     // error diffusion) for superior gradient smoothness and color accuracy.
-    // Falls back to renderBlockImage if perceptual rendering fails.
+    // Falls back to alt text if perceptual rendering fails.
     try {
       const filePath = isFilePath(src) ? (validateFilePath(src, basePath ?? process.cwd()) ?? src) : null;
       if (filePath) {

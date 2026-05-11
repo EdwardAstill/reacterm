@@ -1,46 +1,65 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Box, Text, Spacer,
-  Spinner, Badge, Divider, ProgressBar, Tag, Kbd,
-  TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
-  MaskedInput, ChatInput, Select,
-  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
-  Stepper, Heading, Calendar, DatePicker, EventCalendar,
-  SearchList,
-  Tree, TreeTable, RichLog, Pretty, DefinitionList,
-  OrderedList, UnorderedList,
-  Sparkline, Gauge, BarChart, LineChart, AreaChart, Heatmap, Histogram,
-  OperationTree, StreamingText, ApprovalPrompt, MessageBubble,
-  ShimmerText, BlinkDot, ContextWindow, CostTracker, ModelBadge,
-  StatusLine, TokenStream, CommandBlock,
-  Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight,
-  Transition, AnimatePresence, GlowText, GradientBorder, Gradient,
-  GradientProgress, RevealTransition,
-  Digits, Diagram, Canvas,
-  validateContrast, contrastRatio,
-  LocaleProvider, formatNumber, i18nT, plural,
-  PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA,
-  useTui, useTerminal, useInput, useTick, useMousePosition, useMouseTarget,
-  useUndoRedo, useHotkey, useConfirmAction, useWizard,
-  usePersistentState, memoryStorage,
-  useTextCycler, useEasedInterval,
-  useAnnounce,
-  detectTerminal, detectImageCaps, bestColorDepth,
-  useTheme, useEventCalendarBehavior,
-} from "../demo-kit.js";
+import React, { useRef, useState } from "react";
 import type {
   SelectOption,
   TreeNode,
   TreeTableRow,
-  OpNode,
-  DiagramNode,
-  DiagramEdge,
-  CanvasNode,
-  CanvasEdge,
-  Locale,
-  StormColors,
 } from "../demo-kit.js";
-import { THEMES, PERSONALITY_PRESETS } from "../catalog.js";
+import {
+  Alert,
+  Badge,
+  Box,
+  Breadcrumb,
+  Button,
+  Calendar,
+  ChatInput,
+  Checkbox,
+  CommandPalette,
+  ConfirmDialog,
+  DatePicker,
+  DefinitionList,
+  Divider,
+  DirectoryTree,
+  EventCalendar,
+  FilePicker,
+  Form,
+  HelpPanel,
+  Kbd,
+  LoadingIndicator,
+  ListView,
+  MaskedInput,
+  Menu,
+  Overlay,
+  OverlayProvider,
+  Paginator,
+  Pretty,
+  RadioGroup,
+  RichLog,
+  ScrollView,
+  SearchList,
+  SearchTable,
+  Select,
+  StatusMessage,
+  Stepper,
+  Switch,
+  TabbedContent,
+  Table,
+  Tabs,
+  Tag,
+  Text,
+  TextArea,
+  TextInput,
+  ToastContainer,
+  Tooltip,
+  Tree,
+  TreeTable,
+  VirtualList,
+  Welcome,
+  useEventCalendarBehavior,
+  useInput,
+  useMouseTarget,
+  useTheme,
+  useTui,
+} from "../demo-kit.js";
 import { Clickable } from "../shared.js";
 
 function LayoutSection(): React.ReactElement {
@@ -250,6 +269,25 @@ function FormsSection({ pushToast: toast }: { pushToast: (msg: string, type?: "i
         <Tag label="schema" />
         <Tag label="async-validate" />
         <Kbd>Shift+→</Kbd>
+      </Box>
+
+      <Box flexDirection="column" marginTop={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+        <Text bold color={theme.colors.text.primary}>Form schema</Text>
+        <Form
+          fields={[
+            { key: "package", label: "Package", required: true },
+            { key: "risk", label: "Risk", type: "select", options: [
+              { label: "Low", value: "low" },
+              { label: "Medium", value: "medium" },
+              { label: "High", value: "high" },
+            ] },
+            { key: "approved", label: "Approved", type: "checkbox" },
+          ]}
+          initialValues={{ package: "reacterm", risk: "medium", approved: "true" }}
+          submitLabel="Record"
+          isFocused={false}
+          onSubmit={() => toast("Form submitted", "success")}
+        />
       </Box>
     </Box>
   );
@@ -536,6 +574,94 @@ function ConfigPretty({ height }: { height?: number }): React.ReactElement {
   );
 }
 
+const TABLE_COLUMNS = [
+  { key: "name", header: "Name", width: 15 },
+  { key: "status", header: "Status", width: 11 },
+  { key: "score", header: "Score", width: 7, align: "right" as const },
+];
+
+const TABLE_ROWS = [
+  { name: "renderer", status: "green", score: 98 },
+  { name: "input", status: "green", score: 94 },
+  { name: "demo", status: "review", score: 86 },
+  { name: "docs", status: "yellow", score: 72 },
+];
+
+const DEMO_FILES = [
+  {
+    name: "src",
+    path: "/demo/src",
+    isDirectory: true,
+    children: [
+      { name: "index.ts", path: "/demo/src/index.ts", isDirectory: false },
+      { name: "demo.tsx", path: "/demo/src/demo.tsx", isDirectory: false },
+    ],
+  },
+  { name: "README.md", path: "/demo/README.md", isDirectory: false },
+];
+
+function DataCoverageShowcase(): React.ReactElement {
+  const theme = useTheme();
+  const virtualRows = Array.from({ length: 24 }, (_, i) => `VirtualList row ${String(i + 1).padStart(2, "0")}`);
+
+  return (
+    <Box flexDirection="column" gap={1}>
+      <Text bold color={theme.colors.brand.primary}>Data coverage matrix</Text>
+      <Box flexDirection="row" gap={2}>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>Table</Text>
+          <Table columns={TABLE_COLUMNS} data={TABLE_ROWS} maxVisibleRows={4} isFocused={false} rowHighlight />
+        </Box>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>SearchTable</Text>
+          <SearchTable
+            columns={TABLE_COLUMNS}
+            data={TABLE_ROWS}
+            placeholder="filter rows"
+            maxVisibleRows={3}
+            isFocused={false}
+            rowHighlight
+          />
+        </Box>
+      </Box>
+
+      <Box flexDirection="row" gap={2}>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>VirtualList</Text>
+          <VirtualList
+            items={virtualRows}
+            height={4}
+            isFocused={false}
+            renderItem={(item) => <Text color={theme.colors.text.secondary}>{item}</Text>}
+          />
+        </Box>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>DirectoryTree</Text>
+          <DirectoryTree
+            rootPath="/reacterm-demo"
+            isFocused={false}
+            onLoadChildren={(path) => path.endsWith("reacterm-demo")
+              ? [
+                { name: "src", isDirectory: true },
+                { name: "package.json", isDirectory: false },
+                { name: "README.md", isDirectory: false },
+              ]
+              : [
+                { name: "index.ts", isDirectory: false },
+                { name: "demo.tsx", isDirectory: false },
+              ]}
+          />
+        </Box>
+      </Box>
+
+      <Box flexDirection="column" borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+        <Text bold color={theme.colors.text.primary}>FilePicker</Text>
+        <FilePicker files={DEMO_FILES} maxVisible={4} isFocused={false} selectedPath="/demo/README.md" />
+      </Box>
+    </Box>
+  );
+}
+
 function DataSection({ focused }: { focused: "tree" | "grid" }): React.ReactElement {
   const theme = useTheme();
   return (
@@ -585,12 +711,134 @@ function DataSection({ focused }: { focused: "tree" | "grid" }): React.ReactElem
       <ScrollEditTable />
 
       <TreeTablePane />
+
+      <DataCoverageShowcase />
     </Box>
     </ScrollView>
   );
 }
 
 let nextSpawnId = 1;
+
+function NavigationFeedbackShowcase(): React.ReactElement {
+  const theme = useTheme();
+  const [tab, setTab] = useState("overview");
+  const [page, setPage] = useState(1);
+
+  const paletteCommands = [
+    { id: "open", name: "Open demo coverage", description: "Jump to the coverage matrix", category: "Demo", shortcut: "g d" },
+    { id: "theme", name: "Cycle theme", description: "Preview the next theme preset", category: "Meta", shortcut: "t" },
+    { id: "verify", name: "Run tests", description: "Execute the focused demo suite", category: "Dev", shortcut: "v" },
+  ];
+
+  return (
+    <Box flexDirection="column" gap={1} marginTop={1}>
+      <Text bold color={theme.colors.brand.primary}>Navigation and feedback coverage</Text>
+      <Box flexDirection="row" gap={2}>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>Tabs / TabbedContent</Text>
+          <Tabs
+            tabs={[
+              { key: "overview", label: "Overview" },
+              { key: "logs", label: "Logs" },
+              { key: "settings", label: "Settings", disabled: true },
+            ]}
+            activeKey={tab}
+            onChange={setTab}
+            isFocused={false}
+            variant="pill"
+          />
+          <TabbedContent
+            tabs={[
+              { key: "overview", label: "Overview" },
+              { key: "logs", label: "Logs" },
+            ]}
+            activeKey={tab === "logs" ? "logs" : "overview"}
+            onTabChange={setTab}
+            isFocused={false}
+          >
+            <Text color={theme.colors.text.secondary}>Demo surface is audited.</Text>
+            <Text color={theme.colors.text.secondary}>Focused tests cover drift.</Text>
+          </TabbedContent>
+          <Paginator total={4} current={page} onPageChange={setPage} isFocused={false} style="numbers" />
+        </Box>
+
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>Breadcrumb / Menu / HelpPanel</Text>
+          <Breadcrumb items={["reacterm", "demo", "coverage", "feedback"]} maxItems={3} isFocused={false} />
+          <Menu
+            items={[
+              { label: "Open command palette", value: "palette", shortcut: "/" },
+              { label: "Show help", value: "help", shortcut: "?" },
+              { label: "Disabled action", value: "disabled", disabled: true },
+            ]}
+            isFocused={false}
+            maxVisible={3}
+          />
+          <HelpPanel
+            bindings={[
+              { keys: "/", description: "CommandPalette", category: "Navigation" },
+              { keys: "Esc", description: "Dismiss overlay", category: "Feedback" },
+            ]}
+            mode="inline"
+            visible
+            title="HelpPanel"
+            columns={1}
+          />
+        </Box>
+      </Box>
+
+      <Box flexDirection="row" gap={2}>
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>Alert / Tooltip / StatusMessage / LoadingIndicator</Text>
+          <Alert type="warning" title="Alert" isFocused={false}>
+            Coverage matrix has no missing public components.
+          </Alert>
+          <Tooltip content="Tooltip content is visible in this demo" visible position="right" arrow>
+            <Text color={theme.colors.text.secondary}>Hover target</Text>
+          </Tooltip>
+          <StatusMessage type="success" title="StatusMessage" message="Demo status is explicit." />
+          <LoadingIndicator style="bar" progress={0.72} message="LoadingIndicator" active={false} />
+        </Box>
+
+        <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+          <Text bold color={theme.colors.text.primary}>CommandPalette / ConfirmDialog / ToastContainer / Welcome</Text>
+          <CommandPalette
+            commands={paletteCommands}
+            onExecute={() => undefined}
+            isActive={false}
+            isOpen
+            maxVisible={3}
+            overlayWidth={48}
+            placeholder="CommandPalette"
+          />
+          <ConfirmDialog
+            visible
+            type="warning"
+            message="ConfirmDialog preview"
+            confirmLabel="Rectify"
+            cancelLabel="Cancel"
+          />
+          <ToastContainer
+            toasts={[
+              { id: "coverage", message: "ToastContainer: runtime-demo", type: "success", durationMs: 0 },
+            ]}
+            maxVisible={1}
+          />
+          <Welcome
+            title="Welcome"
+            version="demo"
+            description="Splash primitive preview"
+            visible
+            actions={[{ id: "coverage", label: "Open coverage matrix" }]}
+            shortcuts={[{ key: "?", label: "Help" }]}
+            prompt="Runtime demo"
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
 
 function OverlaysSection(): React.ReactElement {
   const theme = useTheme();
@@ -619,6 +867,8 @@ function OverlaysSection(): React.ReactElement {
           <Button label="Spawn overlay" onPress={spawn} />
           <Text color={theme.colors.text.dim}>  Spawned: {spawned.length}</Text>
         </Box>
+
+        <NavigationFeedbackShowcase />
 
         <Overlay
           id="overlay-A"
@@ -717,7 +967,7 @@ function CalendarSection(): React.ReactElement {
   const rangeEnd = new Date(today.getFullYear(), today.getMonth(), 16);
   const minDate = new Date(today.getFullYear(), today.getMonth(), 3);
   const maxDate = new Date(today.getFullYear(), today.getMonth() + 1, 12);
-  const eventAnchorDate = new Date(today.getFullYear(), today.getMonth(), Math.max(8, today.getDate()));
+  const eventAnchorDate = new Date(today.getFullYear(), today.getMonth(), 8);
 
   const demoEvents = [
     {
@@ -1251,4 +1501,11 @@ function ScrollEditTable(): React.ReactElement {
   );
 }
 
-export { LayoutSection, FormsSection, SearchSection, DataSection, OverlaysSection, CalendarSection };
+export {
+  CalendarSection,
+  DataSection,
+  FormsSection,
+  LayoutSection,
+  OverlaysSection,
+  SearchSection,
+};

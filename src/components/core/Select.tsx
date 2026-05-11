@@ -62,7 +62,6 @@ export interface SelectRootProps {
 }
 
 function SelectRoot({ value, onChange, children }: SelectRootProps): React.ReactElement {
-  const colors = useColors();
   const { requestRender } = useTui();
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -91,7 +90,7 @@ export interface SelectTriggerProps {
 
 function SelectTrigger({ children, placeholder }: SelectTriggerProps): React.ReactElement {
   const colors = useColors();
-  const { value, isOpen, setOpen } = useSelectContext();
+  const { value, isOpen } = useSelectContext();
   const displayLabel = value ?? placeholder;
   const displayColor = value ? colors.text.primary : colors.text.dim;
   const arrow = isOpen ? " \u25B2" : " \u25BC";
@@ -118,6 +117,8 @@ function SelectContent({ maxVisible, children }: SelectContentProps): React.Reac
   const personality = usePersonality();
   const { isOpen } = useSelectContext();
   if (!isOpen) return null;
+  const childArray = React.Children.toArray(children);
+  const visibleChildren = maxVisible === undefined ? childArray : childArray.slice(0, maxVisible);
 
   return React.createElement(
     "tui-box",
@@ -126,7 +127,7 @@ function SelectContent({ maxVisible, children }: SelectContentProps): React.Reac
       borderStyle: personality.borders.default,
       borderColor: colors.brand.primary,
     },
-    children,
+    ...visibleChildren,
   );
 }
 
@@ -139,7 +140,7 @@ export interface SelectCompoundOptionProps {
 
 function SelectCompoundOption({ value: optionValue, label, disabled, children }: SelectCompoundOptionProps): React.ReactElement {
   const colors = useColors();
-  const { value, onChange, setOpen } = useSelectContext();
+  const { value } = useSelectContext();
   const isSelected = optionValue === value;
 
   let labelColor: string | number;

@@ -17,12 +17,15 @@ export interface UseGhostTextResult {
 }
 
 export function useGhostText(options: UseGhostTextOptions): UseGhostTextResult {
-  const { value, cursor, suggest, acceptKey = "tab", debounceMs = 150 } = options;
+  const { value, cursor, suggest, debounceMs = 150 } = options;
   const forceUpdate = useForceUpdate();
 
   const ghostRef = useRef("");
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevValueRef = useRef(value);
+  const cursorIndex = Math.max(0, Math.min(cursor, value.length));
+  const prefix = value.slice(0, cursorIndex);
+  const suffix = value.slice(cursorIndex);
+  const prevPrefixRef = useRef(prefix);
 
   const resolveFromArray = (arr: string[], val: string): string => {
     if (val.length === 0) return "";
@@ -45,8 +48,8 @@ export function useGhostText(options: UseGhostTextOptions): UseGhostTextResult {
   };
 
   // When value changes, recompute ghost
-  if (value !== prevValueRef.current) {
-    prevValueRef.current = value;
+  if (prefix !== prevPrefixRef.current) {
+    prevPrefixRef.current = prefix;
 
     if (timerRef.current !== null) {
       clearTimeout(timerRef.current);
@@ -55,13 +58,13 @@ export function useGhostText(options: UseGhostTextOptions): UseGhostTextResult {
 
     if (Array.isArray(suggest)) {
       // Synchronous resolution for arrays
-      ghostRef.current = resolveFromArray(suggest, value);
+      ghostRef.current = resolveFromArray(suggest, prefix);
     } else {
       // Debounced resolution for functions
       ghostRef.current = "";
       timerRef.current = setTimeout(() => {
         timerRef.current = null;
-        ghostRef.current = resolveFromFn(suggest, value);
+        ghostRef.current = resolveFromFn(suggest, prefix);
         forceUpdate();
       }, debounceMs);
     }
@@ -69,7 +72,7 @@ export function useGhostText(options: UseGhostTextOptions): UseGhostTextResult {
 
   const accept = (): string | null => {
     if (ghostRef.current.length === 0) return null;
-    const full = value + ghostRef.current;
+    const full = prefix + ghostRef.current + suffix;
     ghostRef.current = "";
     forceUpdate();
     return full;

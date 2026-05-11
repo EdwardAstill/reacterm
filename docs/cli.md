@@ -20,7 +20,7 @@ Launch the bundled showcase. No arguments required.
 USAGE: reacterm demo
 ```
 
-`reacterm demo` opens the bundled published demo app, a comprehensive interactive demonstration that exercises every reacterm feature across 22 sections. The installed CLI does not depend on repo-local `examples/` files to launch it.
+`reacterm demo` opens the bundled published demo app, a comprehensive interactive demonstration that exercises the public component, widget, and hook surface across 23 sections. Demo coverage is tracked in `src/cli/demo/coverage.ts` and verified by `src/__tests__/demo-coverage.test.ts`, so new public UI exports must be classified as `runtime-demo`, `docs-only`, `test-only`, `edge-case`, or `missing`. The installed CLI does not depend on repo-local `examples/` files to launch it.
 
 **Options:** none.
 

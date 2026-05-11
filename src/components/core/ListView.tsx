@@ -61,7 +61,6 @@ function ListViewRoot({
   onSelect,
   children,
 }: ListViewRootProps): React.ReactElement {
-  const colors = useColors();
   const { requestRender } = useTui();
   const onHighlightRef = useRef(onHighlightChange);
   onHighlightRef.current = onHighlightChange;
@@ -166,9 +165,14 @@ const ListViewBase = React.memo(function ListView(rawProps: ListViewProps): Reac
     );
   }
 
-  const initialIndex = selectedKey
+  const selectedIndex = selectedKey
     ? Math.max(0, filteredItems.findIndex((it) => it.key === selectedKey))
     : 0;
+  const prevSelectedKeyRef = useRef<string | undefined>(undefined);
+  if (prevSelectedKeyRef.current !== selectedKey) {
+    highlightIndexRef.current = selectedIndex;
+    prevSelectedKeyRef.current = selectedKey;
+  }
 
   if (highlightIndexRef.current >= filteredItems.length) {
     highlightIndexRef.current = Math.max(0, filteredItems.length - 1);

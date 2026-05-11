@@ -1,47 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
-  Box, Text, Spacer,
-  Spinner, Badge, Divider, ProgressBar, Tag, Kbd,
-  TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
-  MaskedInput, ChatInput, Select,
-  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
-  Stepper, Heading, Calendar, DatePicker, EventCalendar,
-  SearchList,
-  Tree, TreeTable, RichLog, Pretty, DefinitionList,
-  OrderedList, UnorderedList,
-  Sparkline, Gauge, BarChart, LineChart, AreaChart, Heatmap, Histogram,
-  OperationTree, StreamingText, ApprovalPrompt, MessageBubble,
-  ShimmerText, BlinkDot, ContextWindow, CostTracker, ModelBadge,
-  StatusLine, TokenStream, CommandBlock,
-  Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight,
-  Transition, AnimatePresence, GlowText, GradientBorder, Gradient,
-  GradientProgress, RevealTransition,
-  Digits, Diagram, Canvas,
-  validateContrast, contrastRatio,
-  LocaleProvider, formatNumber, i18nT, plural,
-  PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA,
-  useTui, useTerminal, useInput, useTick, useMousePosition,
-  useUndoRedo, useHotkey, useConfirmAction, useWizard,
-  usePersistentState, memoryStorage,
-  useTextCycler, useEasedInterval,
-  useAnnounce,
-  detectTerminal, detectImageCaps, bestColorDepth,
-  useTheme, useEventCalendarBehavior,
+  BlinkDot,
+  Box,
+  memoryStorage,
+  ShimmerText,
+  Sparkline,
+  Text,
+  useConfirmAction,
+  useEasedInterval,
+  useHotkey,
+  useInput,
+  usePersistentState,
+  useTextCycler,
+  useTheme,
+  useTick,
+  useUndoRedo,
+  useWizard,
 } from "../demo-kit.js";
-import type {
-  SelectOption,
-  TreeNode,
-  TreeTableRow,
-  OpNode,
-  DiagramNode,
-  DiagramEdge,
-  CanvasNode,
-  CanvasEdge,
-  Locale,
-  StormColors,
-} from "../demo-kit.js";
-import { THEMES, PERSONALITY_PRESETS } from "../catalog.js";
-import { Clickable } from "../shared.js";
+import { DEMO_COVERAGE } from "../coverage.js";
 
 const CYCLER_TEXTS = [
   "Cell-level diff",
@@ -190,6 +166,24 @@ function HooksSection({ pushToast: toast }: { pushToast: (msg: string, type?: "i
           </Text>
         </Box>
       </Box>
+
+      <Box flexDirection="column" borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+        <Text bold color={theme.colors.text.primary}>Public hook coverage cards</Text>
+        <Text color={theme.colors.text.dim}>
+          Runtime demo, docs-only, test-only, and edge-case status are explicit in src/cli/demo/coverage.ts.
+        </Text>
+        {DEMO_COVERAGE
+          .filter((entry) => entry.kind === "hook")
+          .map((entry) => (
+            <Box key={entry.name} flexDirection="row" gap={1}>
+              <Text color={entry.status === "edge-case" ? theme.colors.warning : theme.colors.success}>
+                {entry.status}
+              </Text>
+              <Text color={theme.colors.text.primary}>{entry.name}</Text>
+              <Text color={theme.colors.text.dim}>— {entry.note}</Text>
+            </Box>
+          ))}
+      </Box>
     </Box>
   );
 }
@@ -251,4 +245,4 @@ function BehaviorsSection(): React.ReactElement {
   );
 }
 
-export { AnimLabSection, HooksSection, BehaviorsSection };
+export { AnimLabSection, BehaviorsSection, HooksSection };

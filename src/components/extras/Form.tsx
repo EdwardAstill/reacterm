@@ -32,7 +32,6 @@ export interface FormRootProps {
 }
 
 function FormRoot({ onSubmit, initialValues = {}, children }: FormRootProps): React.ReactElement {
-  const colors = useColors();
   const { requestRender } = useTui();
   const onSubmitRef = useRef(onSubmit);
   onSubmitRef.current = onSubmit;
@@ -80,9 +79,9 @@ export interface FormCompoundFieldProps {
   children?: React.ReactNode;
 }
 
-function FormCompoundField({ name, type = "text", label, validate, children }: FormCompoundFieldProps): React.ReactElement {
+function FormCompoundField({ name, type = "text", label, children }: FormCompoundFieldProps): React.ReactElement {
   const colors = useColors();
-  const { values, setValue, errors, setError, activeField } = useFormContext();
+  const { values, errors, activeField } = useFormContext();
   const value = values[name] ?? "";
   const error = errors.get(name);
   const isActive = activeField === name;
@@ -147,7 +146,6 @@ export interface FormCompoundSubmitProps {
 
 function FormCompoundSubmit({ label = "Submit", children }: FormCompoundSubmitProps): React.ReactElement {
   const colors = useColors();
-  const { submit } = useFormContext();
 
   if (children) {
     return React.createElement("tui-box", { flexDirection: "row", marginTop: 1 }, children);
@@ -531,7 +529,6 @@ const FormBase = React.memo(function Form(rawProps: FormProps): React.ReactEleme
       valueDisplay = field.placeholder!;
     } else if (isActive) {
       const before = displayValue.slice(0, cursorPos);
-      const cursorChar = cursorPos < displayValue.length ? displayValue[cursorPos] : " ";
       const after = displayValue.slice(cursorPos + 1);
       valueDisplay = before + "\u2588" + after; // block cursor approximation
     } else {

@@ -1,46 +1,67 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Box, Text, Spacer,
-  Spinner, Badge, Divider, ProgressBar, Tag, Kbd,
-  TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
-  MaskedInput, ChatInput, Select,
-  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
-  Stepper, Heading, Calendar, DatePicker, EventCalendar,
-  SearchList,
-  Tree, TreeTable, RichLog, Pretty, DefinitionList,
-  OrderedList, UnorderedList,
-  Sparkline, Gauge, BarChart, LineChart, AreaChart, Heatmap, Histogram,
-  OperationTree, StreamingText, ApprovalPrompt, MessageBubble,
-  ShimmerText, BlinkDot, ContextWindow, CostTracker, ModelBadge,
-  StatusLine, TokenStream, CommandBlock,
-  Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight,
-  Transition, AnimatePresence, GlowText, GradientBorder, Gradient,
-  GradientProgress, RevealTransition,
-  Digits, Diagram, Canvas,
-  validateContrast, contrastRatio,
-  LocaleProvider, formatNumber, i18nT, plural,
-  PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA,
-  useTui, useTerminal, useInput, useTick, useMousePosition,
-  useUndoRedo, useHotkey, useConfirmAction, useWizard,
-  usePersistentState, memoryStorage,
-  useTextCycler, useEasedInterval,
-  useAnnounce,
-  detectTerminal, detectImageCaps, bestColorDepth,
-  useTheme, useEventCalendarBehavior,
-} from "../demo-kit.js";
 import type {
-  SelectOption,
-  TreeNode,
-  TreeTableRow,
-  OpNode,
-  DiagramNode,
-  DiagramEdge,
-  CanvasNode,
   CanvasEdge,
-  Locale,
-  StormColors,
+  CanvasNode,
+  DiagramEdge,
+  DiagramNode,
+  OpNode,
 } from "../demo-kit.js";
-import { THEMES, PERSONALITY_PRESETS } from "../catalog.js";
+import {
+  Accordion,
+  AnimatePresence,
+  ApprovalPrompt,
+  AreaChart,
+  Badge,
+  BarChart,
+  Box,
+  Canvas,
+  Collapsible,
+  CommandBlock,
+  CommandDropdown,
+  ContextWindow,
+  CostTracker,
+  Diagram,
+  DiffView,
+  Digits,
+  Editor,
+  Gauge,
+  GlowText,
+  Gradient,
+  GradientBorder,
+  GradientProgress,
+  Heatmap,
+  Histogram,
+  InlineDiff,
+  Kbd,
+  Link,
+  LineChart,
+  Markdown,
+  MarkdownEditor,
+  MarkdownViewer,
+  MessageBubble,
+  ModelBadge,
+  OperationTree,
+  PerformanceHUD,
+  RevealTransition,
+  ScatterPlot,
+  ScrollView,
+  Shadow,
+  Spacer,
+  Sparkline,
+  StatusLine,
+  Stopwatch,
+  StreamingText,
+  SyntaxHighlight,
+  Text,
+  Timer,
+  TokenStream,
+  Transition,
+  useInput,
+  useTerminal,
+  useTheme,
+  useTick,
+  useTui,
+} from "../demo-kit.js";
 import { Clickable } from "../shared.js";
 
 function ChartsSection(): React.ReactElement {
@@ -167,6 +188,22 @@ function ChartsSection(): React.ReactElement {
               Array.from({ length: 12 }, (_, c) => Math.sin(r * 0.6) + Math.cos(c * 0.4))
             )}
             width={36}
+          />
+        </Box>
+
+        <Box marginTop={1}>
+          <Text color={theme.colors.text.secondary}>ScatterPlot — latency vs load</Text>
+          <ScatterPlot
+            series={[
+              {
+                name: "p99",
+                data: Array.from({ length: 14 }, (_, i) => [i, 30 + i * 3 + Math.sin(i) * 8] as [number, number]),
+                color: theme.colors.warning,
+              },
+            ]}
+            width={36}
+            height={7}
+            showTrend
           />
         </Box>
       </Box>
@@ -342,6 +379,41 @@ function AiSection({ pushToast: toast }: { pushToast: (msg: string, type?: "info
               )}
             </Box>
           </Box>
+
+          <Box flexDirection={wide ? "row" : "column"} gap={1}>
+            <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+              <Text bold color={theme.colors.text.primary}>CommandDropdown</Text>
+              <CommandDropdown
+                items={[
+                  { name: "/review", description: "Run reviewer" },
+                  { name: "/test", description: "Run focused tests" },
+                  { name: "/commit", description: "Draft commit" },
+                ]}
+                selectedIndex={1}
+                isFocused={false}
+                maxVisible={3}
+              />
+            </Box>
+            <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+              <Text bold color={theme.colors.text.primary}>PerformanceHUD</Text>
+              <PerformanceHUD
+                title="PerformanceHUD"
+                fps={58}
+                renderTimeMs={4.8}
+                componentCount={142}
+                cellsChanged={310}
+                totalCells={8400}
+                memoryMB={92}
+                heapUsedMB={48}
+                heapTotalMB={96}
+                gcPressure={0.18}
+                bufferKB={128}
+                activeTimerCount={7}
+                layoutMs={1.4}
+                position="top-right"
+              />
+            </Box>
+          </Box>
         </Box>
       </ScrollView>
 
@@ -508,6 +580,17 @@ function EditorSection(props: EditorSectionProps): React.ReactElement {
           <SyntaxHighlight code={code} language="typescript" />
         </Box>
       )}
+
+      <Box flexDirection="column" borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
+        <Text bold color={theme.colors.text.primary}>MarkdownEditor</Text>
+        <MarkdownEditor
+          value={"# Demo\\n\\n- MarkdownEditor\\n- debounced preview"}
+          onChange={() => undefined}
+          rows={4}
+          previewWidth={32}
+          isFocused={false}
+        />
+      </Box>
     </Box>
   );
 }
@@ -659,10 +742,50 @@ function EffectsSection(): React.ReactElement {
               gapX={3}
             />
           </Box>
+
+          <Box
+            flexDirection="column"
+            borderStyle="round"
+            borderColor={theme.colors.divider}
+            paddingX={1}
+          >
+            <Text bold color={theme.colors.text.primary}>Content effects</Text>
+
+            {label("Shadow")}
+            <Shadow contentWidth={18}>
+              <Box borderStyle="round" borderColor={theme.colors.brand.primary} paddingX={1}>
+                <Text color={theme.colors.brand.primary}>shadow panel</Text>
+              </Box>
+            </Shadow>
+
+            {label("Link")}
+            <Link url="https://github.com" color={theme.colors.info}>https://github.com</Link>
+
+            {label("Timer / Stopwatch")}
+            <Box flexDirection="row" gap={2}>
+              <Timer value="01:30" prefix="Timer " color={theme.colors.warning} running={false} />
+              <Stopwatch running={false} color={theme.colors.success} />
+            </Box>
+
+            {label("Accordion")}
+            <Accordion
+              sections={[
+                { key: "one", title: "Runtime demo", content: <Text color={theme.colors.text.secondary}>Accordion body</Text> },
+                { key: "two", title: "Second panel", content: <Text color={theme.colors.text.secondary}>Collapsed by default</Text> },
+              ]}
+              activeKeys={["one"]}
+              isFocused={false}
+            />
+
+            {label("Collapsible")}
+            <Collapsible title="Collapsible" expanded>
+              <Text color={theme.colors.text.secondary}>Expanded content</Text>
+            </Collapsible>
+          </Box>
         </Box>
       </Box>
     </ScrollView>
   );
 }
 
-export { ChartsSection, AiSection, EditorSection, EffectsSection };
+export { AiSection, ChartsSection, EditorSection, EffectsSection };

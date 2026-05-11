@@ -1,46 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Box, Text, Spacer,
-  Spinner, Badge, Divider, ProgressBar, Tag, Kbd,
-  TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
-  MaskedInput, ChatInput, Select,
-  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
-  Stepper, Heading, Calendar, DatePicker, EventCalendar,
-  SearchList,
-  Tree, TreeTable, RichLog, Pretty, DefinitionList,
-  OrderedList, UnorderedList,
-  Sparkline, Gauge, BarChart, LineChart, AreaChart, Heatmap, Histogram,
-  OperationTree, StreamingText, ApprovalPrompt, MessageBubble,
-  ShimmerText, BlinkDot, ContextWindow, CostTracker, ModelBadge,
-  StatusLine, TokenStream, CommandBlock,
-  Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight,
-  Transition, AnimatePresence, GlowText, GradientBorder, Gradient,
-  GradientProgress, RevealTransition,
-  Digits, Diagram, Canvas,
-  validateContrast, contrastRatio,
-  LocaleProvider, formatNumber, i18nT, plural,
-  PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA,
-  useTui, useTerminal, useInput, useTick, useMousePosition,
-  useUndoRedo, useHotkey, useConfirmAction, useWizard,
-  usePersistentState, memoryStorage,
-  useTextCycler, useEasedInterval,
-  useAnnounce,
-  detectTerminal, detectImageCaps, bestColorDepth,
-  useTheme, useEventCalendarBehavior,
-} from "../demo-kit.js";
+import React, { useState } from "react";
+import { PERSONALITY_PRESETS } from "../catalog.js";
 import type {
-  SelectOption,
-  TreeNode,
-  TreeTableRow,
-  OpNode,
-  DiagramNode,
-  DiagramEdge,
-  CanvasNode,
-  CanvasEdge,
   Locale,
   StormColors,
 } from "../demo-kit.js";
-import { THEMES, PERSONALITY_PRESETS } from "../catalog.js";
+import {
+  Badge,
+  bestColorDepth,
+  Box,
+  contrastRatio,
+  detectImageCaps,
+  detectTerminal,
+  formatNumber,
+  i18nT,
+  LocaleProvider,
+  plural,
+  PLURAL_AR,
+  PLURAL_EN,
+  PLURAL_FR,
+  PLURAL_JA,
+  PLURAL_RU,
+  Spinner,
+  Text,
+  useAnnounce,
+  useInput,
+  useTheme,
+  validateContrast,
+} from "../demo-kit.js";
 import { Clickable } from "../shared.js";
 
 const LOCALES_DEMO: Record<string, Locale> = {
@@ -497,4 +483,11 @@ function CapabilitiesSection(): React.ReactElement {
   );
 }
 
-export { I18nSection, DevToolsSection, PluginsSection, PersonalitySection, A11ySection, CapabilitiesSection };
+export {
+  A11ySection,
+  CapabilitiesSection,
+  DevToolsSection,
+  I18nSection,
+  PersonalitySection,
+  PluginsSection,
+};

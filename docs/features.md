@@ -10,16 +10,12 @@ For each entry, the catalog records:
 - **Kind** — Component | Hook | Type | Function | Class | Constant | Plugin | Middleware
 - **Source** — file path under `src/`
 - **One-liner** — what it does, ≤ 80 chars
-- **Demo** — section name in `examples/reacterm-demo.tsx` that exercises it,
-  or the alternative location (`docs/X.md`, `examples/Y.tsx`, "edge-case — see notes")
+- **Demo** — `runtime-demo`, `docs-only`, `test-only`, `edge-case`, or `missing`
+  status. The executable matrix lives in `src/cli/demo/coverage.ts`.
 
-If the **Demo** column is `—`, the feature is not yet exercised in the
-explorer. The sister doc `docs/plans/2026-04-29-explorer-all-features-plan.md`
-tracks the work to fill those gaps.
-
-> This catalog is currently a **skeleton** — categories are defined and
-> seeded with one example per group so the section design has a frame
-> of reference. Sub-task 1 of the plan does the full enumeration.
+`src/__tests__/demo-coverage.test.ts` fails when a public component or widget
+export lacks an explicit status, and also fails if any status remains
+`missing`.
 
 ---
 
@@ -472,38 +468,27 @@ Sections marked **subsystem** are imperative APIs, not React components.
 
 ---
 
-## Coverage rollup
+## Coverage Rollup
 
-The plan target was ≥95% of cataloged features either demoed in
-`examples/reacterm-demo.tsx` or explicitly justified as edge-case.
-Honest pragmatic numbers after the autonomous build pass:
+The demo coverage source of truth is `src/cli/demo/coverage.ts`.
 
-```
-sections in explorer:    21 (Tour / Build / Visualize / Hooks / Internals / Meta)
-public exports surfaced: ~140 of ~190 (~74%)
-informationally listed:  ~30 (Behaviors / Plugins / DevTools / Middleware
-                              cards — hooks/plugins are listed by name,
-                              not actually invoked, because they're
-                              registered at render() time or back high-level
-                              components)
-edge-case (not in explorer):
-  - WebRenderer       — browser only; lives in playground/
-  - StormSSHServer    — ssh2 dep + open port; see examples/ssh-demo.tsx
-  - testing harness   — used BY the explorer's tests; not a section
-  - core types        — type-only, no runtime
-  - low-level ANSI    — used internally; not consumer-facing in a demo
-  - render utilities  — RenderContext, FocusManager, etc. — internal plumbing
-not yet covered:
-  - useFocus / useFocusManager        — needs a focus-trap subsection
-  - useTimer / useTimeout / useInterval — covered in spirit by useTick
-  - useGhostText / useImperativeAnimation — Animation lab gap
-  - Image / Canvas / RevealTransition — Effects gap (Image needs a real file)
-  - DirectoryTree / FilePicker / Table — Data gap
-  - Form (schema-driven) — Forms section uses individual controls instead
-  - CommandPalette as overlay — replaced by sidebar nav
-  - Calendar / DatePicker — Display & content gap
-  - Tooltip / Alert / ConfirmDialog / Welcome — feedback gap
-```
+Status meanings:
+
+- `runtime-demo`: directly visible or interactively exercised in `reacterm demo`.
+- `docs-only`: intentionally documented rather than shown in the runtime demo.
+- `test-only`: best covered by focused rendering or behavior tests.
+- `edge-case`: environment-dependent, unsafe, or too low-level for the runtime demo.
+- `missing`: forbidden by `src/__tests__/demo-coverage.test.ts`.
+
+Current state:
+
+| Status | Meaning in this repo |
+|--------|-----------------------|
+| `runtime-demo` | Data, navigation, feedback, charts, editor, effects, AI widgets, core forms, and hook cards are inside `reacterm demo`. |
+| `docs-only` | Low-value duplicate primitives such as `Header`, `Footer`, `Panes`, `OptionList`, and `Placeholder` remain documented. |
+| `test-only` | Failure boundaries and render-flow primitives are covered where assertions are stronger than a visual demo. |
+| `edge-case` | Capability-dependent features such as `Image`, clipboard/paste hooks, drag reorder, and global focus manager behavior are explicitly justified. |
+| `missing` | None. The demo coverage test rejects this status. |
 
 ### Section ↔ feature map (concrete)
 
@@ -511,15 +496,16 @@ not yet covered:
 |---------------|------------------------------|
 | Welcome       | Spinner, Badge, Divider, ModelBadge, BlinkDot, useTheme |
 | Layout        | Box, Text, ScrollView, ListView, Badge |
-| Forms         | TextInput, TextArea, MaskedInput, ChatInput, Select, Switch, Checkbox, RadioGroup, Button, Stepper, Tag, Kbd, useInput |
+| Forms         | TextInput, TextArea, MaskedInput, ChatInput, Select, Switch, Checkbox, RadioGroup, Button, Form, Stepper, Tag, Kbd, useInput |
 | Search        | SearchList, useSearchFilter (internal) |
-| Data          | Tree, DataGrid, RichLog, Pretty |
-| Charts        | Sparkline, Gauge, BarChart, LineChart, AreaChart, Histogram, Heatmap, useTick |
-| AI            | MessageBubble, OperationTree, StreamingText, ApprovalPrompt, ModelBadge, ContextWindow, CostTracker, TokenStream, CommandBlock, StatusLine |
-| Editor        | Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight |
-| Effects       | Gradient, GlowText, Shadow, GradientBorder, Digits, Transition, AnimatePresence, Diagram |
+| Data          | Tree, DataGrid, RichLog, Pretty, Table, SearchTable, VirtualList, DirectoryTree, FilePicker, TreeTable |
+| Overlays      | Overlay, OverlayProvider, Tabs, TabbedContent, Breadcrumb, Menu, CommandPalette, Paginator, HelpPanel, Alert, ConfirmDialog, Tooltip, StatusMessage, LoadingIndicator, ToastContainer, Welcome |
+| Charts        | Sparkline, Gauge, BarChart, LineChart, AreaChart, Histogram, Heatmap, ScatterPlot, useTick |
+| AI            | MessageBubble, OperationTree, StreamingText, ApprovalPrompt, ModelBadge, ContextWindow, CostTracker, TokenStream, CommandBlock, CommandDropdown, PerformanceHUD, StatusLine |
+| Editor        | Editor, Markdown, MarkdownViewer, MarkdownEditor, DiffView, InlineDiff, SyntaxHighlight |
+| Effects       | Gradient, GlowText, Shadow, Link, Timer, Stopwatch, Accordion, Collapsible, GradientBorder, Digits, Transition, AnimatePresence, Diagram, Canvas, RevealTransition |
 | Anim Lab      | useTextCycler, useEasedInterval, useTick (imperative), Sparkline, ShimmerText, BlinkDot |
-| Hooks         | useUndoRedo, usePersistentState, memoryStorage, useWizard, useConfirmAction, useHotkey |
+| Hooks         | useUndoRedo, usePersistentState, memoryStorage, useWizard, useConfirmAction, useHotkey, useFocus, useFocusManager, useVirtualList, useCommandPalette, useTimer, usePhaseTimer, useGhostText, useImperativeAnimation, useClipboard, usePaste, useKeyChord, useTypeahead, useMultiSelect, useSortable, useAsyncLoader, useBatchAction, useStreamConsumer, useHistory, useModeCycler, useNotification, useContextMenu, useDragReorder, useInfiniteScroll, useCopyPasteBuffer, useStyleSheet |
 | Behaviors     | (15 headless behavior hooks listed by name) |
 | i18n          | LocaleProvider, formatNumber, t, plural, PLURAL_* (5 rules), 6 demo locales |
 | DevTools      | (4 panels + 3 middlewares listed informationally) |
@@ -537,9 +523,5 @@ not yet covered:
 `KeyboardHelp`, `Modal`, `Divider`, `Spacer`, `useColors`,
 `PersonalityProvider`, `ThemeProvider`.
 
-### Closing the gap
-
-Items in "not yet covered" above are tracked in
-[`ROADMAP.md`](../ROADMAP.md). Each will land in a follow-up commit
-that expands an existing section rather than adding a 22nd one — the
-six-super-section sidebar is at its navigation budget.
+The coverage matrix is maintained in code so future additions to the public
+component/widget surface must be classified before the tests pass.
