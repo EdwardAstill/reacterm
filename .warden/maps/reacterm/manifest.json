@@ -2,2515 +2,2515 @@
   "files": {
     "benchmarks/optimization/bench-render-internal.ts": {
       "content_hash": "721ee5189ba7be37482e4096caefd90484db2c3580e0a37f51cdda140d120ab6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "bin/reacterm.ts": {
       "content_hash": "68cb3dd3de58ce179bed2a6a49889fc65a3b08cba219c08220192dd707f40389",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "demo-panes.ts": {
       "content_hash": "8887b424deb2126a721773b805dc8322ba5f1beca057f60dee00262eed0b2745",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/benchmarks-extreme.ts": {
       "content_hash": "e7c9096d7d6d661af915b8b779d063acd8e0e15b75cffb060acd2dd37d112808",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/benchmarks.ts": {
       "content_hash": "e1c09ea6e07d21452a4181ba708399941f9d8e5c3c9635309869ec04fd862b2c",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/debug/absolute-natural.tsx": {
       "content_hash": "9f53914d5bff8f199e6689e57edb574d1f92b63e9ff8904d2db5eb066e839a1c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/absolute.tsx": {
       "content_hash": "b989b1ce27bfd58469f96c1283ba73be6b8fe3b6c55f061495035236e573ac2f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/capture-scrollview.tsx": {
       "content_hash": "6dde9c642108aa58dd1580336874ad810b5ab29d5e13be889b18e43c5b525cf1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/flex-shrink.tsx": {
       "content_hash": "7bf141300c3c1d16d16dbd061b73d90468a27217edbae19f4078ffdc5cf8a69d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/horizontal-scroll.tsx": {
       "content_hash": "8621eb4642955a03a1e95922a71415ee539cd8cba81a0d015c91275551f118b7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/noop.tsx": {
       "content_hash": "80ae13cb91ab400ab330545d640ac62f18691bc726231efcb80a1101b6a0847c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/overflow.tsx": {
       "content_hash": "cfe7d7f495155e808c1041fa1f7c000e203551e103ee4a42608a53430dc6ca75",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/overlay.tsx": {
       "content_hash": "4a8162d76d5ad8ca335ffa8041d693b3f9407acbcf0ffa5b1c7d52110cbaecd0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/reorder.tsx": {
       "content_hash": "c8ec1a56b25a175d846972ffdffc74dc8cf847bd965d3d088ff4f7514453610f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/resize.tsx": {
       "content_hash": "c59b33172b88a02009de5c7a11bebbd580328910d2b819266cd9a626b192fb8a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/scroll.tsx": {
       "content_hash": "018b314ac0c8a0a2e6818b4b23a0aa1ffe01b51acef712ce8ed16a0e7eca3f3f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/scrollview-width.tsx": {
       "content_hash": "564fba41b74702f44051cc2a915a149058ced36bbb8216a9a3a352cdf0210c27",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/wide-char-diff.tsx": {
       "content_hash": "66bdc92674212643a46c30f9343ab33b08f72ad1a106adb7bf7039f2f12e9f47",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/debug/wide-char.tsx": {
       "content_hash": "8d7a51fa7822933dbf01b7913f0e880a62b80d3f80fe5eeb982bdf367ca57a9f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/devtools-demo.tsx": {
       "content_hash": "2fd2a03ea7b7dba47e7367d0fd16c3a531010eaab9cd992da928d6e576fef73b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/reacterm-demo.tsx": {
       "content_hash": "55d0295a063f526bfc021fee0ada2a7c1b54056f9c03c9fdceea085aa8a51c9b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/readme-agent.tsx": {
       "content_hash": "d818858d3eff20b89a8c5319d2efe748dc1d4642b207161a2712aefcf48da645",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/readme-quickstart.tsx": {
       "content_hash": "0825e9c58ed11d73740979caa3fccc333106c286f87ce9a37a3e53a34693cfa6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ssh-demo.tsx": {
       "content_hash": "8e9a6c8ec975664f37994105f332db88ca1808886b35e32adab5f7062d7ba73e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/App.tsx": {
       "content_hash": "1afcf29d7d7b8c57d97f1eda04df89dde6def9db3d81ee61e2324c3942547a5f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/chat/CommandPalette.tsx": {
       "content_hash": "610c39b81f836337bff2e09249b36d39a413975d818593fe82668e756eb0ab28",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/chat/InputBar.tsx": {
       "content_hash": "7ff609ba8663a374749f02aca07b759749b9a3c21b1114e65170e3b860060d44",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/chat/MessageList.tsx": {
       "content_hash": "ae5816af1dcd6ccbaa200e5d2a0f2e40bc94d62590db8f75ff09b604a4456376",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/chat/ToolApproval.tsx": {
       "content_hash": "e9e42682122a229245ead6711c137bd7f7d4518256930545866be2b8ad1f7e3d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/data/mock-agents.ts": {
       "content_hash": "82daa542f2cc0320ea163f84895f0bb5fadd0b00a6bb909bbc23864411a38b85",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-agent/data/mock-responses.ts": {
       "content_hash": "3037c142417dba1d7c599f99bd445105c72228aadf9feb02d3339525a6b0bfca",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-agent/data/simulator.ts": {
       "content_hash": "6952b0ec0d46563970928bc541625bc744c626b0608b340ae8fa574f3de8d8c9",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-agent/data/slash-commands.ts": {
       "content_hash": "c1383e9b8df3c6debd60d25ec0854f98d4401c14169f9886fafdcb633071268d",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-agent/data/types.ts": {
       "content_hash": "88c61bf973b4c303db30a9f29129e54bdc5830f5a66ead020d15476399a8b1c7",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-agent/index.tsx": {
       "content_hash": "f0265a0ed407990576ffd213cb7e09e711e9da474d8f8cb58f2fd121d8c4a737",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/panels/StatusBar.tsx": {
       "content_hash": "b613482ba63456b55d0b534f55e101aeb24eb93cb918dd1f1a738ab020f941dd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-agent/screens/ChatScreen.tsx": {
       "content_hash": "8fc28be2e0d3dcd88f1409e41b3793d5ae17371f5b71a1774e27d8b3c572065c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/App.tsx": {
       "content_hash": "605d57cba100550fa000d7e93dd0b92f230d5e84015bda93a4451b9ca6d3aec0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/chat/CommandPalette.tsx": {
       "content_hash": "6a6660889d625ae80ea137b73ad21318314f18d07ae03e8c6f2bb67e9eba307e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/chat/InputBar.tsx": {
       "content_hash": "5e40843c97a4f3b8a0b1f00071e9996f177abd731b45a57e60b71784d9629a46",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/chat/MessageList.tsx": {
       "content_hash": "7e1cace96322ec77610718095c4c2cda7973eadc52c488b6869d62baf0c32637",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/chat/StormLogo.tsx": {
       "content_hash": "119c3b8c5d7d7fa9ba0cbcb4764cc35aefc0fcf5b2d1c9772527986ca2e98f70",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/chat/ToolApproval.tsx": {
       "content_hash": "be75f4fbd59884a157e6fa514f12fff7134d78fc450822681ceb822b0fe37f10",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/data/mock-responses.ts": {
       "content_hash": "8e8b1345b5ef2c2f09f6bb97aebd8cead7aaa28549feabd0de05312a3d23727a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-code/data/simulator.ts": {
       "content_hash": "214c4d1fe90fcff5b2476670ab52f51e4843321b09d1201336522f527a1ba572",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-code/data/slash-commands.ts": {
       "content_hash": "8eec5e4ee59f675f5268bbacbee64a3348666e6a33051638e059f30fc1267ddb",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-code/data/theme.ts": {
       "content_hash": "62e929aae0d4930e6c7ca11765b650383aff8b8724f5110703b43cbc4b5c8e42",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-code/data/types.ts": {
       "content_hash": "c05a3b2f115e0c79ae1b505e007cebdb6996919a3a3e945f8518a6665b3f350b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "examples/storm-code/index.tsx": {
       "content_hash": "c415b001305dea1f0944099cfb67c653c40d470c92ace7d239956a478a35cb5a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-code/screens/ChatScreen.tsx": {
       "content_hash": "3ebf518e4e3c3599687e4697fdc5f8c7a90f8707bfaf5eda57903bbbbcc90b89",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/App.tsx": {
       "content_hash": "bf6665b8727bc117b70f26d63ca1134f3eb5af71f47b2a59707dc44a291bc82b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/Dashboard.tsx": {
       "content_hash": "8cc08371ef2494b7505f2b0941b58a422d39a8c3b0d7b973ffba5cb074d2c011",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/index.tsx": {
       "content_hash": "124acb66b385d4fff2322b0f5993976cada29c7817bfffe13b5ac1ffe93e1173",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/AgentPanel.tsx": {
       "content_hash": "7a9d4ae0445c14d6edd4590b85a5ad9de0d2e055bcc33b8181c3770095663fda",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/CostPanel.tsx": {
       "content_hash": "4af94fa9fa828b459edc6b98e5f67bd372913ff7daee23ea0b37cca4c0280e04",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/DiffPanel.tsx": {
       "content_hash": "39523e059ff814bf306bb037fe60dbf8fcbcd2255ab1c08e4dc29a602c1515c2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/EventLog.tsx": {
       "content_hash": "734a28a5512990cc99ad723cbadc47142605a211c3e8a75b53e697d1e03c59d4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/GovernancePanel.tsx": {
       "content_hash": "03d9735d66b6e4e52c154e5e710a945ba11c257c69ebb01c3926ea81fb5f4097",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/MetricsPanel.tsx": {
       "content_hash": "248c075049ee62a2cf2817aef4c4bc4c2a2ec75f14b8572f765bc7016d36df11",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-ops/panels/ResourcePanel.tsx": {
       "content_hash": "1c42e32de87565ddc0b195ff2295391df0c76a1a7c594960686b0e7519d005b6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/storm-website.tsx": {
       "content_hash": "a884a253c655d6ab196282b1a957afe839c0a78647e1f80ff77fb23e139ac75c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/syntax-scroll.tsx": {
       "content_hash": "e154e4aebbc0ac80e81b0fa93bc7d9b63d5c0caec0089cd1365a67148ab3e73e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/menu.tsx": {
       "content_hash": "edc4f36b719d77fc9fb33b7d522efea1305aa96fff9efffbd8759bbecf19d16d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/app.tsx": {
       "content_hash": "a0fcebf8552d2f733212ffdf9ad1a2f3eb0a84d01c6ce5e4d7b6d059f862ebd9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/bios95.tsx": {
       "content_hash": "5e1ea5cc5007ce7364cc8650458192469516ae2d5f8e967b7a67b31a3bed4d30",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/brutalist.tsx": {
       "content_hash": "37a2753ce03f5ed62ff71d03e3e36ad63afd97c2161f64448f8bdb71b0bcefdd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/dock.tsx": {
       "content_hash": "d7ca62203278c046b192041ac720468c502e39a85333a474eb8438ef6997a9c3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/feature.tsx": {
       "content_hash": "bc351c7637cc4ed690f8ea67133da1c3205612383e9d02d164908619c27dd882",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/flightdeck.tsx": {
       "content_hash": "2bd7cd12fbc33d1d2b5a286e47d1e20e92d9cd5ab80f59161682baeb940ff3fb",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/logbook.tsx": {
       "content_hash": "47ba7eabd07f0f21c9edcf551cf9282a04bd6fad7bddbe6399234f32d647bca5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/markdown-editor.tsx": {
       "content_hash": "bdd02858dba920280c132e07b8cef3c9050945f96c0479883d8b4349718867f8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/oxide.tsx": {
       "content_hash": "86dc6c1aae1ade1f4ba80d4cfd18dc700267c0317352b7fa8e18606e866e6270",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/showcase/posting.tsx": {
       "content_hash": "27069aec320e64788a5bb36aacdde11b82768d8c3e2af8391938a824a18c3f50",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/style/app.tsx": {
       "content_hash": "11e71fa1e612665ce3868a7918b5f493b89fe2b369f933b13770168878cc33dc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "examples/ui-terminal/themes.ts": {
       "content_hash": "1a719ceccd63d7f13caef66729dbb92daa32d4b12185fcf53ce978b84d10e78c",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "playground/examples/counter.tsx": {
       "content_hash": "b38c75a2797c7fcdbb9c9c35a579daaa8b7a741574d856bed1dc55483e1f0bd9",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "playground/examples/dashboard.tsx": {
       "content_hash": "c9d323d1b9100e01fc712d1af1439d2c4256dcc55b5571e1262220dc4719bbd4",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "playground/examples/form.tsx": {
       "content_hash": "a7e32ed718452b24a019250519ef523e7fb23e790fb267e2a08172912c71139c",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "playground/examples/hello.tsx": {
       "content_hash": "7c1925256d479f914ce4d231b512b96e8a6c651267d3ec967d1bfe9318ca9d59",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "playground/examples/tree-table.tsx": {
       "content_hash": "3a6c3192b6b41ffdfad8f24c75220da9d9a89b93cf2db9695c0dc989cc76b261",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/components.d.ts": {
       "content_hash": "3c47f9b2532d11bb133600d8ba44935d26ef67dd27bb958c3ca3f9a127e0c67d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/devtools.d.ts": {
       "content_hash": "bebfbc3b46f265c4817b9630cb9128bdd1a775ead2c58f1cde0d3db16c2951f4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/headless.d.ts": {
       "content_hash": "9c69f363262b8b404191002a14e7d648fa663d8c4573d04c06ee86d060e97284",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/hooks.d.ts": {
       "content_hash": "d4644f132c451857e70b9b55e210875f7d03affad187dc753c0f210993f7b632",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/root.d.ts": {
       "content_hash": "4bad22314b441f110a45511f3d4b11af70fdc5cb9071601cf61d812fbb6716aa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/ssh.d.ts": {
       "content_hash": "73a2e990255841f647894e730f0d92f1477cc96bff30520c94db8cb7c49a86e7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/templates.d.ts": {
       "content_hash": "6d4e9028692dff5498b8d21a1b7f5de223ddbcf58a406c8f3ef2583f0468805f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/testing.d.ts": {
       "content_hash": "a2969b9761dc3c9281d9a6b36a52c3eb9e0e498f70176238970b4e80950bb7ab",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/__snapshots__/api-surface/widgets.d.ts": {
       "content_hash": "5b591fdb73bda541654ed9fbb21a89ec8db9ce548ca665a25eefe3fb5bc2da84",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/api-surface.test.ts": {
       "content_hash": "fc2989636aa2b405f47be31f3fb7a903cbd7490cf19bac7b787d3934c936a7ce",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/badge.test.ts": {
       "content_hash": "340ec93cb1a15a19c4870d2fbd03329c0cd76042b5b35daa6f6c7551696fb31c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/benchmarks.test.ts": {
       "content_hash": "e4e9c98f1503573cd76b2c43a4dd9f833ec12f13862458837d417fcc4dc67167",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/buffer.test.ts": {
       "content_hash": "3a9ce9d0cb1a1d4e5073675836101d88bd60735603d8c5cf2967f094fd5e30c8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/chart-core.test.ts": {
       "content_hash": "347f154ce2fcaf3de87a420b1ef9ca6cbf2ecb71d4af0bc7b6ecf13fe71def5e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/component-boundary-layout.test.ts": {
       "content_hash": "0a88b7f3661f1bd26502d3509cfa31cb35caacbaf4c44f0f79b607b5063814b4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/components.test.ts": {
       "content_hash": "7e7ee0a867452e397b38b7d0cd493b45b113489b917aa6a1c3959389ba667cf4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/demo-calendar.test.ts": {
       "content_hash": "e24d908df1fb997bd97150036209bff1db8d3fdfa5bfdce327bb095bc33ea94c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/demo-coverage.test.ts": {
       "content_hash": "276d131f05142710e979b5bfeac9ba81b798712e816e3f75cfc157d2a56286d1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/demo-visual-effects.test.ts": {
       "content_hash": "5ce22a628325b57a58b205575083a2066a3a30826f549e66dbc9f81a59ec9131",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/diff.test.ts": {
       "content_hash": "a4c73f614a3f041f7bf0fe35092b6c8b2c80335cdf08f0fbc1f9678b1878eda4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/diffview.test.ts": {
       "content_hash": "29959a0f0d9543f8ccde3f9a4b032a44dd26e3d8f4d9b9ee4b4fccad176928be",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/event-calendar.test.ts": {
       "content_hash": "198934f35643181d4a9acb2fc90acd7161b7e2506597eaac7f1f817d93c09582",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/form.test.ts": {
       "content_hash": "9170810a559f59d86d06220a616121543ec14fd4a311f35e38c270538bc4c7b6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/help-panel.test.ts": {
       "content_hash": "8463a4ca35297d870253e0d8d4e3c0f02b204429268e0be5106aa7ac375782c0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/input-manager.test.ts": {
       "content_hash": "0f9deb0f4b687902ebaef585d73cd8f630fd310786aee69e778ea6c8f9f137fc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/integration.test.ts": {
       "content_hash": "c2198e2b25cda3070b8c7440b26aaf473f615c50b1d81c2450bc4b5d4b7f59f0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/layout-box-api.test.ts": {
       "content_hash": "aca12e132ab5912b08ebf00b1049aea7d4622ac53b01c2a08fce63ad0ea87839",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/layout-engine-scroll.test.ts": {
       "content_hash": "06186f291310ee0c4d242c7a62ac0a4a48f0ce63daa4aac420dbfc864983eec6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/layout-properties.test.ts": {
       "content_hash": "c1d8434f5f52b1178685c43664a035fe87fa8c66c41870bc3b4842f088711a32",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/layout.test.ts": {
       "content_hash": "de98a06dc1c1dd848ec18dbfa8e9f3241405c37b346534facef3c219eb616b7b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/linechart.test.ts": {
       "content_hash": "da90b26135db37abb3b1430e73808d17a32b4a69aaf8fb549811ff61e7f65041",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/link-scheme-validation.test.ts": {
       "content_hash": "ef99850c6ba8b5487635b0acc1dae025dcd348db5df3360876ad4798d19d385e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/markdown-editor.test.ts": {
       "content_hash": "491e3c1e35b440c5b86c6509324df8211ff6756a6f29a4e55cdba7ebda0c0360",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/markdown-parse.test.ts": {
       "content_hash": "d8993494205e9a775a028f8a14b1596a186ba3427e39ccc264141c6136a6db02",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/markdown.test.ts": {
       "content_hash": "034f71ba4722dfa0787d54cb4f1984c4c3a56b1702bbab8f452b1cd310597423",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/messagebubble.test.ts": {
       "content_hash": "c23a60f0406860b040cd031f7f00ab34cfe9f1bebad3276d664f815b69855de5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/modal.test.ts": {
       "content_hash": "81b0a97311715e2ec3c51245b7e9601ba65a02070480512299b7e1557decbb2d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/operationtree.test.ts": {
       "content_hash": "dbcd57ffb3ea30de3764047f92032a609c0dd65da887b432fbb69cb80e04fa88",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/overlay-component.test.ts": {
       "content_hash": "419ffbcec6cd518106c11cf0863882ee9b456cf3f03f931da510a627dd42f28e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/overlay-demo-no-warn.test.ts": {
-      "content_hash": "99b11aa4c5e4808a7b3f4a506cc3612d486f407feb747016ea0feaec1668145a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "content_hash": "7d84b572ce4b29d96cf283336abb5c669698e7b3172fb04013f42a55240a6b51",
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/overlay-free-position.test.ts": {
       "content_hash": "3dd78c33e8c3ea5611326a95c2aa3b78c58b68404479e842365fea2889a4caed",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/overlay-handle-position.test.ts": {
       "content_hash": "fca0643cbc1f99fa16056907dc135fc11eb48b577302d45d4bad4bba9b0e152a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/panes.test.ts": {
       "content_hash": "ed3d1a3c4dbbaff0d0a43435dd1f9070892461fe3e6aaa568cf19c6063131ad9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/playground-file-api.test.ts": {
       "content_hash": "95f43594a4e19a953ff974fc22ac68a7b302a06564395484a151242555e00b1a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/pretty-format.test.ts": {
       "content_hash": "44ceea6e901ff85cc0fda2cc7150a6cb3d72906644936d9b760c7c8ac3155e80",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/priorities.test.ts": {
       "content_hash": "f5fd434c95e2a998de3780038542c337e4cec0846772998d218cbe9818782472",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/render-context.test.ts": {
       "content_hash": "93013a10a9e1ebd995701b09f5e57b0439ddf0468028f546d57f572b84c4aa6f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/renderer-paint-helpers.test.ts": {
       "content_hash": "2474bc497d1686961788a0ea5588630b68a38c90ba115de81866f6e1030a2eea",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/robustness.test.ts": {
       "content_hash": "5590ca89f47f4e4ee1d9fb1610d63cc83d384b403016c0adc0ffc53fce23407e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/screen.test.ts": {
       "content_hash": "3b50e1769f67b95cd5f24d20d846de8a72d25f8d709425bf9c1db9188cd2032c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/scrollview-gutter.test.ts": {
       "content_hash": "df647543cf1a9e2d6382da50bfc99da36461f560ea0dc3ac265adbe897069447",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/scrollview.test.ts": {
       "content_hash": "3c6862ce3765e40f9dfb3791a91233178de9d245e432fa787f436bc5396d671b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/search-table.test.ts": {
       "content_hash": "bb1b09b28edfe10fa538656412ccf7f2a2a8d58ce4277fd2b1a7bd02a18c4137",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/select.test.ts": {
       "content_hash": "97c65f176ce7b6805b387a0cc477d0d84569e515e398f3cf83bb774cc1a835f2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/shades.test.ts": {
       "content_hash": "64fbd86841a2ac792c391b0104ad12a9db802ef83c45ff41e9f2c980320b7327",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/streamingtext.test.ts": {
       "content_hash": "57d571c03bc57352b461983acf69a46e291097ac227abd6952ff6a78d2506ded",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/styles.test.ts": {
       "content_hash": "c1a96034b957e9ae147acc768e9082436c31025fc669291bd1eb802a06b99d81",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/syntaxhighlight.test.ts": {
       "content_hash": "48ea7d412ab18b317fcf2ec9b3eabce5664227ad19e625389459fac27cf3680a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/table.test.ts": {
       "content_hash": "ce97280c02cde8d1f9ed139f17d49c82c635580dfbe8880f39fb9e2300128336",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/testing-driver.test.ts": {
       "content_hash": "06b57405457f02dfdceb983a2709a14c3174211c8d99b22938b812bfa365cce7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/testing-explorer.test.ts": {
       "content_hash": "50683c312774eac450ba5397163db46a033e018d6a7c023b5c506542605fc00b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/testing-pty.test.ts": {
       "content_hash": "21577a878f1c8bcfc98875925c841a92d9dfb5a6f082007e445b51f2f18de1ac",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/testing-scenario.test.ts": {
       "content_hash": "c90196f0e56a6425e9a58b8fb8e4cccc9d45a31bc915caea0cfdb284ec49ae4b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/text-edit.test.ts": {
       "content_hash": "ab2b4cd2584f4d7600b8eb66b2072900f48ac2925e28295d0d050ffc4654ffca",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/text-injection-safety.test.ts": {
       "content_hash": "1c70fa4acc301f0737908427c933174da1f4a87913d63eaa052d63ad76e4615d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/textinput.test.ts": {
       "content_hash": "77a908f1d93e31ad2378d8c9d2e9cfb3caef7602510bf7d38cd4c2b20cf0406a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/theme.test.ts": {
       "content_hash": "eb1a215b81046c37242f7715d9223d85ed822e1d46c9cb343ec78065844b6c53",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/tree-flatten.test.ts": {
       "content_hash": "11ed930d0f14e775ff2c496bc1577d2686677b2c8128dbd4f942eabf3e5d26df",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/__tests__/tree-reorder.test.ts": {
       "content_hash": "55671eb2b57a7e2bfa06727682e5b7e11baef507484a08b55f489780ca2d75b0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/tree-table.test.ts": {
       "content_hash": "7f09b36cb61cb535e5f2276ec32f1abc77ec57bb17c3ada1fa2baa4931964af7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/tree.test.ts": {
       "content_hash": "b09225d559b1e079240203641a90e40b1880b401e215f3ba63044c747e82ad02",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/types.test.ts": {
       "content_hash": "f8e5feb71784667b8f4bce7886a7eefec57d070bb9b66c262cd7e86191090b43",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/unicode-width.test.ts": {
       "content_hash": "f1e90fb851d11ec6a4ab2ad9c4f9b44834c751596a5e82f58dfb318102739259",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/use-clipboard.test.ts": {
       "content_hash": "1c9569dff650a1b4b32f32f1a6a9697c3078e77f853f7794beffc44cda1d0242",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/use-debounced-value.test.ts": {
       "content_hash": "e95c3a4eb5dfc4711ccd7dd24b389cb75bdcc44545cf49e2b7f0cdb899ed6def",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/__tests__/web-renderer-page.test.ts": {
       "content_hash": "52bc7d23dcf1c2d2aa54b959ed7e853cd8cc59ba5992ad404bc1053d6b76034f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/deps.test.ts": {
       "content_hash": "96e70ca9af62ff735ed83b8a77766ace905a89a431c0af4afdccdaf9b1224794",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/docs.test.ts": {
       "content_hash": "43193ae7fcc6fe4333e7c0a173eca40269fe025361d3378f8584cc18fbc2ba59",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/engine/capture.test.ts": {
       "content_hash": "4f2b982211b17873fa98d9b21ee268e8733eed5ddb3f5d81ec563c0495938a72",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/engine/moduleLoader.test.ts": {
       "content_hash": "a2df090bcfd2586a61f785cf0f0ab687bf4c92f7a0ae5b71f6c9e1e24530744d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/engine/pollWaitFor.test.ts": {
       "content_hash": "e7a93b9d7821c1085d1cc5b164e93f22b57adc9affb3467f4770683f7d2b0316",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/engine/runScenario.test.ts": {
       "content_hash": "565a52f49e345af5f9de1e2118feb7b83415fb12554f2815613e70568b902bcf",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/engine/snapshot.test.ts": {
       "content_hash": "c0541cdbfd79b83980e844044d6bd4032bb34f671c6b6a1a6696a283ab6c0816",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/errors.test.ts": {
       "content_hash": "e9d75eb407a1d4a90ffbd4e94fb5017a020057b451ab5c56a02ee859f3d1b7e8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/fixtures/hello-app.tsx": {
       "content_hash": "0f046e16ae7735be9217e0919b8a3ed3c9994c6cd9bb3c8b068c303c9895bac8",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/bin-help.integration.test.ts": {
       "content_hash": "83e1c8f3691d6cf39d542a6ce5e338ad1e12a2b786dbd47155ba0e8e06dad4c1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/drive.integration.test.ts": {
       "content_hash": "6e1b758da391471aaad332997b4f2258551ef5c883f8c65b5bacfa22ecfba066",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/inline-flag-order.integration.test.ts": {
       "content_hash": "2577b78fe921d7019f917645d505cbfeea4e34c6e1c9e2949e4eb308ad6823a9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/jobs-isolation.integration.test.ts": {
       "content_hash": "eed1dbadd0880ac710a7e6a957d8839e9426ed46e387f27097c80615925765e7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/run-capture.integration.test.ts": {
       "content_hash": "5c852c5ce194cc31edb6995d39f01ce4ffffcfe2bdd69a448d8a28f1cbc94012",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/signals.integration.test.ts": {
       "content_hash": "3aa3358325ffb9c331869fd2001c31e3b1fc7c1e367c3cbae45e0ff743f7fd37",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/snapshot-drift.integration.test.ts": {
       "content_hash": "ed28250dae811ea1b1cf703d5b23f58b8ccb0a67b96f804b52cd232d52c5b975",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/integration/test.integration.test.ts": {
       "content_hash": "8e6efc7197d3b1c6fb691e6848d7713d509c0054f20b08935336089282516e1a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/recorder/debounce.test.ts": {
       "content_hash": "9a5c5fa168d0c916456819c12a805ff07022dcfa4ed09d57fdc8f7d7a09a09e9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/recorder/redact.test.ts": {
       "content_hash": "b2cdbefbbdb8ead9cf369410d56f22f8a66df292011939e3942f00c0d5e374bd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/recorder/serializer.test.ts": {
       "content_hash": "58f7eab87fa040ecd6382c5d3957d288bf7bcc4a35da198cdb07e56ae85ae25e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/reporters/json.test.ts": {
       "content_hash": "97fabbc047cb84b72851ad42f948fe28ca1c42cd9d9793bf31a27dccd21ddc4f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/reporters/ndjson.test.ts": {
       "content_hash": "94568f4da64be83ebddcbcf2311900f58dd3a37e55424ddf3ea9ef31dfa26339",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/reporters/pretty.test.ts": {
       "content_hash": "3ccfe53e1c83d9b39c29469df5bb1d22d3ffeba7a3f4ace48cefdcb24e8fef08",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/reporters/tap.test.ts": {
       "content_hash": "4db28a0752f648673f08b18750084c63985b95cd47cafd8c6d0c8ca124991add",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/schema/duration.test.ts": {
       "content_hash": "f2d5a12e2cdb8d5b46be2c7314a69720a93863bd9dc3fbb0883f1e44c20bc4dc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/schema/normalize.test.ts": {
       "content_hash": "bbb346acc65fac636f83b78d637a4688aa1158f3f5c484550f0cab48387c6055",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/schema/parse.test.ts": {
       "content_hash": "3c4342747e1791556d906284255fe17f2097a05cf4914194a0bf8c6baf7f2e16",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/schema/types.test.ts": {
       "content_hash": "1fbea38b55a74bf92a312cfd13a517edb653f548d02902d7b9c0ea9c082b2639",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/signals/handler.test.ts": {
       "content_hash": "8ebcefd01630c4287d305c495919579a71590f974b5b23bfcb7629611f4dc954",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/__tests__/verbs/demo.test.ts": {
       "content_hash": "75fec5d8f1244e7ff6ed17900cba28df3dbf449e729ba0a889ed4658d1cd9598",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/context.ts": {
       "content_hash": "f61b42bf95774c26251ae518b13e6d70706ec1c4994b807e4988c60294fe63a4",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/cli/demo/App.tsx": {
       "content_hash": "1c8a2737c304259953879607e3a63ba802d84410ee94b7de0a8070a691ee8804",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/catalog.ts": {
       "content_hash": "fe598b83bda8c8fad79dbe9ac8880ce0788f7ca2828537c46a55c728dd526949",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/coverage.ts": {
       "content_hash": "0fdaff489828c5f9f660412dfa4405c738e166fb530b6d95c9d8c4af7cf7182b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/demo-kit.ts": {
       "content_hash": "b9646498dd287118558f60cddf0c176f6c1477e74e7ae569911c52a42d2ee3f4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/main.ts": {
       "content_hash": "167663f3d683d1314226161fb796bb18936fded3317b8757eb1881eef8187875",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/sections/build.tsx": {
-      "content_hash": "804b45b52fa84f3494a886ccb976a8e3d8e6fb5803d216f6c3d2e87d88c051f1",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "content_hash": "dfcc1886c24395e4013dd3b4d7259de7cb82df4b041325c0975ff4aa960e5580",
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/cli/demo/sections/hooks.tsx": {
       "content_hash": "71200f4b4eb2f7d5e5f95faaacfa5ab7c75d0d43b99773b5043c90e399cf5e0e",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/sections/index.ts": {
       "content_hash": "8d5d87f799f1b3cfaa72ca737966f6d9a99a77d73c1d16995314e5b9be6e9589",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/sections/internals.tsx": {
       "content_hash": "b61c193c8fc830feee49a7f9d62cf8fd874140c3f3774d8e37debaa9095de223",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/cli/demo/sections/tour-meta.tsx": {
       "content_hash": "44e2ebfbc030edab157edc73c8af0b013a9d359191f1fa8ee3997759ef864990",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/cli/demo/sections/visualize.tsx": {
       "content_hash": "77b22598794fb8ce64426a7c1035ba072a630e3438a7b5a3002933fa01dc77ef",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/cli/demo/shared.tsx": {
       "content_hash": "4b2fbfd5f16ab615d30db29c18044906ef9f1d061f20022e2e43862e11a8fa92",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/demo/shell.tsx": {
       "content_hash": "1440c4520af3980079e3a82b243b7475f1b8bc582b5773f7cfb028e25028f732",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/engine/capture.ts": {
       "content_hash": "b4bb5808bbcf0bd96132d35bdca2d41b5fcdc94c4d334442027b3f2215c966f1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/engine/moduleLoader.ts": {
       "content_hash": "9862e773544e7ce76f5869bc68104f4763eee75ec35cd85069f56022c81a69d5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/engine/pollWaitFor.ts": {
       "content_hash": "2d9eb6b99173848325c8a9f4f407e57ed93c7ac286bfa7b778a03057ee3e0853",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/engine/runScenario.ts": {
       "content_hash": "f3421b1ade53ea902a5b4776c023bd4f2da418f2051f136d907d8f07a601b3ce",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/engine/snapshot.ts": {
       "content_hash": "c9a545345ca6715f1b3dcf700c02f3fcf8faa6e06a33d402cbcab2702afc069e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/errors.ts": {
       "content_hash": "3149d0e1b0d4d80ab0f60635c82b46d308583e41158307ef22084becdf8b2e11",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/cli/index.ts": {
       "content_hash": "519a9e8e34a575178dd59f9b44d5990fb949f700b6bdc90837a33b66e2e8fe9a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/cli/recorder/debounce.ts": {
       "content_hash": "85560cd3c38fdbb18756fcf855727f72ff16f50a59f9d629a84fea99a3e2b51b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/recorder/eventSink.ts": {
       "content_hash": "75d879b94d4a7586ec0d576c87d1308d6bd0a1976ea7942a4856d25285b8bc68",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/recorder/redact.ts": {
       "content_hash": "219ec1f31edfe9c6512e56ea12df71d44d3a1c7fd8307b6f32c0a215c030a313",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/recorder/serializer.ts": {
       "content_hash": "9c2c1a5adc831458fd414c5c2e48236b0107e81772c1953d523862c9c928d387",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/reporters/json.ts": {
       "content_hash": "d15c903e4c0f91dcf95df7c5f773397da78ceb5d2a028f63acff69a6a945fe29",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/reporters/ndjson.ts": {
       "content_hash": "cab2f133ca18217ef6be14c26dc880074db7b11f2f0ea24edda84361d3a49543",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/reporters/pretty.ts": {
       "content_hash": "8e7413ee006e037bf195bc288096b5b29425f8bd24265d5b160dfb1bff03db0e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/reporters/tap.ts": {
       "content_hash": "82888b59f79242f3c06c9549f8b76db257afac5c801f73a777fb109421828ffa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/runtime/launch.ts": {
       "content_hash": "da39b0d7ebbeab10e69de976fb66692b836299901d93c296d4c79dc87f7df95d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/runtime/registerTsx.ts": {
       "content_hash": "6ec1d343f3adf600c32635e98c33e9bc8afbbfd289ec276ddba641fa3b62d219",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/schema/duration.ts": {
       "content_hash": "ea56874812f09d1e3841cebc88e83147e011fa30360689abeeb41f216bcded4d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/schema/normalize.ts": {
       "content_hash": "34bca6123d80b4cdb476ab42835e320f4dc2c0860b511f8980ddbe1712c89e6f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/schema/parse.ts": {
       "content_hash": "3f184e73be100f2031403287d110c3535d0b5f4a6069eff0695db8a776d29020",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/schema/types.ts": {
       "content_hash": "a91eeebd5646dfccc4b06ee83d446fb1241bc8b5036f0fb9e013506f8ed4beaa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/signals/handler.ts": {
       "content_hash": "842bc79f57bfffcc8c8fcb576a412bc7ff2a806ba56426816f3fedc61492abe9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/verbs/demo.ts": {
       "content_hash": "5a2a31774e59ce6efb94a075725226decaeae8fb27b101a3fefb7e72af8d7b78",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/verbs/drive.ts": {
       "content_hash": "ae21dfb6bdda8a472972aad1064a371baeeff8d2bfc4f6007c722d52dcdd306d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/verbs/run.ts": {
       "content_hash": "8373fb00e371290a1bc4fd7c0592dc7f7fbe565f339ba5536fee1cd47a341ea1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/verbs/test.ts": {
       "content_hash": "0b4895fc9070d78822c18be4fa40f5305b3fd1581476c198591aa7f20624b2fa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/workers/dispatch.ts": {
       "content_hash": "32c58d1545da08978d46653f878ca6814deef69317d07da8bd0546cd5a733414",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/cli/workers/scenarioWorker.ts": {
       "content_hash": "dd8e96f915026199b3459cf5fccf4d4a3386c04df856c9dca6a30da066738b9f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Box.tsx": {
       "content_hash": "4b9bbd53e5e92ee66222940946d25dbee43e835185858e51f06b78e4a07587b3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Button.tsx": {
       "content_hash": "7d408d4284c24a9bb1196ededff5109f6d052c11df6d175fe788d3fb47a95780",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Checkbox.tsx": {
       "content_hash": "f8ba94b9746bec3b0ff73bbac4be39778378c7da923d3afd76dcfd1fa80ae80a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Divider.tsx": {
       "content_hash": "1a76eb45055f18796fe0ed3a944745c833af79425215ca5a24fb9c88b4cd9134",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/ErrorBoundary.tsx": {
       "content_hash": "5e2bc55085e730efaeffccbef5d9be57a5232f344913ed49e14b93e8cc508a0d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/FocusGroup.tsx": {
       "content_hash": "784b63f3938ba1d7a2e245a4dc6b88053bd4a6919a04acbaffa83a6b3757c7e2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/ListView.tsx": {
       "content_hash": "e03d1cbff8b54e97e2b0f7bcf0d548eb9e0d0af7f7f3e6cda2b48c501692267f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Modal.tsx": {
       "content_hash": "0917f3e80158b4d638ae9a9765bbaa5bb19f5cd3965368520a337015e13e4e3f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Newline.tsx": {
       "content_hash": "f333875de48efe60b8ae8a86e0747d992507fde788c98fb00c942723cd602914",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Overlay.tsx": {
       "content_hash": "ed4ed09c3423cfc4eea14f9ef283523896d01abe8c9f5c87702102e680c886b1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Panes.tsx": {
       "content_hash": "29cc5b6a5ce6ba35b9eb34376fbe01b1b60b0017b0ea39fd7de46b3050bc3fa8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/ProgressBar.tsx": {
       "content_hash": "c9b604b04643d8b5e30f9f4709c2927ed4e545e666aef5080c1d0334e55e122e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/RadioGroup.tsx": {
       "content_hash": "ee9c893da2e525c41cdf54e913f0e00b80ccc4153ebc2d92f3d30cf45c7fc129",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/ScrollView.tsx": {
       "content_hash": "383d1238c1193b6ddfac2aabd993c50fa9221fde05884ed1ee4af03e801d2987",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Select.tsx": {
       "content_hash": "f6934e5d6d83db970d0f988e867bd33eb408ce94fb8c6edda457ab5d82a26a40",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/SelectInput.tsx": {
       "content_hash": "ad7fe9887c2bc69408d08bd0226aa9861904d93ba1c50575771df77e8be6f2d3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Spacer.tsx": {
       "content_hash": "0fa23ca8bd7eef5aee2e3b9a2035ac5a6cdffae9dd5d0c40938b28b822f81d40",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Spinner.tsx": {
       "content_hash": "4122a373f4d1956e892ac4db41f2c5d754a4fa45ca6b15dfb5d6c22cf4971f36",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Static.tsx": {
       "content_hash": "3387d712818404139ac86df46031c983ca2de1e124651475c444d07de61bfc49",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Switch.tsx": {
       "content_hash": "4cbc5045a363a3de5b5ef7b263d68594473158d6c45bbd2eac47bcc6e5ba9630",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Tabs.tsx": {
       "content_hash": "ff655265ea09cefd84faa1756f2c5fb55395ad37302ac86bf60bc273cdac1680",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/Text.tsx": {
       "content_hash": "9a15ea614d3a82e835d21263283a6d9cb991b3c72a03a39b5c665f763736fd35",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/TextArea.tsx": {
       "content_hash": "aadc7509c6f905d456c45dccdcae99ef761757d95cb69ecd86d72aef46884988",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/TextInput.tsx": {
       "content_hash": "e5d272253efd968c69ac95f8c68998888188717f9e48c090dc00247f579e87d3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/core/VirtualList.tsx": {
       "content_hash": "edb7758ea6df353c79ef38d37cde3c0706fe46a8a172541a45a2a3e9696c968e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/AreaChart.tsx": {
       "content_hash": "30a735ae90f4fc7685563528be3d4ce658c3949dd74f37aa551044eff55ad1f0",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/BarChart.tsx": {
       "content_hash": "ae570cda5c5d6462021f62f78c4a1a1c59f7ab9a7fe4dece20a83fff8ccc1958",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/DataGrid.tsx": {
       "content_hash": "faf241dff3f56f519596ee57524a314f86d94f49878eaa5fa9cc342f2390e3e7",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/DefinitionList.tsx": {
       "content_hash": "537789cf6f32323bf3467b99f09e4d00d4d0fddf8b4d3bab947714349863ce5d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Gauge.tsx": {
       "content_hash": "9b5899e6a71336246edb4b00ef596fec1dd3cbc609ea53f4f514ff750d0a29fd",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Heatmap.tsx": {
       "content_hash": "2d8ac92b99be1516d53fa28e8f3b81be8baf2c190633b6592ab0711e0ab7d852",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Histogram.tsx": {
       "content_hash": "dd6713537a552b4561880e9a0f80b6c8cef9ec4ed37e6d3701251485e92e69a8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/LineChart.tsx": {
       "content_hash": "7dc6118d94c6e7bab01a4d61570e609957cc9cec5506d4b40bd707891cccc969",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Pretty.tsx": {
       "content_hash": "40bab8ed3af8d087a67fbabef7bd411b30b4eb547f970ffe95297e24fabde768",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/RichLog.tsx": {
       "content_hash": "f11d1a44e851320d34416c4c92fdbe95c7b954f96113eb67f9545a61610f26c4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/ScatterPlot.tsx": {
       "content_hash": "e7c9aed19c8c063a6123c3796153c62479477450d74aea756df600180385f231",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Sparkline.tsx": {
       "content_hash": "2e09eae190629a85b275df1338e887ce4881d09f57210140a274f6e2f200a0a2",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Tree.tsx": {
       "content_hash": "c1c218a00515d28447e0b406b7fb181d9b034609d793db7e3ee2e403f515e07a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/Tree.types.ts": {
       "content_hash": "0575efd89f734c69e6de27f87211b9458c1938c1c656f1002378bd2c4a26f710",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/TreeTable.flatten.ts": {
       "content_hash": "58ecfbdf38e35f91686e5895fe4dd451efd86cd1f4c967722fc04503482fa962",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/TreeTable.tsx": {
       "content_hash": "5519c08b136288e4f37d50d8d2d2f5a9d0a3998a52ce0fe73b36b0000c7718a3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/chart-core/format.ts": {
       "content_hash": "da6b34629ba141e95f2446840a112ffad98c174e0ffa0719777a3073cca90e24",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/chart-types.ts": {
       "content_hash": "297fdae74e4cb4fb5af316f5b359be8a12c1cafd33f342247384673ffd6f257b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/data/treeReorderReducer.ts": {
       "content_hash": "7ed527708c7678b578dcaabee2e18d2b5cd46f478e92bdc49bafe3ed5c4df0e0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/AnimatePresence.tsx": {
       "content_hash": "b878e286b844da9dc64bb7cbd8b95e45d616d70d02f57707d808f0a7ad66dd97",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Diagram.tsx": {
       "content_hash": "f7054deee09691dcddf75e2dec60c9b89d490331ad2387b611cbc99ef414a08f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Digits.tsx": {
       "content_hash": "0e416ce706ed78708f7e50b46a810dc34332e0df34b0b55888c3dbb0bb4a34d6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/GlowText.tsx": {
       "content_hash": "10334c05c531d54d465e4a3b18220252b64d06331ca782ec512d9d4e20642fb8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Gradient.tsx": {
       "content_hash": "a665f874efce47918a1074e9b494f9dae636fbe96ee03b2f6a116faec5aa13fa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/GradientBorder.tsx": {
       "content_hash": "ae0d0db9b26391cdf9530c9ae5900d707c58ec7971cbf1e929d8581a1062cbf8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/GradientProgress.tsx": {
       "content_hash": "aa3b3a8da67ddbd06f019127bd9178a6fa44da905d5a5e256e0161e56f235e96",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Image.tsx": {
       "content_hash": "690adf91e60ffdf914159c7fd637b2517f62570883e485164de3dcec1b072eb6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/RevealTransition.tsx": {
       "content_hash": "eb63b178dfae18ca6466405758929026f79d495a8244ef9ee262dbea5caf5ae2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Shadow.tsx": {
       "content_hash": "c1b34207581e30d17838ed32f4295e2d95eb6cf8772c681b69cda27dc07db8a0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/Transition.tsx": {
       "content_hash": "72e5caf7cacb45a537afaecc3c03e4639b5b4d410f12425cdc4b20293bddcd64",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/canvas/Canvas.tsx": {
       "content_hash": "259a261d17a4e44cd80009983e8a5357bb540953dffa326891ed18b9bface865",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/canvas/canvasUtils.ts": {
       "content_hash": "fcb97244a6844effd4fe856c24be59777b994014f7c5a877b902d5104ae2d201",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/canvas/index.ts": {
       "content_hash": "45818296ea16237571a6105ac90c57303665d0401ed9fb9c904aa59a07e92f70",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/canvas/renderNode.ts": {
       "content_hash": "f4e32207ab2fc658407ecb2d954f5dc82000eab5416920fbb68843de8193c01b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/effects/canvas/types.ts": {
       "content_hash": "63d91070cf0e5c562fcd94031e629c6eb2d1ddab3bb0c1775dd6b40752fed11c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Accordion.tsx": {
       "content_hash": "00bca26d3ec7f81010846aeef6ef94ad2b177c5ff23e13750f57e3ce09e0faea",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Alert.tsx": {
       "content_hash": "3240ef238f4dc72d973e9902eadbf8917dac70c25033f164a6cebb4e0036b2a6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Avatar.tsx": {
       "content_hash": "bd9db361d049be6075fb6103a9f42af30cd5465c8d675a9b0ee107a0b153198a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Badge.tsx": {
       "content_hash": "41bb4bd8a5d38566020b1c9ad02effb529ffac524b823445740f6282f0db1a8a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Breadcrumb.tsx": {
       "content_hash": "955a32b947264703674a0ac23c0f73f144ec73b6dacaa2083ed5083bded27e10",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Calendar.tsx": {
       "content_hash": "eb3ffbf3bbe2a6f7102305f2ab807f0afb082da54afb1b496ae7b70662ecac47",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Card.tsx": {
       "content_hash": "c777cf58106852ab1abee7cfda65e38b3ea482f4450d22641649aecc7d1345c0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/ChatInput.tsx": {
       "content_hash": "c7976c6817fee84a390cff6bc87ae1a1b4f4e56eae783dfef4a597f1e3297b99",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Collapsible.tsx": {
       "content_hash": "bc3346f5863848cf5f030068d0d09110315d5aabb776b98cc1986d3760a5f04b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/CommandPalette.tsx": {
       "content_hash": "f8ce316248241dc5898295413b27e5f5e63acdb04a78c2a9a11d19a788c05556",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/ConfirmDialog.tsx": {
-      "content_hash": "d29cb9d41d62b10384010512cd09f24cf486450570706c962517e013acbceef9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "content_hash": "dcff5c657b132e4d07b43694a318e72fc7a21da796500283966fbee7a2bcc049",
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/ContentSwitcher.tsx": {
       "content_hash": "c295779ba3528cbcd73d65c28f1b44bf1654a07eb5b1c7e49507595219f57f69",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/DatePicker.tsx": {
       "content_hash": "99d856e3ccb297074e253e7da6ecedb5a7e2a98d6ba6f500914e46d90ec5b239",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/DiffView.tsx": {
       "content_hash": "c4da2afca3e5c2a3fa572d44275e1a22994f1a07469aef3ee957d0d4496cbe35",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/DirectoryTree.tsx": {
       "content_hash": "98ddf4fd4c3d3d033d52cd06008e94e36d906fe5f10cc7a6583c19f1cf915a9a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Editor.tsx": {
       "content_hash": "c865e636545ebd2bd2a4878342528cb1eef9e8fe8687bed8fe2b3557038c4736",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/EventCalendar.tsx": {
       "content_hash": "810c590541e31056df7e33de64163e956e4f14f8ed100785d016cc7f13606741",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/FilePicker.tsx": {
       "content_hash": "47a8f75db490155b25a8255f20e2957739ced23bdd636ce73d099911509ef3e3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Footer.tsx": {
       "content_hash": "b7fbdc06fa5225a9e44e64f940d32e84349d55dc0a244976c6ba38e9d5888d14",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Form.tsx": {
       "content_hash": "7835a44aa5f590d0547aa8f75ba6330b36ac80ce8a95be2f0bb11786cdac28a1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Header.tsx": {
       "content_hash": "3a8ce32377ac8f55ea04f92f42b7f6525d3ae0c519c3b92e45d3228514b17b36",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Heading.tsx": {
       "content_hash": "19478da2fe43391daa5442f10b5916b8007cbf0545a5510df61e2b5304702c83",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/HelpPanel.tsx": {
       "content_hash": "b99cc8aaa7676e7cab6b887404e3f6b2b563362e32a8c8ec42e82ad875a6aac0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/InlineDiff.tsx": {
       "content_hash": "e38eea904ee7ae37f1e1909cab36d8500b00409c5d23ed6d9cc76d02e6635607",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Kbd.tsx": {
       "content_hash": "9a47c35342fc9dd2800af923d2020bbc8c76982e5d852b07d71b8da9faab556e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/KeyboardHelp.tsx": {
       "content_hash": "a5d3fded252e9c612c0fc36756c46a6c5fa6bca10a9a297181816b6324e20649",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Link.tsx": {
       "content_hash": "24979dcbb25cc024a0efcad63f444a2c8f79afef29453da3673808e7cd3eca8f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/LoadingIndicator.tsx": {
       "content_hash": "4f361c457fdc77d9f01eb00678c5e1a1cb545b117e8b3660323a5d9f3d77df50",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Markdown.tsx": {
       "content_hash": "afb1ca71c976bdb828b3872aad5d1b9f07b0654f7b17d9094b8497094b00367d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/MarkdownEditor.tsx": {
       "content_hash": "f60c75df8fc57d66d92fd9ec032297d388790ccf63c6948d3aecbd2e302b46b7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/MarkdownViewer.tsx": {
       "content_hash": "2d5dc330593c36027a571716a6782e831d85e838b31b424fef9a5e20a944617b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/MaskedInput.tsx": {
       "content_hash": "070f42057f8adc815fe39f8dcc5cb1d7e782aa715b34044942c8c8f4104e6577",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Menu.tsx": {
       "content_hash": "cc79d8c6202d0fc5de502bf58a5610e34ca1fd32e5bb3a746ccf449b0f1eeebe",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/OptionList.tsx": {
       "content_hash": "d717ad7a3815aa36fb698d6f39452459c4de0878f1ee6a14f9fd6d06d4bdeaf2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/OrderedList.tsx": {
       "content_hash": "09e2255c22f21b042d91bc02301a7eb26f80e65c313379b6575090fa608e8046",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Paginator.tsx": {
       "content_hash": "57f38e2665b94a40af92a7ee573e4c86244af9be604e015913c4d948d9df303c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Paragraph.tsx": {
       "content_hash": "965546f059df2727bef7ed5d1361136a97a5b0f250d358232058a1f11b4e4f25",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Placeholder.tsx": {
       "content_hash": "5a0532b14a3a857ced22ccf185aa9121a9c70f1960814da4523678024c880e84",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/SearchInput.tsx": {
       "content_hash": "62b12bd338ef34acbcf6d329f9b17d16e986c926f2bdc5fc526f5de43591117f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/SearchList.tsx": {
       "content_hash": "3419398e6b7dcabe47ea75895fdd024f5e1e4b42c602aefd12c1e3515b152181",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/SearchTable.tsx": {
       "content_hash": "c0ed6c738a018cd1eedc8d7cd4a04cf87a428e5fb495835bc68f8b792e7b0937",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/SelectionList.tsx": {
       "content_hash": "2eac013b665900e804d2bb000a7cdd80b2ae772625849bdfcaf17eaf81b5f877",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/StatusMessage.tsx": {
       "content_hash": "5536b2dd9ce06e7241a96f6f3e6a20c637566ea9ce61dab9c26642058deff62f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Stepper.tsx": {
       "content_hash": "6cd29065d79245666457153afb8253a0cdfcde92c30107680c60715e240b2485",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Stopwatch.tsx": {
       "content_hash": "c5ca2fe3b604a45d3ae9614fdde0beb5c0388b8d5b8508e06b5c2f30e6833b8a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/TabbedContent.tsx": {
       "content_hash": "be12dc020fdfcde9be496b5c30a3c23f51a0ad85b1346303604aa8ef3db5c778",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Tag.tsx": {
       "content_hash": "3a862219dfe5d24f5c597bb6739f337a730983e0cb755f3fc74df5e0f9a86741",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Timer.tsx": {
       "content_hash": "24fb279ae378e6f90e6cff065d543d8fad8fb34ef2f70b884527d1de97f461dc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Toast.tsx": {
       "content_hash": "1988b52e54c5418ac62691fafdacce02c6caba2a291d8f70e5d78b1faa29cf4c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Tooltip.tsx": {
       "content_hash": "7f1c78eb73f2ed43f174db9ba0f939af83f77796f7934b0efd82980d653fa9f7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/UnorderedList.tsx": {
       "content_hash": "1514f91bfa29f52907924d2768e5cd3cb01a72572860613f6eb1d35b62711f50",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/extras/Welcome.tsx": {
       "content_hash": "578c4f0cd5150bb55b7b70a05319e199323aea6814ec294acdf1fa38eb3c638a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/index.ts": {
       "content_hash": "5942f94276cfdb98eda6e3e5f46caa4a92bf515b96f78b061d1e89d1f00764b0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/components/table/Table.tsx": {
       "content_hash": "7f4d255052718ddd2c9031674cc97f1aae59bb188eca9f42270b81d879249c22",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/context/TuiContext.ts": {
       "content_hash": "7a04940c7efb056721b6a84823ca4ed9e0f08c603aa61ee9f14cbcb9c1eccf52",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/accessibility.ts": {
       "content_hash": "5bd5c0bdf34ed252f8a24513e53c643a0e11c2f9590e3699ea693e62639bb13d",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/adaptive.ts": {
       "content_hash": "80289842b13b00418df9a216c2dfc8d6313cbc38feffe646a84966e730fdc445",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/animation-scheduler.ts": {
       "content_hash": "6f733b1f7f6b3bdc4aa478db759ff5019b5a6f764dc8c750cfc0bcf7a9d70f82",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/ansi.ts": {
       "content_hash": "8fcbc9d75f02783d7c9e63771b3db1b4339ce56f40ab192ce7630c7e8e6d0231",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/aria.ts": {
       "content_hash": "cca9e213b60aec36a4a2bd54c0d32626941898f7215c98b5d61881e519930736",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/backpressure.ts": {
       "content_hash": "c9b574147f27a429a2eb5b03b0647b6ee077fc636b3b6532794ebc63683cca0a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/buffer.ts": {
       "content_hash": "aba5c3e2707e5bd9f2762e5a080c9eca71085285466994062571c44812d939c9",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/diff.ts": {
       "content_hash": "b933a9230d6607b8daacba9a01a454e9d201766e6b48822fc6206dadbb3ccba9",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/easing.ts": {
       "content_hash": "8993467b34df111b33c328babae1e1db2a76702b973f10769bb4e7072fdf9417",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/error-boundary.ts": {
       "content_hash": "83ce4a45b9f6f2389d930105a663b1e3af0ef0853916be4193e2bdfceaf51196",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/focus.ts": {
       "content_hash": "ff278821bb3512c716db83dddbacacf988583e784f5fbccd057b7ce3a429bc4d",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/guards.ts": {
       "content_hash": "ce51945b30482f6d7d45ffde8f1099cfd9c49fa3fcdf3d6f3079401205ca2752",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/i18n.ts": {
       "content_hash": "0023980e226cee8ca97ce74f5e107cd2f074c7e0bcb422a316bf2d3a927e9966",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/measurement.ts": {
       "content_hash": "7c89af2668dd155d7649072df676bfcce4bbc77f5a06694bba59501a34325974",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/middleware.ts": {
       "content_hash": "421ff94b55397ec64f7cd5e1e2bfe4a841ab0820f38a95757541bf9c209a51c4",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/personality-presets.ts": {
       "content_hash": "411689e4c373821e4fbdf36e5a4824701f8aede4b9df93c1f4bf1f804d8fde12",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/personality.ts": {
       "content_hash": "e8ff39e636e79ebab6db8629c3d93ae8544297fa25cdecf6c387d21369447cb4",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/plugin.ts": {
       "content_hash": "30c84f2e47ec31a5fcbf1dfe97be78e0592398cbaeb4574ea49a27da0ae13e20",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/render-context.ts": {
       "content_hash": "fb2791eef21df08b5d3f6174910ef2e5cbca836e558ed2855e641b9af34cb7dc",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/resize-observer.ts": {
       "content_hash": "0437f11fe4ac9ae8786ecea4b38686f295417277b1bae4103c1f439e39455773",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/screen.ts": {
       "content_hash": "189f7b4915c3eb6944038a4df02e5b5836c823219e521eccee7cff1a2ffbb0a6",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/style-provider.ts": {
       "content_hash": "2976b39424659f19cbd144d99bed8bb136505c2c4ed0b93b50df4473ca785d69",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/stylesheet-loader.ts": {
       "content_hash": "2f6b908bbf9789f73d85be72630db20eed7095a40b28a21b1ba76e523bd27f7a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/stylesheet.ts": {
       "content_hash": "0d7f63200ff48f61fc094fd5d4f6bcf9de93cca52ee7a406ca51442bd73aca2d",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/terminal-caps.ts": {
       "content_hash": "48f4779a2f43aa5c4b00847e5f8a9f163e91f229c3bc70277a1dd5c50546d6c2",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/terminal-detect.ts": {
       "content_hash": "71f5b6b78961172ac4c983276bdcb9ff14ae3038899f33eb86b6de45606d6978",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/types.ts": {
       "content_hash": "8ffe60726b7229b78e6a534b49399469f27ab2f7fa9e9ed4655cc356beab0453",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/unicode.ts": {
       "content_hash": "25f7e795552a1e0cbfc002690386b9ed021a8080a6e0d4cdc6842ab09dcad311",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/wasm-tokenizer.ts": {
       "content_hash": "d597b14df900aa5c856ac08f854a81d968811f38cc59693c8079226467542915",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/web-renderer-page.ts": {
       "content_hash": "8a2ad8572de585e7e4cf718d498ca22ad847d268aa6ecc816b2faa1fb976fbd6",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/core/web-renderer.ts": {
       "content_hash": "287fb981d0694eb64a625aac841d6e942fcfbf67d7fbf31cc580290223bbd244",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/accessibility-audit.ts": {
       "content_hash": "f25351fe21782db3867a892c01235dbf6bff9f60905c977fe8f43fdb851d7ee3",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/crash-log.ts": {
       "content_hash": "543a40f0322e25608b744f04bfb9395e9879ab740ab80fa5585ec2094dba1beb",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/devtools-overlay.ts": {
       "content_hash": "b0582a488984892adca4d34be526a7b6b81d39a092d6d8aca3112448fa76c2c8",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/enable.ts": {
       "content_hash": "5a8f27a0de00472a50b3f0dc04ad807e106fe600baac79c96515051dabf19603",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/event-logger.ts": {
       "content_hash": "b2b5fe3081c1200a482bfc1e769cd7e298790b5d8c939026bf193656a07ab49a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/index.ts": {
       "content_hash": "a98824e30d17e6731b3f54d5e2e6cffa9dbc233e13372aa6ea4f25e21966c70e",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/inspector.ts": {
       "content_hash": "945211b44a1d67ce8543bf280ea77aae0686def49595f73dd69f9d4c0c0a617f",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/performance-monitor.ts": {
       "content_hash": "eb14754556db282fb946a473ae100355e94ea840e2f0250f6c89df806ef480db",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/profiler-registry.ts": {
       "content_hash": "b8286b0e421e64e77a32800da00cd268ffe91ac7f90271a649a27cd24dda7897",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/profiler.ts": {
       "content_hash": "5651b11ae9a1a085e534cd86c735e7b068d2f2a3f4939ef9f76143b506a698e3",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/render-heatmap.ts": {
       "content_hash": "55eb2b20f2538357b00f7dc0c3a1261d76e39188ebd17f4f35685f538659b8e1",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/time-travel.ts": {
       "content_hash": "b3d5ba33c4087c67cf97e97dbd1bbd3afcb11c100d43a5a7edf94960f9da8758",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/devtools/tree-view.ts": {
       "content_hash": "6870455f0001b836af647f47d49d2ca054fcdcd300292520c7cae047b7c7a705",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/headless/cell-edit.ts": {
       "content_hash": "7b54139d209cc737375ec08b65ad7b249ffab2331ccdd753f26291235bcc9e43",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/index.ts": {
       "content_hash": "48317f11ac6cceeb5e237671940d181b574768e864262b5c04bbb2583e298bb6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/text-edit/linear.ts": {
       "content_hash": "95b4ab4def70530d54e0a59079648cfcfbadbf48b60aa9b1f873f81df6c372a6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/text-edit/multiline.ts": {
       "content_hash": "803778ecb341634cf24a4de977838e84947d0dd2a6a05091eb8cf1de125bf7e5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useAccordionBehavior.ts": {
       "content_hash": "83df6012b0c405d02915c29ac75ba255ef6d50863be6827c26347c21143d8f30",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useCalendarBehavior.ts": {
       "content_hash": "1ff1dfb2c2531e3913a90a80b5a050789be0242ac3900b99d6ac9c2df8a899aa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useChatInputBehavior.ts": {
       "content_hash": "ad872c0ec34f6304b34ee157ba3352146168ae90d739a52a4f7aa30befd24406",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useCollapsibleBehavior.ts": {
       "content_hash": "ca7c151076a7aa3820accf5d09a83ada039422ec52e60082951487bc9bfa14d7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useDataGridBehavior.ts": {
       "content_hash": "8c0b4e935989dd8682844ebdc66c65d3b46f67f43581d03ceafe9741b84a60f0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useDialogBehavior.ts": {
       "content_hash": "39a745f9d38134959137117bae35969aebcdc55847d2eb557a2433d4a4add2af",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useEventCalendarBehavior.ts": {
       "content_hash": "dca8f47ae4d659f04950b3a0b31af0c4846190f18a88be53fc3e694e267c0cd2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useFormBehavior.ts": {
       "content_hash": "840e800797177bd34bd89ff62a420cf5094bdba6d052e841adbe1047a7e7a53c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useListBehavior.ts": {
       "content_hash": "afe5e6b78890e1c8466ccf709b6226be384fc9487d13c59e20e6d703bd8644a3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useMenuBehavior.ts": {
       "content_hash": "c9e8f165d80e7aed5dcfa0fb4b334b0cfd76646d879a9ba9354979d17b5a0c2c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/usePaginatorBehavior.ts": {
       "content_hash": "e154b968ae2331e6da68ca5de48bf4c2c036e87342091af0c6ddbdd0f5583568",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useSelectBehavior.ts": {
       "content_hash": "49d2c84a7878fdf44b450cf966c7295580c1cb02f0180637b801d4b45d3d4ec0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useStepperBehavior.ts": {
       "content_hash": "4597096369f1f1524b703fcad60a36f0836878412c3771cb3a6ceb0958837eb1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useTableBehavior.ts": {
       "content_hash": "f8c91b79573cb63c6c5c4633a2584ce59db764081e4e7109dd2431f2b6384504",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useTabsBehavior.ts": {
       "content_hash": "a79f3ff70fc2fd83519f7e81ce0e5b618f0d9e6bb996726a8fcc7905724a30d8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useTextAreaBehavior.ts": {
       "content_hash": "57e4b6185911837aac800d96e1de39c0eca77b7f0191afd2a977d5aadcd32ef1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useTextInputBehavior.ts": {
       "content_hash": "21ada121bf4133f5c293ac7fa3c465d39fa9904dbfbe843b6798cadc956a7d68",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useToastBehavior.ts": {
       "content_hash": "3c6589cca16028c8af8bb00365b0a4921ca0d12e24f0d992a09321cdd97f6a19",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useTreeBehavior.ts": {
       "content_hash": "5b672a744eac13f02caa75ea8362961112cb43b45a5fbedcef5643177a6b9af2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/headless/useVirtualListBehavior.ts": {
       "content_hash": "f71c6995052a696d9de768bde5ff7ef60e5098a98bbf25a681aeb446d7eb2725",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/hooks/index.ts": {
       "content_hash": "bcf732485a38faea02f5cff63b26665f82c9a2bbf1bc879e05a42022ba622e25",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/key-utils.ts": {
       "content_hash": "dbae8d012d58b69c4423c63fc75665c9a024f5a59d0674342c1ebb0ee8cc8f69",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAccessibility.ts": {
       "content_hash": "b90a182a33081c3e8d307850c4eaad680af86cf982c14ee6ff36f51c4c86ca10",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAdaptive.ts": {
       "content_hash": "de2352e806b8e97fc8221d6dee70ceaed7ae3ceb4102a3b10bac58b1b6d8763f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAnimation.ts": {
       "content_hash": "ed9e1d7beb427db529e83b91a189041339ae7af20b53efa633b9c89333dc20ff",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAnnounce.ts": {
       "content_hash": "529415fc4a2389c1d8acf6f1eef590a1a33223c8b7bc658bfdd97db342a8679f",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useApp.ts": {
       "content_hash": "9b2a7d5c6b4e3725aab2a3acbe5d7c774d063a9c623e14caab7b85df11c368eb",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAsyncCleanup.ts": {
       "content_hash": "d9984e662d1da0522d02c8f657d67cce9c0481f22785f5fddabd68df51511259",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useAsyncLoader.ts": {
       "content_hash": "1207296eab753a94b1f94e00cda94bbaeb50d23f944489d41e946205b02744ec",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useBatchAction.ts": {
       "content_hash": "1fbab01d04dc99218d2cd232296c456e32c7feded6ed31c08f45e6578e709e45",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useBuffer.ts": {
       "content_hash": "5d7987d2c79d5ae81b989868a24d51172d176f690eb4ec976cf6252aa4ca78c1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useCleanup.ts": {
       "content_hash": "0ab9ffc77ae2f228a9b3fe18a8dbb25a4687d1749e414c8089eea2c5f4284741",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useClipboard.ts": {
       "content_hash": "d43353ef4edaaf7f37046980a19e2c3d0a9d15894d50ae9c1177e16a95395615",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useCollapsibleContent.ts": {
       "content_hash": "c430100c5150d271842dcfdb9208d5244b7b5ae8b3cad811c2b11feb217ab1c1",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useColors.ts": {
       "content_hash": "6b63a1cae14f0a6685e1b47a1de6b5465b264108b20a7693bcb9efee2fce5a1e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useCommandPalette.ts": {
       "content_hash": "445d09837255e212d32afadb28c7154288d2bbeec392bc82d043220da36a1b15",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useConfirmAction.ts": {
       "content_hash": "46a7e5bd0efb78f0d1efee3d57591ffaa5bfe104c49e79b6a07c0fe9d9527682",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useContextMenu.ts": {
       "content_hash": "a1c50182be28ffca119eb7d229905d41b69c8b35d3b6548c4833a477a9554d8a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useCopyPasteBuffer.ts": {
       "content_hash": "727766dffc726967da5c749bb63a7ac224844cbb6b36773e6cae80e64356aa05",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useDebouncedValue.ts": {
       "content_hash": "9690d8dc7109096f5b5f1fe1ed167587783fbc899667fbb83dca9b4a6cc251ac",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useDragReorder.ts": {
       "content_hash": "9250e639aed7c848fbd1d9dba05503051a989d7112ed7584567f2083ec510e1d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useEasedInterval.ts": {
       "content_hash": "bf903c805526a47ab16ae999fb74c90d14d51ff73e2357b5b53b98c8e7acbf1f",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useFocus.ts": {
       "content_hash": "926dbce9bb98074825677fc76cca76257cf5f67992b367f8bb92b302d4a3e4bc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useFocusManager.ts": {
       "content_hash": "2a2ddf8652180e6289f710214ad0516e64c82129901242fac7a7949adfcc1848",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useForceUpdate.ts": {
       "content_hash": "6bb6e6d05066adf53f4ff38577fc846574ec7bd3d96c853fe6d28e33fc4ec062",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useGhostText.ts": {
       "content_hash": "6eba500f59299a68aedbdd0cf97e4a0b139652fd7b0e4ebf63bfef727a1ef555",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useHistory.ts": {
       "content_hash": "08c14edf0f88f366974501c102fc39217f43287bc683f6439c961e7985a39462",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useHotkey.ts": {
       "content_hash": "32bc0a60d892c13fb4dd7e3488d25ef7461aa164044cb9bc2103f444d823e21b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useImperativeAnimation.ts": {
       "content_hash": "a16686e0ad38e8abc4ecf5cc65ace1a0d61702289febb4366491b169daf3161c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useInfiniteScroll.ts": {
       "content_hash": "f77c481b5225f3a4b9f5015b822f2f7686da7ad3ee834c6bdae9ac708244d1ea",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useInlinePrompt.ts": {
       "content_hash": "83730c700ad377444ae269645d99aec20c3037642e4458ab4eaa45b5470a506c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useInput.ts": {
       "content_hash": "97d893f20188dea9d771420aa3a15b8f1ca5f970144451ce637406c115ac2119",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useInterval.ts": {
       "content_hash": "2703d4fa38a4e7e9fcd336cfed8927a959f345a4829a22265ec320957e9f112e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useKeyChord.ts": {
       "content_hash": "bbf556b5306a857459595523b260b5da8338f204d8c757e1f1dbcf4007c3d372",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useLayoutBox.ts": {
       "content_hash": "572b437cdcbefd2b66abfbb73536d485b9a95b60c0d9f21bb353c59da6a99b31",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useLocale.ts": {
       "content_hash": "7dde47cccf28e3db25739f7b7f8f492e5c4da4fe5f74f694c429c24d99e389ec",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useMeasure.ts": {
       "content_hash": "0aaa5e1ae58c141cdef8e0fe56b31d43505bba7f48eebc9690e24b7d1e34c05f",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useModeCycler.ts": {
       "content_hash": "39afae231ce19a1b5ca6f7313b97f6e44c11cdc734f54bc9fd629af940896927",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useMouse.ts": {
       "content_hash": "d5c76c3d1e92b2f8e6895647779580238b87a7f5f41402dc70890b5953c059bc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useMousePosition.ts": {
       "content_hash": "7ded7cf089b4576508e01954531ee0eba82537dc1e52a1b73086710ddab246d2",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useMouseTarget.ts": {
       "content_hash": "b0612d8e7956e9a2e15afc74b9d8ee85629155e906b56f0f3259a6549f04514e",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useMultiSelect.ts": {
       "content_hash": "c46b9413eb94a7b54ae57ec337eeb0d9d9e0d973715385d6d0f6944d3c2b579b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useNotification.ts": {
       "content_hash": "b016e2b0e0ab2913db55c405d5bfc6dca8401d05f5366547509bd90336d222e2",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/usePaste.ts": {
       "content_hash": "59945a61de809f6622ca0d508ae7e5987a7acda97cef3941c2795057ed8605a6",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/usePersistentState.ts": {
       "content_hash": "f41f6a93a189f3cf7ff3acdad9f67bc60f16530967285aaf7634d210339d8ec5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/usePhaseTimer.ts": {
       "content_hash": "734c6f19a4c1aa8bcbe18bfaaaba4a7966d95a7d4e62796cae96a376fe4e3525",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/usePlugin.ts": {
       "content_hash": "7054fb006d68e6ecfe6baf91ded700689034d603ac36e6207a79e62c35be109a",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/usePluginProps.ts": {
       "content_hash": "f592cfd518fb76a691b9be08bcfec1a6f078551e532d3ddb3a2594d7d05c68b6",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useProfiler.ts": {
       "content_hash": "edfa82a55fea73cedc0374607192354db30e18464269c4bf7e86dcf56913f231",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useReducedMotion.ts": {
       "content_hash": "2481623a7dc383bbaf344667f5187c71080a4faf457da0ae4e68ad771762a593",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useScroll.ts": {
       "content_hash": "0b4a4394a6123fa0d9042819d0dcfecb746b59b7b1bc6eb3ddff7a706d79111e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useSearchFilter.ts": {
       "content_hash": "e3e3aec2eeb9c410399076d82622e9828751dce98a30ab77b9e4318ce135f279",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useSortable.ts": {
       "content_hash": "3a90e2249648c572f8b040bc0026b2ce1323dda4149e59c82b2e610ca7f9efa0",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useStderr.ts": {
       "content_hash": "cb661d9726783448fd884c139f53451edaeaaa39c58e02fd9e475384b839d63a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useStdin.ts": {
       "content_hash": "3ff5ac4f5a84e8e5aef75547cce3c1e53ab1ddec7018a22e6bcdc25793f08f48",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useStdout.ts": {
       "content_hash": "3c0964f899845178e6d17506b543eaa533588081e794c4b20786563899dfe699",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useStreamConsumer.ts": {
       "content_hash": "e7f54380205d917388874a4f194144489e141d0a18d04f4ccb149104584a3262",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useStyleSheet.ts": {
       "content_hash": "dca23691f805e97b54661ab0a65baee0adbdae37ffc51b0f7137283f94f20ed5",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTerminal.ts": {
       "content_hash": "f089a3b28aa164270c94b19f81a343e6398f2b19b4199eef021f051b5ac7d260",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTextCycler.ts": {
       "content_hash": "742072f968e72a34dd65a6d6313610113490f4076be67098aba683d8e270c5ea",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTick.ts": {
       "content_hash": "1472f76cb31cb7c6871538bba7dc271b1616a6b5c9761bafec583c38f5b2266c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTimeout.ts": {
       "content_hash": "94d653c155ab226be505c6409ec6c89af53d395c07bd661529d64dbc7c15cb17",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTimer.ts": {
       "content_hash": "c9b4e432debae75f64a549ca41a755047055ad03e316e3a7d65377751b2dcda9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTransition.ts": {
       "content_hash": "c289949629d207e22a3cb3e4e2ce0d399043f48a8831b1030b0112fd62b3908e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useTypeahead.ts": {
       "content_hash": "6900dd445cdab666bf23055d52869af5855a8d5f0fc01783727332e8817cb06b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useUndoRedo.ts": {
       "content_hash": "ea6ebe0ef35b3547660aa617391fd8bc01521576cad58dd0c8a2d404ae8e524b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useVirtualList.ts": {
       "content_hash": "e35bd858bb5c03ba80fbdcfbfada0b25e78a6aeeb7030cd624c047e2e068ee34",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/hooks/useWizard.ts": {
       "content_hash": "037dfa6cdc8df4d5c5231da3b137a7e8ccbc60ad9e35f312b505325f151eef53",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/index.ts": {
       "content_hash": "785f52112ff5850641933ba5432cda223c3558ed097dfca906b8ecd71edbda8b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/input/keyboard.ts": {
       "content_hash": "161b9b7e1304a11ca0ef0e0e71a3022ba4c5e31f96a901760295dfa324c4262e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/input/manager.ts": {
       "content_hash": "683714441ec5eb348fce5835a8cd35df9796fbeeccab1a9bf5b6dfc0dc41e0f5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/input/mouse.ts": {
       "content_hash": "17f995e74e9e032672d98a5bbc2fd083ca77e4abd80c447785e2926e3600f537",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/input/priorities.ts": {
       "content_hash": "98a09e86e5fcdbef7db1d7c9d413cf146f6b55239c8974ec3b63afce61c09c70",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/input/types.ts": {
       "content_hash": "2fad600786b4e1dd349a156da603642881d1494651e69971edc2ce665732b2e1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/jsx.d.ts": {
       "content_hash": "c9832a696552305aed6629e6cc436b8012e9aa63de854318deee8416c7fa6009",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/layout/box-model.ts": {
       "content_hash": "4df3fe922b51f4284c1ea481992d33b850f04e9a865d3b3e6cdf76849dbb489f",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/layout/engine.ts": {
       "content_hash": "57c18a7385e596d16c66dcb075a5ab05211add2c0becfa76a5cf37f5bb25d708",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/layout/types.ts": {
       "content_hash": "1c7485cc7794f7ace631c13a36d0326e65b86c97921ae6cb0081b6e59b89fe3b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/auto-scroll.ts": {
       "content_hash": "410511ed57a78984f04dc4131ca233384c37113efa6b4b2d079705a32efbb42f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/compact-mode.ts": {
       "content_hash": "4e8d02b147a63558fe5db2b21d9265edba243082a64ffa9996bcb6b1dfb0574a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/index.ts": {
       "content_hash": "96292dd41c335c1ea6c94b7e6b3636e5735cadc5c134c6365bde1bbd84ed216a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/screenshot.ts": {
       "content_hash": "5858f9f5569d7c7491b9d8ef99116da0729b3370607bfd6988d0c64f45b21240",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/status-bar.ts": {
       "content_hash": "ce0d061e36a854fa54e0517986aa9a1b91fa81fbf260cbe5f26150e17818b792",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/plugins/vim-mode.ts": {
       "content_hash": "59e6a6a52d255f1790852bd7b5ba31635c1b459e6e3ffeae7871b73406bc8c2c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/console-interceptor.ts": {
       "content_hash": "b858f4ea6ba661ee9022452cdf84ef9d8f32399a7c2a6a1c8ddabc8f3f7b0514",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/frame-scheduler.ts": {
       "content_hash": "6dcdd2deeda4556cce4bbf3dadeefce1645d6b4dbf3c1a6f6ec427d4ad3cc00c",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/host.ts": {
       "content_hash": "9f6b7dd30a917dc1bbc4a689f7fe785233b5d776b6a7d5ab875bf8f6b47ee127",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/input-wiring.ts": {
       "content_hash": "8e5b5d09e43765324b529a84dee37723d9f295da390bd846a5e2daf10b26718c",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/paint/clip.ts": {
       "content_hash": "190ea4db8177679eb58750d052d8887c6e13b5040d627dc6a07288b833d3fc7c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/reconciler/paint/text.ts": {
       "content_hash": "4ee9d64fc0ce8e63b60953f82aff062ae58ff60a473ca929846473ba248f18f6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/reconciler/react-reconciler.d.ts": {
       "content_hash": "e0b20185b23355bf8b9d5801b74d7c23c9a53000c1889f422c1cb254ed7065ae",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/render-pipeline.ts": {
       "content_hash": "7e133a607d77bb42128e8a75cb9d3de47bcd64fef60203d5d6f800a83d7c9065",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/render-to-string.ts": {
       "content_hash": "bf00964ac3f22aa646c8d9cf75fbc956ce4851c2430623680492d22dcf906042",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/render-types.ts": {
       "content_hash": "8c0706a1eb1249754f87df42db9f5725f6a2b5035af5628e3881a30e962e2ab4",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/render.ts": {
       "content_hash": "e73d377fc4d5c748e9a8e9be1bab4b8ffcb4b16f440e35f76365d38d073d57ac",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/renderer.ts": {
       "content_hash": "f1db2e1643779ff1640c3dd2aef8dc58edc1e89c04d88a17e7c8b8c931b141de",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/types.ts": {
       "content_hash": "3b425a4da578455e52ac2ab5c52c1e183b7cd4aa96e7d287453f066c1439d055",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/reconciler/use-effect-patch.ts": {
       "content_hash": "0023ef941b307390666a18f2942f4fd0519293a546929135380cb3dd86475f95",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/ssh/index.ts": {
       "content_hash": "73a2e990255841f647894e730f0d92f1477cc96bff30520c94db8cb7c49a86e7",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/ssh/server.ts": {
       "content_hash": "1812125934cc915fd0f6ef9199d67132fefe9181bacc1c9e18cd3b58afd1cece",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/storm-jsx.d.ts": {
       "content_hash": "a17b09952147c8311f7bfa83d28ff4eb3b4cc00ca27f5575b7fc2b6550e04ab7",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/styles/applyStyles.ts": {
       "content_hash": "20413b77838ba164dd0c0cda4f25200df91499c1a9c3b0ce1e3d3639d3fea7dd",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/styles/defaults.ts": {
       "content_hash": "83fc05d5b1899b963bfb01e1f4027993a89f787f3809e44ad2e0222107bfa57b",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/styles/index.ts": {
       "content_hash": "c9e566912a541839f2704e950b1740e59b9a6aef9a89c29841056a31e49340df",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/styles/styleProps.ts": {
       "content_hash": "8f32024c6e2968cfab1c36c9c1f313c803cc1bbab0511b983d1d794ea82f549e",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/templates/ansi-commit.ts": {
       "content_hash": "462aec13fdd2e82701a22390b317895b117af34941f57c81bf9f02fc52322cf9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/templates/index.ts": {
       "content_hash": "4ae2191e8d053bb9839d01330e784a5007d01255e6cb2f7fa803d9a0e8c057dc",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/templates/showcase/AgentChat.tsx": {
       "content_hash": "3426fa0f9298442c3cb82a08fd55c6fbe7b15e2caa891438b9973c1ea6aaeccd",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/CodeReview.tsx": {
       "content_hash": "e0794ffe426b715a11f8bca6de09648ddd0a97ff5acbe24bb95c70010b0e1c89",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/FinancialDashboard.tsx": {
       "content_hash": "c0972140c7da7823217376fc0c1581964e6f3deac81a0536450aa9bcfaae9438",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ProjectManager.tsx": {
       "content_hash": "464979204460f6f27579c0a528c5d9f9849f37ea455b8c366f81bef9d2a611c7",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseAI.tsx": {
       "content_hash": "ada8465b360d8119d529758643cd8cb1cd9a8c7d508f0d1be064d2b841742f30",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseAdvanced.tsx": {
       "content_hash": "47e58b17869b82060ca1a00490154b0bf4a311f05268e41f44bc30fea83264df",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseChat.tsx": {
       "content_hash": "5b73ebb4b69118a2d023167e2e716b602cb0fef0306f908dcb3e182277005c41",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseData.tsx": {
       "content_hash": "2b9f7911f7e8b40d209d5b2d5667daa5356f2cbb92821c5468e6c6037695b28c",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseFeedback.tsx": {
       "content_hash": "2b30a064d8c0c604372b9befb963236938ed1e36ee01ac99071b0571d9ee5e67",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseInput.tsx": {
       "content_hash": "bd092cf15882b62b6a5cf32dcaedfa26d336af97b8c937b5dfa81ad198077eaf",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseLayout.tsx": {
       "content_hash": "e046e3d93a6abc94247f09bdaba6721df4f6c54e0edb44600aee1f84cabf1e76",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcasePrimitives.tsx": {
       "content_hash": "77aa5a3156463e94288f10f119068ecd49b57c9f0e7e1f9e9c13a7a8af7b3e5e",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseRichContent.tsx": {
       "content_hash": "7e281c5d204991986e45b70a2cf35b709a27689eccc66880d97ef7c5636b4f00",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseSelection.tsx": {
       "content_hash": "7044e219a194b61c1ab471b64a0e090d23b69a46f14e4a35a98381c91fa4eed8",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/ShowcaseVisual.tsx": {
       "content_hash": "11598b34ef3d53d356354866637b5ca62ccf261491e35740d6fe820013014b73",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/SystemDashboard.tsx": {
       "content_hash": "02d21dcba6fd794bee13101ccfb558c5d0b98bc1ac646a353e325a4d76a54007",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/helpers.ts": {
       "content_hash": "0afedd4a1f1a27d472dc871c62bd6a3488d27008b4ae3601a6052fd7f8bed4c6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/templates/showcase/index.ts": {
       "content_hash": "ef995e49b739ab31bdced56fc32d2d395fb5a1afb65e79b35175f5b313b14dfa",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/testing/artifacts.ts": {
       "content_hash": "1c58dd0de225b985a857808abb78cbcf7bf34f349298210bb551e2e0ef90a72c",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/driver.ts": {
       "content_hash": "4ff28110364dbe4791966909845a2ce2e72435363c4d05a20ac277064756939e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/explorer.ts": {
       "content_hash": "d01ea6a8c21a8b3f48e98498faa16c2f7459bae7f3663e5acd4340f2a64a8313",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/index.ts": {
       "content_hash": "6ae8f6bcbc42a2f97467b6ff727b22fe0fd5bd227b106862c7b1baa4493db089",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/input-manager.ts": {
       "content_hash": "6b06144c640ce24fe7eef6ef8027285b9c72537d3c2e5574f5b03fa05e19e13a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/metadata.ts": {
       "content_hash": "c0e051804ae622783d7aa08fe5cbb7b057e86fdb193ff70d101c56426c23085a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/pty.ts": {
       "content_hash": "9f5207182481d59bcf0ee9234fbe99cd62218afaa61e88f0665f36c45c7ec4f6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/queries.ts": {
       "content_hash": "f337aa720ed7257bf2e3e841d58aaa7725370c35ed1991bc5a2f872d0d460794",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/scenario.ts": {
       "content_hash": "9ce7514106208520feb6c1a68103018de3cafe907a85ec7246634c56c0099a83",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/testing/svg-renderer.ts": {
       "content_hash": "02cebf3e3e03fa10e1a07264b0289d437ffea2fc0bb7fb64230165ce894c31d9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/colors.ts": {
       "content_hash": "3cab00269eb8a9ec77eead05ad6933b9c0fe370f89b8c20a498722ec16ace9e1",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/index.ts": {
       "content_hash": "ead163fae3420a48d346871a87196f0b907a305df3dcd35d31bfc11cbd600309",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/loader.ts": {
       "content_hash": "8c9dedb1dfd63dca857db650e5bf94fbc3e3f93db8200a5708cb9a80a0af093b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/presets.ts": {
       "content_hash": "6f1a78725a2f4924a95c727088170772884dc01c76e297fea68d9e06c55706e4",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/provider.ts": {
       "content_hash": "ea0bfee9d978b50544dc80e68dfb86474b286b516ef4049374246d941757ec9b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/shades.ts": {
       "content_hash": "f533bf3161d9e54bd0658f510a7c2176e7278c43cf6150ed14b607d0b5232098",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/spacing.ts": {
       "content_hash": "e7d43930d70ef757fcdee4911b64aabcd2437c36ed7388cdee013b50e1bb9ff9",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/utils.ts": {
       "content_hash": "a97315b26fe7a153543c730bb20ab5138e434c728eba5c6a952b403ea4380501",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/theme/validate.ts": {
       "content_hash": "cf892e6a6ae1d98fa5dab05c7b0401ca667c8ada875baee007598c9993b1cfdf",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/animate.ts": {
       "content_hash": "5c66bcd84b4139a87c27c92fa37d9a1904283f56dccba3780535c570ee05c014",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/braille-canvas.ts": {
       "content_hash": "2850d6581ab0fad7567822484687e564cb3e03c5a96cd3e9c153ededa472ef04",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/chart-helpers.ts": {
       "content_hash": "e648909faf05349d36d5657e2958b3b42d8604682e248cb42e3e05863d027cce",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/color.ts": {
       "content_hash": "5bbd960b33c2d3fe5078e9d4117b20dab61e642c3f50d70d3f72388ebc0ecfb1",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/date.ts": {
       "content_hash": "73321d697d42b9e29fd4ccda1d531b4a6c6ab92a4d9cff465d0ef8ff50676a79",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/focus-chars.ts": {
       "content_hash": "85d5ee78741d6c60a971da7724cb042745df63e3c522187fbe7f746d8c2b0dc8",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/format.ts": {
       "content_hash": "11da912d449440a2aff148a45ea8a4a886d55d5ae46cde8159dce84ca6a98b01",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/highlight.ts": {
       "content_hash": "d4d0a17bc25c59d7b7b5b99dc7841efb274ad922c3d6978de8018a8f62893bf6",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/index.ts": {
       "content_hash": "dd6aaf6caee938d6fabb479a098fe598aa75bc8709ac2109dfa8c659dc77f85c",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/markdown/parse.ts": {
       "content_hash": "430c3136dc6985cd19acb2eb5b2c20160744cd354c3e34f4b12079b284c4b156",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/utils/markdown/render-blocks.tsx": {
       "content_hash": "cef91f470b89ceff17c09d24ba129636729536da3d706a9b1943aa05677d05ea",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/utils/navigation.ts": {
       "content_hash": "deb24a8e9e8966d106ae1a02da833b12cd1b92a874b8210cf829d47dae690faf",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/pretty-format.ts": {
       "content_hash": "6673a331b5cc88963aaf9c1429200ae4faabfc751eddd95703cb8b28d21f0296",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/sparkline.ts": {
       "content_hash": "a585618c814110bb8f2d961657bf21081877774f892d656b93b1d6f4c35d7388",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/table-render.ts": {
       "content_hash": "af8cbff7babbf35b294a33802f4d17769db424e5d93b287c73c4064df223f799",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/theme-maps.ts": {
       "content_hash": "86f28fefe864ffb2a94b2a373653ae4c7cc89c5f54ddaaf2928e5abf4b449a01",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/tree-flatten.ts": {
       "content_hash": "d7157e1d477741f11445c22aebc7eaa2d2f6d9cd32e2851d648683ca0b4a826e",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/utils/tree-sitter.ts": {
       "content_hash": "819fa0f32e9d6f15990fa7df6a3c2213afdd6638e6b6b53d0a0521842861e036",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "src/widgets/ai/ApprovalPrompt.tsx": {
       "content_hash": "c5bbcea290c765e0f712a7db1b6d05c2459c6bc0ac9f65025178692a437dea22",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/BlinkDot.tsx": {
       "content_hash": "6b6efcbb642cca2ea234f00f4464f4c4459e579c90e78daf612c40acbab618af",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/CommandBlock.tsx": {
       "content_hash": "b59271c30a5c1d52f261d1915afe2f1ea482a3ea861214ae006e9ef1846b7e57",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/CommandDropdown.tsx": {
       "content_hash": "2e97121e25b1d6d887252864d2e78d0c99c972b7aa0c718e8588289858b8d205",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/ContextWindow.tsx": {
       "content_hash": "0d7a5c4f4c1f4b7824a5f8b5001f609887a8b8e64a06cbd77c302e7a662b7b39",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/CostTracker.tsx": {
       "content_hash": "d66c0a7c898fc453ef0d4d1aebbe81338a480bd97450600531f03273f036bc11",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/MessageBubble.tsx": {
       "content_hash": "0e815b0811ec7b1f930c7759a4fb6cf78d4fcbed993bd84c1bd2c8f715a75298",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/ModelBadge.tsx": {
       "content_hash": "4b4c0a9bccaae6f11c7ae1bad1f0380b41b103c5756ced1296a6bf4719af73e8",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/OperationTree.tsx": {
       "content_hash": "cb8ee51a326b41115fa566df84ff4a8d16ca5e8336a91027b3af7b4b6c2646b3",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/ShimmerText.tsx": {
       "content_hash": "874b75ac2bac9b1c0a6d9b3e1f7d944e51502a193f403c48f6c1d187ee8bef38",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/StatusLine.tsx": {
       "content_hash": "e2a5ea8c30dce6428cd47c8c911924bfbcda1f5212c7870b45bb3bbab72f2097",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/StreamingText.tsx": {
       "content_hash": "e025dc0cdeff0a5986467bdffd0a9f25526435b1e55f45781ce16cea8a0029bd",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/ai/TokenStream.tsx": {
       "content_hash": "b87610b0504e2103bb08107ece14553bb7b4181a6e79a0c91de28f793c82ca91",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/dev/PerformanceHUD.tsx": {
       "content_hash": "6a78d5c3f77d2ecbc98994ca5abe5a12f0f6ed5ee5ca4db6910d34a7d3944afe",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/dev/SyntaxHighlight.tsx": {
       "content_hash": "865ad08c1959fcf6b54908719cdbf19bfaa7c0ddd79351c676a66786d6f2aa7d",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     },
     "src/widgets/dev/syntax-languages.ts": {
       "content_hash": "f87b4d4f445f997164601dad695144b3c513c4368fb4c88eda1bd300f79eca14",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "src/widgets/index.ts": {
       "content_hash": "5b591fdb73bda541654ed9fbb21a89ec8db9ce548ca665a25eefe3fb5bc2da84",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "tests/optimization/buffer/cjk-render.ts": {
       "content_hash": "7e4a2733936df8b76761aea6a2b2d9dd71ea5ee4655269047fb03771c78a233e",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/buffer/pipeline-stress.ts": {
       "content_hash": "7aef677a879edb895b5c99d6e4f3f86dcdb21c9f59fb736184ff4ff74d6fefa8",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/buffer/selective-clear.ts": {
       "content_hash": "b5f3edc4946404dabeb5f665f92a1314c579f033f609bad7ab1b54841fb70751",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/buffer/wide-char-diff.ts": {
       "content_hash": "f5d575d809207b7530bfab68570ed3580076da2a9c46d41834010f06a1ffe549",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/buffer/wide-char-edge.ts": {
       "content_hash": "f82a7cc9c9164ac611576ba88ab3d900f5e038fc2d13c15f7b281e339b6af7bd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/api-surface.ts": {
       "content_hash": "1eafb8e454697f0ce3ec29135a7ff3ae1063611d3c20852d8140bac8c66426ce",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/correctness.ts": {
       "content_hash": "124737b62a879ddcf1f5282ab6a605c8ecdde9c7fc61103230650ade50260b75",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/pixel-perfect.ts": {
       "content_hash": "809eaff69863889313460028a84b39441d3eb9228cba79eac8bd28bb671ec923",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/visual-equiv.ts": {
       "content_hash": "985562acee965e157ddcc895bd7c318cba112335e520e4dd102c7998065b129d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/visual-exhaustive.ts": {
       "content_hash": "4a9779194751080ca760c9e6dc91cbe485c55aa82a29911171af5560abc3df80",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/compat/visual-stress.ts": {
       "content_hash": "330c961cb8b3fec4553416f9722c9961e3e8ec2382cccffd3bff82100f6545fb",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/component/focus-visual.ts": {
       "content_hash": "8aa743c61c5bbaa0b7dc811736162308c0fa521b63f2e5e6614ea1049213bfc6",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/component/hit-test.ts": {
       "content_hash": "9c482519cdcb3e4d58779b7ce7d602283aa4b732e31e23f5438ecde04bb5f94d",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/component/overlap-conditional.ts": {
       "content_hash": "6e6469185b9aa71b918ee941a539debd7d6bc8d3ff370eb56b93e456e99ed36f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/component/overlay.ts": {
       "content_hash": "e801cf177f8610fe8252b203633fc76a86ae0b913664c24400705c40f7172864",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/absolute-natural.ts": {
       "content_hash": "0ae0afff59e0d3c9f87b5dae706b1b246faa6591d037552868b5b70b01815cd3",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/absolute-position.ts": {
       "content_hash": "12033fac0bf55f5ac97e3dbf506c811b94ccb235dcf58e1f02f58a768ff52374",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/cjk-truncate.ts": {
       "content_hash": "6cb06da472634b9a97e8b16c7040d1b4cb31a4772b5c192433d04138b51a4641",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/cjk-wrap.ts": {
       "content_hash": "1aba64653f073eab6809d5d1dc94d575bde2e231d7bd3c6b6d80d0fef2edf845",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/flex-shrink-overflow.ts": {
       "content_hash": "6bc7ff61dc9d0958b6136a805db43579718a950726263c738d313c1283a0fd57",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/overflow-clip.ts": {
       "content_hash": "4aa5e1e3292e9b1af812d17b8edf057f5c499d745f164b3f8738158f02566d8b",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/resize.ts": {
       "content_hash": "e3536ccf2f186a14c921ca263896ca76f28a672afb86c9799884aa4381fbf0e5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/scroll-clamp.ts": {
       "content_hash": "5573ca63805c860de9ed7c4893a249cac3b3e87eea4f059f91ebef53072d2ab7",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/scroll-region.ts": {
       "content_hash": "cbc6abf286eeb0274f8a77002f48f14ea619ed1e61900baba6d502eb9259291a",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/layout/scrollview-inner-width.ts": {
       "content_hash": "807efba11e07359e82769a1e585f6fb3f8b796ac9fde0c7be752568cfb841604",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/element-reorder.ts": {
       "content_hash": "1e697dd845ddfcc0ef60083ded1360fde3cdb0d7ad39adc2f3bc17f198017b5f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/frame-coalesce.ts": {
       "content_hash": "593d961089f9fd40c7214349055d339318ef485d35d7390c3ba9dbfde878d063",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/host-reorder.ts": {
       "content_hash": "814ac1b1a439cc02fbdbfbf6f6a9eeb4af1020be685832dd322b9b17d2d555d5",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/incremental-edge-cases.ts": {
       "content_hash": "80e6508450d37c3e3d2c47e378728d22e560e277c2640bc32b5d7ffb87591171",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/noop-commit.ts": {
       "content_hash": "f6226698b232180ceb35711bbb8c258d9d0b37ed0f6383164a503d332ec60ccf",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/renderer-transitions.ts": {
       "content_hash": "4b5a931be96671173b8cb46c3472385844434a6e6fb9261c6e86986669ce463f",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/screen-transitions.ts": {
       "content_hash": "7d80cd86f3664ad76716a722931d37e3693c25eccd56013b86551750bdfd53bd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/optimization/render/tree-swap-repaint.ts": {
       "content_hash": "e59cd61edc10ec64aebd98323c6c7c24f54539cd72e787525166ef94a6f29595",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/smoke/all-exports.ts": {
       "content_hash": "49a1c1cd30d54175bc6c0a8c9051ec96355d3c1ef0b34dacf14ba240547b0c44",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "tests/smoke/published-package.test.ts": {
       "content_hash": "4ca344c0d57a0f986f7e36417dd06d6e32b4dbc57329f153c430fcde22cfddcd",
-      "last_indexed": "2026-05-11T01:30:45+00:00"
+      "last_indexed": "2026-05-11T01:35:16+00:00"
     },
     "vitest.config.ts": {
       "content_hash": "c2ef3b0e691dff5b17f51a259a3107ba802e158d68264da562dbc22643e19981",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "vitest.package.config.ts": {
       "content_hash": "3883e209eb4a06876fa5da02f636ed88fe0f7df6078b53c5ba468d99e01409ce",
-      "last_indexed": "2026-05-11T01:30:44+00:00"
+      "last_indexed": "2026-05-11T01:35:15+00:00"
     },
     "wasm/src/lib.rs": {
       "content_hash": "eacdf954c613640a29e60930a307a8ee0f8d8d297a1964e0c0bcd0d00a953397",
-      "last_indexed": "2026-05-11T01:30:46+00:00"
+      "last_indexed": "2026-05-11T01:35:17+00:00"
     }
   },
   "grammar_versions": {
@@ -2523,5 +2523,5 @@
     "typescript",
     "rust"
   ],
-  "last_built": "2026-05-11T01:30:46+00:00"
+  "last_built": "2026-05-11T01:35:17+00:00"
 }

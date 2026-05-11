@@ -218,6 +218,7 @@ const ConfirmDialogBase = React.memo(function ConfirmDialog(rawProps: ConfirmDia
 
   const handleInput = useCallback((event: KeyEvent) => {
     if (!visibleRef.current) return;
+    event.consumed = true;
 
     const acts = actionsRef.current;
 

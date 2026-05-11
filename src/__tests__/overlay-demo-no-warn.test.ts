@@ -33,3 +33,29 @@ it("Overlays demo section does not produce 'multiple components' warnings", () =
   );
   expect(warnings).toEqual([]);
 });
+
+it("bottom-right overlay previews own input and close cleanly", () => {
+  const result = renderForTest(React.createElement(DemoApp), { width: 140, height: 36 });
+  for (let i = 0; i < 6; i++) result.pressTab();
+
+  let previewRow = result.lines.findIndex((line) => line.includes("[Summary]") && line.includes("Confirm"));
+  expect(previewRow).toBeGreaterThanOrEqual(0);
+  result.click(result.lines[previewRow]!.indexOf("Confirm") + 2, previewRow);
+  expect(result.hasText("ConfirmDialog preview")).toBe(true);
+
+  result.type("saasa");
+  expect(result.hasText("Filter: saasa")).toBe(false);
+  result.pressEscape();
+  expect(result.hasText("ConfirmDialog preview")).toBe(false);
+
+  previewRow = result.lines.findIndex((line) => line.includes("[Summary]") && line.includes("Palette"));
+  expect(previewRow).toBeGreaterThanOrEqual(0);
+  result.click(result.lines[previewRow]!.indexOf("Palette") + 2, previewRow);
+  expect(result.hasText("CommandPalette")).toBe(true);
+
+  result.type("open");
+  expect(result.hasText("Filter: open")).toBe(false);
+  result.pressEscape();
+  expect(result.hasText("CommandPalette")).toBe(true);
+  expect(result.hasText("[Summary]")).toBe(true);
+});

@@ -813,9 +813,12 @@ function NavigationFeedbackShowcase(): React.ReactElement {
           {preview === "palette" ? (
             <CommandPalette
               commands={paletteCommands}
-              onExecute={() => undefined}
-              isActive={false}
+              onExecute={() => setPreview("summary")}
+              isActive={preview === "palette"}
               isOpen
+              onOpenChange={(open) => {
+                if (!open) setPreview("summary");
+              }}
               maxVisible={3}
               overlayWidth={48}
               placeholder="CommandPalette"
@@ -827,6 +830,8 @@ function NavigationFeedbackShowcase(): React.ReactElement {
             message="ConfirmDialog preview"
             confirmLabel="Rectify"
             cancelLabel="Cancel"
+            onConfirm={() => setPreview("summary")}
+            onCancel={() => setPreview("summary")}
           />
           <ToastContainer
             toasts={[
