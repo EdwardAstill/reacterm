@@ -137,12 +137,14 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
 
     // Helper: commit cursor and value to host props, trigger onChange + render
     const commitState = (cursor: number, val: string) => {
+      const prevValue = valueRef.current;
       cursorRef.current = cursor;
+      valueRef.current = val;
       if (hostPropsRef.current) {
         hostPropsRef.current.cursorOffset = cursor;
         hostPropsRef.current.value = val;
       }
-      if (val !== valueRef.current) onChangeRef.current(val);
+      if (val !== prevValue) onChangeRef.current(val);
       requestRender();
     };
 
@@ -478,6 +480,7 @@ export function useTextInputBehavior(options: UseTextInputBehaviorOptions): UseT
       }
       val = val.slice(0, cursor) + text + val.slice(cursor);
       cursorRef.current = cursor + text.length;
+      valueRef.current = val;
       if (hostPropsRef.current) {
         hostPropsRef.current.cursorOffset = cursorRef.current;
         hostPropsRef.current.value = val;

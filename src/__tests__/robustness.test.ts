@@ -49,6 +49,44 @@ describe("Demo global shortcuts", () => {
     expect(result.hasText("Form controls")).toBe(true);
   });
 
+  it("keeps rapid Forms edits coherent before the next render", () => {
+    const result = renderForTest(React.createElement(DemoApp), { width: 100, height: 30 });
+
+    result.pressTab(); // Layout
+    result.pressTab(); // Forms
+    expect(result.hasText("Form controls")).toBe(true);
+
+    result.type("abc");
+    expect(result.hasText("abc")).toBe(true);
+    result.fireKey("backspace");
+    expect(result.hasText("ab")).toBe(true);
+    expect(result.hasText("abc")).toBe(false);
+
+    let row = result.lines.findIndex((line) => line.includes("Phone"));
+    expect(row).toBeGreaterThanOrEqual(0);
+    result.click(result.lines[row]!.indexOf("Phone") + 1, row);
+    result.type("123");
+    expect(result.hasText("(123")).toBe(true);
+    result.fireKey("backspace");
+    expect(result.hasText("(12")).toBe(true);
+
+    row = result.lines.findIndex((line) => line.includes("Bio"));
+    expect(row).toBeGreaterThanOrEqual(0);
+    result.click(result.lines[row]!.indexOf("Bio") + 1, row);
+    result.type("bio");
+    expect(result.hasText("bio")).toBe(true);
+    result.fireKey("backspace");
+    expect(result.hasText("bi")).toBe(true);
+
+    row = result.lines.findIndex((line) => line.includes("Chat"));
+    expect(row).toBeGreaterThanOrEqual(0);
+    result.click(result.lines[row]!.indexOf("Chat") + 1, row);
+    result.type("hey");
+    expect(result.hasText("hey")).toBe(true);
+    result.fireKey("backspace");
+    expect(result.hasText("he")).toBe(true);
+  });
+
   it("lets SearchList consume bare letters before app-level shortcuts", () => {
     const result = renderForTest(React.createElement(DemoApp), { width: 80, height: 24 });
 

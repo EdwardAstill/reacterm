@@ -139,6 +139,13 @@ export const MaskedInput = React.memo(function MaskedInput(rawProps: MaskedInput
       return count;
     };
 
+    const emitChange = (nextValue: string) => {
+      if (nextValue !== valueRef.current) {
+        valueRef.current = nextValue;
+        onChangeRef.current(nextValue);
+      }
+    };
+
     unsubKeyRef.current = input.onKey((event) => {
       if (!focusPropRef.current) return;
       if (disabledRef.current) return;
@@ -151,7 +158,7 @@ export const MaskedInput = React.memo(function MaskedInput(rawProps: MaskedInput
         undoStackRef.current.push(currentState);
         const next = redoStack.pop()!;
         cursorRef.current = next.cursor;
-        if (next.value !== valueRef.current) onChangeRef.current(next.value);
+        emitChange(next.value);
         requestRender();
         return;
       }
@@ -164,7 +171,7 @@ export const MaskedInput = React.memo(function MaskedInput(rawProps: MaskedInput
         redoStackRef.current.push(currentState);
         const prev = undoStack.pop()!;
         cursorRef.current = prev.cursor;
-        if (prev.value !== valueRef.current) onChangeRef.current(prev.value);
+        emitChange(prev.value);
         requestRender();
         return;
       }
@@ -250,9 +257,7 @@ export const MaskedInput = React.memo(function MaskedInput(rawProps: MaskedInput
       }
 
       cursorRef.current = cursor;
-      if (val !== valueRef.current) {
-        onChangeRef.current(val);
-      }
+      emitChange(val);
       requestRender();
     });
 
@@ -298,7 +303,7 @@ export const MaskedInput = React.memo(function MaskedInput(rawProps: MaskedInput
       const maxRaw = maxRawLength(m);
       if (val.length > maxRaw) val = val.slice(0, maxRaw);
       cursorRef.current = Math.min(cursor + filtered.length, val.length);
-      onChangeRef.current(val);
+      emitChange(val);
       requestRender();
     });
 

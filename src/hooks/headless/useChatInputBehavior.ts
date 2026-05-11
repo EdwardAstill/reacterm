@@ -288,6 +288,13 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
       onSelectionChangeRef.current?.(Math.min(start, end), Math.max(start, end));
     };
 
+    const emitChange = (nextValue: string) => {
+      if (nextValue !== valueRef.current) {
+        valueRef.current = nextValue;
+        onChangeRef.current(nextValue);
+      }
+    };
+
     unsubKeyRef.current = input.onKey((event) => {
       if (!focusPropRef.current) return;
       if (disabledRef.current) return;
@@ -309,7 +316,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         undoStackRef.current.push(currentState);
         const next = redoStack.pop()!;
         cursorRef.current = next.cursor;
-        if (next.value !== valueRef.current) onChangeRef.current(next.value);
+        emitChange(next.value);
         requestRender();
         return;
       }
@@ -323,7 +330,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         redoStackRef.current.push(currentState);
         const prev = undoStack.pop()!;
         cursorRef.current = prev.cursor;
-        if (prev.value !== valueRef.current) onChangeRef.current(prev.value);
+        emitChange(prev.value);
         requestRender();
         return;
       }
@@ -376,7 +383,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
           if (undoStackRef.current.length > 100) undoStackRef.current.shift();
           redoStackRef.current.length = 0;
           cursorRef.current = cursor;
-          if (val !== valueRef.current) onChangeRef.current(val);
+          emitChange(val);
           requestRender();
           return;
         }
@@ -405,7 +412,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         }
 
         cursorRef.current = cursor;
-        if (val !== valueRef.current) onChangeRef.current(val);
+        emitChange(val);
         requestRender();
         return;
       }
@@ -567,7 +574,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
         scrollTopRef.current = cursorRow - mr + 1;
       }
 
-      if (val !== valueRef.current) onChangeRef.current(val);
+      emitChange(val);
       requestRender();
     });
 
@@ -594,7 +601,7 @@ export function useChatInputBehavior(options: UseChatInputBehaviorOptions): UseC
       }
       val = val.slice(0, cursor) + text + val.slice(cursor);
       cursorRef.current = cursor + text.length;
-      onChangeRef.current(val);
+      emitChange(val);
       requestRender();
     });
 

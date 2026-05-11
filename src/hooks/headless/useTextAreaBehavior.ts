@@ -225,6 +225,7 @@ export function useTextAreaBehavior(options: UseTextAreaBehaviorOptions): UseTex
     const emitChange = (lines: string[]) => {
       const newVal = joinLines(lines);
       if (newVal !== valueRef.current) {
+        valueRef.current = newVal;
         linesRef.current = lines;
         onChangeRef.current(newVal);
       }
