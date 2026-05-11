@@ -724,6 +724,7 @@ function NavigationFeedbackShowcase(): React.ReactElement {
   const theme = useTheme();
   const [tab, setTab] = useState("overview");
   const [page, setPage] = useState(1);
+  const [preview, setPreview] = useState<"summary" | "welcome" | "palette" | "confirm">("summary");
 
   const paletteCommands = [
     { id: "open", name: "Open demo coverage", description: "Jump to the coverage matrix", category: "Demo", shortcut: "g d" },
@@ -803,17 +804,25 @@ function NavigationFeedbackShowcase(): React.ReactElement {
 
         <Box flexDirection="column" flex={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
           <Text bold color={theme.colors.text.primary}>CommandPalette / ConfirmDialog / ToastContainer / Welcome</Text>
-          <CommandPalette
-            commands={paletteCommands}
-            onExecute={() => undefined}
-            isActive={false}
-            isOpen
-            maxVisible={3}
-            overlayWidth={48}
-            placeholder="CommandPalette"
-          />
+          <Box flexDirection="row" gap={1}>
+            <Button label="Summary" size="sm" variant={preview === "summary" ? "primary" : "ghost"} onPress={() => setPreview("summary")} />
+            <Button label="Welcome" size="sm" variant={preview === "welcome" ? "primary" : "ghost"} onPress={() => setPreview("welcome")} />
+            <Button label="Palette" size="sm" variant={preview === "palette" ? "primary" : "ghost"} onPress={() => setPreview("palette")} />
+            <Button label="Confirm" size="sm" variant={preview === "confirm" ? "primary" : "ghost"} onPress={() => setPreview("confirm")} />
+          </Box>
+          {preview === "palette" ? (
+            <CommandPalette
+              commands={paletteCommands}
+              onExecute={() => undefined}
+              isActive={false}
+              isOpen
+              maxVisible={3}
+              overlayWidth={48}
+              placeholder="CommandPalette"
+            />
+          ) : null}
           <ConfirmDialog
-            visible
+            visible={preview === "confirm"}
             type="warning"
             message="ConfirmDialog preview"
             confirmLabel="Rectify"
@@ -825,15 +834,26 @@ function NavigationFeedbackShowcase(): React.ReactElement {
             ]}
             maxVisible={1}
           />
-          <Welcome
-            title="Welcome"
-            version="demo"
-            description="Splash primitive preview"
-            visible
-            actions={[{ id: "coverage", label: "Open coverage matrix" }]}
-            shortcuts={[{ key: "?", label: "Help" }]}
-            prompt="Runtime demo"
-          />
+          {preview === "summary" ? (
+            <DefinitionList
+              items={[
+                { term: "Palette", definition: "Open on demand" },
+                { term: "Confirm", definition: "Open on demand" },
+                { term: "Welcome", definition: "Open on demand" },
+              ]}
+            />
+          ) : null}
+          {preview === "welcome" ? (
+            <Welcome
+              title="Welcome"
+              version="demo"
+              description="Splash primitive preview"
+              visible
+              actions={[{ id: "coverage", label: "Open coverage matrix" }]}
+              shortcuts={[{ key: "?", label: "Help" }]}
+              prompt="Runtime demo"
+            />
+          ) : null}
         </Box>
       </Box>
     </Box>
@@ -842,6 +862,8 @@ function NavigationFeedbackShowcase(): React.ReactElement {
 
 function OverlaysSection(): React.ReactElement {
   const theme = useTheme();
+  const [overlayMode, setOverlayMode] = useState<"both" | "move" | "resize">("both");
+  const [showWorkbench, setShowWorkbench] = useState(false);
   const [spawned, setSpawned] = useState<{ id: string; n: number; top: number; left: number }[]>([]);
 
   const spawn = (): void => {
@@ -856,74 +878,56 @@ function OverlaysSection(): React.ReactElement {
     setSpawned((prev) => prev.filter((s) => s.id !== id));
   };
 
+  const overlayTitle = overlayMode === "both"
+    ? "Demo overlay - movable + resizable"
+    : overlayMode === "move"
+      ? "Demo overlay - movable"
+      : "Demo overlay - resizable";
+
   return (
     <OverlayProvider>
-      <Box flexDirection="column" padding={1}>
+      <Box flexDirection="column" padding={1} gap={1}>
         <Text bold color={theme.colors.text.primary}>Movable / resizable overlays</Text>
         <Text color={theme.colors.text.dim}>
-          Drag titles to move (A, B). Drag the \ corner to resize (A, C). Click any overlay to bring it forward.
+          Use one live overlay at a time. Switch the interaction mode, spawn extras only when you want to stress stacking.
         </Text>
-        <Box marginTop={1}>
+        <Box flexDirection="row" gap={1}>
+          <Button label="Move + resize" size="sm" variant={overlayMode === "both" ? "primary" : "ghost"} onPress={() => setOverlayMode("both")} />
+          <Button label="Move only" size="sm" variant={overlayMode === "move" ? "primary" : "ghost"} onPress={() => setOverlayMode("move")} />
+          <Button label="Resize only" size="sm" variant={overlayMode === "resize" ? "primary" : "ghost"} onPress={() => setOverlayMode("resize")} />
+        </Box>
+        <Box flexDirection="row" gap={1}>
+          <Button label={showWorkbench ? "Hide overlay" : "Show overlay"} onPress={() => setShowWorkbench((visible) => !visible)} />
           <Button label="Spawn overlay" onPress={spawn} />
           <Text color={theme.colors.text.dim}>  Spawned: {spawned.length}</Text>
         </Box>
 
         <NavigationFeedbackShowcase />
 
-        <Overlay
-          id="overlay-A"
-          title="A — movable + resizable"
-          movable
-          resizable
-          defaultTop={8}
-          defaultLeft={10}
-          defaultWidth={36}
-          defaultHeight={9}
-          borderStyle="single"
-          borderColor={theme.colors.brand?.primary ?? theme.colors.text.primary}
-        >
-          <Box flexDirection="column" padding={1}>
-            <Text>This overlay accepts both gestures.</Text>
-            <Text color={theme.colors.text.dim}>Drag my title to move me.</Text>
-            <Text color={theme.colors.text.dim}>Drag the \ glyph to resize.</Text>
-          </Box>
-        </Overlay>
-
-        <Overlay
-          id="overlay-B"
-          title="B — movable only"
-          movable
-          defaultTop={4}
-          defaultLeft={50}
-          defaultWidth={28}
-          defaultHeight={7}
-          borderStyle="round"
-          borderColor={theme.colors.text.primary}
-        >
-          <Box flexDirection="column" padding={1}>
-            <Text>This one moves but does not resize.</Text>
-            <Text color={theme.colors.text.dim}>Click my body to bring me forward.</Text>
-          </Box>
-        </Overlay>
-
-        <Overlay
-          id="overlay-C"
-          title="C — resize only"
-          resizable
-          defaultTop={18}
-          defaultLeft={20}
-          defaultWidth={42}
-          defaultHeight={6}
-          borderStyle="single"
-          borderColor={theme.colors.text.dim}
-        >
-          <Box flexDirection="column" padding={1}>
-            <Text>
-              This overlay is locked in place but the corner handle still resizes the box.
-              Reflow happens automatically as the width changes.
-            </Text>
-          </Box>
-        </Overlay>
+        {showWorkbench ? (
+          <Overlay
+            id="overlay-workbench"
+            title={overlayTitle}
+            movable={overlayMode === "both" || overlayMode === "move"}
+            resizable={overlayMode === "both" || overlayMode === "resize"}
+            defaultTop={6}
+            defaultLeft={46}
+            defaultWidth={38}
+            defaultHeight={9}
+            borderStyle="single"
+            borderColor={theme.colors.brand?.primary ?? theme.colors.text.primary}
+          >
+            <Box flexDirection="column" padding={1}>
+              <Text>{overlayTitle}</Text>
+              <Text color={theme.colors.text.dim}>
+                {overlayMode === "resize" ? "Position is locked." : "Drag the title to move it."}
+              </Text>
+              <Text color={theme.colors.text.dim}>
+                {overlayMode === "move" ? "Size is locked." : "Drag the \\ corner to resize."}
+              </Text>
+            </Box>
+          </Overlay>
+        ) : null}
 
         {spawned.map((s) => (
           <Overlay

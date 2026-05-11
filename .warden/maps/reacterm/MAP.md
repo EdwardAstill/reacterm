@@ -4,7 +4,7 @@
 - symbols: 3588
 - edges: 1071
 - languages: rust, typescript
-- last built: 2026-05-11T00:48:42+00:00
+- last built: 2026-05-11T01:00:39+00:00
 
 ## Top files (by PageRank)
 - `examples/ui-terminal/themes.ts` [typescript, 245 loc, rank 0.0056, in 8 / out 0] — `<module>` (module), `THEMES` (constant), `TuiPalette` (class), `TuiTheme` (class), `renderButton` (function)
