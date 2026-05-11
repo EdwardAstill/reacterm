@@ -21,7 +21,7 @@
  * ```
  */
 
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import { useTui } from "../context/TuiContext.js";
 import { StyleContext } from "../core/style-provider.js";
 import { createStyleSheet, type StyleRule } from "../core/stylesheet.js";
@@ -91,8 +91,7 @@ export interface UseStyleSheetResult {
  * @returns An object containing `themeOverrides` extracted from `:root` CSS variables
  */
 export function useStyleSheet(options: StyleSheetLoaderOptions): UseStyleSheetResult {
-  const { renderContext, requestRender, flushSync } = useTui();
-  const existingSheet = useContext(StyleContext);
+  const { renderContext, requestRender } = useTui();
 
   // Also stores the current themeOverrides so they survive re-renders.
   const loaderRef = useRef<{

@@ -282,6 +282,7 @@ export { useAnimation, type UseAnimationOptions, type UseAnimationResult } from 
 export { usePaste } from "./hooks/usePaste.js";
 export { useInterval } from "./hooks/useInterval.js";
 export { useTimeout } from "./hooks/useTimeout.js";
+export { useDebouncedValue } from "./hooks/useDebouncedValue.js";
 export { useVirtualList, type VirtualListOptions, type VirtualListResult } from "./hooks/useVirtualList.js";
 export { useClipboard, type UseClipboardResult } from "./hooks/useClipboard.js";
 export { useAccessibility } from "./hooks/useAccessibility.js";
@@ -332,11 +333,13 @@ export {
   usePaginatorBehavior, type UsePaginatorBehaviorOptions, type UsePaginatorBehaviorResult,
   useStepperBehavior, type UseStepperBehaviorOptions, type UseStepperBehaviorResult, type StepBehaviorDef, type StepStatus,
   useTableBehavior, type UseTableBehaviorOptions, type UseTableBehaviorResult, type TableBehaviorColumn, type TableBehaviorEditing,
+  useDataGridBehavior, type UseDataGridBehaviorOptions, type UseDataGridBehaviorResult, type DataGridBehaviorColumn, type DataGridBehaviorEditState,
   useVirtualListBehavior, type UseVirtualListBehaviorOptions, type UseVirtualListBehaviorResult,
   useDialogBehavior, type UseDialogBehaviorOptions, type UseDialogBehaviorResult, type DialogSize,
   useToastBehavior, type UseToastBehaviorOptions, type UseToastBehaviorResult, type ToastBehaviorItem,
   useFormBehavior, type UseFormBehaviorOptions, type UseFormBehaviorResult, type FormBehaviorField, type FormBehaviorFieldOption,
   useCalendarBehavior, type UseCalendarBehaviorOptions, type UseCalendarBehaviorResult, type CalendarDayInfo,
+  useEventCalendarBehavior, type UseEventCalendarBehaviorOptions, type EventCalendarController, type EventCalendarEvent, type EventCalendarView,
   useCollapsibleBehavior, type UseCollapsibleBehaviorOptions, type UseCollapsibleBehaviorResult,
 } from "./hooks/headless/index.js";
 export {
@@ -554,3 +557,4 @@ export {
 export { useTick, type UseTickOptions } from "./hooks/useTick.js";
 export { usePhaseTimer, type PhaseEntry, type UsePhaseTimerOptions, type UsePhaseTimerResult } from "./hooks/usePhaseTimer.js";
 export { useProfiler, type UseProfilerResult } from "./hooks/useProfiler.js";
+export { useImperativeAnimation, type UseImperativeAnimationOptions, type UseImperativeAnimationResult } from "./hooks/useImperativeAnimation.js";

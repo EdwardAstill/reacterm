@@ -1,13 +1,12 @@
 /**
  * reacterm demo — an interactive showcase.
  *
- * One running app, 22 sections, every reacterm feature wired up so you can
+ * One running app, 23 sections, every reacterm feature wired up so you can
  * hit a key and *do* something instead of just looking at it.
  *
  * Globals: Tab/Shift-Tab cycle sections · ? help overlay · t cycle theme · q quit
  *
  * Usage: reacterm demo
- *    or: npx tsx examples/reacterm-demo.tsx
  */
 
 import React, { useState } from "react";

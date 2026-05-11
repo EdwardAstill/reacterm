@@ -27,7 +27,6 @@ export interface SelectInputProps extends StormLayoutStyleProps {
   renderItem?: (item: SelectInputItem, state: { isHighlighted: boolean; index: number }) => React.ReactNode;
 }
 
-const INDICATOR = "\u25b6"; // ▶
 const INDICATOR_SPACE = " ";
 
 export const SelectInput = React.memo(function SelectInput(rawProps: SelectInputProps): React.ReactElement {

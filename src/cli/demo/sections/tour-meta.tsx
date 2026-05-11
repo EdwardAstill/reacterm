@@ -1,46 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
+import { SECTIONS, THEMES } from "../catalog.js";
 import {
-  Box, Text, Spacer,
-  Spinner, Badge, Divider, ProgressBar, Tag, Kbd,
-  TextInput, TextArea, Switch, Checkbox, RadioGroup, Button,
-  MaskedInput, ChatInput, Select,
-  ScrollView, ListView, Modal, Overlay, OverlayProvider, KeyboardHelp, Toast,
-  Stepper, Heading, Calendar, DatePicker, EventCalendar,
-  SearchList,
-  Tree, TreeTable, RichLog, Pretty, DefinitionList,
-  OrderedList, UnorderedList,
-  Sparkline, Gauge, BarChart, LineChart, AreaChart, Heatmap, Histogram,
-  OperationTree, StreamingText, ApprovalPrompt, MessageBubble,
-  ShimmerText, BlinkDot, ContextWindow, CostTracker, ModelBadge,
-  StatusLine, TokenStream, CommandBlock,
-  Editor, Markdown, MarkdownViewer, DiffView, InlineDiff, SyntaxHighlight,
-  Transition, AnimatePresence, GlowText, GradientBorder, Gradient,
-  GradientProgress, RevealTransition,
-  Digits, Diagram, Canvas,
-  validateContrast, contrastRatio,
-  LocaleProvider, formatNumber, i18nT, plural,
-  PLURAL_EN, PLURAL_AR, PLURAL_FR, PLURAL_RU, PLURAL_JA,
-  useTui, useTerminal, useInput, useTick, useMousePosition,
-  useUndoRedo, useHotkey, useConfirmAction, useWizard,
-  usePersistentState, memoryStorage,
-  useTextCycler, useEasedInterval,
-  useAnnounce,
-  detectTerminal, detectImageCaps, bestColorDepth,
-  useTheme, useEventCalendarBehavior,
+  Badge,
+  BlinkDot,
+  Box,
+  DefinitionList,
+  Divider,
+  Heading,
+  ModelBadge,
+  OrderedList,
+  ProgressBar,
+  Spinner,
+  Text,
+  UnorderedList,
+  useInput,
+  useMousePosition,
+  useTheme,
 } from "../demo-kit.js";
-import type {
-  SelectOption,
-  TreeNode,
-  TreeTableRow,
-  OpNode,
-  DiagramNode,
-  DiagramEdge,
-  CanvasNode,
-  CanvasEdge,
-  Locale,
-  StormColors,
-} from "../demo-kit.js";
-import { THEMES, PERSONALITY_PRESETS } from "../catalog.js";
 import { Clickable } from "../shared.js";
 
 function WelcomeSection(): React.ReactElement {
@@ -58,8 +34,8 @@ function WelcomeSection(): React.ReactElement {
 
       <Box flexDirection="row" gap={4} marginTop={1}>
         <Box flexDirection="column">
-          <Text bold color={theme.colors.brand.primary}>97</Text>
-          <Text color={theme.colors.text.dim}>components</Text>
+          <Text bold color={theme.colors.brand.primary}>123</Text>
+          <Text color={theme.colors.text.dim}>UI exports</Text>
         </Box>
         <Box flexDirection="column">
           <Text bold color={theme.colors.success}>83</Text>
@@ -86,7 +62,7 @@ function WelcomeSection(): React.ReactElement {
       <Box flexDirection="row" gap={2} marginTop={1}>
         <ModelBadge model="claude-opus-4-7" provider="anthropic" />
         <BlinkDot state="streaming" />
-        <Text color={theme.colors.text.dim}>22 sections · 100+ widgets · all interactive</Text>
+        <Text color={theme.colors.text.dim}>{SECTIONS.length} sections · 100+ widgets · all interactive</Text>
       </Box>
     </Box>
   );
@@ -270,4 +246,4 @@ function AboutSection(): React.ReactElement {
   );
 }
 
-export { WelcomeSection, MouseSection, ThemesSection, AboutSection };
+export { AboutSection, MouseSection, ThemesSection, WelcomeSection };
