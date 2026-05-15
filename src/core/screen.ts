@@ -7,6 +7,8 @@ import {
   ALT_SCREEN_EXIT,
   MOUSE_ENABLE,
   MOUSE_DISABLE,
+  MOUSE_ENABLE_BASIC,
+  MOUSE_DISABLE_BASIC,
   RESET,
   CLEAR_SCREEN,
   CLEAR_LINE,
@@ -16,6 +18,13 @@ import {
   setColorDepth,
   type ColorDepth,
 } from "./ansi.js";
+
+// Windows ConPTY leaks prefix-less SGR mouse body bytes during drag/motion.
+// Switching to mode 1000 (click-only, no motion-while-button-down) eliminates
+// the highest-rate source of those leaks. Single-click still works.
+const IS_WIN32 = process.platform === "win32";
+const ACTIVE_MOUSE_ENABLE = IS_WIN32 ? MOUSE_ENABLE_BASIC : MOUSE_ENABLE;
+const ACTIVE_MOUSE_DISABLE = IS_WIN32 ? MOUSE_DISABLE_BASIC : MOUSE_DISABLE;
 import { detectTerminal } from "./terminal-detect.js";
 import { DiffRenderer, type DiffResult } from "./diff.js";
 import { ScreenBuffer } from "./buffer.js";
@@ -192,7 +201,7 @@ export class Screen {
       init += CURSOR_HIDE;
 
       if (this.useMouse) {
-        init += MOUSE_ENABLE;
+        init += ACTIVE_MOUSE_ENABLE;
       }
 
       this.write(init);
@@ -245,7 +254,7 @@ export class Screen {
       restore += CURSOR_SHOW;
 
       if (this.useMouse) {
-        restore += MOUSE_DISABLE;
+        restore += ACTIVE_MOUSE_DISABLE;
       }
 
       if (this.useAltScreen) {

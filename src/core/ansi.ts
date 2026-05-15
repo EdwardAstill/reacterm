@@ -150,6 +150,14 @@ export const MOUSE_DISABLE = `${CSI}?1002l${CSI}?1006l`;
 export const MOUSE_ENABLE_ALL = `${CSI}?1003h${CSI}?1006h`;
 export const MOUSE_DISABLE_ALL = `${CSI}?1003l${CSI}?1006l`;
 
+/** Enable basic click tracking (1000) + SGR — press/release only, NO drag.
+ *  Used on Windows where ConPTY's mouse-event byte stream sometimes leaks
+ *  prefix-less SGR body fragments into stdin. Skipping mode 1002 means the
+ *  terminal never sends drag-motion events, eliminating the highest-rate
+ *  source of those leaks. */
+export const MOUSE_ENABLE_BASIC = `${CSI}?1000h${CSI}?1006h`;
+export const MOUSE_DISABLE_BASIC = `${CSI}?1000l${CSI}?1006l`;
+
 export const FOCUS_ENABLE = `${CSI}?1004h`;
 export const FOCUS_DISABLE = `${CSI}?1004l`;
 export const FOCUS_IN = `${CSI}I`;

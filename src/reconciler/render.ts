@@ -166,6 +166,22 @@ export function render(
   input.start();
   const inputWiring = new InputWiring(input, screen, renderCtx, pluginManager);
 
+  // Windows ConPTY workaround: setRawMode(true) does not fully suppress
+  // echo of mouse SGR sequences on Windows Terminal + Bun/Node ConPTY.
+  // The InputManager still consumes the bytes correctly, but the terminal
+  // has already drawn them to the display (visible as `[<32;47;17M`
+  // garbage during click-and-drag). Force a full repaint after every
+  // mouse event so any echoed bytes are overwritten on the next frame.
+  // The scheduler coalesces, so rapid drag events become at most one
+  // paint per frame.
+  if (process.platform === "win32") {
+    const unsubMouseEchoFix = input.onMouse(() => {
+      screen.invalidate();
+      pipeline.scheduleFastRepaint();
+    });
+    renderCtx.cleanups.set("win32-mouse-echo-fix", unsubMouseEchoFix);
+  }
+
   screen.onResizeEvent(() => {
     screen.invalidate();
     screen.write("\x1b[2J\x1b[H");

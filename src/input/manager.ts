@@ -18,6 +18,17 @@ const PASTE_END = "\x1b[201~";
 const FOCUS_IN = "\x1b[I";
 const FOCUS_OUT = "\x1b[O";
 
+// Prefix-less SGR mouse body, e.g. "<32;5;10M", ";80;19m", "20;21m".
+// Bun/Node on Windows ConPTY sometimes delivers the body without the
+// `\x1b[<` (or `\x1b[`) escape prefix; without this guard the digits and
+// semicolons leak to the keyboard parser as typed characters.
+// Anchored at start of slice; requires ≥2 numbers separated by `;`
+// terminated by m/M so legitimate single-token typing (e.g. "5m") is
+// untouched. Allows an optional leading `<` or `;` (the partial prefix
+// from a stripped escape sequence) and an optional third number group.
+const LOOSE_SGR_BODY = /^[<;]?\d+;\d+(?:;\d+)?[mM]/;
+const IS_WINDOWS = process.platform === "win32";
+
 export interface PrioritizedKeyHandler {
   handler: KeyHandler;
   priority: number;
@@ -34,15 +45,29 @@ export class InputManager {
   private pasteBuffer: string | null = null; // non-null = inside paste
   private escBuffer = "";
   private escTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastMouseEventAt = 0; // ms timestamp of most recent emitted mouse event
   private readonly dataHandler: (data: Buffer | string) => void;
   private stdin: NodeJS.ReadStream;
   private attached = false;
 
   constructor(stdin: NodeJS.ReadStream = process.stdin) {
     this.stdin = stdin;
-    this.dataHandler = (data: Buffer | string) => this.handleData(
-      typeof data === "string" ? data : data.toString("utf-8"),
-    );
+    this.dataHandler = (data: Buffer | string) => {
+      // STORM_TRACE_STDIN: append every raw chunk to a file as hex. Set to a
+      // path to capture (e.g. STORM_TRACE_STDIN=C:\Users\you\stdin-trace.log).
+      // Used to diagnose Windows ConPTY mouse byte issues — disabled by default.
+      const tracePath = process.env.STORM_TRACE_STDIN;
+      if (tracePath) {
+        try {
+          const fs = require("fs") as typeof import("fs");
+          const buf = typeof data === "string" ? Buffer.from(data, "utf-8") : data;
+          fs.appendFileSync(tracePath, `${new Date().toISOString()} ${buf.toString("hex")}\n`);
+        } catch { /* swallow — diagnostic only */ }
+      }
+      this.handleData(
+        typeof data === "string" ? data : data.toString("utf-8"),
+      );
+    };
   }
 
   /** Start listening to stdin. */
@@ -246,6 +271,46 @@ export class InputManager {
         continue;
       }
 
+      // Windows ConPTY workaround: Bun/Node on Windows occasionally
+      // delivers SGR mouse events stripped of their `\x1b[<` (or `\x1b[`)
+      // prefix, leaving naked body fragments like ";80;19m" or "20;21m"
+      // or "<32;5;10M" to spill into the keyboard parser. The user sees
+      // these as typed characters in edit fields after a click/drag.
+      // Recognize and silently drop these prefix-less mouse bodies before
+      // the keyboard pass-through. Requires at least 2 number groups
+      // separated by `;` ending in m/M so legitimate input (e.g. a stray
+      // "5m") is unaffected.
+      if (IS_WINDOWS) {
+        const looseMatch = LOOSE_SGR_BODY.exec(slice);
+        if (looseMatch) {
+          i += looseMatch[0].length;
+          continue;
+        }
+
+        // Byte-by-byte mouse-body delivery defense: when stdin chunks
+        // each contain a single byte (Windows ConPTY does this under
+        // mouse drag), the LOOSE_SGR_BODY regex above never matches
+        // because no single byte is a full body. If a mouse event was
+        // emitted very recently, treat any digit / `;` / `m` / `M` /
+        // `<` byte as a mouse fragment and drop it. Window is short
+        // enough (60ms) that real typing is unaffected: a human cannot
+        // click and then type a digit within 60ms.
+        const sinceMouse = Date.now() - this.lastMouseEventAt;
+        if (sinceMouse < 60) {
+          const c = slice.charCodeAt(0);
+          const isFragmentByte =
+            (c >= 0x30 && c <= 0x39) || // 0-9
+            c === 0x3b ||               // ;
+            c === 0x3c ||               // <
+            c === 0x6d ||               // m
+            c === 0x4d;                 // M
+          if (isFragmentByte) {
+            i++;
+            continue;
+          }
+        }
+      }
+
       // Not a mouse sequence — pass through to keyboard
       // But be careful: only pass one character/sequence at a time
       if (slice.startsWith("\x1b") && slice.length > 1) {
@@ -328,6 +393,7 @@ export class InputManager {
   }
 
   private emitMouse(event: MouseEvent): void {
+    this.lastMouseEventAt = Date.now();
     for (const handler of this.mouseListeners) {
       handler(event);
     }
