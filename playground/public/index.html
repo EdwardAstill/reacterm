@@ -641,6 +641,7 @@ render(<FormDemo />).waitUntilExit();`,
   let loadedMtimeMs = null;
   let dirty = false;
   let loadingFile = false;
+  const pageToken = new URLSearchParams(location.search).get("token") || "";
 
   function fileBaseName(path) {
     return String(path || "").split(/[\\/]/).pop() || "file";
@@ -740,13 +741,13 @@ render(<FormDemo />).waitUntilExit();`,
     }
   }
 
-  function setStatus(state) {
+  function setStatus(state, message) {
     statusDot.className = "dot " + state;
     if (state === "connected") {
       statusText.textContent = "Connected";
       btnRun.disabled = false;
     } else if (state === "error") {
-      statusText.textContent = "Disconnected";
+      statusText.textContent = message || "Disconnected";
       btnRun.disabled = true;
       btnStop.disabled = true;
     } else {
@@ -760,15 +761,20 @@ render(<FormDemo />).waitUntilExit();`,
     if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
 
     const proto = location.protocol === "https:" ? "wss:" : "ws:";
-    ws = new WebSocket(proto + "//" + location.host);
+    ws = new WebSocket(
+      proto + "//" + location.host + "/?token=" + encodeURIComponent(pageToken),
+    );
 
     ws.onopen = () => {
       setStatus("connected");
       if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
     };
 
-    ws.onclose = () => {
-      setStatus("error");
+    ws.onclose = (event) => {
+      setStatus(
+        "error",
+        event.code === 1008 || event.code === 1006 ? "Connection rejected" : "Disconnected",
+      );
       running = false;
       updateRunStopState();
       reconnectTimer = setTimeout(connect, 2000);
