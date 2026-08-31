@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
-import React from "react";
+import React, { useContext, useRef } from "react";
 import { OVERLAY_LAYER } from "../components/overlay-layers.js";
+import {
+  createWindowLayerManager,
+  Overlay,
+  OverlayContext,
+  OverlayProvider,
+} from "../components/core/Overlay.js";
 import { INPUT_PRIORITY } from "../input/priorities.js";
 import { renderForTest } from "../testing/index.js";
 
@@ -57,5 +63,72 @@ describe("semantic overlay layers", () => {
     expect(result.hasText("window layer")).toBe(false);
     expect(result.hasText("panel layer")).toBe(false);
     expect(result.hasText("modal layer")).toBe(false);
+  });
+
+  it("keeps a brought-forward window topmost when the window band is full", () => {
+    const BoundaryWindows = (): React.ReactElement => {
+      const manager = useContext(OverlayContext);
+      const primed = useRef(false);
+      if (!manager) throw new Error("OverlayProvider is required");
+      if (!primed.current) {
+        primed.current = true;
+        for (let i = 0; i < 9_997; i++) manager.register(`filler-${i}`);
+      }
+
+      return React.createElement(
+        React.Fragment,
+        null,
+        React.createElement(
+          Overlay,
+          {
+            id: "back",
+            position: "free",
+            defaultTop: 5,
+            defaultLeft: 10,
+            defaultWidth: 30,
+            defaultHeight: 5,
+            borderStyle: "single",
+          },
+          React.createElement("tui-text", null, "          BACK"),
+        ),
+        React.createElement(
+          Overlay,
+          {
+            id: "front",
+            position: "free",
+            defaultTop: 5,
+            defaultLeft: 20,
+            defaultWidth: 20,
+            defaultHeight: 5,
+            borderStyle: "single",
+          },
+          React.createElement("tui-text", null, "FRONT"),
+        ),
+      );
+    };
+
+    const result = renderForTest(
+      React.createElement(OverlayProvider, null, React.createElement(BoundaryWindows)),
+      { width: 80, height: 24 },
+    );
+
+    expect(result.hasText("FRONT")).toBe(true);
+    result.click(12, 7);
+    expect(result.hasText("BACK")).toBe(true);
+    expect(result.hasText("FRONT")).toBe(false);
+  });
+
+  it("keeps standalone window-manager bring-to-front values within the window band", () => {
+    const manager = createWindowLayerManager();
+    for (let i = 0; i < 9_997; i++) manager.register(`filler-${i}`);
+    manager.register("back");
+    manager.register("front");
+
+    const broughtToFront = manager.bringToFront("back");
+    const front = manager.register("front");
+
+    expect(broughtToFront).toBeGreaterThan(front);
+    expect(broughtToFront).toBeLessThan(OVERLAY_LAYER.FLOATING_PANEL);
+    expect(front).toBeGreaterThan(OVERLAY_LAYER.WINDOW_BASE);
   });
 });

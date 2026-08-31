@@ -15,6 +15,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useMouse } from "../../hooks/useMouse.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { useInput } from "../../hooks/useInput.js";
+import { useCleanup } from "../../hooks/useCleanup.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
 import type { KeyEvent, MouseEvent } from "../../input/types.js";
 import type { BorderStyle } from "../../core/types.js";
@@ -28,40 +29,88 @@ export interface OverlayManagerValue {
   bringToFront(id: string): number;
 }
 
-const windowLayerLast = OVERLAY_LAYER.FLOATING_PANEL - 1;
-const moduleZCounter = { current: OVERLAY_LAYER.WINDOW_BASE };
-function moduleAssignZ(): number {
-  return nextWindowZ(moduleZCounter);
+interface WindowLayerManager extends OverlayManagerValue {
+  subscribe(id: string, setZIndex: React.Dispatch<React.SetStateAction<number>>): void;
+  unregister(id: string, setZIndex: React.Dispatch<React.SetStateAction<number>>): void;
 }
 
-export const OverlayContext = createContext<OverlayManagerValue | null>(null);
+const windowLayerLast = OVERLAY_LAYER.FLOATING_PANEL - 1;
+
+interface WindowLayerEntry {
+  zIndex: number;
+  setZIndex?: React.Dispatch<React.SetStateAction<number>>;
+}
+
+/** @internal Shared by provider-managed and standalone Overlay windows. */
+export function createWindowLayerManager(): WindowLayerManager {
+  const windows = new Map<string, WindowLayerEntry>();
+  let nextZIndex: number = OVERLAY_LAYER.WINDOW_BASE;
+
+  const assign = (entry: WindowLayerEntry, zIndex: number): void => {
+    entry.zIndex = zIndex;
+    entry.setZIndex?.(zIndex);
+  };
+
+  const rebase = (): void => {
+    const step = (OVERLAY_LAYER.FLOATING_PANEL - OVERLAY_LAYER.WINDOW_BASE) / (windows.size + 1);
+    let index = 1;
+    for (const entry of windows.values()) {
+      assign(entry, OVERLAY_LAYER.WINDOW_BASE + step * index++);
+    }
+    nextZIndex = windowLayerLast;
+  };
+
+  const register = (id: string): number => {
+    const existing = windows.get(id);
+    if (existing) return existing.zIndex;
+
+    const entry: WindowLayerEntry = { zIndex: OVERLAY_LAYER.WINDOW_BASE };
+    windows.set(id, entry);
+    if (nextZIndex >= windowLayerLast) {
+      rebase();
+    } else {
+      assign(entry, ++nextZIndex);
+    }
+    return entry.zIndex;
+  };
+
+  return {
+    register,
+    bringToFront(id) {
+      const entry = windows.get(id);
+      if (!entry) return register(id);
+
+      if (nextZIndex < windowLayerLast) {
+        assign(entry, ++nextZIndex);
+        return entry.zIndex;
+      }
+
+      windows.delete(id);
+      windows.set(id, entry);
+      rebase();
+      return entry.zIndex;
+    },
+    subscribe(id, setZIndex) {
+      const entry = windows.get(id);
+      if (entry) entry.setZIndex = setZIndex;
+    },
+    unregister(id, setZIndex) {
+      const entry = windows.get(id);
+      if (entry?.setZIndex === setZIndex) windows.delete(id);
+    },
+  };
+}
+
+const moduleWindowManager = createWindowLayerManager();
+
+export const OverlayContext = createContext<WindowLayerManager | null>(null);
 
 export function OverlayProvider({ children }: { children: React.ReactNode }): React.ReactElement {
-  const counterRef = useRef(OVERLAY_LAYER.WINDOW_BASE);
-  const known = useRef(new Map<string, number>());
+  const managerRef = useRef<WindowLayerManager | null>(null);
+  if (!managerRef.current) managerRef.current = createWindowLayerManager();
   // Memoize so consumers don't re-render on every parent render — refs are stable for the lifetime of this component.
-  const value = useMemo<OverlayManagerValue>(() => ({
-    register(id) {
-      const existing = known.current.get(id);
-      if (existing !== undefined) return existing;
-      const z = nextWindowZ(counterRef);
-      known.current.set(id, z);
-      return z;
-    },
-    bringToFront(id) {
-      const z = nextWindowZ(counterRef);
-      known.current.set(id, z);
-      return z;
-    },
-  }), []);
+  const value = useMemo<WindowLayerManager>(() => managerRef.current!, []);
   return React.createElement(OverlayContext.Provider, { value }, children);
-}
-
-function nextWindowZ(counter: { current: number }): number {
-  if (counter.current >= windowLayerLast) {
-    counter.current = OVERLAY_LAYER.WINDOW_BASE;
-  }
-  return ++counter.current;
 }
 
 export interface OverlayProps {
@@ -164,10 +213,12 @@ export const Overlay = React.memo(function Overlay(props: OverlayProps): React.R
   const { screen } = useTui();
   const idRef = useRef<string>(props.id ?? `overlay-${nextOverlayId++}`);
 
-  const manager = useContext(OverlayContext);
+  const manager = useContext(OverlayContext) ?? moduleWindowManager;
   const [zIndex, setZIndex] = useState<number>(() =>
-    manager ? manager.register(idRef.current) : moduleAssignZ(),
+    manager.register(idRef.current),
   );
+  manager.subscribe(idRef.current, setZIndex);
+  useCleanup(() => manager.unregister(idRef.current, setZIndex));
 
   const isFreeMode =
     movable || resizable ||
@@ -196,11 +247,7 @@ export const Overlay = React.memo(function Overlay(props: OverlayProps): React.R
   onCloseRef.current = onClose;
 
   const bringToFront = useCallback(() => {
-    if (manager) {
-      setZIndex(manager.bringToFront(idRef.current));
-    } else {
-      setZIndex(moduleAssignZ());
-    }
+    setZIndex(manager.bringToFront(idRef.current));
   }, [manager]);
 
   // Register zones from broadest (lowest priority) to most-specific (highest priority).
