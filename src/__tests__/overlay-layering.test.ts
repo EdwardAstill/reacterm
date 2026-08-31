@@ -1,10 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import React, { useContext, useRef } from "react";
 import { OVERLAY_LAYER } from "../components/overlay-layers.js";
 import {
   createWindowLayerManager,
   Overlay,
   OverlayContext,
+  type OverlayManagerValue,
   OverlayProvider,
 } from "../components/core/Overlay.js";
 import { INPUT_PRIORITY } from "../input/priorities.js";
@@ -104,18 +105,38 @@ describe("semantic overlay layers", () => {
           },
           React.createElement("tui-text", null, "FRONT"),
         ),
+        React.createElement(
+          Overlay,
+          {
+            id: "overflow",
+            position: "free",
+            defaultTop: 12,
+            defaultLeft: 45,
+            defaultWidth: 20,
+            defaultHeight: 5,
+            borderStyle: "single",
+          },
+          React.createElement("tui-text", null, "OVERFLOW"),
+        ),
       );
     };
 
-    const result = renderForTest(
-      React.createElement(OverlayProvider, null, React.createElement(BoundaryWindows)),
-      { width: 80, height: 24 },
-    );
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    let result: ReturnType<typeof renderForTest>;
+    try {
+      result = renderForTest(
+        React.createElement(OverlayProvider, null, React.createElement(BoundaryWindows)),
+        { width: 80, height: 24 },
+      );
+    } finally {
+      error.mockRestore();
+    }
 
-    expect(result.hasText("FRONT")).toBe(true);
-    result.click(12, 7);
-    expect(result.hasText("BACK")).toBe(true);
-    expect(result.hasText("FRONT")).toBe(false);
+    expect(error.mock.calls.flat().join(" ")).not.toContain("Cannot update a component while rendering");
+    expect(result!.hasText("FRONT")).toBe(true);
+    result!.click(12, 7);
+    expect(result!.hasText("BACK")).toBe(true);
+    expect(result!.hasText("FRONT")).toBe(false);
   });
 
   it("keeps standalone window-manager bring-to-front values within the window band", () => {
@@ -130,5 +151,34 @@ describe("semantic overlay layers", () => {
     expect(broughtToFront).toBeGreaterThan(front);
     expect(broughtToFront).toBeLessThan(OVERLAY_LAYER.FLOATING_PANEL);
     expect(front).toBeGreaterThan(OVERLAY_LAYER.WINDOW_BASE);
+  });
+
+  it("accepts a custom OverlayContext manager with the exported two-method interface", () => {
+    const manager: OverlayManagerValue = {
+      register: () => OVERLAY_LAYER.WINDOW_BASE + 1,
+      bringToFront: () => OVERLAY_LAYER.WINDOW_BASE + 2,
+    };
+    const result = renderForTest(
+      React.createElement(
+        OverlayContext.Provider,
+        { value: manager },
+        React.createElement(
+          Overlay,
+          {
+            id: "custom-manager-window",
+            position: "free",
+            defaultTop: 5,
+            defaultLeft: 10,
+            defaultWidth: 20,
+            defaultHeight: 5,
+            borderStyle: "single",
+          },
+          React.createElement("tui-text", null, "CUSTOM MANAGER"),
+        ),
+      ),
+      { width: 80, height: 24 },
+    );
+
+    expect(result.hasText("CUSTOM MANAGER")).toBe(true);
   });
 });
