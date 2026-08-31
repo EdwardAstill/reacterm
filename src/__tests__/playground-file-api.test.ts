@@ -21,9 +21,11 @@ class FakeChild extends EventEmitter {
   readonly stdout = new PassThrough();
   readonly stderr = new PassThrough();
   killed = false;
+  readonly killSignals: Array<NodeJS.Signals | undefined> = [];
 
-  kill() {
+  kill(signal?: NodeJS.Signals) {
     this.killed = true;
+    this.killSignals.push(signal);
     return true;
   }
 }
@@ -378,6 +380,40 @@ describe("playground runner boundary", () => {
     expect(children[0]!.killed).toBe(true);
   });
 
+  it("escalates an uncooperative stopped child and cleans up only after close", async () => {
+    const children: FakeChild[] = [];
+    const spawnCalls: Array<{ args: string[] }> = [];
+    const timeoutSpy = vi.spyOn(global, "setTimeout");
+    const { baseUrl } = await start({
+      spawnProcess: (_command: string, args: string[]) => {
+        spawnCalls.push({ args });
+        const child = new FakeChild();
+        children.push(child);
+        return child;
+      },
+    });
+    const ws = await openRunner(baseUrl);
+    ws.send(JSON.stringify({ type: "run", code: "console.log('ok')", cols: 80, rows: 24 }));
+    await waitFor(() => expect(children).toHaveLength(1));
+    const tmpFile = spawnCalls[0]!.args.at(-1)!;
+
+    ws.send(JSON.stringify({ type: "stop" }));
+    await waitFor(() => expect(children[0]!.killSignals).toEqual(["SIGTERM"]));
+    expect(existsSync(tmpFile)).toBe(true);
+
+    const graceTimer = timeoutSpy.mock.calls.find(([, delay]) => delay === 1_000);
+    expect(graceTimer).toBeDefined();
+    graceTimer![0]!();
+    expect(children[0]!.killSignals).toEqual(["SIGTERM", "SIGKILL"]);
+    expect(existsSync(tmpFile)).toBe(true);
+
+    children[0]!.emit("close", null, "SIGKILL");
+    await waitFor(() => expect(existsSync(tmpFile)).toBe(false));
+    timeoutSpy.mockRestore();
+    ws.close();
+    await once(ws, "close");
+  });
+
   it("arms the default 30,000 ms run timeout", async () => {
     const children: FakeChild[] = [];
     const timeoutSpy = vi.spyOn(global, "setTimeout");
@@ -419,6 +455,56 @@ describe("playground runner boundary", () => {
     expect(children[0]!.killed).toBe(true);
     ws.close();
     await once(ws, "close");
+  });
+
+  it("relays final stream output before signaling child close", async () => {
+    const children: FakeChild[] = [];
+    const { baseUrl } = await start({
+      spawnProcess: () => {
+        const child = new FakeChild();
+        children.push(child);
+        return child;
+      },
+    });
+    const ws = await openRunner(baseUrl);
+    const messages: Array<{ type: string; data?: string; code?: number }> = [];
+    ws.on("message", (raw) => messages.push(JSON.parse(raw.toString())));
+    ws.send(JSON.stringify({ type: "run", code: "console.log('ok')", cols: 80, rows: 24 }));
+    await waitFor(() => expect(children).toHaveLength(1));
+
+    children[0]!.emit("exit", 0);
+    children[0]!.stdout.write("trailing output");
+    await waitFor(() => {
+      expect(messages).toContainEqual({
+        type: "output",
+        data: Buffer.from("trailing output").toString("base64"),
+      });
+    });
+    expect(messages.some((message) => message.type === "exit")).toBe(false);
+
+    children[0]!.emit("close", 0, null);
+    await waitFor(() => expect(messages).toContainEqual({ type: "exit", code: 0 }));
+    ws.close();
+    await once(ws, "close");
+  });
+
+  it("reports temporary-run setup failures without escaping the socket handler", async () => {
+    const originalTmpDir = process.env.TMPDIR;
+    const { baseUrl } = await start();
+    const ws = await openRunner(baseUrl);
+    try {
+      const error = once(ws, "message");
+      process.env.TMPDIR = join(tmpRoot, "missing-temp-parent");
+      ws.send(JSON.stringify({ type: "run", code: "console.log('ok')", cols: 80, rows: 24 }));
+      const [raw] = await error;
+
+      expect(JSON.parse(raw.toString())).toMatchObject({ type: "error" });
+    } finally {
+      if (originalTmpDir === undefined) delete process.env.TMPDIR;
+      else process.env.TMPDIR = originalTmpDir;
+      ws.close();
+      await once(ws, "close");
+    }
   });
 
   it("spawns with the allowlisted environment only", async () => {
@@ -465,7 +551,7 @@ describe("playground runner boundary", () => {
     const firstFile = spawnCalls[0]!.args.at(-1)!;
     expect(existsSync(firstFile)).toBe(true);
 
-    children[0]!.emit("exit", 0);
+    children[0]!.emit("close", 0, null);
     await waitFor(() => expect(existsSync(firstFile)).toBe(false));
     ws.send(JSON.stringify({ type: "run", code: "console.log('second')", cols: 80, rows: 24 }));
     await waitFor(() => expect(spawnCalls).toHaveLength(2));
@@ -473,7 +559,7 @@ describe("playground runner boundary", () => {
 
     expect(secondFile).not.toBe(firstFile);
     expect(existsSync(secondFile)).toBe(true);
-    children[1]!.emit("exit", 0);
+    children[1]!.emit("close", 0, null);
     await waitFor(() => expect(existsSync(secondFile)).toBe(false));
     ws.close();
     await once(ws, "close");

@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3777;
 const DEFAULT_MAX_RUN_MS = 30_000;
 const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576;
 const DEFAULT_MAX_PAYLOAD_BYTES = 1_048_576;
+const TERMINATION_GRACE_MS = 1_000;
 const TSX_CLI = join(PROJECT_ROOT, "node_modules", "tsx", "dist", "cli.mjs");
 
 // ── Static file server ──────────────────────────────────────────────
@@ -118,20 +119,34 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
       }
     }
 
-    function finalizeRun(target, { kill = false } = {}) {
-      if (!target || target.finished) return false;
-      target.finished = true;
+    function completeRun(target) {
+      if (!target || target.closed) return false;
+      target.closed = true;
       clearTimeout(target.timeout);
+      clearTimeout(target.killTimer);
       if (run === target) run = null;
+      rmSync(target.directory, { recursive: true, force: true });
+      return true;
+    }
 
-      if (kill && target.proc && !target.proc.killed) {
+    function terminateRun(target, reason) {
+      if (!target || target.closed || target.terminating) return false;
+      target.terminating = true;
+      target.terminationReason = reason;
+      clearTimeout(target.timeout);
+      try {
+        target.proc.kill("SIGTERM");
+      } catch {
+        // already dead
+      }
+      target.killTimer = setTimeout(() => {
+        if (target.closed) return;
         try {
-          target.proc.kill("SIGTERM");
+          target.proc.kill("SIGKILL");
         } catch {
           // already dead
         }
-      }
-      rmSync(target.directory, { recursive: true, force: true });
+      }, TERMINATION_GRACE_MS);
       return true;
     }
 
@@ -144,33 +159,34 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
       }
 
       if (msg.type === "run") {
-        finalizeRun(run, { kill: true });
+        terminateRun(run, "replacement");
 
-        const directory = mkdtempSync(join(tmpdir(), "reacterm-playground-"));
-        const tmpFile = join(directory, "example.tsx");
-        writeFileSync(tmpFile, String(msg.code ?? ""), "utf-8");
-
-        const cols = String(msg.cols || 120);
-        const rows = String(msg.rows || 40);
-        const childEnv = {
-          PATH: process.env.PATH ?? "",
-          TERM: "xterm-256color",
-          COLUMNS: cols,
-          ROWS: rows,
-          FORCE_COLOR: "3",
-          NODE_ENV: "production",
-          REACTERM_FORCE_TTY: "1",
-        };
-
+        let directory;
+        let tmpFile;
         let proc;
         try {
+          directory = mkdtempSync(join(tmpdir(), "reacterm-playground-"));
+          tmpFile = join(directory, "example.tsx");
+          writeFileSync(tmpFile, String(msg.code ?? ""), "utf-8");
+
+          const cols = String(msg.cols || 120);
+          const rows = String(msg.rows || 40);
+          const childEnv = {
+            PATH: process.env.PATH ?? "",
+            TERM: "xterm-256color",
+            COLUMNS: cols,
+            ROWS: rows,
+            FORCE_COLOR: "3",
+            NODE_ENV: "production",
+            REACTERM_FORCE_TTY: "1",
+          };
           proc = spawnProcess(process.execPath, [TSX_CLI, tmpFile], {
             cwd: PROJECT_ROOT,
             env: childEnv,
             stdio: ["pipe", "pipe", "pipe"],
           });
         } catch (error) {
-          rmSync(directory, { recursive: true, force: true });
+          if (directory) rmSync(directory, { recursive: true, force: true });
           send({ type: "error", message: error instanceof Error ? error.message : String(error) });
           return;
         }
@@ -179,17 +195,22 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
           proc,
           directory,
           timeout: null,
+          killTimer: null,
           outputBytes: 0,
-          finished: false,
+          closed: false,
+          terminating: false,
+          terminationReason: null,
+          reportedError: false,
         };
         run = nextRun;
 
         function relayOutput(data) {
-          if (nextRun.finished) return;
+          if (nextRun.closed || nextRun.terminating) return;
           const chunk = Buffer.from(data);
           nextRun.outputBytes += chunk.length;
           if (nextRun.outputBytes > maxOutputBytes) {
-            if (finalizeRun(nextRun, { kill: true })) {
+            if (terminateRun(nextRun, "output")) {
+              nextRun.reportedError = true;
               send({ type: "error", message: "Run exceeded output limit" });
             }
             return;
@@ -199,14 +220,24 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
 
         proc.stdout.on("data", relayOutput);
         proc.stderr.on("data", relayOutput);
-        proc.on("exit", (code) => {
-          if (finalizeRun(nextRun)) send({ type: "exit", code });
+        proc.on("exit", (code, signal) => {
+          nextRun.exitCode = code;
+          nextRun.exitSignal = signal;
         });
         proc.on("error", (err) => {
-          if (finalizeRun(nextRun)) send({ type: "error", message: err.message });
+          nextRun.error = err;
+        });
+        proc.on("close", (code) => {
+          if (!completeRun(nextRun)) return;
+          if (nextRun.error) {
+            send({ type: "error", message: nextRun.error.message });
+          } else if (!nextRun.reportedError && nextRun.terminationReason !== "replacement") {
+            send({ type: "exit", code: nextRun.terminationReason === "stop" ? null : code });
+          }
         });
         nextRun.timeout = setTimeout(() => {
-          if (finalizeRun(nextRun, { kill: true })) {
+          if (terminateRun(nextRun, "timeout")) {
+            nextRun.reportedError = true;
             send({ type: "error", message: "Run exceeded time limit" });
           }
         }, maxRunMs);
@@ -226,16 +257,16 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
       }
 
       if (msg.type === "stop") {
-        if (finalizeRun(run, { kill: true })) send({ type: "exit", code: null });
+        terminateRun(run, "stop");
       }
     });
 
     ws.on("close", () => {
-      finalizeRun(run, { kill: true });
+      terminateRun(run, "socket");
     });
 
     ws.on("error", () => {
-      finalizeRun(run, { kill: true });
+      terminateRun(run, "socket");
     });
   });
 }
