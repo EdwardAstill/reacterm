@@ -174,14 +174,15 @@ class AuthRateLimiter {
 interface ActiveSession {
   app: TuiApp;
   sshSession: SSHSession;
-  client: unknown;
   idleTimer: ReturnType<typeof setTimeout> | null;
+  finalize: () => void;
 }
 
 export class StormSSHServer {
   private readonly options: StormSSHOptions;
   private server: InstanceType<SSH2Module["Server"]> | null = null;
   private activeSessions = new Set<ActiveSession>();
+  private activeClientFinalizers = new Set<() => void>();
   private activeConnectionCount = 0;
   private rateLimiter = new AuthRateLimiter();
 
@@ -211,6 +212,27 @@ export class StormSSHServer {
       },
       (client) => {
         this.activeConnectionCount++;
+        let authTimer: ReturnType<typeof setTimeout> | null = null;
+        const clientSessionFinalizers = new Set<() => void>();
+        let clientFinalized = false;
+        const finalizeClient = () => {
+          if (clientFinalized) return;
+          clientFinalized = true;
+          if (authTimer) {
+            clearTimeout(authTimer);
+            authTimer = null;
+          }
+          for (const finalizeSession of clientSessionFinalizers) {
+            finalizeSession();
+          }
+          this.activeConnectionCount--;
+          this.activeClientFinalizers.delete(finalizeClient);
+        };
+        this.activeClientFinalizers.add(finalizeClient);
+
+        // Attach handlers immediately so every connection exit shares one finalizer.
+        client.on("error", finalizeClient);
+        client.on("close", finalizeClient);
 
         let remoteAddress = "unknown";
         try {
@@ -222,7 +244,7 @@ export class StormSSHServer {
 
         // Connection limit
         if (this.activeConnectionCount > maxConns) {
-          this.activeConnectionCount--;
+          finalizeClient();
           try { client.end(); } catch { /* ignore */ }
           return;
         }
@@ -230,7 +252,7 @@ export class StormSSHServer {
         // Rate limit check
         if (this.rateLimiter.isLimited(remoteAddress)) {
           this.emit({ type: "rate-limited", remoteAddress });
-          this.activeConnectionCount--;
+          finalizeClient();
           try { client.end(); } catch { /* ignore */ }
           return;
         }
@@ -239,21 +261,14 @@ export class StormSSHServer {
         let authenticated = false;
 
         // Auth timeout — kill connection if auth takes too long
-        let authTimer: ReturnType<typeof setTimeout> | null = null;
         if (authTimeout > 0) {
           authTimer = setTimeout(() => {
             if (!authenticated) {
+              finalizeClient();
               try { client.end(); } catch { /* ignore */ }
             }
           }, authTimeout);
         }
-
-        // Attach error handler immediately to prevent unhandled errors
-        client.on("error", () => {
-          this.activeConnectionCount--;
-          if (authTimer) clearTimeout(authTimer);
-          this.cleanupClientSessions(client);
-        });
 
         client.on("authentication", (ctx) => {
           username = ctx.username;
@@ -362,8 +377,6 @@ export class StormSSHServer {
                 },
               };
 
-              let activeSession: ActiveSession | null = null;
-
               try {
                 const element = this.options.app(sessionInfo);
                 const app = render(element, {
@@ -389,8 +402,24 @@ export class StormSSHServer {
                   resetIdle();
                 }
 
-                activeSession = { app, sshSession: sessionInfo, client, idleTimer };
+                let sessionFinalized = false;
+                const activeSession: ActiveSession = {
+                  app,
+                  sshSession: sessionInfo,
+                  idleTimer,
+                  finalize: () => {
+                    if (sessionFinalized) return;
+                    sessionFinalized = true;
+                    onResize = null;
+                    if (activeSession.idleTimer) clearTimeout(activeSession.idleTimer);
+                    try { activeSession.app.unmount(); } catch { /* ignore */ }
+                    this.activeSessions.delete(activeSession);
+                    clientSessionFinalizers.delete(activeSession.finalize);
+                    this.emit({ type: "session-end", username, remoteAddress });
+                  },
+                };
                 this.activeSessions.add(activeSession);
+                clientSessionFinalizers.add(activeSession.finalize);
 
                 this.emit({ type: "session-start", username, remoteAddress });
 
@@ -403,18 +432,7 @@ export class StormSSHServer {
                   ttyOut.emit("resize");
                 };
 
-                const cleanup = () => {
-                  onResize = null;
-                  if (activeSession) {
-                    if (activeSession.idleTimer) clearTimeout(activeSession.idleTimer);
-                    try { activeSession.app.unmount(); } catch { /* ignore */ }
-                    this.activeSessions.delete(activeSession);
-                    this.emit({ type: "session-end", username, remoteAddress });
-                    activeSession = null;
-                  }
-                };
-
-                channel.on("close", cleanup);
+                channel.on("close", activeSession.finalize);
               } catch (err) {
                 try {
                   const msg = err instanceof Error ? err.message : "Internal server error";
@@ -427,11 +445,6 @@ export class StormSSHServer {
           });
         });
 
-        client.on("close", () => {
-          this.activeConnectionCount--;
-          if (authTimer) clearTimeout(authTimer);
-          this.cleanupClientSessions(client);
-        });
       },
     );
 
@@ -453,11 +466,11 @@ export class StormSSHServer {
   /** Stop server, disconnect all sessions. */
   async close(): Promise<void> {
     for (const session of this.activeSessions) {
-      if (session.idleTimer) clearTimeout(session.idleTimer);
-      try { session.app.unmount(); } catch { /* ignore */ }
       try { session.sshSession.disconnect(); } catch { /* ignore */ }
     }
-    this.activeSessions.clear();
+    for (const finalizeClient of this.activeClientFinalizers) {
+      finalizeClient();
+    }
 
     return new Promise<void>((resolve) => {
       if (this.server) {
@@ -496,19 +509,6 @@ export class StormSSHServer {
   disconnectAll(): void {
     for (const s of this.activeSessions) {
       s.sshSession.disconnect();
-    }
-  }
-
-  // ── Private ────────────────────────────────────────────────────────
-
-  private cleanupClientSessions(client: unknown): void {
-    for (const s of this.activeSessions) {
-      if (s.client === client) {
-        if (s.idleTimer) clearTimeout(s.idleTimer);
-        try { s.app.unmount(); } catch { /* ignore */ }
-        this.activeSessions.delete(s);
-        this.emit({ type: "session-end", username: s.sshSession.username, remoteAddress: s.sshSession.remoteAddress });
-      }
     }
   }
 }

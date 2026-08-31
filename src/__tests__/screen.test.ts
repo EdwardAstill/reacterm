@@ -3,6 +3,15 @@ import { EventEmitter } from "node:events";
 import { Screen } from "../core/screen.js";
 import { ALT_SCREEN_ENTER, CLEAR_LINE } from "../core/ansi.js";
 
+const PROCESS_EVENTS = [
+  "exit",
+  "SIGINT",
+  "SIGTERM",
+  "SIGHUP",
+  "uncaughtException",
+  "unhandledRejection",
+] as const;
+
 function makeFakeStdout() {
   const ee = new EventEmitter();
   let output = "";
@@ -38,5 +47,31 @@ describe("Screen lifecycle", () => {
     expect(clearIdx).toBeGreaterThanOrEqual(0);
     expect(altIdx).toBeGreaterThanOrEqual(0);
     expect(clearIdx).toBeLessThan(altIdx);
+  });
+
+  it("does not install process handlers for fake terminal streams", () => {
+    const baseline = Object.fromEntries(
+      PROCESS_EVENTS.map((event) => [event, process.listenerCount(event)]),
+    ) as Record<(typeof PROCESS_EVENTS)[number], number>;
+    const screens = Array.from({ length: 12 }, () =>
+      new Screen({
+        stdout: makeFakeStdout(),
+        stdin: { isTTY: false } as NodeJS.ReadStream,
+        mouse: false,
+        rawMode: false,
+      }),
+    );
+
+    for (const screen of screens) screen.start();
+    const whileStarted = Object.fromEntries(
+      PROCESS_EVENTS.map((event) => [event, process.listenerCount(event)]),
+    ) as Record<(typeof PROCESS_EVENTS)[number], number>;
+
+    for (const screen of screens) screen.stop();
+
+    for (const event of PROCESS_EVENTS) {
+      expect(whileStarted[event]).toBe(baseline[event]);
+      expect(process.listenerCount(event)).toBe(baseline[event]);
+    }
   });
 });

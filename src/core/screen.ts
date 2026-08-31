@@ -215,25 +215,28 @@ export class Screen {
     // Listen for resize (only fires on TTYs, but harmless to register)
     this.stdout.on("resize", this.onResize);
 
-    // to prevent signal handler accumulation from repeated start()/stop() cycles.
-    if (this._signalsBound) {
-      process.removeListener("exit", this.onExit);
-      process.removeListener("SIGINT", this.onSignal);
-      process.removeListener("SIGTERM", this.onSignal);
-      process.removeListener("SIGHUP", this.onSignal);
-      process.removeListener("uncaughtException", this.onUncaughtException);
-      process.removeListener("unhandledRejection", this.onUnhandledRejection);
-    }
+    const usesProcessTerminal = this.stdout === process.stdout && this.stdin === process.stdin;
+    if (usesProcessTerminal) {
+      // Prevent signal handler accumulation from repeated start()/stop() cycles.
+      if (this._signalsBound) {
+        process.removeListener("exit", this.onExit);
+        process.removeListener("SIGINT", this.onSignal);
+        process.removeListener("SIGTERM", this.onSignal);
+        process.removeListener("SIGHUP", this.onSignal);
+        process.removeListener("uncaughtException", this.onUncaughtException);
+        process.removeListener("unhandledRejection", this.onUnhandledRejection);
+      }
 
-    process.on("exit", this.onExit);
-    process.on("SIGINT", this.onSignal);
-    process.on("SIGTERM", this.onSignal);
-    // SIGHUP for terminal close
-    process.on("SIGHUP", this.onSignal);
-    // Crash handlers — restore terminal before dying
-    process.on("uncaughtException", this.onUncaughtException);
-    process.on("unhandledRejection", this.onUnhandledRejection);
-    this._signalsBound = true;
+      process.on("exit", this.onExit);
+      process.on("SIGINT", this.onSignal);
+      process.on("SIGTERM", this.onSignal);
+      // SIGHUP for terminal close
+      process.on("SIGHUP", this.onSignal);
+      // Crash handlers — restore terminal before dying
+      process.on("uncaughtException", this.onUncaughtException);
+      process.on("unhandledRejection", this.onUnhandledRejection);
+      this._signalsBound = true;
+    }
   }
 
   /** Stop the screen — restore terminal state. */
@@ -273,12 +276,16 @@ export class Screen {
     }
 
     this.stdout.removeListener("resize", this.onResize);
-    process.removeListener("exit", this.onExit);
-    process.removeListener("SIGINT", this.onSignal);
-    process.removeListener("SIGTERM", this.onSignal);
-    process.removeListener("SIGHUP", this.onSignal);
-    process.removeListener("uncaughtException", this.onUncaughtException);
-    process.removeListener("unhandledRejection", this.onUnhandledRejection);
+    const usesProcessTerminal = this.stdout === process.stdout && this.stdin === process.stdin;
+    if (usesProcessTerminal) {
+      process.removeListener("exit", this.onExit);
+      process.removeListener("SIGINT", this.onSignal);
+      process.removeListener("SIGTERM", this.onSignal);
+      process.removeListener("SIGHUP", this.onSignal);
+      process.removeListener("uncaughtException", this.onUncaughtException);
+      process.removeListener("unhandledRejection", this.onUnhandledRejection);
+      this._signalsBound = false;
+    }
   }
 
   /** Change the terminal's default background via OSC 11.
