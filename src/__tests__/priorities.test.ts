@@ -3,7 +3,7 @@
  *
  * The numeric ladder in src/input/priorities.ts is load-bearing:
  *
- *   CONFIRM_DIALOG > MODAL > FLOATING_PANEL > INLINE_OVERLAY > DEFAULT
+ *   CONFIRM_DIALOG > MODAL > FLOATING_PANEL > WINDOW > INLINE_OVERLAY > DEFAULT
  *
  * A renumbering that flips this order would silently break stacked overlays
  * (e.g. ConfirmDialog mounted over Modal would stop receiving Escape, and
@@ -27,6 +27,14 @@ describe("INPUT_PRIORITY registry", () => {
     expect(INPUT_PRIORITY.FLOATING_PANEL).toBeGreaterThan(INPUT_PRIORITY.INLINE_OVERLAY);
   });
 
+  it("FLOATING_PANEL outranks WINDOW (panels stay above movable windows)", () => {
+    expect(INPUT_PRIORITY.FLOATING_PANEL).toBeGreaterThan(INPUT_PRIORITY.WINDOW);
+  });
+
+  it("WINDOW outranks INLINE_OVERLAY", () => {
+    expect(INPUT_PRIORITY.WINDOW).toBeGreaterThan(INPUT_PRIORITY.INLINE_OVERLAY);
+  });
+
   it("INLINE_OVERLAY outranks DEFAULT", () => {
     expect(INPUT_PRIORITY.INLINE_OVERLAY).toBeGreaterThan(INPUT_PRIORITY.DEFAULT);
   });
@@ -39,6 +47,7 @@ describe("INPUT_PRIORITY registry", () => {
     const tiers = [
       INPUT_PRIORITY.DEFAULT,
       INPUT_PRIORITY.INLINE_OVERLAY,
+      INPUT_PRIORITY.WINDOW,
       INPUT_PRIORITY.FLOATING_PANEL,
       INPUT_PRIORITY.MODAL,
       INPUT_PRIORITY.CONFIRM_DIALOG,

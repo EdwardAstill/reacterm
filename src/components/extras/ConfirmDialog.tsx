@@ -11,6 +11,7 @@ import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getDialogTypeColors, getDialogVariantColors } from "../../utils/theme-maps.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
+import { OVERLAY_LAYER } from "../overlay-layers.js";
 
 /**
  * Runs a 1-second-tick countdown while `active` is true. Side effects use the
@@ -144,7 +145,14 @@ function ConfirmDialogRoot({
     { value: ctx },
     React.createElement(
       "tui-overlay",
-      { position: "center", borderStyle: personality.borders.accent, borderColor, paddingX: 2, paddingY: 1 },
+      {
+        position: "center",
+        borderStyle: personality.borders.accent,
+        borderColor,
+        paddingX: 2,
+        paddingY: 1,
+        zIndex: OVERLAY_LAYER.CONFIRM_DIALOG,
+      },
       React.createElement("tui-box", { flexDirection: "column" }, children),
     ),
   );
@@ -380,6 +388,7 @@ const ConfirmDialogBase = React.memo(function ConfirmDialog(rawProps: ConfirmDia
       borderColor,
       paddingX: 2,
       paddingY: 1,
+      zIndex: OVERLAY_LAYER.CONFIRM_DIALOG,
     },
     userStyles,
   );

@@ -19,6 +19,7 @@ import { INPUT_PRIORITY } from "../../input/priorities.js";
 import type { KeyEvent, MouseEvent } from "../../input/types.js";
 import type { BorderStyle } from "../../core/types.js";
 import { useColors } from "../../hooks/useColors.js";
+import { OVERLAY_LAYER } from "../overlay-layers.js";
 
 let nextOverlayId = 0;
 
@@ -27,32 +28,40 @@ export interface OverlayManagerValue {
   bringToFront(id: string): number;
 }
 
-const moduleZCounter = { current: 100 };
+const windowLayerLast = OVERLAY_LAYER.FLOATING_PANEL - 1;
+const moduleZCounter = { current: OVERLAY_LAYER.WINDOW_BASE };
 function moduleAssignZ(): number {
-  return ++moduleZCounter.current;
+  return nextWindowZ(moduleZCounter);
 }
 
 export const OverlayContext = createContext<OverlayManagerValue | null>(null);
 
 export function OverlayProvider({ children }: { children: React.ReactNode }): React.ReactElement {
-  const counterRef = useRef(100);
+  const counterRef = useRef(OVERLAY_LAYER.WINDOW_BASE);
   const known = useRef(new Map<string, number>());
   // Memoize so consumers don't re-render on every parent render — refs are stable for the lifetime of this component.
   const value = useMemo<OverlayManagerValue>(() => ({
     register(id) {
       const existing = known.current.get(id);
       if (existing !== undefined) return existing;
-      const z = ++counterRef.current;
+      const z = nextWindowZ(counterRef);
       known.current.set(id, z);
       return z;
     },
     bringToFront(id) {
-      const z = ++counterRef.current;
+      const z = nextWindowZ(counterRef);
       known.current.set(id, z);
       return z;
     },
   }), []);
   return React.createElement(OverlayContext.Provider, { value }, children);
+}
+
+function nextWindowZ(counter: { current: number }): number {
+  if (counter.current >= windowLayerLast) {
+    counter.current = OVERLAY_LAYER.WINDOW_BASE;
+  }
+  return ++counter.current;
 }
 
 export interface OverlayProps {
@@ -289,7 +298,7 @@ export const Overlay = React.memo(function Overlay(props: OverlayProps): React.R
         onCloseRef.current?.();
       }
     }, []),
-    { isActive: visible && !!onClose, priority: INPUT_PRIORITY.MODAL },
+    { isActive: visible && !!onClose, priority: INPUT_PRIORITY.WINDOW },
   );
 
   if (!visible) return null;

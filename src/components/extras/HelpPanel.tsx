@@ -9,6 +9,7 @@ import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import type { KeyEvent } from "../../input/types.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
+import { OVERLAY_LAYER } from "../overlay-layers.js";
 
 export interface HelpBinding {
   /** Key combo label, e.g. "Ctrl+S", "↑↓" */
@@ -349,6 +350,7 @@ export const HelpPanel = React.memo(function HelpPanel(rawProps: HelpPanelProps)
         borderColor: personality.colors.brand.primary,
         padding: 1,
         paddingX: 2,
+        zIndex: OVERLAY_LAYER.FLOATING_PANEL,
         role: "dialog",
         ...layoutProps,
       },

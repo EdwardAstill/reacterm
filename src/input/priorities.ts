@@ -17,6 +17,8 @@ export const INPUT_PRIORITY = {
   DEFAULT: 0,
   /** Non-modal in-flow overlays (Welcome banner, inline prompts). */
   INLINE_OVERLAY: 500,
+  /** Movable and resizable Overlay windows. */
+  WINDOW: 700,
   /** Floating panels that dismiss on trigger-key or Escape (HelpPanel, CommandPalette). */
   FLOATING_PANEL: 900,
   /** Full-screen modal panels (Modal). */

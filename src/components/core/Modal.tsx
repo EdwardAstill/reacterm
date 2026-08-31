@@ -10,6 +10,7 @@ import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
+import { OVERLAY_LAYER } from "../overlay-layers.js";
 
 let nextModalId = 0;
 
@@ -67,7 +68,7 @@ function renderModalShell(
 ): React.ReactElement {
   return React.createElement(
     "tui-overlay",
-    overlayProps,
+    { ...overlayProps, zIndex: OVERLAY_LAYER.MODAL },
     React.createElement(
       FocusGroup,
       { id: groupId, trap: true, direction: "vertical" },

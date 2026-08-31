@@ -38,6 +38,10 @@ it("bottom-right overlay previews own input and close cleanly", () => {
   const result = renderForTest(React.createElement(DemoApp), { width: 140, height: 36 });
   for (let i = 0; i < 6; i++) result.pressTab();
 
+  // The Overlays section always mounts its movable overlay A. A confirmation
+  // preview must paint above that permanent window after this click.
+  expect(result.hasText("A — movable + resizable")).toBe(true);
+
   let previewRow = result.lines.findIndex((line) => line.includes("[Summary]") && line.includes("Confirm"));
   expect(previewRow).toBeGreaterThanOrEqual(0);
   result.click(result.lines[previewRow]!.indexOf("Confirm") + 2, previewRow);

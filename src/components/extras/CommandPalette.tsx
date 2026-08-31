@@ -10,6 +10,7 @@ import type { KeyEvent } from "../../input/types.js";
 import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
 import { findNextNavigable } from "../../utils/navigation.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
+import { OVERLAY_LAYER } from "../overlay-layers.js";
 
 export interface PaletteCommand {
   /** Unique identifier for the command. */
@@ -151,6 +152,7 @@ function CommandPaletteRoot({
       borderColor: colors.brand.primary,
       padding: 1,
       width: 60,
+      zIndex: OVERLAY_LAYER.FLOATING_PANEL,
       role: "dialog",
       "aria-label": "Command Palette",
     },
@@ -724,6 +726,7 @@ const CommandPaletteBase = React.memo(function CommandPalette(rawProps: CommandP
       borderColor: colors.brand.primary,
       padding: 1,
       width: overlayWidth,
+      zIndex: OVERLAY_LAYER.FLOATING_PANEL,
       role: "dialog",
       "aria-label": props["aria-label"] ?? "Command Palette",
     },
