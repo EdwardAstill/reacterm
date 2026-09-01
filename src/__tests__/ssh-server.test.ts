@@ -95,7 +95,11 @@ function activeClientCount(server: StormSSHServer): number {
     .activeConnectionCount;
 }
 
-function makeServer(overrides: { maxConnections?: number; authTimeout?: number } = {}) {
+function makeServer(overrides: {
+  maxConnections?: number;
+  authTimeout?: number;
+  idleTimeout?: number;
+} = {}) {
   const events: SSHEvent[] = [];
   const server = new StormSSHServer({
     hostKey: "test-host-key",
@@ -149,6 +153,37 @@ describe("StormSSHServer teardown", () => {
     channel.emit("close");
 
     expect(activeClientCount(server)).toBe(0);
+    expect(renderState.unmount).toHaveBeenCalledTimes(1);
+    expect(sessionEnds(events)).toHaveLength(1);
+    await server.close();
+  });
+
+  it("cancels a reset idle timer when the session is cleaned up", async () => {
+    vi.useFakeTimers();
+    const { server } = makeServer({ idleTimeout: 10 });
+    await server.listen();
+    const client = makeClient("192.0.2.7");
+    connect(client);
+    const channel = openSession(client);
+
+    channel.emit("data", Buffer.from("activity"));
+    client.emit("close");
+    await vi.advanceTimersByTimeAsync(10);
+
+    expect(channel.end).not.toHaveBeenCalled();
+    await server.close();
+  });
+
+  it("finalizes a session when its channel errors without closing", async () => {
+    const { server, events } = makeServer();
+    await server.listen();
+    const client = makeClient("192.0.2.8");
+    connect(client);
+    const channel = openSession(client);
+
+    channel.emit("error", new Error("channel lost"));
+
+    expect(server.connections).toBe(0);
     expect(renderState.unmount).toHaveBeenCalledTimes(1);
     expect(sessionEnds(events)).toHaveLength(1);
     await server.close();

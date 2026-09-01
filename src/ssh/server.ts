@@ -174,7 +174,6 @@ class AuthRateLimiter {
 interface ActiveSession {
   app: TuiApp;
   sshSession: SSHSession;
-  idleTimer: ReturnType<typeof setTimeout> | null;
   finalize: () => void;
 }
 
@@ -361,8 +360,6 @@ export class StormSSHServer {
               const channel = accept();
               const { cols, rows, term } = ptyInfo;
 
-              channel.on("error", () => { /* handled in cleanup below */ });
-
               const ttyOut = adaptChannelAsWriteStream(channel, cols, rows);
               const ttyIn = adaptChannelAsReadStream(channel);
 
@@ -387,9 +384,10 @@ export class StormSSHServer {
                   rawMode: false,
                 });
 
-                // Idle timeout
+                let sessionFinalized = false;
                 let idleTimer: ReturnType<typeof setTimeout> | null = null;
                 const resetIdle = () => {
+                  if (sessionFinalized) return;
                   if (idleTimer) clearTimeout(idleTimer);
                   if (idleTimeout > 0) {
                     idleTimer = setTimeout(() => {
@@ -402,16 +400,17 @@ export class StormSSHServer {
                   resetIdle();
                 }
 
-                let sessionFinalized = false;
                 const activeSession: ActiveSession = {
                   app,
                   sshSession: sessionInfo,
-                  idleTimer,
                   finalize: () => {
                     if (sessionFinalized) return;
                     sessionFinalized = true;
                     onResize = null;
-                    if (activeSession.idleTimer) clearTimeout(activeSession.idleTimer);
+                    if (idleTimer) {
+                      clearTimeout(idleTimer);
+                      idleTimer = null;
+                    }
                     try { activeSession.app.unmount(); } catch { /* ignore */ }
                     this.activeSessions.delete(activeSession);
                     clientSessionFinalizers.delete(activeSession.finalize);
@@ -433,6 +432,7 @@ export class StormSSHServer {
                 };
 
                 channel.on("close", activeSession.finalize);
+                channel.on("error", activeSession.finalize);
               } catch (err) {
                 try {
                   const msg = err instanceof Error ? err.message : "Internal server error";
