@@ -157,13 +157,23 @@ export function ShowcaseRichContent(props: ShowcaseRichContentProps): React.Reac
     heading("Image — Reacterm Banner"),
     gap(),
     React.createElement("tui-box", { key: "img-banner", marginLeft: 2 },
-      React.createElement(Image, {
-        src: imagePath ?? path.join(process.cwd(), "examples", "reacterm-banner.png"),
-        alt: "Reacterm Banner",
-        width: 60,
-        height: 10,
-        protocol: "block" as const,
-      }),
+      imagePath
+        ? React.createElement(Image, {
+          src: imagePath,
+          alt: "Reacterm Banner",
+          width: 60,
+          height: 10,
+          protocol: "block" as const,
+        })
+        : React.createElement("tui-box", {
+          borderStyle: "reacterm",
+          borderColor: colors.brand.primary,
+          paddingX: 1,
+          flexDirection: "column",
+        },
+        React.createElement("tui-text", { bold: true, color: colors.brand.light }, "Reacterm Terminal UI"),
+        React.createElement("tui-text", { color: colors.text.dim }, "Image preview unavailable"),
+        ),
     ),
     gap(),
 

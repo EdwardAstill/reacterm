@@ -228,12 +228,12 @@ const BORDER_DEMOS: Array<{
     ),
   },
   {
-    id: "storm",
+    id: "reacterm",
     label: "Reacterm",
     desc: "Reacterm framework signature border",
-    borderStyle: "storm",
+    borderStyle: "reacterm",
     render: (c) => (
-      <Box borderStyle={"storm" as BorderStyleName} borderColor={c.border} paddingX={1} height={5} flexDirection="column">
+      <Box borderStyle={"reacterm" as BorderStyleName} borderColor={c.border} paddingX={1} height={5} flexDirection="column">
         <Text bold color={c.fg}>Panel</Text>
         <Text dim color={c.dim}>Reacterm style</Text>
       </Box>

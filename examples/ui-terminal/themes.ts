@@ -6,7 +6,7 @@
  * and paints both the Showcase and Style Guide views accordingly.
  */
 
-export type BorderStyleName = "round" | "single" | "double" | "heavy" | "ascii" | "storm";
+export type BorderStyleName = "round" | "single" | "double" | "heavy" | "ascii" | "reacterm";
 
 export type ButtonStyle =
   | "plain"     //  Submit

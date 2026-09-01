@@ -363,7 +363,7 @@ export function Dashboard({ model, onExit }: DashboardProps): React.ReactElement
     <Box flexDirection="column" width={width} height={height}>
       {/* Header — same pattern as Reacterm Code */}
       <Box height={1} flexDirection="row" paddingLeft={1} overflow="hidden">
-        <Spinner type="storm-logo" color={S.arc} interval={120} />
+        <Spinner type="reacterm-logo" color={S.arc} interval={120} />
         <Text color={S.text} bold>{" reacterm ops"}</Text>
         <Text color={S.dim}>{" · "}{activeAgents}{"/3 agents"}</Text>
         <Text color={S.dim}>{" · "}{model}</Text>

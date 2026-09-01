@@ -115,13 +115,13 @@ function Swatch({ label, color, theme }: { label: string; color: string; theme: 
 function StyleGuideView({ theme }: { theme: TuiTheme }) {
   const c = theme.colors;
   const allButtonStyles: ButtonStyle[] = ["plain", "bracket", "brace", "angle", "fill", "shaded", "double"];
-  const allBorders: { name: string; style: "round" | "single" | "double" | "heavy" | "ascii" | "storm" }[] = [
+  const allBorders: { name: string; style: "round" | "single" | "double" | "heavy" | "ascii" | "reacterm" }[] = [
     { name: "round", style: "round" },
     { name: "single", style: "single" },
     { name: "double", style: "double" },
     { name: "heavy", style: "heavy" },
     { name: "ascii", style: "ascii" },
-    { name: "storm", style: "storm" },
+    { name: "reacterm", style: "reacterm" },
   ];
 
   return (

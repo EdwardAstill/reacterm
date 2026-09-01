@@ -11,7 +11,7 @@ Animated loading indicator with 6 built-in styles. Uses imperative mutation and 
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `type` | `"dots" \| "line" \| "arc" \| "bounce" \| "braille" \| "storm"` | `"dots"` | Animation style |
+| `type` | `"dots" \| "line" \| "arc" \| "bounce" \| "braille" \| "reacterm"` | `"dots"` | Animation style |
 | `interval` | `number` | `80` | Frame interval in milliseconds |
 | `label` | `string` | -- | Text shown after spinner |
 | `labelColor` | `string \| number` | -- | Label color |
@@ -31,7 +31,7 @@ import { Spinner } from "reacterm";
 
 ```tsx
 <Box flexDirection="column" gap={1}>
-  <Spinner type="storm" label="Analyzing codebase..." color="#82AAFF" />
+  <Spinner type="reacterm" label="Analyzing codebase..." color="#82AAFF" />
   <Spinner type="braille" label="Building index..." color="#34D399" />
   <Spinner type="dots" label="Connecting..." labelColor="#808080" />
 </Box>

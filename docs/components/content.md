@@ -13,7 +13,7 @@ Content container with rounded border, optional title, icon, and variant colorin
 | `children` | `ReactNode` | -- | Card content (required) |
 | `title` | `string` | -- | Card title |
 | `icon` | `string` | -- | Icon before title |
-| `variant` | `"default" \| "storm" \| "success" \| "error" \| "warning"` | `"default"` | Border color variant |
+| `variant` | `"default" \| "reacterm" \| "success" \| "error" \| "warning"` | `"default"` | Border color variant |
 | `focused` | `boolean` | `false` | Brighten border when focused |
 | _Plus container props_ | | | `borderStyle`, `borderColor`, `padding*`, `width`, `margin*`, `backgroundColor` |
 
@@ -31,7 +31,7 @@ import { Card, Text } from "reacterm";
 
 ```tsx
 <Box flexDirection="row" gap={2}>
-  <Card title="CPU" icon="*" variant="storm" focused={activePanel === "cpu"}>
+  <Card title="CPU" icon="*" variant="reacterm" focused={activePanel === "cpu"}>
     <Text bold>42%</Text>
     <Text dim>8 cores active</Text>
   </Card>

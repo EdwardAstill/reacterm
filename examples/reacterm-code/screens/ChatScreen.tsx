@@ -340,7 +340,7 @@ export function ChatScreen({ model, onExit }: ChatScreenProps): React.ReactEleme
     <Box flexDirection="column" width={width} height={height} {...(S.bg ? { backgroundColor: S.bg } : {})}>
       {/* Header — mini Reacterm logo spinner + bottom border */}
       <Box height={1} flexDirection="row" paddingLeft={1} overflow="hidden">
-        <Spinner type="storm-logo" color={S.arc} interval={120} />
+        <Spinner type="reacterm-logo" color={S.arc} interval={120} />
         <Text color={S.text} bold>{" reacterm"}</Text>
         <Text color={S.dim}>{" · "}{model}</Text>
         <Box flex={1} />
