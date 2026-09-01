@@ -74,6 +74,7 @@ const W = 40;
 const H = 5;
 let styleFixturePath: string;
 let styleFixtureDirectory: string;
+let imageFixturePath: string;
 
 function smoke(name: string, fn: () => void): void {
   it(name, () => {
@@ -103,7 +104,12 @@ describe("all public exports", () => {
   beforeAll(() => {
     styleFixtureDirectory = mkdtempSync(join(tmpdir(), "reacterm-style-"));
     styleFixturePath = join(styleFixtureDirectory, "fixture.css");
+    imageFixturePath = join(styleFixtureDirectory, "fixture.png");
     writeFileSync(styleFixturePath, "");
+    writeFileSync(
+      imageFixturePath,
+      Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC", "base64"),
+    );
   });
 
   afterAll(() => {
@@ -219,7 +225,21 @@ smoke("GlowText", () => renderEl(React.createElement(GlowText, null, "glow")));
 smoke("GradientBorder", () => renderEl(React.createElement(GradientBorder, null, React.createElement(Text, null, "bordered"))));
 smoke("GradientProgress", () => renderEl(React.createElement(GradientProgress, { value: 0.5, width: 20 })));
 smoke("Shadow", () => renderEl(React.createElement(Shadow, null, React.createElement(Text, null, "shadow"))));
-smoke("Image", () => renderEl(React.createElement(Image, { src: "/tmp/nonexistent.png", width: 10, height: 3 })));
+it("Image decodes the managed PNG fixture", () => {
+  const result = renderToString(
+    React.createElement(Image, {
+      src: imageFixturePath,
+      alt: "image fixture",
+      width: 1,
+      height: 1,
+      protocol: "block",
+    }),
+    { width: W, height: H },
+  );
+
+  expect(result.output).not.toContain("image fixture");
+  result.unmount();
+});
 
 // ════════════════════════════════════════════════════════════════════════
 // WIDGETS
