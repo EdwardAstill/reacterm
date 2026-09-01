@@ -175,9 +175,7 @@ describe("Panes + Modal", () => {
           React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "PaneA")),
           React.createElement(Pane, { flex: 1 }, React.createElement(T, null, "PaneB")),
         ),
-        React.createElement(Modal, { visible: modalVisible, size: "sm" },
-          React.createElement(T, null, "ModalX"),
-        ),
+        React.createElement(Modal, { visible: modalVisible, size: "sm", children: React.createElement(T, null, "ModalX") }),
       );
 
     const without = renderForTest(layout(false), { width: 60, height: 20 });
@@ -229,12 +227,10 @@ describe("Modal stacking", () => {
     // we DO verify the outer content survives and the render doesn't crash.
     expect(() => {
       const result = renderForTest(
-        React.createElement(Modal, { visible: true, title: "Outer", onClose: () => {} },
+        React.createElement(Modal, { visible: true, title: "Outer", onClose: () => {}, children: [
           React.createElement(T, null, "OuterBody"),
-          React.createElement(Modal, { visible: true, title: "Inner", onClose: () => {} },
-            React.createElement(T, null, "InnerBody"),
-          ),
-        ),
+          React.createElement(Modal, { visible: true, title: "Inner", onClose: () => {}, children: React.createElement(T, null, "InnerBody") }),
+        ] }),
         { width: 80, height: 24 },
       );
       expect(result.hasText("Outer")).toBe(true);
@@ -249,9 +245,7 @@ describe("Modal stacking", () => {
 
   it("rapid visible toggling does not corrupt state", () => {
     const makeModal = (v: boolean, tag: string) =>
-      React.createElement(Modal, { visible: v, title: "T", onClose: () => {} },
-        React.createElement(T, null, tag),
-      );
+      React.createElement(Modal, { visible: v, title: "T", onClose: () => {}, children: React.createElement(T, null, tag) });
     const result = renderForTest(makeModal(true, "R1"), { width: 60, height: 20 });
     expect(result.hasText("R1")).toBe(true);
     for (let i = 0; i < 12; i++) {
@@ -274,9 +268,7 @@ describe("Modal + ConfirmDialog (sibling overlays)", () => {
   it("sibling confirm dialog over modal — both messages render", () => {
     const result = renderForTest(
       React.createElement("tui-box", { width: 80, height: 24 },
-        React.createElement(Modal, { visible: true, title: "Settings", onClose: () => {} },
-          React.createElement(T, null, "SettingsBody"),
-        ),
+        React.createElement(Modal, { visible: true, title: "Settings", onClose: () => {}, children: React.createElement(T, null, "SettingsBody") }),
         React.createElement(ConfirmDialog, {
           visible: true,
           message: "Discard changes?",
@@ -299,9 +291,7 @@ describe("Modal + ConfirmDialog (sibling overlays)", () => {
     let dialogCancelled = false;
     const result = renderForTest(
       React.createElement("tui-box", { width: 80, height: 24 },
-        React.createElement(Modal, { visible: true, title: "Host", onClose: () => { modalClosed = true; } },
-          React.createElement(T, null, "HostBody"),
-        ),
+        React.createElement(Modal, { visible: true, title: "Host", onClose: () => { modalClosed = true; }, children: React.createElement(T, null, "HostBody") }),
         React.createElement(ConfirmDialog, {
           visible: true,
           message: "Confirm?",
@@ -320,9 +310,7 @@ describe("Modal + ConfirmDialog (sibling overlays)", () => {
   it("confirm dialog visibility flip does not destabilize host modal", () => {
     const layout = (dialogVisible: boolean) =>
       React.createElement("tui-box", { width: 80, height: 24 },
-        React.createElement(Modal, { visible: true, title: "Host", onClose: () => {} },
-          React.createElement(T, null, "HostBody"),
-        ),
+        React.createElement(Modal, { visible: true, title: "Host", onClose: () => {}, children: React.createElement(T, null, "HostBody") }),
         React.createElement(ConfirmDialog, {
           visible: dialogVisible,
           message: "Proceed?",
@@ -354,7 +342,7 @@ describe("SearchInput + OptionList in Modal (improvements.md §4)", () => {
     let selected = "";
     let query = "";
     const result = renderForTest(
-      React.createElement(Modal, { visible: true, title: "Pick", onClose: () => {} },
+      React.createElement(Modal, { visible: true, title: "Pick", onClose: () => {}, children: [
         React.createElement(SearchInput, {
           value: query,
           onChange: (v: string) => { query = v; },
@@ -365,7 +353,7 @@ describe("SearchInput + OptionList in Modal (improvements.md §4)", () => {
           isFocused: true,
           onSelect: (v: string) => { selected = v; },
         }),
-      ),
+      ] }),
       { width: 60, height: 20 },
     );
     expect(result.hasText("Apple")).toBe(true);
@@ -394,7 +382,7 @@ describe("SearchInput + OptionList in Modal (improvements.md §4)", () => {
         { label: "Beta", value: "beta" },
       ];
       const result = renderForTest(
-        React.createElement(Modal, { visible: true, title: "Add", onClose: () => {} },
+        React.createElement(Modal, { visible: true, title: "Add", onClose: () => {}, children: [
           React.createElement(SearchInput, {
             value: "",
             onChange: () => {},
@@ -405,7 +393,7 @@ describe("SearchInput + OptionList in Modal (improvements.md §4)", () => {
             isFocused: true,
             onSelect: () => {},
           }),
-        ),
+        ] }),
         { width: 60, height: 20 },
       );
       // Exercise typing + navigation like a real user: letter, down, enter
@@ -581,9 +569,8 @@ describe("Focus trap interactions", () => {
       React.createElement(Modal, {
         visible: true,
         onClose: () => { modalClosed = true; },
-      },
-        React.createElement(T, null, "Trapped"),
-      ),
+        children: React.createElement(T, null, "Trapped"),
+      }),
     );
     // NOTE: host-level escape handler can't easily be added without a full app
     // shell, but we can still verify the modal's onClose fires on escape.
@@ -598,13 +585,11 @@ describe("Focus trap interactions", () => {
     let closed = false;
     let value = "";
     const result = renderForTest(
-      React.createElement(Modal, { visible: true, onClose: () => { closed = true; } },
-        React.createElement(TextInput, {
+      React.createElement(Modal, { visible: true, onClose: () => { closed = true; }, children: React.createElement(TextInput, {
           value,
           onChange: (v: string) => { value = v; },
           isFocused: true,
-        }),
-      ),
+        }) }),
       { width: 60, height: 20 },
     );
     result.pressEscape();

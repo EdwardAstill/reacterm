@@ -10,7 +10,7 @@ import { MessageBubble } from "../widgets/index.js";
 describe("MessageBubble", () => {
   it("renders user role with > symbol", () => {
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "user" }, "Hello world"),
+      React.createElement(MessageBubble, { role: "user", children: "Hello world" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText(">")).toBe(true);
@@ -19,7 +19,7 @@ describe("MessageBubble", () => {
 
   it("renders assistant role with star symbol", () => {
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "assistant" }, "Response"),
+      React.createElement(MessageBubble, { role: "assistant", children: "Response" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText("\u2726")).toBe(true); // ✦
@@ -28,7 +28,7 @@ describe("MessageBubble", () => {
 
   it("renders system role with filled circle symbol", () => {
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "system" }, "System msg"),
+      React.createElement(MessageBubble, { role: "system", children: "System msg" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText("\u25CF")).toBe(true); // ●
@@ -37,7 +37,7 @@ describe("MessageBubble", () => {
 
   it("renders markdown content when markdown=true", () => {
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "assistant", markdown: true }, "**bold text**"),
+      React.createElement(MessageBubble, { role: "assistant", markdown: true, children: "**bold text**" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText("bold text")).toBe(true);
@@ -45,7 +45,7 @@ describe("MessageBubble", () => {
 
   it("renders meta and timestamp", () => {
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "user", meta: "500 tokens", timestamp: "12:30" }, "Content"),
+      React.createElement(MessageBubble, { role: "user", meta: "500 tokens", timestamp: "12:30", children: "Content" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText("500 tokens")).toBe(true);
@@ -58,7 +58,7 @@ describe("MessageBubble", () => {
       { label: "Retry", key: "r", onAction: () => {} },
     ];
     const result = renderForTest(
-      React.createElement(MessageBubble, { role: "assistant", actions }, "Msg"),
+      React.createElement(MessageBubble, { role: "assistant", actions, children: "Msg" }),
       { width: 60, height: 10 },
     );
     expect(result.hasText("[c] Copy")).toBe(true);

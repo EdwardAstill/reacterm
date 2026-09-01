@@ -12,6 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough } from "node:stream";
 import WebSocket from "ws";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createFileApi, handleFileApiRequest } from "../../playground/file-api.mjs";
 import { createPlaygroundServer, listenPlayground } from "../../playground/server.mjs";
@@ -47,7 +48,7 @@ async function waitFor(assertion: () => void) {
 async function rejectedWebSocketStatus(url: string, origin?: string) {
   return new Promise<number>((resolve, reject) => {
     const ws = new WebSocket(url, origin ? { origin } : undefined);
-    ws.once("unexpected-response", (_request, response) => {
+    ws.once("unexpected-response", (_request: IncomingMessage, response: IncomingMessage) => {
       response.resume();
       resolve(response.statusCode ?? 0);
     });
@@ -88,11 +89,23 @@ function listenServer(server: ReturnType<typeof createServer>) {
   });
 }
 
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+async function jsonObject(response: Response): Promise<Record<string, unknown>> {
+  const body: unknown = await response.json();
+  if (!isJsonObject(body)) {
+    throw new Error("Expected a JSON object response");
+  }
+  return body;
+}
+
 async function getJson(url: string) {
   const response = await fetch(url);
   return {
     response,
-    body: await response.json(),
+    body: await jsonObject(response),
   };
 }
 
@@ -104,7 +117,7 @@ async function putJson(url: string, body: unknown) {
   });
   return {
     response,
-    body: await response.json(),
+    body: await jsonObject(response),
   };
 }
 
@@ -468,7 +481,7 @@ describe("playground runner boundary", () => {
     });
     const ws = await openRunner(baseUrl);
     const messages: Array<{ type: string; data?: string; code?: number }> = [];
-    ws.on("message", (raw) => messages.push(JSON.parse(raw.toString())));
+    ws.on("message", (raw: WebSocket.RawData) => messages.push(JSON.parse(raw.toString())));
     ws.send(JSON.stringify({ type: "run", code: "console.log('ok')", cols: 80, rows: 24 }));
     await waitFor(() => expect(children).toHaveLength(1));
 

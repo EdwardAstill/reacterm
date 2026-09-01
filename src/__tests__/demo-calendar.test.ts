@@ -1,9 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import React from "react";
 import { App as DemoApp } from "../../examples/reacterm-demo.js";
 import { renderForTest } from "../testing/index.js";
 
 describe("Demo calendar section", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 4, 12, 0, 0));
+  });
+  afterEach(() => vi.useRealTimers());
+
   function openCalendarSection(): ReturnType<typeof renderForTest> {
     const result = renderForTest(React.createElement(DemoApp), { width: 128, height: 32 });
     const sectionRow = result.lines.findIndex((line) => line.includes("▣ Calendar"));

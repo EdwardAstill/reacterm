@@ -55,8 +55,7 @@ describe("Demo editor and visual effects", () => {
         { width: 80, flexDirection: "column" },
         React.createElement(
           GradientBorder,
-          { width: 28 },
-          React.createElement(Text, null, "multi-color border"),
+          { width: 28, children: React.createElement(Text, null, "multi-color border") },
         ),
       ),
       { width: 80, height: 8 },

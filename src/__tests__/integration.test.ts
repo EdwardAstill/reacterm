@@ -669,13 +669,13 @@ describe("Plugin system", () => {
 
     manager.register(plugin);
 
-    const result = manager.applyComponentProps("Button", { label: "Click" });
+    const result = manager.applyComponentProps<Record<string, unknown>>("Button", { label: "Click" });
     expect(result["label"]).toBe("Click");
     expect(result["size"]).toBe("large");
     expect(result["intercepted"]).toBe(true);
 
     // Other components should pass through unchanged
-    const other = manager.applyComponentProps("Text", { color: "red" });
+    const other = manager.applyComponentProps<Record<string, unknown>>("Text", { color: "red" });
     expect(other["color"]).toBe("red");
     expect(other["intercepted"]).toBeUndefined();
   });
@@ -692,13 +692,13 @@ describe("Plugin system", () => {
     manager.register(plugin);
 
     // Defaults should be applied
-    const buttonProps = manager.applyComponentProps("Button", { label: "OK" });
+    const buttonProps = manager.applyComponentProps<Record<string, unknown>>("Button", { label: "OK" });
     expect(buttonProps["variant"]).toBe("primary");
     expect(buttonProps["size"]).toBe("medium");
     expect(buttonProps["label"]).toBe("OK");
 
     // User props should override defaults
-    const override = manager.applyComponentProps("Button", { variant: "danger", label: "Delete" });
+    const override = manager.applyComponentProps<Record<string, unknown>>("Button", { variant: "danger", label: "Delete" });
     expect(override["variant"]).toBe("danger");
     expect(override["label"]).toBe("Delete");
     expect(override["size"]).toBe("medium"); // default still applies
@@ -789,7 +789,7 @@ describe("Plugin system", () => {
       },
     });
 
-    const result = manager.applyComponentProps("Test", { original: true });
+    const result = manager.applyComponentProps<Record<string, unknown>>("Test", { original: true });
     expect(result["original"]).toBe(true);
     expect(result["fromA"]).toBe(true);
     expect(result["fromB"]).toBe(true);

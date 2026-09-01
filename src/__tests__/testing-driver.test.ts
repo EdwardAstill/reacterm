@@ -13,7 +13,7 @@ import {
 describe("testing metadata", () => {
   it("captures frame, semantic, focus, and bounds metadata without breaking renderForTest", () => {
     const result = renderForTest(
-      React.createElement(Box, { role: "region", "aria-label": "Demo Region", testId: "root-box" },
+      React.createElement("tui-box", { role: "region", "aria-label": "Demo Region", testId: "root-box" },
         React.createElement(Button, { label: "Run", "aria-label": "Run task" }),
       ),
       { width: 40, height: 8 },
