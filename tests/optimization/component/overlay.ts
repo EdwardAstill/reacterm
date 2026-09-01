@@ -111,11 +111,18 @@ console.log("  5. Two overlays mount ordering");
   );
 
   const r = renderToString(mk(), { width: W, height: H });
-  // Both mount cleanly; the overlay manager owns their ordering.
-  check("both visible", r.output.includes("OVERLAY_A") || r.output.includes("OVERLAY_B"));
+  check(
+    "later-mounted overlay wins",
+    r.output.includes("OVERLAY_B") && !r.output.includes("OVERLAY_A"),
+    `output: ${JSON.stringify(r.output)}`,
+  );
 
   const r2 = r.rerender(mk());
-  check("rerender no crash", r2.output.length > 0);
+  check(
+    "mount ordering survives rerender",
+    r2.output.includes("OVERLAY_B") && !r2.output.includes("OVERLAY_A"),
+    `output: ${JSON.stringify(r2.output)}`,
+  );
 
   r.unmount();
 }
