@@ -333,7 +333,7 @@ function App() {
         borderColor={theme.colors.border}
         paddingX={1}
       >
-        <Text bold color={theme.colors.accent}>STORM</Text>
+        <Text bold color={theme.colors.accent}>REACTERM</Text>
         <Text dim color={theme.colors.dim}>  ·  Style Guide  ·  </Text>
         <Text color={theme.colors.fg}>{theme.name}</Text>
         <Text dim color={theme.colors.dim}>  ({theme.id})</Text>

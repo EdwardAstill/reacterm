@@ -1,4 +1,4 @@
-# Storm TUI Hook Guide
+# Reacterm TUI Hook Guide
 
 All hooks are imported from `reacterm`. They follow React conventions but are adapted for the custom reconciler -- notably, `useEffect` cleanup does not fire, so cleanup is handled by `useCleanup`.
 
@@ -6,7 +6,7 @@ All hooks are imported from `reacterm`. They follow React conventions but are ad
 
 ## Tier 0 -- Essential
 
-Learn these first. Every Storm TUI app uses them.
+Learn these first. Every Reacterm TUI app uses them.
 
 ### useApp()
 
@@ -111,7 +111,7 @@ function StatusBar() {
 
 ### useCleanup()
 
-Register a cleanup function that runs on unmount. Required because `useEffect` cleanup does not fire in Storm's reconciler.
+Register a cleanup function that runs on unmount. Required because `useEffect` cleanup does not fire in Reacterm's reconciler.
 
 ```ts
 import { useRef } from "react";
@@ -262,7 +262,7 @@ const { colors, shades } = useTheme();
 // shades.brand.lighten2, shades.brand.darken1, etc.
 ```
 
-**Signature:** `useTheme() => { colors: StormColors; shades: ThemeShades }`
+**Signature:** `useTheme() => { colors: ReactermColors; shades: ThemeShades }`
 
 ### useInterval() / useTimeout()
 
@@ -838,7 +838,7 @@ const calendar = useEventCalendarBehavior({
 
 ### Imperative Updates (Not React State)
 
-Storm's reconciler does not reliably flush React state updates. For scroll, animation, and anything that needs instant visual response, mutate a ref and call `requestRender()`:
+Reacterm's reconciler does not reliably flush React state updates. For scroll, animation, and anything that needs instant visual response, mutate a ref and call `requestRender()`:
 
 ```ts
 const scrollRef = useRef(0);

@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
 /**
- * Storm TUI DevTools Demo
+ * Reacterm TUI DevTools Demo
  *
  * Press 1/2/3/4 to toggle each DevTools feature.
  * The app keeps running underneath — all overlays are non-blocking.
@@ -98,7 +98,7 @@ function App() {
   return (
     <Box flexDirection="column" padding={1}>
       <Text bold color="#82AAFF">
-        {"  Storm TUI DevTools Demo"}
+        {"  Reacterm TUI DevTools Demo"}
       </Text>
       <Text dim>
         {"  Press 1-4 to toggle features. App keeps running underneath.\n"}

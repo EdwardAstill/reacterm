@@ -321,7 +321,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     host: process.env.REACTERM_PLAYGROUND_HOST ?? "127.0.0.1",
   })
     .then(({ baseUrl }) => {
-      console.log(`\n  Storm Playground`);
+      console.log(`\n  Reacterm Playground`);
       console.log(`  ${baseUrl}`);
       console.log(`  token: ${app.token}\n`);
     })

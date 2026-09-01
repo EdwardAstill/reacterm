@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Storm Playground</title>
+<title>Reacterm Playground</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -301,7 +301,7 @@
 
   <!-- Top bar -->
   <div class="topbar">
-    <div class="topbar-logo">Storm Playground</div>
+    <div class="topbar-logo">Reacterm Playground</div>
     <div class="topbar-sep"></div>
     <select id="example-select" class="topbar-select">
       <option value="hello">hello.tsx -- Hello World</option>
@@ -335,7 +335,7 @@
           autocomplete="off"
           autocorrect="off"
           autocapitalize="off"
-          placeholder="Select an example or write your own Storm code..."
+          placeholder="Select an example or write your own Reacterm code..."
         ></textarea>
       </div>
     </div>
@@ -356,7 +356,7 @@
     <span><kbd>Ctrl</kbd>+<kbd>.</kbd> Stop</span>
     <span>Terminal input is live when a process is running</span>
     <div style="flex:1"></div>
-    <span>Storm TUI v0.1.0</span>
+    <span>Reacterm TUI v0.1.0</span>
   </div>
 
 </div>
@@ -376,7 +376,7 @@ import { render, Box, Text } from "../src/index.js";
 function App() {
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold color="#82AAFF">Hello from Storm!</Text>
+      <Text bold color="#82AAFF">Hello from Reacterm!</Text>
       <Text dim>Press Ctrl+C to exit</Text>
     </Box>
   );
@@ -401,7 +401,7 @@ function Counter() {
 
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold color="#82AAFF">Storm Counter</Text>
+      <Text bold color="#82AAFF">Reacterm Counter</Text>
       <Text>
         Seconds elapsed: <Text bold color="#9ECE6A">{countRef.current}</Text>
       </Text>
@@ -465,7 +465,7 @@ function Dashboard() {
     <Box flexDirection="column" width={width} height={height}>
       <Box height={1} paddingX={1}>
         <Spinner type="dots" color="#82AAFF" />
-        <Text bold color="#82AAFF">{" Storm Dashboard"}</Text>
+        <Text bold color="#82AAFF">{" Reacterm Dashboard"}</Text>
         <Box flex={1} />
         <Badge label={\`CPU \${cpu}%\`} variant={cpu > 70 ? "error" : "success"} />
         <Text> </Text>
@@ -545,7 +545,7 @@ function FormDemo() {
 
   return (
     <Box flexDirection="column" padding={1} width={Math.min(60, width)}>
-      <Text bold color="#82AAFF">Storm Form Demo</Text>
+      <Text bold color="#82AAFF">Reacterm Form Demo</Text>
       <Box height={1} />
       <Text>Name:</Text>
       <TextInput

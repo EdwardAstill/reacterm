@@ -37,7 +37,7 @@ function FormDemo() {
   return (
     <Box flexDirection="column" padding={1} width={Math.min(60, width)}>
       <Text bold color="#82AAFF">
-        Storm Form Demo
+        Reacterm Form Demo
       </Text>
       <Box height={1} />
       <Text>Name:</Text>

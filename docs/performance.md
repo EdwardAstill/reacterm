@@ -1,6 +1,6 @@
 # Performance
 
-Storm is designed for sub-millisecond frame times. On a typical scroll frame, 97% of cells have not changed and Storm skips them entirely. This document covers the techniques that make this possible.
+Reacterm is designed for sub-millisecond frame times. On a typical scroll frame, 97% of cells have not changed and Reacterm skips them entirely. This document covers the techniques that make this possible.
 
 ## Rendering Pipeline
 
@@ -82,7 +82,7 @@ The `swapPrevBuffer()` method uses `copyFrom()` (typed array `.set()`) instead o
 
 ## DECSTBM Scroll Region Optimization
 
-For pure scroll operations (only `scrollTop` changed, content unchanged), Storm uses the terminal's native DECSTBM (Set Top and Bottom Margins) escape sequence instead of repainting:
+For pure scroll operations (only `scrollTop` changed, content unchanged), Reacterm uses the terminal's native DECSTBM (Set Top and Bottom Margins) escape sequence instead of repainting:
 
 1. Detect that exactly one `ScrollView` scrolled and nothing else changed.
 2. Verify the `ScrollView` spans the full terminal width (DECSTBM operates on full rows).
@@ -95,7 +95,7 @@ This reduces a scroll frame from repainting hundreds of cells to moving terminal
 
 ## WASM Acceleration
 
-Storm includes an optional 33KB Rust/WASM module for the `renderLine` function. It loads automatically when present and falls back to TypeScript when absent.
+Reacterm includes an optional 33KB Rust/WASM module for the `renderLine` function. It loads automatically when present and falls back to TypeScript when absent.
 
 ### Adaptive Selection
 
@@ -140,7 +140,7 @@ This prevents wasted frames when events arrive faster than the display can refre
 
 ### Dual-Speed Rendering
 
-Storm uses two render paths:
+Reacterm uses two render paths:
 
 - **Full paint** (`doFullPaint`): Triggered by React commits (structural changes). Rebuilds layout from scratch, then paints and diffs.
 - **Fast repaint** (`doFastRepaint`): Triggered by `requestRender()` (scroll, cursor, animation). Skips layout, repaints from cached positions, then diffs.

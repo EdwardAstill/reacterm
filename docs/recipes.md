@@ -1,4 +1,4 @@
-# Storm Recipes
+# Reacterm Recipes
 
 Complete, copy-pasteable examples. Each builds something real.
 
@@ -111,7 +111,7 @@ function Dashboard() {
         {active === "settings" && <Text>Config: default profile</Text>}
       </Box>
 
-      <StatusLine brand="storm" model="phi-4" tokens={2048} />
+      <StatusLine brand="reacterm" model="phi-4" tokens={2048} />
     </Box>
   );
 }
@@ -819,13 +819,13 @@ render(<DownloadProgress />, { alternateScreen: false });
 Key: `alternateScreen: false` keeps the normal scrollback, and `commitText()` writes persistent lines above the live TUI area.
 
 > **Tip: File Logging**
-> To log to a file while the TUI runs, use `fs.appendFileSync("app.log", message + "\n")` directly. Storm's `patchConsole` routes console output to the screen, not files. For structured logging, use any file-based logger (pino, winston with file transport).
+> To log to a file while the TUI runs, use `fs.appendFileSync("app.log", message + "\n")` directly. Reacterm's `patchConsole` routes console output to the screen, not files. For structured logging, use any file-based logger (pino, winston with file transport).
 
 ---
 
 ## 12. Background Patterns
 
-Storm supports buffer-level background patterns on any Box. Patterns paint directly into the cell buffer before content -- zero extra render passes.
+Reacterm supports buffer-level background patterns on any Box. Patterns paint directly into the cell buffer before content -- zero extra render passes.
 
 **Dot pattern:**
 
@@ -877,7 +877,7 @@ useTick(100, () => {});
   <App />
 </Box>
 
-<Box background={{ type: "watermark", text: "STORM", mode: "center" }}>
+<Box background={{ type: "watermark", text: "REACTERM", mode: "center" }}>
   <App />
 </Box>
 ```

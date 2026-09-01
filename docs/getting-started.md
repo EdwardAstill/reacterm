@@ -1,6 +1,6 @@
-# Getting Started with Storm TUI
+# Getting Started with Reacterm TUI
 
-Storm is a terminal UI framework built on React. It renders to a cell-based buffer, diffs at the cell level, and only writes what changed. If you know React, you know Storm.
+Reacterm is a terminal UI framework built on React. It renders to a cell-based buffer, diffs at the cell level, and only writes what changed. If you know React, you know Reacterm.
 
 ## Installation
 
@@ -62,7 +62,7 @@ function App() {
 
   return (
     <Box borderStyle="round" borderColor="#82AAFF" padding={1}>
-      <Text color="#34D399" bold>Hello, Storm!</Text>
+      <Text color="#34D399" bold>Hello, Reacterm!</Text>
       <Spinner type="dots" />
       <Text dim>Ctrl+C to exit</Text>
     </Box>
@@ -87,7 +87,7 @@ npx tsx app.tsx
 
 ## The Golden Rules
 
-Before you write any Storm code, know these three things:
+Before you write any Reacterm code, know these three things:
 
 ### Rule 1: Use `useRef` + `requestRender()` for animation and live data
 
@@ -104,12 +104,12 @@ useTick(100, () => { frameRef.current++; });
 
 `useState` is for structural changes (switching screens, adding items). For anything that updates frequently (animation, scroll, live metrics), use refs + `requestRender()` or `useTick()`.
 
-**Storm will warn you automatically.** If more than 10 full React reconciliation passes happen in one second, Storm writes a performance warning to stderr pointing you here. The warning fires once per 5 seconds in development, and is capped at 3 occurrences in production.
+**Reacterm will warn you automatically.** If more than 10 full React reconciliation passes happen in one second, Reacterm writes a performance warning to stderr pointing you here. The warning fires once per 5 seconds in development, and is capped at 3 occurrences in production.
 
 ### Rule 2: Use `useCleanup()`, not `useEffect` cleanup
 
 ```tsx
-// WRONG — cleanup function will NOT fire in Storm's reconciler
+// WRONG — cleanup function will NOT fire in Reacterm's reconciler
 useEffect(() => {
   const timer = setInterval(tick, 1000);
   return () => clearInterval(timer);  // Never runs!
@@ -137,7 +137,7 @@ These rules are the top reasons new apps feel slow or broken. For the full list 
 
 ## Layout Basics
 
-Storm uses a flexbox layout engine. Every `Box` is a flex container. The default flex direction is `column` (vertical stacking).
+Reacterm uses a flexbox layout engine. Every `Box` is a flex container. The default flex direction is `column` (vertical stacking).
 
 ### Vertical and Horizontal Layout
 
@@ -235,7 +235,7 @@ function App() {
 render(<App />);
 ```
 
-**Note:** Storm uses a custom React reconciler with `syncContainerUpdate`, which handles most state updates automatically. Basic `setState` calls work without `flushSync`. However, `flushSync()` is recommended for immediate visual feedback -- it guarantees React processes the update synchronously before the next paint, eliminating any batching delay. For high-frequency updates (scroll, animation), prefer `useRef` + `requestRender()` instead -- see [Common Pitfalls](pitfalls.md#1-usestate-vs-useref--requestrender).
+**Note:** Reacterm uses a custom React reconciler with `syncContainerUpdate`, which handles most state updates automatically. Basic `setState` calls work without `flushSync`. However, `flushSync()` is recommended for immediate visual feedback -- it guarantees React processes the update synchronously before the next paint, eliminating any batching delay. For high-frequency updates (scroll, animation), prefer `useRef` + `requestRender()` instead -- see [Common Pitfalls](pitfalls.md#1-usestate-vs-useref--requestrender).
 
 The `KeyEvent` object contains:
 
@@ -337,7 +337,7 @@ Scroll is hit-tested: only the `ScrollView` under the mouse cursor receives scro
 
 ## Theming
 
-Storm ships with a default color palette and 11 presets. Use `ThemeProvider` to apply a theme:
+Reacterm ships with a default color palette and 11 presets. Use `ThemeProvider` to apply a theme:
 
 ```tsx
 import { render, Box, Text, ThemeProvider, neonTheme, useTheme } from "reacterm";
@@ -368,7 +368,7 @@ Built-in presets: `arcticTheme`, `midnightTheme`, `emberTheme`, `mistTheme`, `vo
 
 ## Style Props
 
-Storm uses a three-tiered style customization system. Every component accepts style props from its tier:
+Reacterm uses a three-tiered style customization system. Every component accepts style props from its tier:
 
 **Tier 1 -- Text styles** (inline components like `Text`, `Badge`, `Spinner`):
 
@@ -443,7 +443,7 @@ Override any default by passing the corresponding prop directly to the component
 
 ## Full-Screen App Pattern
 
-Most Storm apps fill the terminal. Here is the standard pattern:
+Most Reacterm apps fill the terminal. Here is the standard pattern:
 
 ```tsx
 import { useState } from "react";
@@ -546,7 +546,7 @@ The returned `TuiApp` object provides:
 
 ## Testing Your App
 
-Storm includes testing utilities for rendering components without a terminal:
+Reacterm includes testing utilities for rendering components without a terminal:
 
 ```tsx
 import { renderForTest } from "reacterm/testing";
@@ -581,7 +581,7 @@ cleanup();
 
 ## SSH App Serving
 
-Serve your Storm app over SSH -- users connect with `ssh your-server.com` and get an interactive terminal UI.
+Serve your Reacterm app over SSH -- users connect with `ssh your-server.com` and get an interactive terminal UI.
 
 ```bash
 npm install ssh2
@@ -589,10 +589,10 @@ ssh-keygen -t ed25519 -f host_key -N ""
 ```
 
 ```tsx
-import { StormSSHServer } from "reacterm/ssh";
+import { ReactermSSHServer } from "reacterm/ssh";
 import { readFileSync } from "node:fs";
 
-const server = new StormSSHServer({
+const server = new ReactermSSHServer({
   port: 2222,
   hostKey: readFileSync("./host_key"),
   authenticate: ({ username, password }) => username === "admin" && password === "secret",
@@ -613,7 +613,7 @@ Each connection gets its own isolated React tree. Features:
 
 ## Playground
 
-Try Storm in your browser without installing anything:
+Try Reacterm in your browser without installing anything:
 
 ```bash
 npm run playground

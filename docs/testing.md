@@ -1,6 +1,6 @@
-# Testing Storm Apps
+# Testing Reacterm Apps
 
-Storm ships with a full testing toolkit that renders components without a terminal. You can simulate keyboard, mouse, and paste input, query output text, and use snapshot utilities -- all without spawning a TTY.
+Reacterm ships with a full testing toolkit that renders components without a terminal. You can simulate keyboard, mouse, and paste input, query output text, and use snapshot utilities -- all without spawning a TTY.
 
 ## Setup
 
@@ -140,7 +140,7 @@ test("updates on rerender", () => {
 
 ## Assertion Helpers
 
-Storm provides `expectOutput` for fluent assertions that throw descriptive errors on failure -- useful when you want clear diagnostics without framework-specific matchers:
+Reacterm provides `expectOutput` for fluent assertions that throw descriptive errors on failure -- useful when you want clear diagnostics without framework-specific matchers:
 
 ```tsx
 import { renderForTest, expectOutput } from "reacterm/testing";
@@ -152,7 +152,7 @@ test("with fluent assertions", () => {
   expectOutput(result).toNotContainText("Error");
   expectOutput(result).toHaveLineCount(5);
   expectOutput(result).lineAt(0).toContain("Welcome");
-  expectOutput(result).lineAt(0).toEqual("Welcome to Storm");
+  expectOutput(result).lineAt(0).toEqual("Welcome to Reacterm");
   expectOutput(result).lineAt(4).toBeEmpty();
 });
 ```
@@ -171,19 +171,19 @@ test("with fluent assertions", () => {
 
 ## Custom Matchers (Vitest/Jest)
 
-Register Storm's custom matchers for a more natural `expect()` syntax:
+Register Reacterm's custom matchers for a more natural `expect()` syntax:
 
 ```tsx
-import { createStormMatchers, renderForTest } from "reacterm/testing";
+import { createReactermMatchers, renderForTest } from "reacterm/testing";
 
-expect.extend(createStormMatchers());
+expect.extend(createReactermMatchers());
 
 test("with custom matchers", () => {
   const result = renderForTest(<App />);
 
-  expect(result).toContainStormText("Welcome");
-  expect(result).toHaveStormLines(5);
-  expect(result).toMatchStormSnapshot("app-initial");
+  expect(result).toContainReactermText("Welcome");
+  expect(result).toHaveReactermLines(5);
+  expect(result).toMatchReactermSnapshot("app-initial");
 });
 ```
 
@@ -191,9 +191,9 @@ Available matchers:
 
 | Matcher | Description |
 |---|---|
-| `toContainStormText(text)` | Check if render output contains text |
-| `toHaveStormLines(count)` | Check render output line count |
-| `toMatchStormSnapshot(name)` | Compare against an in-memory snapshot |
+| `toContainReactermText(text)` | Check if render output contains text |
+| `toHaveReactermLines(count)` | Check render output line count |
+| `toMatchReactermSnapshot(name)` | Compare against an in-memory snapshot |
 
 ## Snapshot Testing
 
@@ -210,7 +210,7 @@ test("matches snapshot", () => {
 
 ### In-Memory Snapshots
 
-Storm provides its own in-memory snapshot store for cases where you want explicit control:
+Reacterm provides its own in-memory snapshot store for cases where you want explicit control:
 
 ```tsx
 import {

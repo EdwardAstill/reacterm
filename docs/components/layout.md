@@ -230,7 +230,7 @@ import { Accordion, Text } from "reacterm";
 <Accordion
   sections={[
     { key: "install", title: "Installation", content: <Text>npm install reacterm</Text> },
-    { key: "usage", title: "Basic Usage", content: <Text>Import components and render with storm.</Text> },
+    { key: "usage", title: "Basic Usage", content: <Text>Import components and render with Reacterm.</Text> },
   ]}
   activeKeys={openSections}
   onToggle={handleToggle}

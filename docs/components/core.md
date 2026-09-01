@@ -375,7 +375,7 @@ import { Box, Text, Spacer } from "reacterm";
 
 ```tsx
 <Box flexDirection="row" paddingX={1}>
-  <Text color="#82AAFF">storm v2.1</Text>
+  <Text color="#82AAFF">reacterm v2.1</Text>
   <Spacer />
   <Text bold>Dashboard</Text>
   <Spacer />

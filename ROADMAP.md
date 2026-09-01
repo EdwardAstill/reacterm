@@ -1,4 +1,4 @@
-# Storm/Reacterm Roadmap
+# Reacterm Roadmap
 
 A living, prioritized list of improvements grouped by theme. Sibling to
 `improvements.md` (which captures consumer-side bugs), this file is for
@@ -24,7 +24,7 @@ pattern. Today it forces consumers to:
 
 - wire `useSearchFilter` themselves
 - pass `isFocused` to both children
-- worry about `[storm] Multiple components are receiving keyboard input`
+- worry about `[reacterm] Multiple components are receiving keyboard input`
 
 A single `<SearchList items predicate onSelect />` collapses all three.
 One focus owner, one keyboard-domain split (printable → input,
@@ -120,12 +120,12 @@ Surface them in the DevTools overlay (`src/devtools/devtools-overlay.ts`)
 as a 5th panel beside heatmap/inspector/time-travel/perf. Click to jump
 to the offending node.
 
-### B5. Theme hot-reload from `.storm.css` watcher
+### B5. Theme hot-reload from `.reacterm.css` watcher
 
 `src/core/stylesheet-loader.ts` parses CSS-style theme files;
 `useStyleSheet` hook applies them; nothing watches the file system. Add
 opt-in `watch: true` that re-parses on `fs.watch` events. Already
-mentioned in README ("live `.storm.css` hot-reload") but only partially
+mentioned in README ("live `.reacterm.css` hot-reload") but only partially
 delivered.
 
 ---

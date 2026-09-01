@@ -67,7 +67,7 @@ function makeNode(props: LayoutNode["props"], children: LayoutNode[] = []): Layo
 
 // ── Benchmarks ─────────────────────────────────────────────────────────
 
-console.log("\u26A1 Storm TUI Performance Benchmark Suite");
+console.log("\u26A1 Reacterm TUI Performance Benchmark Suite");
 console.log("\u2550".repeat(50));
 
 // 1. Buffer Operations
@@ -79,7 +79,7 @@ section("Buffer Operations");
   const buf = new ScreenBuffer(200, 50);
   const r2 = bench("write 10K chars", 200, () => {
     for (let i = 0; i < 200; i++) {
-      buf.writeString(0, i % 50, "Hello, Storm TUI Benchmark! Testing write performance across the entire buffer row. 0123456789");
+      buf.writeString(0, i % 50, "Hello, Reacterm TUI Benchmark! Testing write performance across the entire buffer row. 0123456789");
     }
   });
   printResult("write 10K chars", r2);
@@ -315,7 +315,7 @@ section("Full Frame (complex UI)");
   const complexUI = React.createElement(
     Box, { flexDirection: "column", width: 120, height: 40 },
     React.createElement(Box, { height: 1, width: 120 },
-      React.createElement(Text, { bold: true, color: "#D4A053" }, " Storm TUI "),
+      React.createElement(Text, { bold: true, color: "#D4A053" }, " Reacterm TUI "),
       React.createElement(Text, { dim: true }, " | Status: running"),
     ),
     React.createElement(Box, { flexDirection: "row", flex: 1 },
@@ -326,7 +326,7 @@ section("Full Frame (complex UI)");
       ),
       React.createElement(Box, { flexDirection: "column", flex: 1 },
         React.createElement(SyntaxHighlight, {
-          code: "const greet = (name: string) => {\n  console.log(`Hello, ${name}!`);\n};\ngreet('Storm');",
+          code: "const greet = (name: string) => {\n  console.log(`Hello, ${name}!`);\n};\ngreet('Reacterm');",
           language: "typescript",
           width: 88,
         }),

@@ -1,6 +1,6 @@
 # Architecture
 
-Storm is a terminal UI framework. React reconciler on top, cell-based buffer underneath, diff renderer that only writes what changed. No Yoga, no native dependencies (WASM optional).
+Reacterm is a terminal UI framework. React reconciler on top, cell-based buffer underneath, diff renderer that only writes what changed. No Yoga, no native dependencies (WASM optional).
 
 ## Render Pipeline
 
@@ -89,6 +89,6 @@ No real terminal required. Components render into a `ScreenBuffer` in memory, di
 
 ## Footguns
 
-1. **useEffect cleanup does not fire reliably.** Storm monkey-patches `React.useEffect` to warn you. Use `useCleanup()`.
+1. **useEffect cleanup does not fire reliably.** Reacterm monkey-patches `React.useEffect` to warn you. Use `useCleanup()`.
 2. **useState causes full repaints.** FrameScheduler warns if you exceed 15 full paints/sec. Use imperative mutation for hot paths.
 3. **requestRender is not React setState.** It triggers repaint of the existing tree without a React commit. State changes need `useState`; visual updates need `requestRender`.

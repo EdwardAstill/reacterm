@@ -1,12 +1,12 @@
 # Common Pitfalls
 
-Read this before you write your first component. These are the gotchas that trip up every new Storm TUI developer, and the patterns that fix them.
+Read this before you write your first component. These are the gotchas that trip up every new Reacterm TUI developer, and the patterns that fix them.
 
 ---
 
 ## 1. useState vs useRef + requestRender()
 
-Storm TUI uses a custom React reconciler with a cell-based buffer renderer. This means React state updates are more expensive than you might expect.
+Reacterm TUI uses a custom React reconciler with a cell-based buffer renderer. This means React state updates are more expensive than you might expect.
 
 **The cost:**
 - `useState` setter triggers full React reconciliation, layout rebuild, paint, and diff (~5-10ms)
@@ -134,7 +134,7 @@ When `stickToBottom` is active and the user is scrolled to the bottom, new child
 ```tsx
 // This is fine — inline style nesting
 <Text>
-  Hello <Text bold>world</Text>, welcome to <Text color="cyan">Storm</Text>
+  Hello <Text bold>world</Text>, welcome to <Text color="cyan">Reacterm</Text>
 </Text>
 ```
 
@@ -142,7 +142,7 @@ When `stickToBottom` is active and the user is scrolled to the bottom, new child
 
 ## 4. useCleanup instead of useEffect
 
-Storm's custom reconciler does not reliably fire `useEffect` cleanup functions. If you use `useEffect` to set up a timer or event listener, the cleanup callback may never run, causing memory leaks and ghost handlers.
+Reacterm's custom reconciler does not reliably fire `useEffect` cleanup functions. If you use `useEffect` to set up a timer or event listener, the cleanup callback may never run, causing memory leaks and ghost handlers.
 
 Always use `useCleanup()` for anything that needs teardown.
 
@@ -182,13 +182,13 @@ function Poller({ url }: { url: string }) {
 }
 ```
 
-`useCleanup` registers with the render context and fires when the app unmounts. It is the only reliable teardown mechanism in Storm TUI.
+`useCleanup` registers with the render context and fires when the app unmounts. It is the only reliable teardown mechanism in Reacterm TUI.
 
 ---
 
 ## 5. flushSync is for React state only
 
-Storm exposes `flushSync` from `useTui()`. It forces synchronous React reconciliation so that state updates inside the callback commit immediately, rather than being batched.
+Reacterm exposes `flushSync` from `useTui()`. It forces synchronous React reconciliation so that state updates inside the callback commit immediately, rather than being batched.
 
 The catch: `flushSync` only works with React state setters. Mutating a ref inside `flushSync` does nothing because refs do not trigger React reconciliation.
 
@@ -234,7 +234,7 @@ function Broken() {
 
 ## 6. Keyboard input: which hook to use?
 
-Storm provides three input hooks at different abstraction levels.
+Reacterm provides three input hooks at different abstraction levels.
 
 ### useInput — raw key events
 
@@ -287,7 +287,7 @@ Start with `useInput`. If you want to render a help bar from the shortcut defini
 
 ## 7. Focus management basics
 
-Storm has a built-in focus system. Components opt in with `useFocus()`.
+Reacterm has a built-in focus system. Components opt in with `useFocus()`.
 
 ```tsx
 import { useFocus } from "reacterm";
@@ -336,7 +336,7 @@ If you need manual focus trapping outside of Modal, use `FocusGroup` with a `gro
 
 ## 8. Animation: use the framework's tools
 
-Storm provides animation primitives that sync to a global scheduler. Using them instead of raw timers avoids timer thrashing and ensures proper cleanup.
+Reacterm provides animation primitives that sync to a global scheduler. Using them instead of raw timers avoids timer thrashing and ensures proper cleanup.
 
 ### useAnimation — frame-based animation
 
@@ -484,7 +484,7 @@ app.requestRepaint(); // Force a repaint so plugin hooks apply
 
 ## 11. Emergency Exit: Double Ctrl+C
 
-If your app intercepts `Ctrl+C` via `useInput`, a single press calls your handler. If the user presses `Ctrl+C` twice rapidly (within 500ms), Storm force-exits the process regardless of your handler. This is a safety valve -- it prevents apps from trapping users.
+If your app intercepts `Ctrl+C` via `useInput`, a single press calls your handler. If the user presses `Ctrl+C` twice rapidly (within 500ms), Reacterm force-exits the process regardless of your handler. This is a safety valve -- it prevents apps from trapping users.
 
 If you need custom cleanup before exit, use `useCleanup()` or `useAsyncCleanup()` -- these run automatically on any exit path including double-Ctrl+C and SIGTERM.
 
@@ -500,13 +500,13 @@ reset          # Full terminal reset
 stty sane      # Restore sane terminal settings
 ```
 
-Storm handles SIGINT, SIGTERM, SIGHUP, uncaught exceptions, and unhandled rejections -- the terminal is restored automatically in all of these cases. Only SIGKILL (which cannot be caught by any program) leaves the terminal broken.
+Reacterm handles SIGINT, SIGTERM, SIGHUP, uncaught exceptions, and unhandled rejections -- the terminal is restored automatically in all of these cases. Only SIGKILL (which cannot be caught by any program) leaves the terminal broken.
 
 ---
 
 ## 13. When to use flushSync vs requestRender
 
-Storm has two ways to trigger a repaint:
+Reacterm has two ways to trigger a repaint:
 
 **`requestRender()`** — imperative repaint. Use for animations, scroll, cursor updates. No React reconciliation. Only repaints the buffer from the existing element tree. Fast (~0.5ms).
 

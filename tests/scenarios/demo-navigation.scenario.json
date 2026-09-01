@@ -6,7 +6,7 @@
     "height": 30
   },
   "steps": [
-    { "expectText": "Storm" },
+    { "expectText": "Reacterm" },
     { "press": "tab" },
     { "press": "tab" },
     { "expectText": "Forms" },

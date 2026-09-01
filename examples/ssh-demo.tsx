@@ -1,5 +1,5 @@
 /**
- * SSH Demo — serve a Storm TUI app over SSH.
+ * SSH Demo — serve a Reacterm TUI app over SSH.
  *
  * Generate a host key:   ssh-keygen -t ed25519 -f host_key -N ""
  * Run:                    npx tsx examples/ssh-demo.tsx
@@ -9,13 +9,13 @@
 import React from "react";
 import { readFileSync } from "node:fs";
 import { Box, Text, Spinner } from "../src/index.js";
-import { StormSSHServer, type SSHSession } from "../src/ssh/index.js";
+import { ReactermSSHServer, type SSHSession } from "../src/ssh/index.js";
 
 function App({ session }: { session: SSHSession }) {
   return (
     <Box flexDirection="column" padding={1}>
       <Text bold color="#82AAFF">
-        Welcome to Storm over SSH!
+        Welcome to Reacterm over SSH!
       </Text>
       <Text>
         Connected as: {session.username}
@@ -28,7 +28,7 @@ function App({ session }: { session: SSHSession }) {
       </Text>
       <Box marginTop={1}>
         <Spinner type="dots" />
-        <Text> Storm is running</Text>
+        <Text> Reacterm is running</Text>
       </Box>
       <Text dim marginTop={1}>
         Press Ctrl+C to disconnect
@@ -37,7 +37,7 @@ function App({ session }: { session: SSHSession }) {
   );
 }
 
-const server = new StormSSHServer({
+const server = new ReactermSSHServer({
   port: 2222,
   hostKey: readFileSync("./host_key"),
   // Accept all connections (for demo only — use proper auth in production)
@@ -50,5 +50,5 @@ const server = new StormSSHServer({
 });
 
 await server.listen();
-console.log("Storm SSH server listening on port 2222");
+console.log("Reacterm SSH server listening on port 2222");
 console.log("Connect: ssh localhost -p 2222");

@@ -270,7 +270,7 @@ describe("playground file API", () => {
     const body = await response.text();
 
     expect(response.status).toBe(200);
-    expect(body).toContain("Storm Playground");
+    expect(body).toContain("Reacterm Playground");
   });
 });
 

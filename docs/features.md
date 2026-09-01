@@ -1,8 +1,8 @@
-# Storm — Feature Reference
+# Reacterm — Feature Reference
 
 The exhaustive catalog of every public export from `src/index.ts`,
 grouped into 27 categories. This file is the **source of truth** for
-the question: *"what does Storm ship?"*
+the question: *"what does Reacterm ship?"*
 
 For each entry, the catalog records:
 
@@ -330,7 +330,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `useColors`              | Hook | `hooks/useColors.ts`              | Theme.colors shortcut                | All sections |
 | `useLayoutBox`           | Hook | `hooks/useLayoutBox.ts`           | Public measureId + layout rect       | — |
 | `useMeasure`             | Hook | `hooks/useMeasure.ts`             | Live element rect                    | — |
-| `useStyleSheet`          | Hook | `hooks/useStyleSheet.ts`          | Apply parsed `.storm.css`            | — |
+| `useStyleSheet`          | Hook | `hooks/useStyleSheet.ts`          | Apply parsed `.reacterm.css`         | — |
 
 ## §17. Hooks — headless behaviors
 
@@ -357,14 +357,14 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `extractThemeOverrides`                        | Function | `theme/index.ts` | Diff a theme against default | — |
 | `generateShades` / `generateThemeShades`       | Function | `theme/shades.ts` | Tint/shade ramp generator | — |
 | `validateTheme` / `validateContrast`           | Function | `theme/validate.ts` | Theme linter | — |
-| `loadTheme` / `parseTheme` / `saveTheme` / `serializeTheme` | Function | `theme/loader.ts` | `.storm.theme.json` round-trip | — |
+| `loadTheme` / `parseTheme` / `saveTheme` / `serializeTheme` | Function | `theme/loader.ts` | `.reacterm.theme.json` round-trip | — |
 | `spacing`                                      | Constant | `theme/spacing.ts` | Spacing scale tokens | — |
 
 ## §19. Personality & stylesheet
 
 > Personality controls the "voice" of the framework (icon set,
 > wording, animation style). Stylesheet provides CSS-style runtime
-> theming via `.storm.css` files.
+> theming via `.reacterm.css` files.
 
 | Name | Kind | Source | One-liner | Demo |
 |------|------|--------|-----------|------|
@@ -373,7 +373,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `defaultPreset` / `minimalPreset` / `hackerPreset` / `playfulPreset` | Constant | `core/personality-presets.ts` | Built-in personalities | Personality (planned) |
 | `createStyleSheet` / `StyleSheet`               | Function / Class | `core/stylesheet.ts` | Build stylesheet rules | — |
 | `StyleProvider` / `StyleContext` / `useStyles`  | Component / Hook | `core/style-provider.ts` | Apply stylesheets | — |
-| `parseStormCSS` / `createStyleSheetLoader`      | Function | `core/stylesheet-loader.ts` | Read `.storm.css` | — |
+| `parseReactermCSS` / `createStyleSheetLoader`   | Function | `core/stylesheet-loader.ts` | Read `.reacterm.css` | — |
 
 ## §20. i18n
 
@@ -453,7 +453,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | Name | Kind | Source | One-liner | Demo |
 |------|------|--------|-----------|------|
 | `WebRenderer`     | Class | `core/web-renderer.ts` | Render to HTML canvas (browser playground) | Playground (separate) |
-| `StormSSHServer`  | Class | `ssh/index.ts`         | Serve apps over SSH (optional ssh2 dep)   | `examples/ssh-demo.tsx` |
+| `ReactermSSHServer` | Class | `ssh/index.ts`       | Serve apps over SSH (optional ssh2 dep)   | `examples/ssh-demo.tsx` |
 
 ## §27. Testing harness (subsystem)
 
@@ -464,7 +464,7 @@ Sections marked **subsystem** are imperative APIs, not React components.
 | `expectOutput` / `createSnapshot` / `compareSnapshot` / `clearSnapshots` | Function | `testing/index.ts` | Assertion helpers | — |
 | `saveSnapshot` / `compareFileSnapshot`   | Function | `testing/index.ts` | File-backed snapshots | — |
 | `saveSvgSnapshot` / `compareSvgSnapshot` / `renderToSvg` | Function | `testing/svg-renderer.ts` | SVG snapshots | — |
-| `createStormMatchers`                    | Function | `testing/index.ts` | Vitest matchers | — |
+| `createReactermMatchers`                 | Function | `testing/index.ts` | Vitest matchers | — |
 
 ---
 

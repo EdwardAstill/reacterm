@@ -75,7 +75,7 @@ function makeNode(props: LayoutNode["props"], children: LayoutNode[] = []): Layo
 
 // ── Output Header ───────────────────────────────────────────────────
 
-console.log("\n\x1b[1;35m\u26a1 Storm TUI EXTREME Benchmark Suite\x1b[0m");
+console.log("\n\x1b[1;35m\u26a1 Reacterm TUI EXTREME Benchmark Suite\x1b[0m");
 console.log("\x1b[35m" + "\u2501".repeat(60) + "\x1b[0m");
 console.log(`
 \x1b[2mLegend:
@@ -324,7 +324,7 @@ section("Real FPS \u2014 Full Render Pipeline (Buffer \u2192 Diff \u2192 ANSI \u
   const complexUI = React.createElement(
     Box, { flexDirection: "column", width: W, height: H },
     React.createElement(Box, { height: 1, width: W },
-      React.createElement(Text, { bold: true }, " Storm TUI "),
+      React.createElement(Text, { bold: true }, " Reacterm TUI "),
       React.createElement(Text, { dim: true }, " | Status: running"),
     ),
     React.createElement(Box, { flexDirection: "row", flex: 1 },
@@ -335,7 +335,7 @@ section("Real FPS \u2014 Full Render Pipeline (Buffer \u2192 Diff \u2192 ANSI \u
       ),
       React.createElement(Box, { flexDirection: "column", flex: 1 },
         React.createElement(SyntaxHighlight, {
-          code: "const greet = (name: string) => {\n  console.log(`Hello, ${name}!`);\n};\ngreet('Storm');",
+          code: "const greet = (name: string) => {\n  console.log(`Hello, ${name}!`);\n};\ngreet('Reacterm');",
           language: "typescript",
           width: W - 32,
         }),
@@ -408,7 +408,7 @@ section("DECSTBM Scroll Regions \u2014 Timing + Byte Comparison");
   const normalAvgBytes = normalTotalBytes / frames;
 
   // PATH B: With DECSTBM — only write 1 new row + scroll escape sequences
-  // This simulates the actual work Storm does when DECSTBM is active:
+  // This simulates the actual work Reacterm does when DECSTBM is active:
   // 1. Shift the internal buffer (same cell-copy work)
   // 2. Instead of diffing all rows, emit scroll region commands + 1 row
   const buf2 = new ScreenBuffer(W, H);

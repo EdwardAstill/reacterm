@@ -100,7 +100,7 @@ Block of wrapped text with consistent bottom spacing for readable document-like 
 import { Paragraph } from "reacterm";
 
 <Paragraph>
-  Storm is a high-performance terminal UI framework built on a custom React reconciler.
+  Reacterm is a high-performance terminal UI framework built on a custom React reconciler.
 </Paragraph>
 ```
 
@@ -152,7 +152,7 @@ Text with color gradient. Interpolates between an array of hex colors across cha
 | `direction` | `"horizontal" \| "vertical"` | `"horizontal"` | Gradient direction |
 
 ```tsx
-<Gradient colors={["#D4A053", "#6DBF8B", "#82AAFF"]}>Storm Gradient Text</Gradient>
+<Gradient colors={["#D4A053", "#6DBF8B", "#82AAFF"]}>Reacterm Gradient Text</Gradient>
 ```
 
 ---
@@ -189,7 +189,7 @@ Text with glow effect. Three intensity levels with optional pulse animation.
 | `animateInterval` | `number` | `400` | Pulse interval in ms |
 
 ```tsx
-<GlowText intensity="high" color="#82AAFF">Storm TUI</GlowText>
+<GlowText intensity="high" color="#82AAFF">Reacterm TUI</GlowText>
 ```
 
 ---
@@ -331,7 +331,7 @@ Term and definition pairs with stacked or inline layout.
 ```tsx
 <DefinitionList
   items={[
-    { term: "Name", definition: "Storm TUI" },
+    { term: "Name", definition: "Reacterm TUI" },
     { term: "Version", definition: "2.1.0" },
     { term: "License", definition: "MIT" },
   ]}

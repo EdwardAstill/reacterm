@@ -1,4 +1,4 @@
-# Storm TUI DevTools
+# Reacterm TUI DevTools
 
 Built-in development tools for debugging rendering, accessibility, performance, and component structure directly in the terminal.
 

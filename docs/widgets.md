@@ -1,4 +1,4 @@
-# Storm AI Widgets
+# Reacterm AI Widgets
 
 15 components for AI agent terminal UIs: token streaming, approval workflows, cost tracking, and performance profiling.
 
@@ -616,7 +616,7 @@ Developer tool that renders a compact bordered box showing real-time rendering m
 | `position` | `"top-right" \| "bottom-right" \| "top-left" \| "bottom-left"` | `"top-right"` | Position hint (sets `alignSelf` for flex layout). |
 | `renderMetric` | `(label: string, value: string, sparkline: string) => ReactNode` | -- | Custom render for each metric row. |
 | `historySize` | `number` | `20` | Number of history samples to keep for sparklines. |
-| `title` | `string` | `"Storm HUD"` | HUD title text. |
+| `title` | `string` | `"Reacterm HUD"` | HUD title text. |
 
 ### Usage
 
@@ -633,7 +633,7 @@ import { PerformanceHUD } from "reacterm";
 />
 // Renders:
 // ╭─────────────────────╮
-// │ Storm HUD           │
+// │ Reacterm HUD        │
 // │ FPS: 58 ▅▆▇█▇▆  RT: 2.3ms ▁▁▂▁▁ │
 // │ Cells: 120/4.8K     │
 // │ Mem: 24.3 MB        │
@@ -736,13 +736,13 @@ import { StatusLine } from "reacterm";
 
 // Built-in layout
 <StatusLine
-  brand="Storm"
+  brand="Reacterm"
   model="demo-model"
   tokens={4200}
   turns={12}
   extra={{ cost: "$0.42" }}
 />
-// Renders: ⚡ Storm demo-model          tokens:4.2K  turns:12  cost:$0.42
+// Renders: ⚡ Reacterm demo-model       tokens:4.2K  turns:12  cost:$0.42
 
 // Custom layout
 <StatusLine
@@ -1003,7 +1003,7 @@ import {
 
 ## Architecture Notes
 
-- **Imperative animation pattern**: All animated widgets (BlinkDot, ShimmerText, StreamingText, OperationTree) use ref mutation + `requestRender()` instead of React state. This is because Storm's custom React reconciler does not flush state updates the way React DOM does. See the [pitfalls guide](./pitfalls.md) for details.
+- **Imperative animation pattern**: All animated widgets (BlinkDot, ShimmerText, StreamingText, OperationTree) use ref mutation + `requestRender()` instead of React state. This is because Reacterm's custom React reconciler does not flush state updates the way React DOM does. See the [pitfalls guide](./pitfalls.md) for details.
 
 - **Plugin props**: Every widget wraps its raw props through `usePluginProps("WidgetName", rawProps)`, allowing plugins to intercept and modify any widget's props globally.
 
@@ -1011,4 +1011,4 @@ import {
 
 - **Cleanup**: All timer-based widgets register cleanup via `useCleanup()` to prevent leaked intervals on unmount.
 
-- **Memoization**: All widgets are wrapped in `React.memo()` to minimize re-renders in Storm's reconciler.
+- **Memoization**: All widgets are wrapped in `React.memo()` to minimize re-renders in Reacterm's reconciler.

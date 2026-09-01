@@ -456,7 +456,7 @@ const filtered = library.filter((item) =>
 </Modal>
 ```
 
-Common matching strategies in Storm apps:
+Common matching strategies in Reacterm apps:
 - simple substring match: `label.toLowerCase().includes(query.toLowerCase())`
 - fuzzy matching for command palettes and pickers
 - debounced remote search with `debounceMs`

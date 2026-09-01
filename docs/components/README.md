@@ -1,6 +1,6 @@
 # Components
 
-Storm ships 99 built-in components organized by category.
+Reacterm ships 99 built-in components organized by category.
 
 ## Quick Decision Guide
 

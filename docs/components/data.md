@@ -704,7 +704,7 @@ JSON/object pretty-printer with syntax coloring and collapsible nodes.
 Compound API: `Pretty.Root`, `Pretty.Node`.
 
 ```tsx
-<Pretty data={{ name: "Storm", version: 1, features: ["fast", "reactive"] }} interactive isFocused />
+<Pretty data={{ name: "Reacterm", version: 1, features: ["fast", "reactive"] }} interactive isFocused />
 ```
 
 

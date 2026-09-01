@@ -72,7 +72,7 @@ function Dashboard() {
       <Box height={1} paddingX={1}>
         <Spinner type="dots" color="#82AAFF" />
         <Text bold color="#82AAFF">
-          {" Storm Dashboard"}
+          {" Reacterm Dashboard"}
         </Text>
         <Box flex={1} />
         <Badge

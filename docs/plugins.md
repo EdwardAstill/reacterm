@@ -1,10 +1,10 @@
-# Storm TUI Plugin System
+# Reacterm TUI Plugin System
 
-Plugins extend Storm TUI with custom behavior -- lifecycle hooks, input interception, component prop overrides, and default component configuration. They integrate deeply without modifying core code.
+Plugins extend Reacterm TUI with custom behavior -- lifecycle hooks, input interception, component prop overrides, and default component configuration. They integrate deeply without modifying core code.
 
 ## What plugins can do
 
-A `StormPlugin` is a plain object implementing any combination of these capabilities:
+A `ReactermPlugin` is a plain object implementing any combination of these capabilities:
 
 - **Lifecycle hooks** -- run code at setup, before/after each render, and on cleanup
 - **Input interception** -- intercept keyboard and mouse events before they reach components, with the ability to consume (suppress) them
@@ -13,10 +13,10 @@ A `StormPlugin` is a plain object implementing any combination of these capabili
 - **Custom elements** -- register custom element types with their own paint routines
 - **Global shortcuts** -- add keyboard shortcuts via the plugin context
 
-## StormPlugin interface
+## ReactermPlugin interface
 
 ```ts
-interface StormPlugin<TConfig = unknown> {
+interface ReactermPlugin<TConfig = unknown> {
   /** Plugin name -- must be unique. */
   name: string;
 
@@ -74,7 +74,7 @@ interface PluginContext {
   registerElement: (tagName: string, handler: CustomElementHandler) => void;
   addShortcut: (shortcut: Shortcut) => void;
   renderContext: RenderContext;
-  theme: StormColors;
+  theme: ReactermColors;
   bus: PluginBus;
 }
 ```
@@ -84,7 +84,7 @@ interface PluginContext {
 Here is a complete plugin that adds a Ctrl+R keyboard shortcut to reload data:
 
 ```ts
-import type { StormPlugin } from "reacterm";
+import type { ReactermPlugin } from "reacterm";
 
 let reloadCallback: (() => void) | null = null;
 
@@ -92,7 +92,7 @@ export function setReloadCallback(fn: () => void) {
   reloadCallback = fn;
 }
 
-export const reloadPlugin: StormPlugin = {
+export const reloadPlugin: ReactermPlugin = {
   name: "reload-shortcut",
 
   setup(context) {
@@ -147,7 +147,7 @@ Plugins follow a strict lifecycle in this order:
 The `onKey` and `onMouse` hooks form a middleware chain. Each plugin receives the event and can either pass it through (return the event) or consume it (return `null`). Events flow through plugins in registration order -- if any plugin returns `null`, the event is dropped.
 
 ```ts
-const loggingPlugin: StormPlugin = {
+const loggingPlugin: ReactermPlugin = {
   name: "input-logger",
 
   onKey(event) {
@@ -183,7 +183,7 @@ onKey(event) {
 The `onComponentProps` callback is called for every component render. It receives the component name and the current props (after defaults are applied). Return modified props to transform them, or `undefined` to pass through unchanged.
 
 ```ts
-const highContrastPlugin: StormPlugin = {
+const highContrastPlugin: ReactermPlugin = {
   name: "high-contrast",
 
   onComponentProps(componentName, props) {
@@ -207,7 +207,7 @@ The processing order is:
 The `componentDefaults` record provides default prop values for named components. These are merged across all plugins, with later plugins overriding earlier ones. User-provided props always take precedence.
 
 ```ts
-const compactPlugin: StormPlugin = {
+const compactPlugin: ReactermPlugin = {
   name: "compact-layout",
 
   componentDefaults: {
@@ -257,7 +257,7 @@ const all = app.pluginManager.getAll();
 
 ### vim-mode
 
-Storm TUI ships with a `vimModePlugin` that adds j/k navigation to list-style components:
+Reacterm TUI ships with a `vimModePlugin` that adds j/k navigation to list-style components:
 
 ```ts
 import { vimModePlugin } from "reacterm";
@@ -271,7 +271,7 @@ This plugin uses `componentDefaults` to set `keyBindings` on `Select`, `Menu`, a
 
 ```ts
 // What vimModePlugin does internally:
-const vimModePlugin: StormPlugin = {
+const vimModePlugin: ReactermPlugin = {
   name: "vim-mode",
   componentDefaults: {
     Select: { keyBindings: { next: "j", prev: "k" } },
@@ -294,7 +294,7 @@ Since these are defaults, users can still override key bindings per-component:
 Plugin setup can be async -- useful for loading config from files, databases, or APIs:
 
 ```tsx
-const myPlugin: StormPlugin = {
+const myPlugin: ReactermPlugin = {
   name: "my-plugin",
   async setup(context, config) {
     const data = await fetch(config.apiUrl);
@@ -326,7 +326,7 @@ The bus also supports one-shot subscriptions via `context.bus.once(channel, hand
 Restrict a plugin's effect to a specific subtree:
 
 ```tsx
-const sidebarPlugin: StormPlugin = {
+const sidebarPlugin: ReactermPlugin = {
   name: "sidebar-styles",
   scope: "sidebar",
   onComponentProps(name, props) {

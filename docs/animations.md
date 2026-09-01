@@ -1,6 +1,6 @@
-# Storm TUI Animations
+# Reacterm TUI Animations
 
-Storm TUI provides both imperative and declarative animation APIs. All animations integrate with the global `AnimationScheduler`, which batches frame updates onto a single timer and calls `requestRender()` once per tick.
+Reacterm TUI provides both imperative and declarative animation APIs. All animations integrate with the global `AnimationScheduler`, which batches frame updates onto a single timer and calls `requestRender()` once per tick.
 
 ## Animation approaches
 
@@ -281,7 +281,7 @@ If a child that is mid-exit reappears (same key), AnimatePresence cancels the ex
 
 ## Easing functions
 
-All animation APIs accept easing functions. Storm TUI provides these built-in options:
+All animation APIs accept easing functions. Reacterm TUI provides these built-in options:
 
 | Name | Curve | Use case |
 |------|-------|----------|
@@ -297,7 +297,7 @@ The `spring` easing is available in `useTransition` but not in the `Transition` 
 
 ### Why imperative is faster
 
-Storm TUI uses a custom React reconciler where state updates do not automatically flush renders (unlike browser React). Animation hooks use refs and `requestRender()` for imperative mutation, which avoids:
+Reacterm TUI uses a custom React reconciler where state updates do not automatically flush renders (unlike browser React). Animation hooks use refs and `requestRender()` for imperative mutation, which avoids:
 
 - React reconciliation overhead on every frame
 - Unnecessary virtual DOM diffing

@@ -15,7 +15,7 @@ function Counter() {
 
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold color="#82AAFF">Storm Counter</Text>
+      <Text bold color="#82AAFF">Reacterm Counter</Text>
       <Text>
         Seconds elapsed: <Text bold color="#9ECE6A">{countRef.current}</Text>
       </Text>

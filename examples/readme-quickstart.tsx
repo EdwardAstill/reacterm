@@ -8,7 +8,7 @@ function App() {
   return (
     <Box padding={1}>
       <Spinner type="diamond" color="#82AAFF" />
-      <Text bold color="#82AAFF"> storm is alive</Text>
+      <Text bold color="#82AAFF"> reacterm is alive</Text>
     </Box>
   );
 }

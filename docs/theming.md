@@ -1,11 +1,11 @@
 # Theming & Styling
 
-Storm's styling system has four layers — from low-level colors to high-level interaction identity:
+Reacterm's styling system has four layers — from low-level colors to high-level interaction identity:
 
 1. **Theme** — color palette with auto-generated shades, 11 presets, WCAG validation
 2. **StyleSheet** — CSS-like selectors with specificity cascading
 3. **Personality** — holistic interaction identity (colors + borders + animation + typography)
-4. **Live Stylesheets** — `.storm.css` files with CSS variables and hot reload
+4. **Live Stylesheets** — `.reacterm.css` files with CSS variables and hot reload
 
 ## Default Theme
 
@@ -34,13 +34,13 @@ colors.error    // "#F87171" -- Soft red
 colors.info     // "#7AA2F7" -- Blue info
 ```
 
-The full `StormColors` type includes semantic groups for `syntax`, `diff`, `tool` status, `approval` dialogs, `input` borders, `thinking` indicators, `user`/`assistant`/`system` roles, and `divider` color.
+The full `ReactermColors` type includes semantic groups for `syntax`, `diff`, `tool` status, `approval` dialogs, `input` borders, `thinking` indicators, `user`/`assistant`/`system` roles, and `divider` color.
 
 ## Built-in Presets
 
-Storm ships 11 professionally curated themes: 7 branded palettes with distinct character, plus 4 utility presets.
+Reacterm ships 11 professionally curated themes: 7 branded palettes with distinct character, plus 4 utility presets.
 
-### Storm-Branded Themes
+### Reacterm-Branded Themes
 
 | Preset | Brand Color | Character |
 |--------|-------------|-----------|
@@ -104,7 +104,7 @@ function StatusBar() {
 
 ## Auto-Generated Shades
 
-For every semantic color, Storm generates six variants by mixing with white (lighten) or black (darken):
+For every semantic color, Reacterm generates six variants by mixing with white (lighten) or black (darken):
 
 ```typescript
 import { generateShades } from "reacterm";
@@ -222,14 +222,14 @@ const contrastResult = validateContrast(myTheme);
 A personality goes beyond theming — it defines the complete interaction identity: colors, borders, animation timing, typography, and component defaults in one coherent object.
 
 ```typescript
-import type { StormPersonality } from "reacterm";
+import type { ReactermPersonality } from "reacterm";
 ```
 
 ### Structure
 
 ```typescript
-interface StormPersonality {
-  colors: StormColors;                    // Color palette (any theme)
+interface ReactermPersonality {
+  colors: ReactermColors;                 // Color palette (any theme)
 
   borders: {
     default: BorderStyle;                 // Normal state
@@ -297,7 +297,7 @@ function MyComponent() {
 
 # StyleSheet (CSS-like Selectors)
 
-Storm supports CSS-like stylesheets with selector specificity:
+Reacterm supports CSS-like stylesheets with selector specificity:
 
 ```typescript
 import { createStyleSheet } from "reacterm";
@@ -314,7 +314,7 @@ Specificity scoring: ID=100, pseudo-class/class=10, type=1.
 
 ---
 
-# Live Stylesheets (.storm.css)
+# Live Stylesheets (.reacterm.css)
 
 Load stylesheets from files with hot reload — edit the file and see changes instantly:
 
@@ -322,12 +322,12 @@ Load stylesheets from files with hot reload — edit the file and see changes in
 import { useStyleSheet } from "reacterm";
 
 function App() {
-  useStyleSheet({ path: "./app.storm.css", watch: true });
+  useStyleSheet({ path: "./app.reacterm.css", watch: true });
   return <Box className="sidebar">...</Box>;
 }
 ```
 
-### .storm.css Format
+### .reacterm.css Format
 
 ```css
 /* CSS variables */
@@ -369,7 +369,7 @@ Supports:
 
 ### Available Style Properties
 
-These are the properties you can use in `.storm.css` rules. Values are auto-parsed from strings: `true`/`false` become booleans, integer/float strings become numbers, percentages are preserved as strings, and everything else stays as a string.
+These are the properties you can use in `.reacterm.css` rules. Values are auto-parsed from strings: `true`/`false` become booleans, integer/float strings become numbers, percentages are preserved as strings, and everything else stays as a string.
 
 | Property | Type | Applies to |
 |---|---|---|
@@ -395,7 +395,7 @@ These are the properties you can use in `.storm.css` rules. Values are auto-pars
 
 ### Selector Types
 
-Selectors follow CSS conventions adapted for Storm components:
+Selectors follow CSS conventions adapted for Reacterm components:
 
 | Selector | Example | Specificity | Matches |
 |---|---|---|---|
@@ -408,12 +408,12 @@ Selectors follow CSS conventions adapted for Storm components:
 
 Higher specificity wins when multiple rules match the same element.
 
-### Complete .storm.css Example
+### Complete .reacterm.css Example
 
 Here is a full example showing a dashboard stylesheet:
 
 ```css
-/* dashboard.storm.css */
+/* dashboard.reacterm.css */
 
 :root {
   /* Theme variables */
@@ -423,10 +423,10 @@ Here is a full example showing a dashboard stylesheet:
   --surface-raised: #1C1C1C;
   --dim: #505050;
 
-  /* Storm theme overrides (picked up by useStyleSheet themeOverrides) */
-  --storm-brand-primary: #82AAFF;
-  --storm-surface-base: #0A0A0A;
-  --storm-success: #34D399;
+  /* Reacterm theme overrides (picked up by useStyleSheet themeOverrides) */
+  --reacterm-brand-primary: #82AAFF;
+  --reacterm-surface-base: #0A0A0A;
+  --reacterm-success: #34D399;
 }
 
 // Global defaults
@@ -484,13 +484,13 @@ Button:focus {
 
 ### Theme Overrides via CSS Variables
 
-Variables named `--storm-{group}-{key}` are automatically extracted and can be passed to `ThemeProvider`, bridging the gap between `.storm.css` files and the theme system:
+Variables named `--reacterm-{group}-{key}` are automatically extracted and can be passed to `ThemeProvider`, bridging the gap between `.reacterm.css` files and the theme system:
 
 ```tsx
 import { useStyleSheet, extendTheme, ThemeProvider, colors } from "reacterm";
 
 function App() {
-  const { themeOverrides } = useStyleSheet({ path: "./app.storm.css", watch: true });
+  const { themeOverrides } = useStyleSheet({ path: "./app.reacterm.css", watch: true });
   const mergedTheme = extendTheme(colors, themeOverrides);
 
   return (
@@ -502,8 +502,8 @@ function App() {
 ```
 
 The naming convention for theme variables:
-- Flat fields: `--storm-success`, `--storm-warning`, `--storm-error`, `--storm-info`, `--storm-divider`
-- Nested fields: `--storm-brand-primary`, `--storm-text-dim`, `--storm-surface-base`, `--storm-input-border-active` (hyphens after the group name are converted to camelCase)
+- Flat fields: `--reacterm-success`, `--reacterm-warning`, `--reacterm-error`, `--reacterm-info`, `--reacterm-divider`
+- Nested fields: `--reacterm-brand-primary`, `--reacterm-text-dim`, `--reacterm-surface-base`, `--reacterm-input-border-active` (hyphens after the group name are converted to camelCase)
 
 Valid group names: `brand`, `text`, `surface`, `system`, `user`, `assistant`, `thinking`, `tool`, `approval`, `input`, `diff`, `syntax`.
 

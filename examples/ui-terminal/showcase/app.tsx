@@ -1,5 +1,5 @@
 /**
- * Showcase demo picker — small Storm TUI that lists the 8 demo screens
+ * Showcase demo picker — small Reacterm TUI that lists the 8 demo screens
  * and exits with a code the bash dispatcher turns into a `bun run` of
  * the actual demo file.
  *

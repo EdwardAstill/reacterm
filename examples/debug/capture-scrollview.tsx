@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
 /**
- * Captures raw ANSI output to /tmp/storm-capture.txt for debugging.
+ * Captures raw ANSI output to /tmp/reacterm-capture.txt for debugging.
  * Run this, wait for it to render, press q to exit, then inspect the file.
  */
 import React from "react";
@@ -9,9 +9,9 @@ import { writeFileSync, appendFileSync } from "fs";
 
 // Intercept stdout to capture raw ANSI
 const origWrite = process.stdout.write.bind(process.stdout);
-writeFileSync("/tmp/storm-capture.txt", "");
+writeFileSync("/tmp/reacterm-capture.txt", "");
 process.stdout.write = (chunk: any, ...args: any[]) => {
-  appendFileSync("/tmp/storm-capture.txt", typeof chunk === "string" ? chunk : chunk.toString());
+  appendFileSync("/tmp/reacterm-capture.txt", typeof chunk === "string" ? chunk : chunk.toString());
   return (origWrite as any)(chunk, ...args);
 };
 
@@ -48,7 +48,7 @@ function App() {
           </Box>
         </Box>
       </ScrollView>
-      <Text dim>Press q. Then: cat /tmp/storm-capture.txt | cat -v</Text>
+      <Text dim>Press q. Then: cat /tmp/reacterm-capture.txt | cat -v</Text>
     </Box>
   );
 }

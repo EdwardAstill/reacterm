@@ -1,4 +1,4 @@
-# Storm TUI Demo Recording
+# Reacterm TUI Demo Recording
 
 Output examples/demo.gif
 Output examples/demo.mp4
@@ -12,7 +12,7 @@ Set Padding 20
 Set Theme "Hardcore"
 
 Hide
-Type "npx tsx examples/storm-website.tsx"
+Type "npx tsx examples/reacterm-website.tsx"
 Show
 Enter
 Sleep 26s

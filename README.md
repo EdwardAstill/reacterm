@@ -5,7 +5,7 @@
     <img src="assets/logo-black.png" width="56" alt="" valign="middle">
   </picture>
   <br>
-  <strong style="font-size: 2em;">STORM</strong><br>
+  <strong style="font-size: 2em;">REACTERM</strong><br>
   <strong>A compositor-based terminal UI framework.</strong><br>
   Fast. Layered. Unstoppable.
 </p>
@@ -19,13 +19,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.producthunt.com/products/storm-4?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-storm-5" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1115184&theme=dark&t=1775249991586" alt="Storm on Product Hunt" width="250" height="54" /></a>
-</p>
-
-<br>
-
-<p align="center">
-  <img src="examples/demo.gif" width="720" alt="Storm TUI Demo">
+  <img src="examples/demo.gif" width="720" alt="Reacterm TUI Demo">
 </p>
 
 <p align="center">
@@ -34,9 +28,9 @@
 
 <br>
 
-## Why Storm
+## Why Reacterm
 
-Most terminal frameworks treat your terminal like a string printer. Storm treats it like a **display server**.
+Most terminal frameworks treat your terminal like a string printer. Reacterm treats it like a **display server**.
 
 **Cell-level diff** — only changed cells are written. 97% are skipped per frame.<br>
 **Dual-speed rendering** — React for structure, `requestRender()` for 60fps animation.<br>
@@ -66,7 +60,7 @@ function App() {
   return (
     <Box padding={1}>
       <Spinner type="diamond" color="#82AAFF" />
-      <Text bold color="#82AAFF"> storm is alive</Text>
+      <Text bold color="#82AAFF"> reacterm is alive</Text>
     </Box>
   );
 }
@@ -80,7 +74,7 @@ That's 10 lines. You have a running TUI with animated spinner and keyboard input
 
 ## Testing
 
-Storm apps can be tested without spawning a terminal. `reacterm/testing`
+Reacterm apps can be tested without spawning a terminal. `reacterm/testing`
 provides `renderForTest` for component output, `renderDriver` for full app
 flows, declarative scenario replay, bounded explorer runs, SVG/text artifacts,
 and optional PTY smoke checks for real terminal lifecycle behavior.
@@ -93,7 +87,7 @@ await driver.press("tab").expectText("Ready").assertNoWarnings();
 driver.unmount();
 ```
 
-See [Testing Storm Apps](docs/testing.md) for driver, scenario, explorer, and
+See [Testing Reacterm Apps](docs/testing.md) for driver, scenario, explorer, and
 PTY examples.
 
 <br>
@@ -154,7 +148,7 @@ Every frame flows through five stages: **React → Layout → Buffer → Diff �
   </picture>
 </p>
 
-On a typical scroll frame, **97% of cells are unchanged**. Storm skips them entirely — emitting only the bytes for mutated cells. The typed-array buffer eliminates ~30,000 Cell objects per frame.
+On a typical scroll frame, **97% of cells are unchanged**. Reacterm skips them entirely — emitting only the bytes for mutated cells. The typed-array buffer eliminates ~30,000 Cell objects per frame.
 
 **Other rendering features:**
 - **DECSTBM hardware scroll** — terminal-native scroll regions for pure scroll ops
@@ -192,7 +186,7 @@ All four run as render middleware — non-blocking, the app keeps running.
 **99 components** — Box, Text, ScrollView, Tabs, Modal, Table, TreeTable, DataGrid, Tree, Form, Select, CommandPalette, TextArea, Editor, Markdown, DatePicker, Spinner (14 types), DiffView, Calendar, and more. [Browse all →](docs/components.md)<br>
 **15 AI widgets** — OperationTree, MessageBubble, ApprovalPrompt, StreamingText, SyntaxHighlight, TokenStream, ContextWindow, CostTracker. [Browse all →](docs/widgets.md)<br>
 **83 hooks** — 4 tiers: Essential, Common, Interactive, and 20 headless behavior hooks. [Decision matrix →](docs/hook-guide.md)<br>
-**12 themes** — Arctic, Midnight, Ember, Voltage, Neon, High Contrast + live `.storm.css` hot-reload. [Guide →](docs/theming.md)<br>
+**12 themes** — Arctic, Midnight, Ember, Voltage, Neon, High Contrast + live `.reacterm.css` hot-reload. [Guide →](docs/theming.md)<br>
 **Animations** — `<Transition>` enter/exit, `<AnimatePresence>` mount/unmount, spring physics. [Guide →](docs/animations.md)<br>
 **Plugins** — Vim mode, compact mode, auto-scroll, screenshot, status bar. [Guide →](docs/plugins.md)<br>
 **i18n** — Locales, RTL, pluralization for EN/FR/AR/RU/JA. [Guide →](docs/i18n.md)<br>
@@ -203,10 +197,10 @@ All four run as render middleware — non-blocking, the app keeps running.
 ## Get started
 
 ```bash
-bun examples/storm-code/index.tsx    # AI coding agent
-bun examples/storm-ops/index.tsx     # Operations dashboard
+bun examples/reacterm-code/index.tsx # AI coding agent
+bun examples/reacterm-ops/index.tsx  # Operations dashboard
 bun examples/devtools-demo.tsx       # DevTools showcase
-bun examples/storm-website.tsx       # This README's demo
+bun examples/reacterm-website.tsx    # This README's demo
 ```
 
 There is no compile step. Edit `src/`, run `bun run typecheck` for type errors, `bun run test` to run the test suite. `bun link` makes the in-repo build available globally for `reacterm demo`.

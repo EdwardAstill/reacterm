@@ -1,5 +1,5 @@
 /**
- * Storm TUI theme catalog.
+ * Reacterm TUI theme catalog.
  *
  * Each theme is a self-contained bundle of colors + stylistic knobs
  * (border glyphs, button rendering). The app reads the active theme
