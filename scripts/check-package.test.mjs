@@ -161,3 +161,37 @@ test("rejects an allowed source file containing an external absolute workspace p
   const { failures } = validate({ contents });
   assert.match(failures.join("\n"), /external absolute workspace path in src\/index\.ts/);
 });
+
+test("rejects external workspace file URLs across POSIX, Windows, and UNC forms", async (t) => {
+  const externalFileUrls = [
+    "file:///Users/alice/work/reacterm/src/secret.ts",
+    "file:///home/alice/projects/reacterm/src/secret.ts",
+    "file:///C:/workspace/reacterm/src/secret.ts",
+    "file://server/share/projects/reacterm/src/secret.ts",
+  ];
+
+  for (const fileUrl of externalFileUrls) {
+    await t.test(fileUrl, () => {
+      const contents = {
+        "src/index.ts": `export const secret = "${fileUrl}";\n`,
+      };
+
+      const { failures } = validate({ contents });
+      assert.match(failures.join("\n"), /external absolute workspace path in src\/index\.ts/);
+    });
+  }
+});
+
+test("accepts non-file URLs and intentional virtual or runtime paths", () => {
+  const contents = {
+    "src/index.ts": String.raw`
+      export const remote = "https://example.com/Users/alice/work/reacterm/src/secret.ts";
+      export const virtual = "/src/index.ts";
+      export const demo = "/demo/src";
+      export const tty = "/dev/tty";
+      export const trace = "C:\Users\you\stdin-trace.log";
+    `,
+  };
+
+  assert.deepEqual(validate({ contents }).failures, []);
+});

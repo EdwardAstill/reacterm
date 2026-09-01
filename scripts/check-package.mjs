@@ -52,8 +52,34 @@ const isAllowedPackagePath = (filePath) => {
   return !forbiddenPathPatterns.some(([pattern]) => pattern.test(filePath));
 };
 
-const hasExternalWorkspacePath = (contents) =>
+const hasWorkspacePath = (contents) =>
   externalWorkspacePathPatterns.some((pattern) => pattern.test(contents));
+
+const normalizeFileUrlPath = (value) => {
+  try {
+    const url = new URL(value);
+    const pathname = decodeURIComponent(url.pathname);
+
+    if (url.hostname && url.hostname !== "localhost") {
+      return `\\\\${url.hostname}${pathname.replaceAll("/", "\\")}`;
+    }
+
+    if (/^\/[A-Za-z]:\//.test(pathname)) return pathname.slice(1);
+    return pathname;
+  } catch {
+    return null;
+  }
+};
+
+const hasExternalWorkspacePath = (contents) => {
+  if (hasWorkspacePath(contents)) return true;
+
+  const fileUrls = contents.match(/\bfile:\/\/[^\s"'`)<>{}\]]+/gi) ?? [];
+  return fileUrls.some((value) => {
+    const normalizedPath = normalizeFileUrlPath(value);
+    return normalizedPath !== null && hasWorkspacePath(normalizedPath);
+  });
+};
 
 const collectReports = (packJson, failures) => {
   if (Array.isArray(packJson)) return packJson;
