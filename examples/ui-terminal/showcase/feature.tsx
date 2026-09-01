@@ -22,7 +22,7 @@ import {
   useApp,
   useTerminal,
 } from "../../../src/index.js";
-import { THEMES, renderButton, type TuiTheme, type TuiPalette, type BorderStyleName } from "../themes";
+import { THEMES, renderButton, type TuiTheme, type TuiPalette, type BorderStyleName } from "../themes.js";
 
 let chosenCode = 0;
 
@@ -114,10 +114,11 @@ function ThemeSidebar({
             <Box key={t.id} flexDirection="row" alignItems="center">
               <Text
                 color={isActive ? theme.colors.selected : theme.colors.fg}
-                backgroundColor={
-                  isActive ? theme.colors.selectedBg :
-                  isFocused ? theme.colors.border : undefined
-                }
+                {...(isActive
+                  ? { backgroundColor: theme.colors.selectedBg }
+                  : isFocused
+                    ? { backgroundColor: theme.colors.border }
+                    : {})}
                 bold={isActive || isFocused}
               >
                 {" "}{t.emoji} {t.name.padEnd(14)}
@@ -299,7 +300,7 @@ function PickerView<T extends { id: string; label: string; desc: string }>({
             const applied = isApplied(item);
             return (
               <Box key={item.id} flexDirection="row" gap={1} alignItems="center"
-                backgroundColor={isCursor ? c.selectedBg : undefined}>
+                {...(isCursor ? { backgroundColor: c.selectedBg } : {})}>
                 <Text color={isCursor ? c.borderFocus : c.dim}>{isCursor ? cursorChar : " "}</Text>
                 <Text color={isCursor ? c.borderFocus : c.fg} bold={isCursor}>{item.label}</Text>
                 {applied && <Text color={c.accent}> ✓</Text>}
@@ -583,7 +584,7 @@ function App() {
                       )}
                       <Text
                         color={isFocused ? c.selected : c.fg}
-                        backgroundColor={isFocused ? c.selectedBg : undefined}
+                        {...(isFocused ? { backgroundColor: c.selectedBg } : {})}
                         bold={isFocused}
                       >
                         {indent}{toggle}{node.label}
@@ -618,7 +619,7 @@ function App() {
                       bold={isActive || showHint}
                       dim={!isActive && !showHint}
                       color={showHint ? c.borderFocus : (isActive ? c.selected : c.fg)}
-                      backgroundColor={isActive ? c.selectedBg : (showHint ? c.selectedBg : undefined)}
+                      {...(isActive || showHint ? { backgroundColor: c.selectedBg } : {})}
                     >
                       {showHint ? ` [${i + 1}] ${labels[k]} ` : ` ${i + 1} ${labels[k]} `}
                     </Text>
@@ -633,7 +634,7 @@ function App() {
                   <PickerView
                     title="Pane Borders"
                     hint="j/k · Enter apply"
-                    statusText={appliedBorderStyle ? `applied: ${appliedBorderStyle}` : undefined}
+                    {...(appliedBorderStyle ? { statusText: `applied: ${appliedBorderStyle}` } : {})}
                     items={BORDER_DEMOS}
                     cursorIdx={activePane === "top" ? borderDemoIdx : -1}
                     isApplied={demo => !!demo.borderStyle && demo.borderStyle === appliedBorderStyle}
@@ -687,7 +688,7 @@ function App() {
                       <Box flexDirection="column" gap={1}>
                         {["Item One", "Item Two", "Item Three"].map((label, i) => (
                           <Box key={label} flexDirection="row" gap={1}
-                            backgroundColor={i === 1 ? c.selectedBg : undefined}>
+                            {...(i === 1 ? { backgroundColor: c.selectedBg } : {})}>
                             <Text color={i === 1 ? c.borderFocus : c.dim}>{i === 1 ? opt.char : " "}</Text>
                             <Text color={i === 1 ? c.borderFocus : c.fg} bold={i === 1}>{label}</Text>
                           </Box>

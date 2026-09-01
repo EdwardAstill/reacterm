@@ -14,6 +14,8 @@ import {
   useTui,
   useInterval,
   useInput,
+  type KeyEvent,
+  type LogLevel,
   type OpNode,
   type LogEntry,
 } from "../../src/index.js";
@@ -165,7 +167,7 @@ export function Dashboard({ model, onExit }: DashboardProps): React.ReactElement
   const eventsRef = useRef<LogEntry[]>([
     { text: "Reacterm Ops initialized", level: "info", timestamp: ts() },
     { text: "3 agents registered", level: "info", timestamp: ts() },
-    { text: "Governance policies loaded (5 active)", level: "success", timestamp: ts() },
+    { text: "Governance policies loaded (5 active)", level: "info", color: S.success, timestamp: ts() },
   ]);
 
   // Diff
@@ -191,16 +193,19 @@ export function Dashboard({ model, onExit }: DashboardProps): React.ReactElement
   const pendingAgeRef = useRef(0);
 
   // -- Keyboard input --
-  useInput(useCallback((input: string) => {
-    if (input === "q") {
+  useInput(useCallback((event: KeyEvent) => {
+    if (event.key === "q") {
       onExit();
     }
   }, [onExit]));
 
   // -- Helper: push event (capped at 50) --
-  const pushEvent = (text: string, level: "info" | "warn" | "error" | "debug" | "success") => {
+  const pushEvent = (text: string, level: LogLevel | "success") => {
     const events = eventsRef.current;
-    events.push({ text, level, timestamp: ts() });
+    const entry: LogEntry = level === "success"
+      ? { text, level: "info", color: S.success, timestamp: ts() }
+      : { text, level, timestamp: ts() };
+    events.push(entry);
     if (events.length > 50) events.splice(0, events.length - 50);
   };
 
@@ -464,7 +469,7 @@ function MetricsSidebar({ p50, p99, p50History, p99History, flex }: {
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

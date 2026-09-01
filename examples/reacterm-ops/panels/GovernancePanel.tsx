@@ -35,7 +35,7 @@ export function GovernancePanel({ pendingApprovals, policiesActive, policiesPass
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

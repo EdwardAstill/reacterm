@@ -152,7 +152,7 @@ function App() {
               <Text color={c.fg}>  HSI  T/W</Text>
             </Box>
             <Box flex={1} />
-            <Box flexDirection="column" alignItems="flex-end">
+            <Box flexDirection="column" alignItems="end">
               <Box flexDirection="row" gap={1}>
                 <Label text="ATS" />
                 <Text color={atsLabel === "OFF" ? c.red : c.fg} bold>{atsLabel}</Text>
@@ -235,7 +235,7 @@ function App() {
           </Box>
 
           <Box flex={1} />
-          <Box flexDirection="row" justifyContent="flex-end">
+          <Box flexDirection="row" justifyContent="end">
             <Box borderStyle="single" borderColor={c.line} paddingX={1}>
               <Text color={c.fg}>LOC</Text>
             </Box>

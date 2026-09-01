@@ -19,7 +19,7 @@ import {
   useApp,
   useTerminal,
 } from "../../../src/index.js";
-import { THEMES, renderButton, type TuiTheme, type ButtonStyle } from "../themes";
+import { THEMES, renderButton, type TuiTheme, type ButtonStyle } from "../themes.js";
 
 let chosenCode = 0;
 
@@ -56,10 +56,11 @@ function ThemeSidebar({
             <Box key={t.id} flexDirection="row" alignItems="center">
               <Text
                 color={isActive ? theme.colors.selected : theme.colors.fg}
-                backgroundColor={
-                  isActive ? theme.colors.selectedBg :
-                  isFocused ? theme.colors.border : undefined
-                }
+                {...(isActive
+                  ? { backgroundColor: theme.colors.selectedBg }
+                  : isFocused
+                    ? { backgroundColor: theme.colors.border }
+                    : {})}
                 bold={isActive || isFocused}
               >
                 {" "}{t.emoji} {t.name.padEnd(14)}

@@ -156,8 +156,8 @@ section("Layout Engine");
   // Invalidate cache on entire tree so each iteration does real work
   function dirtyAll(node: LayoutNode): void {
     node.dirty = true;
-    node._prevProps = undefined;
-    node._prevWidth = undefined;
+    delete node._prevProps;
+    delete node._prevWidth;
     for (const child of node.children) dirtyAll(child);
   }
 

@@ -265,7 +265,7 @@ function App() {
                         <Text color={c.dim}>  └ </Text>
                         <Text
                           color={active ? c.accentFg : c.fg}
-                          backgroundColor={active ? c.accent : undefined}
+                          {...(active ? { backgroundColor: c.accent } : {})}
                           bold={active}
                         >
                           {` ${sp.genus.padEnd(HIGHLIGHT_W - 2)}`}
@@ -275,7 +275,7 @@ function App() {
                         <Text color={c.dim}>    </Text>
                         <Text
                           color={active ? c.accentFg : c.dim}
-                          backgroundColor={active ? c.accent : undefined}
+                          {...(active ? { backgroundColor: c.accent } : {})}
                         >
                           {` (${sp.common})${" ".repeat(Math.max(0, HIGHLIGHT_W - sp.common.length - 4))}`}
                         </Text>
@@ -307,7 +307,7 @@ function App() {
               const color = active ? c.accentFg : c.fg;
               const bg = active ? c.accent : undefined;
               return (
-                <Box key={obs.id} flexDirection="row" backgroundColor={bg}>
+                <Box key={obs.id} flexDirection="row" {...(bg === undefined ? {} : { backgroundColor: bg })}>
                   <Text color={color}>{" " + obs.id + "  "}</Text>
                   <Text color={active ? c.accentFg : c.dim}>│ </Text>
                   <Text color={color}>{obs.time + "  "}</Text>

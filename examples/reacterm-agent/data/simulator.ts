@@ -21,7 +21,7 @@ export interface SimulatorCallbacks {
   /** Called for memory operations. */
   onMemoryOp: (action: string, content: string) => void;
   /** Called when the agent wants to use a tool. Returns a Promise that resolves to true (approved) or false (denied). */
-  onToolCall: (name: string, params: Record<string, unknown>, riskLevel: string) => Promise<boolean>;
+  onToolCall: (name: string, params: Record<string, unknown>, riskLevel: NonNullable<Message["riskLevel"]>) => Promise<boolean>;
   /** Called with tool results after approval. */
   onToolResult: (result: string) => void;
   /** Called for the assistant response. Content streams word-by-word. */
@@ -145,12 +145,13 @@ export function simulate(
     await wait(initialDelay + 200);
     if (cancelled) return;
 
-    callbacks.onMemoryOp(step.memoryAction ?? "unknown", step.content);
+    const memoryAction = step.memoryAction ?? "unknown";
+    callbacks.onMemoryOp(memoryAction, step.content);
     collectedMessages.push({
       id: makeId(),
       type: "memory_op",
       content: step.content,
-      memoryAction: step.memoryAction,
+      memoryAction,
       timestamp: Date.now(),
     });
   }

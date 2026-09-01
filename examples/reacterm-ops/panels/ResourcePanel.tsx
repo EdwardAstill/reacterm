@@ -44,7 +44,7 @@ export function ResourcePanel({ cpu, memory, gpu, cpuHistory, memHistory, gpuHis
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

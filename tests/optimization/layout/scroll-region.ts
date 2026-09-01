@@ -17,7 +17,7 @@ console.log(`\n  DECSTBM Scroll Region Tests — ${W}×${H}\n`);
 
 function setupScrollState(ctx: RenderContext, id: string, scrollTop: number, y1: number, y2: number) {
   ctx.scrollViewStates.set(id, {
-    scrollTop, contentHeight: 100, viewportHeight: y2 - y1 + 1,
+    scrollTop,
     screenX1: 0, screenX2: W, screenY1: y1, screenY2: y2,
   });
 }
@@ -128,7 +128,7 @@ console.log("  5. Non-full-width — DECSTBM skipped");
   for (let y = 0; y < H; y++) buf.writeString(0, y, `N_${y}`.padEnd(W));
   // screenX2 < W — not full width
   ctx.scrollViewStates.set("sv1", {
-    scrollTop: 0, contentHeight: 100, viewportHeight: 10,
+    scrollTop: 0,
     screenX1: 5, screenX2: 25, screenY1: 2, screenY2: 12,
   });
   ctx.swapScrollStates();
@@ -137,7 +137,7 @@ console.log("  5. Non-full-width — DECSTBM skipped");
   buf.clearPaintedRows();
   for (let y = 0; y < H; y++) buf.writeString(0, y, `N_${y + 1}`.padEnd(W));
   ctx.scrollViewStates.set("sv1", {
-    scrollTop: 1, contentHeight: 100, viewportHeight: 10,
+    scrollTop: 1,
     screenX1: 5, screenX2: 25, screenY1: 2, screenY2: 12,
   });
   const r = diff.render(buf, undefined, ctx);

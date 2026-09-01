@@ -184,8 +184,8 @@ section("Layout \u2014 Extreme Tree Sizes");
   // Invalidate cache on entire tree so each iteration does real work
   function dirtyAll(node: LayoutNode): void {
     node.dirty = true;
-    node._prevProps = undefined;
-    node._prevWidth = undefined;
+    delete node._prevProps;
+    delete node._prevWidth;
     for (const child of node.children) dirtyAll(child);
   }
 
@@ -398,7 +398,7 @@ section("DECSTBM Scroll Regions \u2014 Timing + Byte Comparison");
     // Shift all rows up by 1 — this is what happens without scroll regions
     for (let y = 0; y < H - 1; y++) {
       for (let x = 0; x < W; x++) {
-        buf1.setCell(x, y, { char: buf1.getChar(x, y + 1), fg: buf1.getFg(x, y + 1), bg: buf1.getBg(x, y + 1), attrs: buf1.getAttrs(x, y + 1) });
+        buf1.setCell(x, y, { char: buf1.getChar(x, y + 1), fg: buf1.getFg(x, y + 1), bg: buf1.getBg(x, y + 1), attrs: buf1.getAttrs(x, y + 1), ulColor: buf1.getUlColor(x, y + 1) });
       }
     }
     buf1.writeString(0, H - 1, `New line ${performance.now().toFixed(0)} ${"fresh content ".repeat(7)}`.slice(0, W));
@@ -419,7 +419,7 @@ section("DECSTBM Scroll Regions \u2014 Timing + Byte Comparison");
     // Same buffer shift work as without DECSTBM
     for (let y = 0; y < H - 1; y++) {
       for (let x = 0; x < W; x++) {
-        buf2.setCell(x, y, { char: buf2.getChar(x, y + 1), fg: buf2.getFg(x, y + 1), bg: buf2.getBg(x, y + 1), attrs: buf2.getAttrs(x, y + 1) });
+        buf2.setCell(x, y, { char: buf2.getChar(x, y + 1), fg: buf2.getFg(x, y + 1), bg: buf2.getBg(x, y + 1), attrs: buf2.getAttrs(x, y + 1), ulColor: buf2.getUlColor(x, y + 1) });
       }
     }
     const newRow = `New line ${performance.now().toFixed(0)} ${"fresh content ".repeat(7)}`.slice(0, W);

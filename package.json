@@ -39,6 +39,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
+    "typecheck:examples": "tsc -p tsconfig.examples.json --noEmit",
+    "typecheck:tools": "tsc -p tsconfig.tools.json --noEmit",
+    "typecheck:all": "bun run typecheck && bun run typecheck:tests && bun run typecheck:examples && bun run typecheck:tools",
     "dev": "tsc --noEmit --watch",
     "test": "vitest run",
     "test:watch": "vitest",

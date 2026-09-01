@@ -96,28 +96,26 @@ console.log("  4. Overlay content changes");
   r.unmount();
 }
 
-// ── 5. Two overlays — z-order ───────────────────────────────────
-console.log("  5. Two overlays z-order");
+// ── 5. Two overlays — mount ordering ────────────────────────────
+console.log("  5. Two overlays mount ordering");
 {
-  const mk = (z1: number, z2: number) => React.createElement(Box,
+  const mk = () => React.createElement(Box,
     { flexDirection: "column", width: W, height: H },
     React.createElement(Text, null, "BG"),
-    React.createElement(Overlay, { visible: true, zIndex: z1 },
+    React.createElement(Overlay, { visible: true },
       React.createElement(Text, null, "OVERLAY_A"),
     ),
-    React.createElement(Overlay, { visible: true, zIndex: z2 },
+    React.createElement(Overlay, { visible: true },
       React.createElement(Text, null, "OVERLAY_B"),
     ),
   );
 
-  const r = renderToString(mk(1, 2), { width: W, height: H });
-  // Both visible — B is on top (higher z)
+  const r = renderToString(mk(), { width: W, height: H });
+  // Both mount cleanly; the overlay manager owns their ordering.
   check("both visible", r.output.includes("OVERLAY_A") || r.output.includes("OVERLAY_B"));
 
-  // Swap z-order
-  const r2 = r.rerender(mk(2, 1));
-  // A is now on top — should still render without artifacts
-  check("z-swap no crash", r2.output.length > 0);
+  const r2 = r.rerender(mk());
+  check("rerender no crash", r2.output.length > 0);
 
   r.unmount();
 }

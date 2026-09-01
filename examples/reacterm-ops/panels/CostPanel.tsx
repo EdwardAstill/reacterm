@@ -39,7 +39,7 @@ export function CostPanel({ inputTokens, outputTokens, totalCost, flex }: CostPa
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

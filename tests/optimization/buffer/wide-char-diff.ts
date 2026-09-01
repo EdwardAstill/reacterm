@@ -119,7 +119,7 @@ console.log("  Component level:");
 {
   const mk = (bg?: string) => React.createElement(Box,
     { width: 20, height: 3 },
-    React.createElement(Text, { backgroundColor: bg }, "中文测试")
+    React.createElement(Text, bg === undefined ? {} : { backgroundColor: bg }, "中文测试")
   );
 
   const r = renderToString(mk(), { width: 20, height: 3 });

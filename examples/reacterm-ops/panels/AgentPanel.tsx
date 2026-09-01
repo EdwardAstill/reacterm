@@ -39,7 +39,7 @@ export function AgentPanel({ agents, flex }: AgentPanelProps): React.ReactElemen
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

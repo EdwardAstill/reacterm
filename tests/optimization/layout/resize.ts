@@ -11,6 +11,8 @@ import { InputManager } from "../../../src/input/manager.js";
 import { buildLayoutTree } from "../../../src/reconciler/renderer.js";
 import { computeLayout } from "../../../src/layout/engine.js";
 import { isTuiElement } from "../../../src/reconciler/types.js";
+import { Screen } from "../../../src/core/screen.js";
+import type { TuiContextValue } from "../../../src/context/TuiContext.js";
 
 let pass = 0, fail = 0;
 
@@ -27,6 +29,20 @@ function bufToLines(buf: ScreenBuffer): string[] {
     lines.push(line.trimEnd());
   }
   return lines;
+}
+
+function createTuiContext(renderContext: RenderContext): TuiContextValue {
+  return {
+    screen: new Screen({ alternateScreen: false, mouse: false, rawMode: false }),
+    input: new InputManager(),
+    focus: renderContext.focus,
+    renderContext,
+    exit: () => {},
+    requestRender: () => {},
+    flushSync: (fn) => { fn(); },
+    clear: () => {},
+    commitText: () => {},
+  };
 }
 
 console.log(`\n  Resize Tests\n`);
@@ -72,22 +88,13 @@ console.log("  3. Buffer dimensions match paint dimensions");
 {
   const ctx = new RenderContext();
   const root = createRoot(() => { ctx.invalidateLayout(); });
-  const input = new InputManager();
-  const mkCtx = (w: number, h: number) => ({
-    screen: { width: w, height: h, stdout: process.stdout, stdin: process.stdin,
-      write:()=>{},start:()=>{},stop:()=>{},flush:()=>{},
-      getBuffer:()=>new ScreenBuffer(w,h),createBuffer:()=>new ScreenBuffer(w,h),
-      invalidate:()=>{},setDebugRainbow:()=>{},setCursor:()=>{},
-      setCursorVisible:()=>{},onResizeEvent:()=>()=>{},isActive:false,
-    }, input, focus: ctx.focus, renderContext: ctx,
-    exit:()=>{},requestRender:()=>{},flushSync:(fn: () => void)=>{fn();},clear:()=>{},commitText:()=>{},
-  });
+  const tuiContext = createTuiContext(ctx);
   const container = TuiReconciler.createContainer(root, 0, null, false, null, '', () => {}, null);
 
   const el = React.createElement("tui-text", null, "TEST");
 
   // Paint at 40x10
-  syncContainerUpdate(React.createElement(TuiProvider, { value: mkCtx(40, 10) }, el), container);
+  syncContainerUpdate(React.createElement(TuiProvider, { value: tuiContext }, el), container);
   ctx.invalidateLayout();
   const r1 = paint(root, 40, 10, ctx);
   check("buffer 40x10", r1.buffer.width === 40 && r1.buffer.height === 10,
@@ -105,7 +112,7 @@ console.log("  3. Buffer dimensions match paint dimensions");
   check("buffer resized to 80x24", r3.buffer.width === 80 && r3.buffer.height === 24,
     `got ${r3.buffer.width}x${r3.buffer.height}`);
 
-  syncContainerUpdate(null as any, container);
+  TuiReconciler.updateContainer(null, container, null, null);
 }
 
 // ── 4. Content reflows on resize ────────────────────────────────
@@ -137,16 +144,7 @@ console.log("  5. No stale content after shrink");
 {
   const ctx = new RenderContext();
   const root = createRoot(() => { ctx.invalidateLayout(); });
-  const input = new InputManager();
-  const mkCtx = (w: number, h: number) => ({
-    screen: { width: w, height: h, stdout: process.stdout, stdin: process.stdin,
-      write:()=>{},start:()=>{},stop:()=>{},flush:()=>{},
-      getBuffer:()=>new ScreenBuffer(w,h),createBuffer:()=>new ScreenBuffer(w,h),
-      invalidate:()=>{},setDebugRainbow:()=>{},setCursor:()=>{},
-      setCursorVisible:()=>{},onResizeEvent:()=>()=>{},isActive:false,
-    }, input, focus: ctx.focus, renderContext: ctx,
-    exit:()=>{},requestRender:()=>{},flushSync:(fn: () => void)=>{fn();},clear:()=>{},commitText:()=>{},
-  });
+  const tuiContext = createTuiContext(ctx);
   const container = TuiReconciler.createContainer(root, 0, null, false, null, '', () => {}, null);
 
   // Fill 40x10 with content
@@ -155,7 +153,7 @@ console.log("  5. No stale content after shrink");
       React.createElement("tui-text", { key: i }, `ROW_${i}_LONG_CONTENT_HERE`)
     )
   );
-  syncContainerUpdate(React.createElement(TuiProvider, { value: mkCtx(40, 10) }, bigEl), container);
+  syncContainerUpdate(React.createElement(TuiProvider, { value: tuiContext }, bigEl), container);
   ctx.invalidateLayout();
   paint(root, 40, 10, ctx);
 
@@ -163,7 +161,7 @@ console.log("  5. No stale content after shrink");
   const smallEl = React.createElement("tui-box", { flexDirection: "column" },
     React.createElement("tui-text", null, "SMALL"),
   );
-  syncContainerUpdate(React.createElement(TuiProvider, { value: mkCtx(20, 3) }, smallEl), container);
+  syncContainerUpdate(React.createElement(TuiProvider, { value: tuiContext }, smallEl), container);
   ctx.invalidateLayout();
   const r = paint(root, 20, 3, ctx);
   const lines = bufToLines(r.buffer);
@@ -172,7 +170,7 @@ console.log("  5. No stale content after shrink");
   check("shrunk no old content", !lines.some(l => l.includes("ROW_")),
     `stale: ${lines.find(l => l.includes("ROW_"))}`);
 
-  syncContainerUpdate(null as any, container);
+  TuiReconciler.updateContainer(null, container, null, null);
 }
 
 console.log(`\n  Resize: ${pass} passed, ${fail} failed\n`);

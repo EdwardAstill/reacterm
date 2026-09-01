@@ -21,7 +21,7 @@ import {
   useApp,
   useTerminal,
 } from "../../src/index.js";
-import { THEMES } from "./themes";
+import { THEMES } from "./themes.js";
 
 let chosenCode = 0;
 
@@ -110,7 +110,7 @@ function Menu() {
               <Box key={it.code} flexDirection="row" alignItems="center" gap={1}>
                 <Text
                   color={isFocused ? c.selected : c.dim}
-                  backgroundColor={isFocused ? c.selectedBg : undefined}
+                  {...(isFocused ? { backgroundColor: c.selectedBg } : {})}
                   bold={isFocused}
                 >
                   {isFocused ? " ▶ " : "   "}
@@ -123,7 +123,7 @@ function Menu() {
                 </Text>
                 <Text
                   color={isFocused ? c.selected : c.fg}
-                  backgroundColor={isFocused ? c.selectedBg : undefined}
+                  {...(isFocused ? { backgroundColor: c.selectedBg } : {})}
                   bold={isFocused}
                 >
                   {` ${platformTag}  ${it.label.padEnd(24)} `}

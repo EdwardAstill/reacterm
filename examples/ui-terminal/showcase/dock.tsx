@@ -32,6 +32,7 @@ import {
   useInput,
   useApp,
   useTerminal,
+  type TreeNode,
   type TreeController,
 } from "../../../src/index.js";
 
@@ -305,6 +306,17 @@ function flattenVisible(nodes: Section[], expandedIds: Set<string>, level = 0): 
   return out;
 }
 
+function restoreSections(nodes: TreeNode[], sectionById: ReadonlyMap<string, Section>): Section[] {
+  return nodes.map((node) => {
+    const source = sectionById.get(node.key);
+    if (!source) throw new Error(`Unknown section key: ${node.key}`);
+    const { children: _previousChildren, ...section } = source;
+    return node.children
+      ? { ...section, children: restoreSections(node.children, sectionById) }
+      : section;
+  });
+}
+
 // Block cursor: render the char at `cursorIdx` with inverted colors (bg = fg).
 // At end-of-string, render a space with inverted colors. No blink.
 function EditableText({ value, cursorIdx, focused }: {
@@ -390,13 +402,13 @@ function App() {
   // Derived
   const flatTree = useMemo(() => flattenVisible(sections, expandedIds), [expandedIds, sections]);
   const treeNodes = useMemo(() => {
-    const mapNodes = (nodes: Section[]): Array<{ key: string; label: string; expanded?: boolean; icon?: string; children?: ReturnType<typeof mapNodes> }> =>
+    const mapNodes = (nodes: Section[]): TreeNode[] =>
       nodes.map((node) => ({
         key: node.id,
         label: node.label,
         expanded: expandedIds.has(node.id),
         icon: node.kind === "folder" ? "▤" : "▢",
-        children: node.children ? mapNodes(node.children) : undefined,
+        ...(node.children ? { children: mapNodes(node.children) } : {}),
       }));
     return mapNodes(sections);
   }, [expandedIds, sections]);
@@ -821,7 +833,7 @@ function App() {
                 controller={treeCtrl}
                 reorderable
                 onReorder={(change) => {
-                  setSections(change.nextNodes as Section[]);
+                  setSections(restoreSections(change.nextNodes, sectionById));
                   if (change.expandedKeys.length > 0) {
                     setExpandedIds((prev) => new Set([...prev, ...change.expandedKeys]));
                   }
@@ -870,7 +882,7 @@ function App() {
                   return (
                     <Text
                       color={C.fg}
-                      backgroundColor={state.isSelected ? C.selectedBg : undefined}
+                      {...(state.isSelected ? { backgroundColor: C.selectedBg } : {})}
                       bold={state.isHighlighted}
                     >
                       {"  ".repeat(state.depth)}{toggle} {icon} {node.label}
@@ -1166,7 +1178,7 @@ function App() {
                 <Box key={p.path} flexDirection="row" gap={1}>
                   <Text color={cursor ? C.borderFocused : C.bg}>{cursor ? "❯" : " "}</Text>
                   <Text color={C.fg}
-                    backgroundColor={cursor ? C.selectedBg : undefined}
+                    {...(cursor ? { backgroundColor: C.selectedBg } : {})}
                     bold={cursor}>
                     {` ${p.name.padEnd(26)} `}
                   </Text>
@@ -1221,7 +1233,7 @@ function App() {
                 if (!match) return null;
                 const alreadyAdded = activeProjectCalcs.includes(match.id);
                 return (
-                  <Box flexDirection="row" gap={1} backgroundColor={state.isActive ? C.selectedBg : undefined}>
+                  <Box flexDirection="row" gap={1} {...(state.isActive ? { backgroundColor: C.selectedBg } : {})}>
                     <Text color={state.isActive ? C.borderFocused : C.bg}>{state.isActive ? "❯" : " "}</Text>
                     <Text color={state.isActive ? C.tabActive : C.fg} bold={state.isActive}>
                       {` ${match.name.padEnd(22)} `}

@@ -222,7 +222,7 @@ export function ChatScreen({ agent, onExit }: ChatScreenProps): React.ReactEleme
                     content: `Auto-approved: ${name}`,
                     toolName: name,
                     toolParams: params,
-                    riskLevel: riskLevel as Message["riskLevel"],
+                    riskLevel,
                     timestamp: Date.now(),
                   },
                 ]);
@@ -237,7 +237,7 @@ export function ChatScreen({ agent, onExit }: ChatScreenProps): React.ReactEleme
                     content: `Requesting approval: ${name}`,
                     toolName: name,
                     toolParams: params,
-                    riskLevel: riskLevel as Message["riskLevel"],
+                    riskLevel,
                     timestamp: Date.now(),
                   },
                 ]);

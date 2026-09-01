@@ -30,9 +30,9 @@ function App({ session }: { session: SSHSession }) {
         <Spinner type="dots" />
         <Text> Reacterm is running</Text>
       </Box>
-      <Text dim marginTop={1}>
-        Press Ctrl+C to disconnect
-      </Text>
+      <Box marginTop={1}>
+        <Text dim>Press Ctrl+C to disconnect</Text>
+      </Box>
     </Box>
   );
 }

@@ -98,7 +98,7 @@ function Picker() {
               <Box key={d.code} flexDirection="row" alignItems="center" gap={1}>
                 <Text
                   color={isFocused ? "#0b0b0d" : dim}
-                  backgroundColor={isFocused ? selBg : undefined}
+                  {...(isFocused ? { backgroundColor: selBg } : {})}
                   bold={isFocused}
                 >
                   {isFocused ? " ▶ " : "   "}
@@ -108,7 +108,7 @@ function Picker() {
                 </Text>
                 <Text
                   color={isFocused ? fg : fg}
-                  backgroundColor={isFocused ? selBg : undefined}
+                  {...(isFocused ? { backgroundColor: selBg } : {})}
                   bold={isFocused}
                 >
                   {` ${d.label.padEnd(18)} `}

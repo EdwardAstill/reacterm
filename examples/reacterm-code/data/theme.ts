@@ -71,7 +71,8 @@ export function toggleTheme(): ReactermTheme {
 
 /** Shorthand — components use `S.arc`, `S.text`, etc. */
 export const S = new Proxy({} as ReactermTheme, {
-  get(_target, prop: string) {
-    return (current as Record<string, string>)[prop];
+  get(_target, prop: string | symbol) {
+    if (typeof prop !== "string" || !Object.prototype.hasOwnProperty.call(current, prop)) return undefined;
+    return current[prop as keyof ReactermTheme];
   },
 });

@@ -135,7 +135,8 @@ function hasCodeBlock(content: string): boolean {
 function extractCodeBlock(content: string): { language: string; code: string } | null {
   const match = content.match(/```(\w*)\n?([\s\S]*?)```/);
   if (!match) return null;
-  return { language: match[1] || "text", code: match[2].trimEnd() };
+  const [, language = "", code = ""] = match;
+  return { language: language || "text", code: code.trimEnd() };
 }
 
 function ToolOutputContent({ content }: { content: string }) {

@@ -196,7 +196,7 @@ function App() {
                 )}
                 <Text
                   color={focused ? c.fg : c.fg}
-                  backgroundColor={focused ? c.selBg : undefined}
+                  {...(focused ? { backgroundColor: c.selBg } : {})}
                   bold={focused}
                 >
                   {n.label}

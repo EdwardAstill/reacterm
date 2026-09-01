@@ -35,7 +35,7 @@ export function MetricsPanel({ p50History, p99History, latencyTrend, flex }: Met
   return (
     <Box
       flexDirection="column"
-      flex={flex}
+      {...(flex === undefined ? {} : { flex })}
       borderStyle="round"
       borderColor={S.panelBorder}
       overflow="hidden"

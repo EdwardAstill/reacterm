@@ -66,7 +66,7 @@ function Card({
         borderColor={c.border}
         backgroundColor={c.bgDark}
         paddingX={1}
-        width={width}
+        {...(width === undefined ? {} : { width })}
       >
         {title !== undefined && (
           <Box flexDirection="row" marginBottom={1}>
@@ -111,14 +111,14 @@ function App() {
       let n = current;
       for (let i = 0; i < list.length; i++) {
         n = (n + 1) % list.length;
-        if (list[n]!.label !== "" && (list[n] as any).enabled !== false) break;
+        if (list[n]!.label !== "" && list[n]!.enabled !== false) break;
       }
       setter(n);
     } else if (e.key === "k" || e.key === "up") {
       let n = current;
       for (let i = 0; i < list.length; i++) {
         n = (n - 1 + list.length) % list.length;
-        if (list[n]!.label !== "" && (list[n] as any).enabled !== false) break;
+        if (list[n]!.label !== "" && list[n]!.enabled !== false) break;
       }
       setter(n);
     }
@@ -154,7 +154,7 @@ function App() {
               <Text
                 key={i}
                 color={color}
-                backgroundColor={focused ? c.accentBg : undefined}
+                {...(focused ? { backgroundColor: c.accentBg } : {})}
                 bold={focused}
                 dim={!item.enabled}
               >
@@ -179,7 +179,7 @@ function App() {
               <Text
                 key={i}
                 color={c.fg}
-                backgroundColor={focused ? c.accentBg : undefined}
+                {...(focused ? { backgroundColor: c.accentBg } : {})}
                 bold={focused}
               >
                 {` ${item.padEnd(12)}`}
