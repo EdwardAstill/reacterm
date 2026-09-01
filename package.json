@@ -4,10 +4,15 @@
   "description": "reacterm — compositor-based terminal UI framework for React",
   "type": "module",
   "files": [
-    "src",
-    "bin",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/__tests__/**",
+    "!src/**/*.test.ts",
+    "bin/reacterm.ts",
+    "bin/reacterm-run-module.mjs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CONTRIBUTING.md"
   ],
   "bin": {
     "reacterm": "./bin/reacterm.ts"
@@ -51,7 +56,9 @@
     "test:pty": "vitest run --config vitest.config.ts src/__tests__/testing-pty.test.ts",
     "test:package": "vitest run --config vitest.package.config.ts",
     "test:api": "vitest run --config vitest.config.ts src/__tests__/api-surface.test.ts",
-    "test:all": "bun run test && bun run test:pty && bun run test:api && bun run typecheck",
+    "check:package": "node scripts/check-package.mjs",
+    "audit": "bun audit",
+    "test:all": "bun run typecheck:all && bun run test && bun run test:pty && bun run test:api && bun run test:package && bun run check:package && bun run audit",
     "clean": "rm -rf dist",
     "playground": "cd playground && bun install --silent 2>/dev/null && node server.mjs"
   },
@@ -73,14 +80,14 @@
     "chafa-wasm": "^0.3.3",
     "react": "^19.0.0",
     "ssh2": "^1.17.0",
-    "tsx": "^4.21.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.2",
-    "ws": "^8.20.0"
+    "vitest": "^4.1.11",
+    "ws": "^8.21.3"
   },
   "dependencies": {
     "commander": "^12",
-    "js-yaml": "^4",
+    "js-yaml": "^4.3.1",
     "react-reconciler": "^0.31.0",
     "zod": "^3"
   }
