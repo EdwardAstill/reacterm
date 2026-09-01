@@ -265,6 +265,15 @@ function parseReactermJSON(source: string): ParsedStyleSheet {
  * Detect file format and parse accordingly.
  */
 function parseFile(filePath: string, source: string): ParsedStyleSheet {
+  const fileName = path.basename(filePath).toLowerCase();
+  const removedBrand = ["sto", "rm"].join("");
+  if (
+    fileName.endsWith(`.${removedBrand}.css`) ||
+    fileName.endsWith(`.${removedBrand}.json`)
+  ) {
+    throw new Error("Removed stylesheet filename. Use .reacterm.css or .reacterm.json.");
+  }
+
   const ext = path.extname(filePath).toLowerCase();
   if (ext === ".json") {
     return parseReactermJSON(source);

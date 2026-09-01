@@ -158,7 +158,7 @@ export function ShowcaseRichContent(props: ShowcaseRichContentProps): React.Reac
     gap(),
     React.createElement("tui-box", { key: "img-banner", marginLeft: 2 },
       React.createElement(Image, {
-        src: imagePath ?? path.join(process.cwd(), "examples", "reacterm-banner.png"),
+        src: imagePath ?? path.join(process.cwd(), "examples", "storm-banner.png"),
         alt: "Reacterm Banner",
         width: 60,
         height: 10,

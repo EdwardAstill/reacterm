@@ -35,4 +35,21 @@ describe("Reacterm stylesheet formats", () => {
       rmSync(directory, { recursive: true, force: true });
     }
   });
+
+  it.each(["css", "json"] as const)("rejects the removed .%s stylesheet name", (format) => {
+    const removedBrand = ["sto", "rm"].join("");
+    const directory = mkdtempSync(join(tmpdir(), "reacterm-legacy-stylesheet-"));
+    const filePath = join(directory, `app.${removedBrand}.${format}`);
+    const source = format === "json"
+      ? '{"Text":{"color":"cyan"}}'
+      : "Text { color: cyan; }";
+    writeFileSync(filePath, source, "utf8");
+
+    try {
+      expect(() => createStyleSheetLoader({ path: filePath, watch: false }))
+        .toThrow(/Use \.reacterm\.(?:css|json)/);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
 });
