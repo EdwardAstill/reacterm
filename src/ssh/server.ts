@@ -181,7 +181,7 @@ export class ReactermSSHServer {
   private readonly options: ReactermSSHOptions;
   private server: InstanceType<SSH2Module["Server"]> | null = null;
   private activeSessions = new Set<ActiveSession>();
-  private activeClientFinalizers = new Set<() => void>();
+  private activeClientShutdowns = new Set<() => void>();
   private activeConnectionCount = 0;
   private rateLimiter = new AuthRateLimiter();
 
@@ -225,9 +225,14 @@ export class ReactermSSHServer {
             finalizeSession();
           }
           this.activeConnectionCount--;
-          this.activeClientFinalizers.delete(finalizeClient);
+          this.activeClientShutdowns.delete(shutdownClient);
         };
-        this.activeClientFinalizers.add(finalizeClient);
+        const shutdownClient = () => {
+          if (clientFinalized) return;
+          try { client.end(); } catch { /* ignore */ }
+          finalizeClient();
+        };
+        this.activeClientShutdowns.add(shutdownClient);
 
         // Attach handlers immediately so every connection exit shares one finalizer.
         client.on("error", finalizeClient);
@@ -243,16 +248,14 @@ export class ReactermSSHServer {
 
         // Connection limit
         if (this.activeConnectionCount > maxConns) {
-          finalizeClient();
-          try { client.end(); } catch { /* ignore */ }
+          shutdownClient();
           return;
         }
 
         // Rate limit check
         if (this.rateLimiter.isLimited(remoteAddress)) {
           this.emit({ type: "rate-limited", remoteAddress });
-          finalizeClient();
-          try { client.end(); } catch { /* ignore */ }
+          shutdownClient();
           return;
         }
 
@@ -263,8 +266,7 @@ export class ReactermSSHServer {
         if (authTimeout > 0) {
           authTimer = setTimeout(() => {
             if (!authenticated) {
-              finalizeClient();
-              try { client.end(); } catch { /* ignore */ }
+              shutdownClient();
             }
           }, authTimeout);
         }
@@ -468,8 +470,8 @@ export class ReactermSSHServer {
     for (const session of this.activeSessions) {
       try { session.sshSession.disconnect(); } catch { /* ignore */ }
     }
-    for (const finalizeClient of this.activeClientFinalizers) {
-      finalizeClient();
+    for (const shutdownClient of this.activeClientShutdowns) {
+      shutdownClient();
     }
 
     return new Promise<void>((resolve) => {

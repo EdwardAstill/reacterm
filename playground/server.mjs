@@ -1,6 +1,5 @@
 import { createServer } from "node:http";
 import { readFileSync, writeFileSync, existsSync, mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join, extname } from "node:path";
 import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
@@ -16,6 +15,17 @@ const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576;
 const DEFAULT_MAX_PAYLOAD_BYTES = 1_048_576;
 const TERMINATION_GRACE_MS = 1_000;
 const TSX_CLI = join(PROJECT_ROOT, "node_modules", "tsx", "dist", "cli.mjs");
+const CONTENT_SECURITY_POLICY =
+  "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+  "connect-src 'self'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+const VENDOR_FILES = new Map([
+  ["/vendor/xterm/xterm.css", join(__dirname, "node_modules", "xterm", "css", "xterm.css")],
+  ["/vendor/xterm/xterm.js", join(__dirname, "node_modules", "xterm", "lib", "xterm.js")],
+  [
+    "/vendor/xterm-addon-fit/xterm-addon-fit.js",
+    join(__dirname, "node_modules", "xterm-addon-fit", "lib", "xterm-addon-fit.js"),
+  ],
+]);
 
 // ── Static file server ──────────────────────────────────────────────
 
@@ -42,6 +52,8 @@ export function createPlaygroundServer(options = {}) {
   });
 
   const server = createServer((req, res) => {
+    res.setHeader("Content-Security-Policy", CONTENT_SECURITY_POLICY);
+    res.setHeader("Referrer-Policy", "no-referrer");
     if (handleFileApiRequest(req, res, fileApi)) return;
 
     const parsed = new URL(req.url ?? "/", "http://127.0.0.1");
@@ -54,7 +66,7 @@ export function createPlaygroundServer(options = {}) {
       return;
     }
 
-    const filePath = join(__dirname, "public", staticPath);
+    const filePath = VENDOR_FILES.get(staticPath) ?? join(__dirname, "public", staticPath);
     if (!existsSync(filePath)) {
       res.writeHead(404);
       res.end("Not Found");
@@ -165,7 +177,7 @@ function wireTerminalSocket(wss, { maxRunMs, maxOutputBytes, spawnProcess }) {
         let tmpFile;
         let proc;
         try {
-          directory = mkdtempSync(join(tmpdir(), "reacterm-playground-"));
+          directory = mkdtempSync(join(PROJECT_ROOT, ".reacterm-playground-"));
           tmpFile = join(directory, "example.tsx");
           writeFileSync(tmpFile, String(msg.code ?? ""), "utf-8");
 
@@ -322,8 +334,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   })
     .then(({ baseUrl }) => {
       console.log(`\n  Reacterm Playground`);
-      console.log(`  ${baseUrl}`);
-      console.log(`  token: ${app.token}\n`);
+      console.log(`  ${baseUrl}/?token=${encodeURIComponent(app.token)}\n`);
     })
     .catch((error) => {
       console.error(`  Failed to start: ${error.message}`);

@@ -1,7 +1,7 @@
 # Reacterm Clean-Break Hardening Design
 
-**Date:** 2026-08-31  
-**Status:** Approved  
+**Date:** 2026-08-31<br>
+**Status:** Approved<br>
 **Scope:** Full Storm debranding plus the urgent security, lifecycle, layering, validation, dependency, and release-hygiene work identified during the repository audit.
 
 ## Context

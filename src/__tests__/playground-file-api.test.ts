@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { spawn as spawnChild } from "node:child_process";
 import { EventEmitter, once } from "node:events";
 import {
   existsSync,
@@ -9,7 +10,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { PassThrough } from "node:stream";
 import WebSocket from "ws";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -23,10 +24,19 @@ class FakeChild extends EventEmitter {
   readonly stderr = new PassThrough();
   killed = false;
   readonly killSignals: Array<NodeJS.Signals | undefined> = [];
+  private closeScheduled = false;
+
+  constructor(private readonly closeOnTerminate = true) {
+    super();
+  }
 
   kill(signal?: NodeJS.Signals) {
     this.killed = true;
     this.killSignals.push(signal);
+    if (this.closeOnTerminate && signal === "SIGTERM" && !this.closeScheduled) {
+      this.closeScheduled = true;
+      queueMicrotask(() => this.emit("close", null, signal));
+    }
     return true;
   }
 }
@@ -272,6 +282,52 @@ describe("playground file API", () => {
     expect(response.status).toBe(200);
     expect(body).toContain("Reacterm Playground");
   });
+
+  it("serves the playground page with restrictive browser security headers", async () => {
+    const app = createPlaygroundServer({ root: tmpRoot, token: "test-token" });
+    const server = await listenServer(app.server);
+    closeServer = server.close;
+
+    const response = await fetch(`${server.baseUrl}/`);
+
+    expect(response.headers.get("content-security-policy")).toBe(
+      "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+      "connect-src 'self'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    );
+    expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+  });
+
+  it("references only local xterm browser assets", async () => {
+    const app = createPlaygroundServer({ root: tmpRoot, token: "test-token" });
+    const server = await listenServer(app.server);
+    closeServer = server.close;
+
+    const response = await fetch(`${server.baseUrl}/`);
+    const body = await response.text();
+
+    expect(body).toContain('href="/vendor/xterm/xterm.css"');
+    expect(body).toContain('src="/vendor/xterm/xterm.js"');
+    expect(body).toContain('src="/vendor/xterm-addon-fit/xterm-addon-fit.js"');
+    expect(body).not.toContain("cdn.jsdelivr.net");
+    expect(body).not.toMatch(/<(?:script|link)[^>]+https?:\/\//i);
+  });
+
+  it.each([
+    ["/vendor/xterm/xterm.css", "text/css; charset=utf-8", ".xterm"],
+    ["/vendor/xterm/xterm.js", "text/javascript; charset=utf-8", "Terminal"],
+    ["/vendor/xterm-addon-fit/xterm-addon-fit.js", "text/javascript; charset=utf-8", "FitAddon"],
+  ])("serves the locked browser asset at %s", async (path, contentType, marker) => {
+    const app = createPlaygroundServer({ root: tmpRoot, token: "test-token" });
+    const server = await listenServer(app.server);
+    closeServer = server.close;
+
+    const response = await fetch(`${server.baseUrl}${path}`);
+    const body = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe(contentType);
+    expect(body).toContain(marker);
+  });
 });
 
 describe("playground file handoff page", () => {
@@ -353,6 +409,78 @@ describe("playground runner boundary", () => {
     expect(host).toBe("127.0.0.1");
   });
 
+  it("prints a directly usable tokenized startup URL", async () => {
+    const token = "a b&c/?";
+    const child = spawnChild(process.execPath, [join(process.cwd(), "playground", "server.mjs")], {
+      cwd: process.cwd(),
+      env: {
+        ...process.env,
+        PORT: "0",
+        REACTERM_PLAYGROUND_TOKEN: token,
+      },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
+    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+
+    try {
+      await waitFor(() => expect(stdout).toMatch(/^\s*http:\/\/127\.0\.0\.1:\d+\/\?token=/m));
+      const displayedUrl = stdout
+        .split("\n")
+        .map((line) => line.trim())
+        .find((line) => line.startsWith("http://"));
+
+      expect(displayedUrl).toBeDefined();
+      expect(displayedUrl).toContain("?token=a%20b%26c%2F%3F");
+      expect(new URL(displayedUrl!).searchParams.get("token")).toBe(token);
+      expect(stderr).toBe("");
+    } finally {
+      child.kill("SIGTERM");
+      if (child.exitCode === null) await once(child, "close");
+    }
+  });
+
+  it("runs the built-in React and project imports through the real runner", async () => {
+    const { baseUrl } = await start();
+    const ws = await openRunner(baseUrl);
+    const output: string[] = [];
+    let exitMessage: { type: string; code: number | null } | undefined;
+    const finished = new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error("Timed out waiting for playground run")), 5_000);
+      ws.on("message", (raw: WebSocket.RawData) => {
+        const message = JSON.parse(raw.toString());
+        if (message.type === "output") output.push(Buffer.from(message.data, "base64").toString());
+        if (message.type === "exit") {
+          exitMessage = message;
+          clearTimeout(timeout);
+          resolve();
+        }
+      });
+    });
+
+    try {
+      ws.send(JSON.stringify({
+        type: "run",
+        code: [
+          'import React from "react";',
+          'import * as Reacterm from "../src/index.js";',
+          'console.log("imports-ok", typeof React.createElement, typeof Reacterm.render);',
+        ].join("\n"),
+        cols: 80,
+        rows: 24,
+      }));
+      await finished;
+
+      expect(output.join("")).toContain("imports-ok function function");
+      expect(exitMessage).toEqual({ type: "exit", code: 0 });
+    } finally {
+      ws.close();
+      await once(ws, "close");
+    }
+  });
+
   it("terminates the previous child when a socket starts another run", async () => {
     const children: FakeChild[] = [];
     const { baseUrl } = await start({
@@ -400,7 +528,7 @@ describe("playground runner boundary", () => {
     const { baseUrl } = await start({
       spawnProcess: (_command: string, args: string[]) => {
         spawnCalls.push({ args });
-        const child = new FakeChild();
+        const child = new FakeChild(false);
         children.push(child);
         return child;
       },
@@ -501,20 +629,23 @@ describe("playground runner boundary", () => {
     await once(ws, "close");
   });
 
-  it("reports temporary-run setup failures without escaping the socket handler", async () => {
-    const originalTmpDir = process.env.TMPDIR;
-    const { baseUrl } = await start();
+  it("reports run setup failures without escaping the socket handler", async () => {
+    const { baseUrl } = await start({
+      spawnProcess: () => {
+        throw new Error("spawn setup failed");
+      },
+    });
     const ws = await openRunner(baseUrl);
     try {
       const error = once(ws, "message");
-      process.env.TMPDIR = join(tmpRoot, "missing-temp-parent");
       ws.send(JSON.stringify({ type: "run", code: "console.log('ok')", cols: 80, rows: 24 }));
       const [raw] = await error;
 
-      expect(JSON.parse(raw.toString())).toMatchObject({ type: "error" });
+      expect(JSON.parse(raw.toString())).toMatchObject({
+        type: "error",
+        message: "spawn setup failed",
+      });
     } finally {
-      if (originalTmpDir === undefined) delete process.env.TMPDIR;
-      else process.env.TMPDIR = originalTmpDir;
       ws.close();
       await once(ws, "close");
     }
@@ -547,7 +678,7 @@ describe("playground runner boundary", () => {
     await once(ws, "close");
   });
 
-  it("uses a unique temporary file for each run and removes it after exit", async () => {
+  it("uses a unique project-local temporary file for each run and removes it after exit", async () => {
     const children: FakeChild[] = [];
     const spawnCalls: Array<{ args: string[] }> = [];
     const { baseUrl } = await start({
@@ -562,6 +693,7 @@ describe("playground runner boundary", () => {
     ws.send(JSON.stringify({ type: "run", code: "console.log('first')", cols: 80, rows: 24 }));
     await waitFor(() => expect(spawnCalls).toHaveLength(1));
     const firstFile = spawnCalls[0]!.args.at(-1)!;
+    expect(relative(process.cwd(), firstFile)).toMatch(/^\.reacterm-playground-[^/\\]+[/\\]example\.tsx$/);
     expect(existsSync(firstFile)).toBe(true);
 
     children[0]!.emit("close", 0, null);

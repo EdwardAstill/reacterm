@@ -128,11 +128,11 @@ describe("semantic overlay layers", () => {
         React.createElement(OverlayProvider, null, React.createElement(BoundaryWindows)),
         { width: 80, height: 24 },
       );
+      expect(error.mock.calls.flat().join(" ")).not.toContain("Cannot update a component while rendering");
     } finally {
       error.mockRestore();
     }
 
-    expect(error.mock.calls.flat().join(" ")).not.toContain("Cannot update a component while rendering");
     expect(result!.hasText("FRONT")).toBe(true);
     result!.click(12, 7);
     expect(result!.hasText("BACK")).toBe(true);

@@ -1,10 +1,13 @@
 import React from "react";
 import { EventEmitter } from "node:events";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import type { SSHEvent } from "../ssh/server.js";
 
 const ssh2State = vi.hoisted(() => ({
   onConnection: undefined as ((client: unknown) => void) | undefined,
+  closeWaitsForClientEnd: false,
+  clientEnded: false,
+  closeCallback: undefined as (() => void) | undefined,
 }));
 
 const renderState = vi.hoisted(() => ({
@@ -25,7 +28,11 @@ vi.mock("ssh2", async () => {
     }
 
     close(callback: () => void): void {
-      callback();
+      if (!ssh2State.closeWaitsForClientEnd || ssh2State.clientEnded) {
+        callback();
+      } else {
+        ssh2State.closeCallback = callback;
+      }
     }
   }
 
@@ -40,7 +47,7 @@ import { ReactermSSHServer } from "../ssh/server.js";
 
 interface FakeClient extends EventEmitter {
   _sock: { remoteAddress: string };
-  end: ReturnType<typeof vi.fn>;
+  end: Mock<() => void>;
 }
 
 interface FakeChannel extends EventEmitter {
@@ -49,10 +56,16 @@ interface FakeChannel extends EventEmitter {
 }
 
 function makeClient(remoteAddress: string): FakeClient {
-  return Object.assign(new EventEmitter(), {
+  const client = Object.assign(new EventEmitter(), {
     _sock: { remoteAddress },
-    end: vi.fn(),
+    end: vi.fn(() => {
+      ssh2State.clientEnded = true;
+      const callback = ssh2State.closeCallback;
+      ssh2State.closeCallback = undefined;
+      callback?.();
+    }),
   });
+  return client;
 }
 
 function makeChannel(): FakeChannel {
@@ -119,6 +132,9 @@ function sessionEnds(events: SSHEvent[]): SSHEvent[] {
 describe("ReactermSSHServer teardown", () => {
   beforeEach(() => {
     ssh2State.onConnection = undefined;
+    ssh2State.closeWaitsForClientEnd = false;
+    ssh2State.clientEnded = false;
+    ssh2State.closeCallback = undefined;
     renderState.unmount.mockReset();
   });
 
@@ -234,6 +250,28 @@ describe("ReactermSSHServer teardown", () => {
     channel.emit("close");
     client.emit("close");
 
+    expect(activeClientCount(server)).toBe(0);
+    expect(renderState.unmount).toHaveBeenCalledTimes(1);
+    expect(sessionEnds(events)).toHaveLength(1);
+  });
+
+  it("ends a retained client transport before waiting for the server close callback", async () => {
+    ssh2State.closeWaitsForClientEnd = true;
+    const { server, events } = makeServer();
+    await server.listen();
+    const client = makeClient("192.0.2.9");
+    connect(client);
+    const channel = openSession(client);
+
+    const closePromise = server.close();
+    const endCallsBeforeManualCleanup = client.end.mock.calls.length;
+    if (endCallsBeforeManualCleanup === 0) client.end();
+    await closePromise;
+    channel.emit("close");
+    client.emit("close");
+
+    expect(endCallsBeforeManualCleanup).toBe(1);
+    expect(client.end).toHaveBeenCalledTimes(1);
     expect(activeClientCount(server)).toBe(0);
     expect(renderState.unmount).toHaveBeenCalledTimes(1);
     expect(sessionEnds(events)).toHaveLength(1);

@@ -44,8 +44,8 @@ Reacterm ships 11 professionally curated themes: 7 branded palettes with distinc
 
 | Preset | Brand Color | Character |
 |--------|-------------|-----------|
-| **Arctic** `arcticTheme` | `#5CB8C8` storm frost | Cool Nordic blue-grey, Scandinavian clarity |
-| **Midnight** `midnightTheme` | `#6B9EF0` storm midnight | Deep blue night, violet info tones |
+| **Arctic** `arcticTheme` | `#5CB8C8` Nordic frost | Cool Nordic blue-grey, Scandinavian clarity |
+| **Midnight** `midnightTheme` | `#6B9EF0` midnight blue | Deep blue night, violet info tones |
 | **Ember** `emberTheme` | `#6EB0A0` teal undercurrent | Warm earth, toasted neutrals, amber glow |
 | **Mist** `mistTheme` | `#78B0E8` gentle blue | Soft pastels, lavender info, soothing |
 | **Voltage** `voltageTheme` | `#A080E8` blue-violet | Vivid electric, maximum visual punch |
