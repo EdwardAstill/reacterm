@@ -2,7 +2,7 @@ import React from "react";
 import { fmtNum, fmtCost } from "../../utils/format.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 
 export interface CostTrackerProps {
   inputTokens: number;
@@ -18,7 +18,7 @@ export interface CostTrackerProps {
   renderCost?: (cost: number, currency: string) => React.ReactNode;
 }
 
-function costColor(total: number, colors: StormColors): string {
+function costColor(total: number, colors: ReactermColors): string {
   if (total >= 1) return colors.error;
   if (total >= 0.1) return colors.warning;
   return colors.success;

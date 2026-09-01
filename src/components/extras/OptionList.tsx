@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -22,7 +22,7 @@ export interface OptionListItem {
   richLabel?: React.ReactNode;
 }
 
-export interface OptionListProps extends StormLayoutStyleProps {
+export interface OptionListProps extends ReactermLayoutStyleProps {
   items: OptionListItem[];
   /** Fired when the user presses Enter on an active option. */
   onSelect?: (value: string) => void;

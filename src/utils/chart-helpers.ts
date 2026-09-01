@@ -1,4 +1,4 @@
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 import { BRAILLE_BASE } from "./braille-canvas.js";
 
 export function resample(data: number[], targetWidth: number): number[] {
@@ -28,7 +28,7 @@ export function formatAxisLabel(value: number, width: number): string {
   return str.padStart(width);
 }
 
-export function getSeriesPalette(colors: StormColors): readonly string[] {
+export function getSeriesPalette(colors: ReactermColors): readonly string[] {
   return [
     colors.brand.primary, colors.success, colors.warning, colors.error,
     colors.brand.light, "#A78BFA", "#FB923C", "#F472B6",

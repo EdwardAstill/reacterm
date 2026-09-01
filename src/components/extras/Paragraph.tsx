@@ -1,8 +1,8 @@
 import React from "react";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface ParagraphProps extends StormTextStyleProps {
+export interface ParagraphProps extends ReactermTextStyleProps {
   children: React.ReactNode;
   marginBottom?: number;
 }

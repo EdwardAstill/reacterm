@@ -20,7 +20,7 @@ export function useAsyncCleanup(fn: () => Promise<void>): void {
   if (!_asyncCleanupLeakWarned && renderContext.asyncCleanups.size > MAX_CLEANUPS) {
     _asyncCleanupLeakWarned = true;
     process.stderr.write(
-      `[storm] Warning: async cleanup map has ${renderContext.asyncCleanups.size} entries, possible leak\n`,
+      `[reacterm] Warning: async cleanup map has ${renderContext.asyncCleanups.size} entries, possible leak\n`,
     );
   }
 }

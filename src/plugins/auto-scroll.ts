@@ -6,10 +6,10 @@
  * sequence tracker for the double-g chord.
  */
 
-import type { StormPlugin } from "../core/plugin.js";
+import type { ReactermPlugin } from "../core/plugin.js";
 import type { KeyEvent } from "../input/types.js";
 
-export const autoScrollPlugin: StormPlugin = {
+export const autoScrollPlugin: ReactermPlugin = {
   name: "auto-scroll",
 
   setup({ renderContext }) {

@@ -395,7 +395,7 @@ export {
 } from "./core/i18n.js";
 export { useTui, TuiContext, type TuiContextValue } from "./context/TuiContext.js";
 export {
-  colors, type StormColors, useTheme, ThemeProvider, ThemeContext, type ThemeWithShades, extendTheme, createTheme, type DeepPartial,
+  colors, type ReactermColors, useTheme, ThemeProvider, ThemeContext, type ThemeWithShades, extendTheme, createTheme, type DeepPartial,
   extractThemeOverrides,
   spacing, type SpacingToken,
   arcticTheme, midnightTheme, emberTheme, mistTheme,
@@ -407,7 +407,7 @@ export {
   generateShades, generateThemeShades, type ColorShades, type ThemeShades,
 } from "./theme/index.js";
 export {
-  type StormPersonality,
+  type ReactermPersonality,
   type DeepPartialPersonality,
   defaultPersonality,
   createPersonality,
@@ -423,12 +423,12 @@ export {
   hackerPreset,
   playfulPreset,
 } from "./core/personality-presets.js";
-export type { StormTextStyleProps, StormLayoutStyleProps, StormContainerStyleProps } from "./styles/index.js";
+export type { ReactermTextStyleProps, ReactermLayoutStyleProps, ReactermContainerStyleProps } from "./styles/index.js";
 export { mergeBoxStyles, pickStyleProps, pickLayoutProps, DEFAULTS, type ComponentDefaults } from "./styles/index.js";
 export { createStyleSheet, StyleSheet, type StyleRule } from "./core/stylesheet.js";
 export { StyleProvider, StyleContext, useStyles } from "./core/style-provider.js";
 export {
-  parseStormCSS,
+  parseReactermCSS,
   createStyleSheetLoader,
   type StyleSheetLoaderOptions,
   type ParsedStyleSheet,
@@ -441,7 +441,7 @@ export { AnimationScheduler, type AnimationCallback } from "./core/animation-sch
 export {
   PluginManager,
   PluginBus,
-  type StormPlugin,
+  type ReactermPlugin,
   type PluginContext,
   type CustomElementHandler,
 } from "./core/plugin.js";
@@ -533,7 +533,7 @@ export {
   notifyResizeObservers,
   type ResizeObserverEntry,
 } from "./core/resize-observer.js";
-export { StormSSHServer, type StormSSHOptions, type SSHSession, type SSHEvent } from "./ssh/index.js";
+export { ReactermSSHServer, type ReactermSSHOptions, type SSHSession, type SSHEvent } from "./ssh/index.js";
 export {
   TestInputManager,
   MockInputManager,
@@ -546,7 +546,7 @@ export {
   compareFileSnapshot,
   saveSvgSnapshot,
   compareSvgSnapshot,
-  createStormMatchers,
+  createReactermMatchers,
   renderToSvg,
   type RenderResult,
   type OutputAssertions,

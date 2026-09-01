@@ -53,10 +53,10 @@ export class InputManager {
   constructor(stdin: NodeJS.ReadStream = process.stdin) {
     this.stdin = stdin;
     this.dataHandler = (data: Buffer | string) => {
-      // STORM_TRACE_STDIN: append every raw chunk to a file as hex. Set to a
-      // path to capture (e.g. STORM_TRACE_STDIN=C:\Users\you\stdin-trace.log).
+      // REACTERM_TRACE_STDIN: append every raw chunk to a file as hex. Set to a
+      // path to capture (e.g. REACTERM_TRACE_STDIN=C:\Users\you\stdin-trace.log).
       // Used to diagnose Windows ConPTY mouse byte issues — disabled by default.
-      const tracePath = process.env.STORM_TRACE_STDIN;
+      const tracePath = process.env.REACTERM_TRACE_STDIN;
       if (tracePath) {
         try {
           const fs = require("fs") as typeof import("fs");
@@ -377,13 +377,13 @@ export class InputManager {
         && countAtMax > 1
       ) {
         this.warnedMultipleHandlers = true;
-        process.stderr.write("[storm] Warning: Multiple components are receiving keyboard input simultaneously. This usually means multiple isFocused={true} props on sibling components OR two useInput hooks at the same priority. Use a focus state, raise/lower one priority, or set event.consumed=true. See docs/pitfalls.md#14 (priority) and #7 (focus).\n");
+        process.stderr.write("[reacterm] Warning: Multiple components are receiving keyboard input simultaneously. This usually means multiple isFocused={true} props on sibling components OR two useInput hooks at the same priority. Use a focus state, raise/lower one priority, or set event.consumed=true. See docs/pitfalls.md#14 (priority) and #7 (focus).\n");
       }
       // If a prioritized handler consumed the event, suppress normal listeners.
       // Otherwise, let it propagate — the handler chose not to intercept this key.
       if (event.consumed) return;
     }
-    // Note: multiple non-prioritized listeners is normal in Storm — hooks like
+    // Note: multiple non-prioritized listeners is normal in Reacterm — hooks like
     // useCollapsibleContent, useInlinePrompt, useModeCycler, ScrollView keyboard
     // scroll, and TextInput all register independent listeners. No warning here.
     for (const handler of this.keyListeners) {

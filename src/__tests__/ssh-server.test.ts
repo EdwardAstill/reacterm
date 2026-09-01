@@ -36,7 +36,7 @@ vi.mock("../reconciler/render.js", () => ({
   render: vi.fn(() => ({ unmount: renderState.unmount })),
 }));
 
-import { StormSSHServer } from "../ssh/server.js";
+import { ReactermSSHServer } from "../ssh/server.js";
 
 interface FakeClient extends EventEmitter {
   _sock: { remoteAddress: string };
@@ -90,7 +90,7 @@ function openSession(client: FakeClient): FakeChannel {
   return channel;
 }
 
-function activeClientCount(server: StormSSHServer): number {
+function activeClientCount(server: ReactermSSHServer): number {
   return (server as unknown as { activeConnectionCount: number })
     .activeConnectionCount;
 }
@@ -101,7 +101,7 @@ function makeServer(overrides: {
   idleTimeout?: number;
 } = {}) {
   const events: SSHEvent[] = [];
-  const server = new StormSSHServer({
+  const server = new ReactermSSHServer({
     hostKey: "test-host-key",
     authenticate: () => true,
     app: () => React.createElement("div"),
@@ -116,7 +116,7 @@ function sessionEnds(events: SSHEvent[]): SSHEvent[] {
   return events.filter((event) => event.type === "session-end");
 }
 
-describe("StormSSHServer teardown", () => {
+describe("ReactermSSHServer teardown", () => {
   beforeEach(() => {
     ssh2State.onConnection = undefined;
     renderState.unmount.mockReset();

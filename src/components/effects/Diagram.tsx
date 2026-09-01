@@ -273,7 +273,7 @@ function renderMergeIndicator(
 
 function renderNodeBox(
   node: DiagramNode,
-  borderStyle: Exclude<BorderStyle, "none" | "ascii" | "storm">,
+  borderStyle: Exclude<BorderStyle, "none" | "ascii" | "reacterm">,
   defaultColor: string | number,
 ): React.ReactElement {
   const nodeColor = node.color ?? defaultColor;

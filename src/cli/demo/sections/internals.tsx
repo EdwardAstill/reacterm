@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PERSONALITY_PRESETS } from "../catalog.js";
 import type {
   Locale,
-  StormColors,
+  ReactermColors,
 } from "../demo-kit.js";
 import {
   Badge,
@@ -290,7 +290,7 @@ function PluginsSection(): React.ReactElement {
       <Box flexDirection="column" marginTop={1} borderStyle="round" borderColor={theme.colors.divider} paddingX={1}>
         <Text bold color={theme.colors.text.primary}>Plugin contract</Text>
         <Text color={theme.colors.text.secondary}>
-          A plugin implements StormPlugin: name, optional onMount, beforeRender,
+          A plugin implements ReactermPlugin: name, optional onMount, beforeRender,
           onComponentMount, getCustomElementHandlers. PluginManager fires hooks
           at every lifecycle stage — your plugin gets a turn before the renderer.
         </Text>
@@ -381,7 +381,7 @@ function A11ySection(): React.ReactElement {
   const passesAAA = ratio >= 7.0;
 
   // Theme-wide validation
-  const validation = validateContrast(theme.colors as StormColors);
+  const validation = validateContrast(theme.colors as ReactermColors);
 
   return (
     <Box flexDirection="column" gap={1} paddingX={2} paddingY={1}>

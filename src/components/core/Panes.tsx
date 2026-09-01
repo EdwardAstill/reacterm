@@ -1,5 +1,5 @@
 import React from "react";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import type { BorderStyle } from "../../core/types.js";
 import { BORDER_CHARS } from "../../core/types.js";
 import type { BoxProps } from "./Box.js";
@@ -14,7 +14,7 @@ const JUNCTIONS: Record<Exclude<BorderStyle, "none">, {
   heavy:  { top: "┳", bottom: "┻", left: "┣", right: "┫", center: "╋" },
   round:  { top: "┬", bottom: "┴", left: "├", right: "┤", center: "┼" },
   ascii:  { top: "+", bottom: "+", left: "+", right: "+", center: "+" },
-  storm:  { top: "┳", bottom: "┻", left: "┣", right: "┫", center: "╋" },
+  reacterm:  { top: "┳", bottom: "┻", left: "┣", right: "┫", center: "╋" },
 };
 
 const FILL = 500;
@@ -282,7 +282,7 @@ const wrapperLayoutProps = (child: React.ReactElement<Record<string, unknown>>) 
 /** Props for an individual pane. Border-side props are managed by Panes. */
 export type PaneProps = Omit<BoxProps, "borderLeft" | "borderRight" | "borderTop" | "borderBottom">;
 
-export interface PanesProps extends StormLayoutStyleProps {
+export interface PanesProps extends ReactermLayoutStyleProps {
   children?: React.ReactNode;
   /** Layout axis. Default: "row". */
   direction?: "row" | "column";

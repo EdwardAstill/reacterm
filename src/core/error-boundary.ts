@@ -90,7 +90,7 @@ export class RenderErrorBoundary {
   formatError(error: RenderError): string {
     const ts = new Date(error.timestamp).toISOString();
     const comp = error.component ? ` in <${error.component}>` : "";
-    const header = `[Storm Error] ${error.phase}${comp} @ ${ts}`;
+    const header = `[Reacterm Error] ${error.phase}${comp} @ ${ts}`;
     const message = error.error.message;
     const stack = error.error.stack
       ? "\n" + error.error.stack.split("\n").slice(1).join("\n")

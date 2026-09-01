@@ -1,4 +1,4 @@
-import { colors as defaultColors, type StormColors } from "../../../theme/colors.js";
+import { colors as defaultColors, type ReactermColors } from "../../../theme/colors.js";
 import type { CanvasNode, CanvasEdge } from "./types.js";
 
 export interface NodeEntry {
@@ -43,7 +43,7 @@ export function classifyEdge(
   return "cross-container";
 }
 
-function buildStatusColors(colors: StormColors): Record<string, string> {
+function buildStatusColors(colors: ReactermColors): Record<string, string> {
   return {
     success: colors.success,
     error: colors.error,
@@ -54,7 +54,7 @@ function buildStatusColors(colors: StormColors): Record<string, string> {
 }
 
 /** Resolve effective color for a node (explicit > status > default). */
-export function resolveNodeColor(node: CanvasNode, colors: StormColors = defaultColors): string | number {
+export function resolveNodeColor(node: CanvasNode, colors: ReactermColors = defaultColors): string | number {
   if (node.color) return node.color;
   if (node.borderColor) return node.borderColor;
   const statusColors = buildStatusColors(colors);

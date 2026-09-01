@@ -151,7 +151,7 @@ export function SystemDashboard(_props: SystemDashboardProps): React.ReactElemen
       React.createElement(Spinner, { type: "dots", color: PRIMARY }),
     ),
     React.createElement("tui-box", { flexDirection: "row", gap: 2 },
-      React.createElement("tui-text", { color: DIM }, `host: storm-prod-01`),
+      React.createElement("tui-text", { color: DIM }, `host: reacterm-prod-01`),
       React.createElement("tui-text", { color: PRIMARY }, `up ${fmtUptime(uptime)}`),
     ),
   );
@@ -264,7 +264,7 @@ export function SystemDashboard(_props: SystemDashboardProps): React.ReactElemen
       flexDirection: "column", width: width - 2, paddingX: 1, gap: 1,
     },
       header,
-      React.createElement(Separator, { style: "storm", color: ACCENT, width: width - 4 }),
+      React.createElement(Separator, { style: "reacterm", color: ACCENT, width: width - 4 }),
       topRow,
       sparkRow,
       bottomRow,

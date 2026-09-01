@@ -36,7 +36,7 @@ export interface PerformanceHUDProps {
   renderMetric?: (label: string, value: string, sparkline: string) => React.ReactNode;
   /** Number of history samples to keep for sparklines (default 20) */
   historySize?: number;
-  /** HUD title (default "Storm HUD") */
+  /** HUD title (default "Reacterm HUD") */
   title?: string;
 }
 
@@ -50,7 +50,7 @@ function thresholdColor(
   goodThreshold: number,
   warnThreshold: number,
   invert: boolean,
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): string {
   if (invert) {
     // Lower is better (render time, GC pressure)
@@ -64,9 +64,9 @@ function thresholdColor(
   return colors.error;
 }
 
-const fpsColor = (fps: number, c: import("../../theme/colors.js").StormColors) => thresholdColor(fps, 30, 15, false, c);
-const renderTimeColor = (ms: number, c: import("../../theme/colors.js").StormColors) => thresholdColor(ms, 8, 16, true, c);
-const gcPressureColor = (pressure: number, c: import("../../theme/colors.js").StormColors) => thresholdColor(pressure, 0.3, 0.7, true, c);
+const fpsColor = (fps: number, c: import("../../theme/colors.js").ReactermColors) => thresholdColor(fps, 30, 15, false, c);
+const renderTimeColor = (ms: number, c: import("../../theme/colors.js").ReactermColors) => thresholdColor(ms, 8, 16, true, c);
+const gcPressureColor = (pressure: number, c: import("../../theme/colors.js").ReactermColors) => thresholdColor(pressure, 0.3, 0.7, true, c);
 
 const HISTORY_SIZE = 20;
 
@@ -90,7 +90,7 @@ export const PerformanceHUD = React.memo(function PerformanceHUD(rawProps: Perfo
     position = "top-right",
     renderMetric,
     historySize = HISTORY_SIZE,
-    title: hudTitle = "Storm HUD",
+    title: hudTitle = "Reacterm HUD",
   } = props;
 
   // ── History tracking (imperative, no setState) ──────────────────────

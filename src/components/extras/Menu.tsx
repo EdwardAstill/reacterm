@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -21,7 +21,7 @@ export interface MenuItem {
   children?: MenuItem[];
 }
 
-export interface MenuProps extends StormLayoutStyleProps {
+export interface MenuProps extends ReactermLayoutStyleProps {
   items: MenuItem[];
   onSelect?: (value: string) => void;
   isFocused?: boolean;

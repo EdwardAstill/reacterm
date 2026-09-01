@@ -59,7 +59,7 @@ export class MiddlewarePipeline {
           buf = mw.onPaint(buf, width, height, this.shared);
         } catch (err) {
           this.failed.add(mw.name);
-          process.stderr.write(`[storm] Middleware "${mw.name}" error in onPaint: ${(err as Error).message}\n`);
+          process.stderr.write(`[reacterm] Middleware "${mw.name}" error in onPaint: ${(err as Error).message}\n`);
         }
       }
     }
@@ -75,7 +75,7 @@ export class MiddlewarePipeline {
           out = mw.onOutput(out, this.shared);
         } catch (err) {
           this.failed.add(mw.name);
-          process.stderr.write(`[storm] Middleware "${mw.name}" error in onOutput: ${(err as Error).message}\n`);
+          process.stderr.write(`[reacterm] Middleware "${mw.name}" error in onOutput: ${(err as Error).message}\n`);
         }
       }
     }
@@ -90,7 +90,7 @@ export class MiddlewarePipeline {
           mw.onLayout(rootWidth, rootHeight);
         } catch (err) {
           this.failed.add(mw.name);
-          process.stderr.write(`[storm] Middleware "${mw.name}" error in onLayout: ${(err as Error).message}\n`);
+          process.stderr.write(`[reacterm] Middleware "${mw.name}" error in onLayout: ${(err as Error).message}\n`);
         }
       }
     }

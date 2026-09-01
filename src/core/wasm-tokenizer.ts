@@ -40,7 +40,7 @@ function ensureLoaded(): boolean {
   loadAttempted = true;
   try {
     const esmRequire = createRequire(import.meta.url);
-    wasmModule = esmRequire("../../wasm/pkg/storm_wasm.js");
+    wasmModule = esmRequire("../../wasm/pkg/reacterm_wasm.js");
   } catch {
     // WASM not available — pure TypeScript fallback
     wasmModule = null;

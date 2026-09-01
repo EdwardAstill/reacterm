@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { padCell } from "../../utils/format.js";
@@ -19,7 +19,7 @@ export interface DataGridColumn {
   align?: "left" | "right" | "center";
 }
 
-export interface DataGridProps extends StormContainerStyleProps {
+export interface DataGridProps extends ReactermContainerStyleProps {
   columns: DataGridColumn[];
   rows: Array<Record<string, string | number>>;
   selectedRow?: number;

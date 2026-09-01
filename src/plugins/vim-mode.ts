@@ -4,9 +4,9 @@
  * Registers j/k as next/prev key bindings for Select, Menu, and ListView.
  */
 
-import type { StormPlugin } from "../core/plugin.js";
+import type { ReactermPlugin } from "../core/plugin.js";
 
-export const vimModePlugin: StormPlugin = {
+export const vimModePlugin: ReactermPlugin = {
   name: "vim-mode",
   componentDefaults: {
     Select: { keyBindings: { next: "j", prev: "k" } },

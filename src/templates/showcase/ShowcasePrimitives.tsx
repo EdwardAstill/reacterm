@@ -38,7 +38,7 @@ export function ShowcasePrimitives(props: ShowcasePrimitivesProps): React.ReactE
     heading("Text", "h-text"),
     blank("b1a"),
     React.createElement("tui-box", { key: "d-text", marginLeft: 2 },
-      React.createElement(Text, { bold: true, color: colors.brand.primary }, "Hello Storm!"),
+      React.createElement(Text, { bold: true, color: colors.brand.primary }, "Hello Reacterm!"),
     ),
     blank("b1b"),
 
@@ -54,7 +54,7 @@ export function ShowcasePrimitives(props: ShowcasePrimitivesProps): React.ReactE
     heading("Separator", "h-sep"),
     blank("b3a"),
     React.createElement("tui-box", { key: "d-sep", marginLeft: 2 },
-      React.createElement(Separator, { style: "storm", label: "Section" }),
+      React.createElement(Separator, { style: "reacterm", label: "Section" }),
     ),
     blank("b3b"),
 
@@ -62,7 +62,7 @@ export function ShowcasePrimitives(props: ShowcasePrimitivesProps): React.ReactE
     heading("Link", "h-link"),
     blank("b4a"),
     React.createElement("tui-box", { key: "d-link", marginLeft: 2 },
-      React.createElement(Link, { url: "https://storm.dev", color: colors.info, children: "https://storm.dev" }),
+      React.createElement(Link, { url: "https://reacterm.dev", color: colors.info, children: "https://reacterm.dev" }),
     ),
     blank("b4b"),
 

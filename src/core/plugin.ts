@@ -3,7 +3,7 @@ import type { KeyEvent, MouseEvent } from "../input/types.js";
 interface Shortcut { key: string; ctrl?: boolean; shift?: boolean; meta?: boolean; handler: () => void; label?: string; description?: string; }
 import type { RenderContext } from "./render-context.js";
 import type { ScreenBuffer } from "./buffer.js";
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 
 export interface CustomElementHandler {
   /** Paint the custom element to the buffer. Receives the element's React props via the optional `props` parameter. */
@@ -38,7 +38,7 @@ export class PluginBus {
         handler(data);
       } catch (err) {
         process.stderr.write(
-          `[storm] PluginBus error on channel "${channel}": ${(err as Error).message}\n`,
+          `[reacterm] PluginBus error on channel "${channel}": ${(err as Error).message}\n`,
         );
       }
     }
@@ -78,12 +78,12 @@ export interface PluginContext {
   /** Access the render context. */
   renderContext: RenderContext;
   /** Access the theme. */
-  theme: StormColors;
+  theme: ReactermColors;
   /** Inter-plugin communication bus. */
   bus: PluginBus;
 }
 
-export interface StormPlugin<TConfig = unknown> {
+export interface ReactermPlugin<TConfig = unknown> {
   /** Plugin name — must be unique. */
   name: string;
   /**
@@ -147,7 +147,7 @@ const DEFAULT_PRIORITY = 100;
 
 /** Lifecycle hooks, input interception, custom elements, and component prop transforms. Priority + dependency ordered. */
 export class PluginManager {
-  private plugins: StormPlugin[] = [];
+  private plugins: ReactermPlugin[] = [];
   private customElements = new Map<string, CustomElementHandler>();
   private shortcuts: Shortcut[] = [];
   private configs = new Map<string, unknown>();
@@ -183,7 +183,7 @@ export class PluginManager {
       return true;
     } catch (err) {
       process.stderr.write(
-        `[storm] Plugin "${pluginName}" error in ${hookName}: ${(err as Error).message}\n`,
+        `[reacterm] Plugin "${pluginName}" error in ${hookName}: ${(err as Error).message}\n`,
       );
       return false;
     }
@@ -201,7 +201,7 @@ export class PluginManager {
         for (const dep of plugin.dependencies) {
           if (!names.has(dep)) {
             process.stderr.write(
-              `[storm] Plugin "${plugin.name}" depends on "${dep}" which is not registered.\n`,
+              `[reacterm] Plugin "${plugin.name}" depends on "${dep}" which is not registered.\n`,
             );
           }
         }
@@ -216,12 +216,12 @@ export class PluginManager {
       // Circular dependency detected
       if (this.strictDependencies) {
         throw new Error(
-          `[storm] Circular plugin dependency detected. Cannot resolve plugin ordering.`,
+          `[reacterm] Circular plugin dependency detected. Cannot resolve plugin ordering.`,
         );
       }
       // Non-strict: fall back to priority-only sort with registration order tiebreaker
       process.stderr.write(
-        `[storm] Circular plugin dependency detected. Falling back to priority order.\n`,
+        `[reacterm] Circular plugin dependency detected. Falling back to priority order.\n`,
       );
       this.plugins.sort(this.comparePriority);
     }
@@ -231,8 +231,8 @@ export class PluginManager {
    * Topological sort of plugins respecting both priority and dependencies.
    * Returns null if a cycle is detected.
    */
-  private topologicalSort(): StormPlugin[] | null {
-    const pluginMap = new Map<string, StormPlugin>();
+  private topologicalSort(): ReactermPlugin[] | null {
+    const pluginMap = new Map<string, ReactermPlugin>();
     for (const p of this.plugins) {
       pluginMap.set(p.name, p);
     }
@@ -257,7 +257,7 @@ export class PluginManager {
     }
 
     // Kahn's algorithm with priority-ordered queue
-    const queue: StormPlugin[] = [];
+    const queue: ReactermPlugin[] = [];
     for (const p of this.plugins) {
       if (inDegree.get(p.name) === 0) {
         queue.push(p);
@@ -266,14 +266,14 @@ export class PluginManager {
     // Sort initial queue by priority, then registration order for stable tie-breaking
     queue.sort(this.comparePriority);
 
-    const result: StormPlugin[] = [];
+    const result: ReactermPlugin[] = [];
     while (queue.length > 0) {
       const current = queue.shift()!;
       result.push(current);
 
       const deps = dependents.get(current.name);
       if (deps) {
-        const readyPlugins: StormPlugin[] = [];
+        const readyPlugins: ReactermPlugin[] = [];
         for (const depName of deps) {
           const newDeg = (inDegree.get(depName) ?? 1) - 1;
           inDegree.set(depName, newDeg);
@@ -298,7 +298,7 @@ export class PluginManager {
   }
 
   /** Register a plugin. Calls its setup hook if a context is provided. */
-  register(plugin: StormPlugin, contextOrConfig?: PluginContext | unknown, maybeContext?: PluginContext): void {
+  register(plugin: ReactermPlugin, contextOrConfig?: PluginContext | unknown, maybeContext?: PluginContext): void {
     if (this.plugins.some((p) => p.name === plugin.name)) {
       throw new Error(`Plugin "${plugin.name}" is already registered.`);
     }
@@ -355,7 +355,7 @@ export class PluginManager {
         if (result && typeof (result as Promise<void>).then === "function") {
           (result as Promise<void>).catch((err) => {
             process.stderr.write(
-              `[storm] Plugin "${plugin.name}" async setup error: ${(err as Error).message}\n`,
+              `[reacterm] Plugin "${plugin.name}" async setup error: ${(err as Error).message}\n`,
             );
             this.failedPlugins.add(plugin.name);
           });
@@ -402,7 +402,7 @@ export class PluginManager {
         }
       } catch (err) {
         process.stderr.write(
-          `[storm] Plugin "${plugin.name}" error in setup: ${(err as Error).message}\n`,
+          `[reacterm] Plugin "${plugin.name}" error in setup: ${(err as Error).message}\n`,
         );
         this.failedPlugins.add(plugin.name);
       }
@@ -425,7 +425,7 @@ export class PluginManager {
     this.registrationOrder.delete(name);
   }
 
-  getPlugin(name: string): StormPlugin | undefined {
+  getPlugin(name: string): ReactermPlugin | undefined {
     return this.plugins.find((p) => p.name === name);
   }
 
@@ -433,7 +433,7 @@ export class PluginManager {
     return this.configs.get(name) as T | undefined;
   }
 
-  getAll(): readonly StormPlugin[] {
+  getAll(): readonly ReactermPlugin[] {
     return this.plugins;
   }
 
@@ -481,7 +481,7 @@ export class PluginManager {
           current = plugin.onKey(current);
         } catch (err) {
           process.stderr.write(
-            `[storm] Plugin "${plugin.name}" error in onKey: ${(err as Error).message}\n`,
+            `[reacterm] Plugin "${plugin.name}" error in onKey: ${(err as Error).message}\n`,
           );
           // Don't lose the event — continue with current value
         }
@@ -500,7 +500,7 @@ export class PluginManager {
           current = plugin.onMouse(current);
         } catch (err) {
           process.stderr.write(
-            `[storm] Plugin "${plugin.name}" error in onMouse: ${(err as Error).message}\n`,
+            `[reacterm] Plugin "${plugin.name}" error in onMouse: ${(err as Error).message}\n`,
           );
         }
       }
@@ -610,7 +610,7 @@ export class PluginManager {
           }
         } catch (err) {
           process.stderr.write(
-            `[storm] Plugin "${plugin.name}" error in onComponentProps: ${(err as Error).message}\n`,
+            `[reacterm] Plugin "${plugin.name}" error in onComponentProps: ${(err as Error).message}\n`,
           );
         }
       }
@@ -627,7 +627,7 @@ export class PluginManager {
     const handler = this.customElements.get(tagName);
     if (!handler || !(hook in handler) || !handler[hook as keyof CustomElementHandler]) return;
     try { fn(); } catch (err) {
-      process.stderr.write(`[storm] Custom element "${tagName}" error in ${hook}: ${(err as Error).message}\n`);
+      process.stderr.write(`[reacterm] Custom element "${tagName}" error in ${hook}: ${(err as Error).message}\n`);
     }
   }
 

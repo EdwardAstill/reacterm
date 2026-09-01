@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useMemo } from "react";
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 import { colors as defaultColors } from "../theme/colors.js";
 import { useTheme } from "../theme/provider.js";
 import type { BorderStyle } from "./types.js";
 import { deepMerge } from "../theme/utils.js";
 
 /** Controls colors, borders, animation timing, typography, focus indicators, and per-component defaults. */
-export interface StormPersonality {
-  /** Color theme (existing StormColors). */
-  colors: StormColors;
+export interface ReactermPersonality {
+  /** Color theme (existing ReactermColors). */
+  colors: ReactermColors;
 
   /** Border personality — style per usage context. */
   borders: {
@@ -55,7 +55,7 @@ export type DeepPartialPersonality<T> = {
   [P in keyof T]?: T[P] extends Record<string, unknown> ? DeepPartialPersonality<T[P]> : T[P];
 };
 
-export const defaultPersonality: StormPersonality = {
+export const defaultPersonality: ReactermPersonality = {
   colors: defaultColors,
 
   borders: {
@@ -98,9 +98,9 @@ export const defaultPersonality: StormPersonality = {
  * default personality. Only the properties you specify are replaced.
  */
 export function createPersonality(
-  overrides: DeepPartialPersonality<StormPersonality>,
-): StormPersonality {
-  return deepMerge(defaultPersonality, overrides as Partial<StormPersonality>);
+  overrides: DeepPartialPersonality<ReactermPersonality>,
+): ReactermPersonality {
+  return deepMerge(defaultPersonality, overrides as Partial<ReactermPersonality>);
 }
 
 /**
@@ -108,20 +108,20 @@ export function createPersonality(
  * Returns a new object; the base is not mutated.
  */
 export function mergePersonality(
-  base: StormPersonality,
-  overrides: DeepPartialPersonality<StormPersonality>,
-): StormPersonality {
-  return deepMerge(base, overrides as Partial<StormPersonality>);
+  base: ReactermPersonality,
+  overrides: DeepPartialPersonality<ReactermPersonality>,
+): ReactermPersonality {
+  return deepMerge(base, overrides as Partial<ReactermPersonality>);
 }
 
-const PersonalityContext = createContext<StormPersonality>(defaultPersonality);
+const PersonalityContext = createContext<ReactermPersonality>(defaultPersonality);
 
 /**
- * Provide a StormPersonality to all descendant components.
+ * Provide a ReactermPersonality to all descendant components.
  * Components use usePersonality() to read the active personality.
  */
 export function PersonalityProvider(props: {
-  personality: StormPersonality;
+  personality: ReactermPersonality;
   children: React.ReactNode;
 }): React.ReactElement {
   return React.createElement(
@@ -132,7 +132,7 @@ export function PersonalityProvider(props: {
 }
 
 /**
- * Read the active StormPersonality from context, with colors
+ * Read the active ReactermPersonality from context, with colors
  * always reflecting the active theme (not the static dark-theme
  * defaults captured at module load time).
  *
@@ -141,7 +141,7 @@ export function PersonalityProvider(props: {
  * preserved. Otherwise the colors (and color-derived typography
  * fields) are replaced with the live theme from ThemeProvider.
  */
-export function usePersonality(): StormPersonality {
+export function usePersonality(): ReactermPersonality {
   const base = useContext(PersonalityContext);
   const themeColors = useTheme().colors;
 
@@ -149,7 +149,7 @@ export function usePersonality(): StormPersonality {
     // when the personality uses the default color palette. Custom
     // personality colors (e.g. hackerPreset, playfulPreset) are preserved.
     const colors = base.colors === defaultPersonality.colors ? themeColors : base.colors;
-    const typography = { ...base.typography } as StormPersonality["typography"];
+    const typography = { ...base.typography } as ReactermPersonality["typography"];
 
     // Only patch typography values that still match the original
     // dark-theme defaults — if the personality explicitly set them

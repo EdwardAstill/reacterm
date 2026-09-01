@@ -3,13 +3,13 @@ import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import { createAnimation, tickAnimation, type AnimationRef } from "../../utils/animate.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermColors } from "../../theme/colors.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface ToastProps extends StormContainerStyleProps {
+export interface ToastProps extends ReactermContainerStyleProps {
   message: string;
   type?: "info" | "success" | "warning" | "error";
   visible?: boolean;
@@ -29,7 +29,7 @@ export interface ToastItem {
   durationMs?: number;
 }
 
-export interface ToastContainerProps extends Omit<StormContainerStyleProps, "position"> {
+export interface ToastContainerProps extends Omit<ReactermContainerStyleProps, "position"> {
   /** Stack of toast items to display. */
   toasts: ToastItem[];
   /** Position of the toast stack: "top" or "bottom" (default "bottom"). */
@@ -118,7 +118,7 @@ function ToastCompoundItem({ id, message, type = "info", durationMs }: ToastComp
   });
 }
 
-function getTypeColors(colors: StormColors): Record<string, string> {
+function getTypeColors(colors: ReactermColors): Record<string, string> {
   return {
     info: colors.info,
     success: colors.success,

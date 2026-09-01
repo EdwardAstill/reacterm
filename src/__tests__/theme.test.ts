@@ -1,5 +1,5 @@
 /**
- * Theme system tests for Storm TUI.
+ * Theme system tests for Reacterm TUI.
  *
  * Tests theme validation, contrast checking, shade generation,
  * theme presets, ThemeProvider, and theme utilities.
@@ -9,7 +9,7 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { renderForTest } from "../testing/index.js";
 import { ThemeProvider, useTheme, type ThemeWithShades } from "../theme/provider.js";
-import { colors, type StormColors } from "../theme/colors.js";
+import { colors, type ReactermColors } from "../theme/colors.js";
 import { validateTheme, validateContrast } from "../theme/validate.js";
 import { generateShades, generateThemeShades, type ColorShades, type ThemeShades } from "../theme/shades.js";
 import {
@@ -25,8 +25,24 @@ import {
   highContrastTheme,
   monochromeTheme,
 } from "../theme/presets.js";
-import { extendTheme, createTheme, type DeepPartial } from "../theme/index.js";
+import { extendTheme, createTheme, extractThemeOverrides, type DeepPartial } from "../theme/index.js";
 import { contrastRatio, relativeLuminance } from "../core/accessibility.js";
+
+describe("Reacterm CSS theme variables", () => {
+  it("extracts --reacterm-* variables and ignores the removed prefix", () => {
+    const removedPrefix = ["--sto", "rm-"].join("");
+    const overrides = extractThemeOverrides(new Map([
+      ["--reacterm-brand-primary", "#123456"],
+      ["--reacterm-success", "#00ff00"],
+      [`${removedPrefix}error`, "#ff0000"],
+    ]));
+
+    expect(overrides).toEqual({
+      brand: { primary: "#123456" },
+      success: "#00ff00",
+    });
+  });
+});
 
 // ── ThemeProvider ─────────────────────────────────────────────────────
 
@@ -290,7 +306,7 @@ describe("validateTheme", () => {
   });
 
   it("rejects theme with missing fields", () => {
-    const partial = { brand: { primary: "#FF0000" } } as unknown as StormColors;
+    const partial = { brand: { primary: "#FF0000" } } as unknown as ReactermColors;
     const result = validateTheme(partial);
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
@@ -324,7 +340,7 @@ describe("validateTheme", () => {
     const incomplete = {
       brand: { primary: "#FF0000" },
       text: { primary: "#FFFFFF" },
-    } as unknown as StormColors;
+    } as unknown as ReactermColors;
     const result = validateTheme(incomplete);
     expect(result.valid).toBe(false);
     // Should report many missing paths
@@ -475,7 +491,7 @@ describe("relativeLuminance", () => {
 // ── Theme presets ─────────────────────────────────────────────────────
 
 describe("Theme presets", () => {
-  const presets: Record<string, StormColors> = {
+  const presets: Record<string, ReactermColors> = {
     arctic: arcticTheme,
     midnight: midnightTheme,
     ember: emberTheme,
@@ -525,7 +541,7 @@ describe("Theme presets", () => {
 
 describe("extendTheme", () => {
   it("overrides only specified values", () => {
-    const extended = extendTheme(colors, { brand: { primary: "#FF0000" } } as DeepPartial<StormColors>);
+    const extended = extendTheme(colors, { brand: { primary: "#FF0000" } } as DeepPartial<ReactermColors>);
     expect(extended.brand.primary).toBe("#FF0000");
     // Other brand fields unchanged
     expect(extended.brand.light).toBe(colors.brand.light);
@@ -535,7 +551,7 @@ describe("extendTheme", () => {
   });
 
   it("deep-merges nested objects", () => {
-    const extended = extendTheme(colors, { text: { primary: "#EEEEEE" } } as DeepPartial<StormColors>);
+    const extended = extendTheme(colors, { text: { primary: "#EEEEEE" } } as DeepPartial<ReactermColors>);
     expect(extended.text.primary).toBe("#EEEEEE");
     expect(extended.text.secondary).toBe(colors.text.secondary);
   });

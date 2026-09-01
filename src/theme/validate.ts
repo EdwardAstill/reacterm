@@ -1,4 +1,4 @@
-import type { StormColors } from "./colors.js";
+import type { ReactermColors } from "./colors.js";
 import { contrastRatio } from "../core/accessibility.js";
 import { isPlainObject } from "./utils.js";
 
@@ -61,7 +61,7 @@ function isValidColor(value: string): boolean {
 }
 
 /**
- * Collect every leaf string value from a StormColors object together with
+ * Collect every leaf string value from a ReactermColors object together with
  * its dotted path (e.g. "brand.primary", "success").
  */
 function collectColorPaths(obj: Record<string, unknown>, prefix: string = ""): Array<{ path: string; value: unknown }> {
@@ -84,16 +84,16 @@ function collectColorPaths(obj: Record<string, unknown>, prefix: string = ""): A
  * - Reports missing required fields as errors.
  * - Reports unusually low-contrast text colors as warnings.
  *
- * @param theme - A full StormColors object to validate.
+ * @param theme - A full ReactermColors object to validate.
  * @returns A result with `valid`, `errors`, and `warnings`.
  */
-export function validateTheme(theme: StormColors): ThemeValidationResult {
+export function validateTheme(theme: ReactermColors): ThemeValidationResult {
   const errors: ThemeValidationError[] = [];
   const warnings: ThemeValidationWarning[] = [];
 
   const entries = collectColorPaths(theme as unknown as Record<string, unknown>);
 
-  // Expected leaf paths derived from the StormColors type.
+  // Expected leaf paths derived from the ReactermColors type.
   const expectedPaths = new Set([
     "brand.primary", "brand.light", "brand.glow",
     "text.primary", "text.secondary", "text.dim", "text.disabled",
@@ -165,12 +165,12 @@ export function validateTheme(theme: StormColors): ThemeValidationResult {
  * - Pairs below 4.5:1 ratio produce **warnings** (WCAG AA).
  * - Pairs below 3:1 ratio produce **errors** (WCAG minimum for large text).
  *
- * @param theme - A full StormColors object.
+ * @param theme - A full ReactermColors object.
  * @param background - The background hex color to check against (defaults to "#1A1A2E").
  * @returns A result with `valid`, `errors`, and `warnings`.
  */
 export function validateContrast(
-  theme: StormColors,
+  theme: ReactermColors,
   background?: string,
 ): ThemeValidationResult {
   const bg = background ?? theme.surface.base;

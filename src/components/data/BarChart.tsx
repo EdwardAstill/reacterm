@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
@@ -68,7 +68,7 @@ interface InternalBar {
   segments: { value: number; color: string | number; name?: string }[];
 }
 
-function normalizeData(props: BarChartProps, palette: readonly string[], colors: StormColors): { bars: InternalBar[]; mode: "simple" | "stacked" | "grouped" } {
+function normalizeData(props: BarChartProps, palette: readonly string[], colors: ReactermColors): { bars: InternalBar[]; mode: "simple" | "stacked" | "grouped" } {
   if (props.grouped) {
     const { series, labels } = props.grouped;
     const bars: InternalBar[] = labels.map((label, li) => ({
@@ -132,7 +132,7 @@ interface VerticalCtx {
   props: BarChartProps;
   selectedIdx: number;
   isInteractive: boolean;
-  colors: StormColors;
+  colors: ReactermColors;
   chartHeight: number;
   totalWidth: number;
   showAxes: boolean;
@@ -160,7 +160,7 @@ function buildVerticalCtx(
   props: BarChartProps,
   selectedIdx: number,
   isInteractive: boolean,
-  colors: StormColors,
+  colors: ReactermColors,
 ): VerticalCtx {
   const chartHeight = Math.max(1, props.height ?? 8);
   const totalWidth = props.width ?? 60;
@@ -619,7 +619,7 @@ function renderVertical(
   props: BarChartProps,
   selectedIdx: number,
   isInteractive: boolean,
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): React.ReactElement {
   const numBars = data.length;
   if (numBars === 0) {
@@ -668,7 +668,7 @@ interface HorizontalCtx {
   props: BarChartProps;
   selectedIdx: number;
   isInteractive: boolean;
-  colors: StormColors;
+  colors: ReactermColors;
   totalWidth: number;
   axisColor: string | number;
   showValues: boolean;
@@ -690,7 +690,7 @@ function buildHorizontalCtx(
   props: BarChartProps,
   selectedIdx: number,
   isInteractive: boolean,
-  colors: StormColors,
+  colors: ReactermColors,
 ): HorizontalCtx {
   const totalWidth = props.width ?? 60;
   const axisColor = props.axisColor ?? colors.text.dim;
@@ -939,7 +939,7 @@ function renderHorizontal(
   props: BarChartProps,
   selectedIdx: number,
   isInteractive: boolean,
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): React.ReactElement {
   const numBars = data.length;
   if (numBars === 0) {
@@ -971,7 +971,7 @@ function renderHorizontal(
 function buildLegend(
   data: InternalBar[],
   mode: "simple" | "stacked" | "grouped",
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): React.ReactElement | null {
   const seen = new Map<string, string | number>();
   for (const bar of data) {

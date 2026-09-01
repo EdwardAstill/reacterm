@@ -5,7 +5,7 @@ import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { useStyles } from "../../core/style-provider.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
@@ -16,7 +16,7 @@ const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
-export interface ButtonProps extends StormLayoutStyleProps {
+export interface ButtonProps extends ReactermLayoutStyleProps {
   label: string;
   onPress?: () => void;
   isFocused?: boolean;

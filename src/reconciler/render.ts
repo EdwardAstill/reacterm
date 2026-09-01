@@ -55,12 +55,12 @@ export function render(
 ): TuiApp {
   if (!(options.stdout ?? process.stdout).isTTY && !_nonTtyWarned) {
     _nonTtyWarned = true;
-    process.stderr.write("[storm] Warning: stdout is not a TTY. Running in headless mode.\n");
+    process.stderr.write("[reacterm] Warning: stdout is not a TTY. Running in headless mode.\n");
   }
   if (process.env.NODE_ENV !== "production" &&
       typeof (TuiReconciler as ReconcilerPrivate).updateContainerSync !== "function") {
     const v = (Reconciler as unknown as { version?: string }).version ?? "unknown"; // React private API
-    process.stderr.write(`[storm] Warning: React reconciler ${v} may lack syncContainerUpdate.\n`);
+    process.stderr.write(`[reacterm] Warning: React reconciler ${v} may lack syncContainerUpdate.\n`);
   }
   patchUseEffect();
 

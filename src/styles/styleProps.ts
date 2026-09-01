@@ -1,7 +1,7 @@
 import type { FlexDirection, FlexWrap, Align, AlignSelf, Justify, Overflow, Display, Position } from "../layout/engine.js";
 import type { BorderStyle } from "../core/types.js";
 
-export interface StormTextStyleProps {
+export interface ReactermTextStyleProps {
   color?: string | number;
   bold?: boolean;
   dim?: boolean;
@@ -11,7 +11,7 @@ export interface StormTextStyleProps {
   id?: string;
 }
 
-export interface StormLayoutStyleProps extends StormTextStyleProps {
+export interface ReactermLayoutStyleProps extends ReactermTextStyleProps {
   /** Public layout measurement ID readable through useMeasure/useLayoutBox. */
   measureId?: string;
   width?: number | `${number}%`;
@@ -51,7 +51,7 @@ export interface StormLayoutStyleProps extends StormTextStyleProps {
 }
 
 /** Base style interface for all container components (Box, Card, Modal, etc). Extends layout with padding, border, bg. */
-export interface StormContainerStyleProps extends StormLayoutStyleProps {
+export interface ReactermContainerStyleProps extends ReactermLayoutStyleProps {
   padding?: number;
   paddingX?: number;
   paddingY?: number;

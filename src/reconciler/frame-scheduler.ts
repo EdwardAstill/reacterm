@@ -69,7 +69,7 @@ export class FrameScheduler {
     this.framesThisSecond++;
     if (this.framesThisSecond > FrameScheduler.MAX_FRAMES_PER_SECOND) {
       process.stderr.write(
-        `\x1b[33m[storm] Warning: render loop detected (>${FrameScheduler.MAX_FRAMES_PER_SECOND} frames/s). Skipping frame. Check for setState calls in useInput handlers or requestRender() in a tight loop.\x1b[0m\n`,
+        `\x1b[33m[reacterm] Warning: render loop detected (>${FrameScheduler.MAX_FRAMES_PER_SECOND} frames/s). Skipping frame. Check for setState calls in useInput handlers or requestRender() in a tight loop.\x1b[0m\n`,
       );
       return;
     }

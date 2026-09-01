@@ -1,10 +1,10 @@
 import React from "react";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { useStyles } from "../../core/style-provider.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 
-export interface BadgeProps extends StormTextStyleProps {
+export interface BadgeProps extends ReactermTextStyleProps {
   label: string;
   variant?: "default" | "success" | "warning" | "error" | "info" | "outline";
   /** Display mode: label (text), dot (colored dot only), count (number with max). */

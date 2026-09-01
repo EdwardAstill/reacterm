@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
@@ -122,7 +122,7 @@ export interface StepDef {
   description?: string;
 }
 
-export interface StepperProps extends StormLayoutStyleProps {
+export interface StepperProps extends ReactermLayoutStyleProps {
   steps: StepDef[];
   activeStep: number;
   orientation?: "horizontal" | "vertical";
@@ -177,7 +177,7 @@ function renderHorizontal(
   completedColor: string | number,
   activeColor: string | number,
   pendingColor: string | number,
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): React.ReactElement {
   const elements: React.ReactElement[] = [];
 
@@ -226,7 +226,7 @@ function renderVertical(
   completedColor: string | number,
   activeColor: string | number,
   pendingColor: string | number,
-  colors: import("../../theme/colors.js").StormColors,
+  colors: import("../../theme/colors.js").ReactermColors,
 ): React.ReactElement {
   const elements: React.ReactElement[] = [];
 

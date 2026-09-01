@@ -30,8 +30,8 @@ import { DiffRenderer, type DiffResult } from "./diff.js";
 import { ScreenBuffer } from "./buffer.js";
 import type { LinkRange, RenderContext } from "./render-context.js";
 
-/** Allow forcing TTY behavior via STORM_FORCE_TTY=1 (for playground/WebSocket). */
-const FORCE_TTY = process.env.STORM_FORCE_TTY === "1";
+/** Allow forcing TTY behavior via REACTERM_FORCE_TTY=1 (for playground/WebSocket). */
+const FORCE_TTY = process.env.REACTERM_FORCE_TTY === "1";
 
 export interface ScreenOptions {
   stdout?: NodeJS.WriteStream;
@@ -154,7 +154,7 @@ export class Screen {
     if (this.onBeforeCleanup) {
       const fn = this.onBeforeCleanup;
       this.onBeforeCleanup = null;
-      try { fn(); } catch (err) { if (process.env.NODE_ENV !== 'production') process.stderr.write('[storm] I/O error: ' + (err as Error).message + '\n'); }
+      try { fn(); } catch (err) { if (process.env.NODE_ENV !== 'production') process.stderr.write('[reacterm] I/O error: ' + (err as Error).message + '\n'); }
     }
   }
 
@@ -271,7 +271,7 @@ export class Screen {
       try {
         this.stdin.setRawMode(this.wasRaw);
       } catch (err) {
-        if (process.env.NODE_ENV !== 'production') process.stderr.write('[storm] I/O error: ' + (err as Error).message + '\n');
+        if (process.env.NODE_ENV !== 'production') process.stderr.write('[reacterm] I/O error: ' + (err as Error).message + '\n');
       }
     }
 
@@ -405,7 +405,7 @@ export class Screen {
     try {
       this.stdout.write(data);
     } catch (err) {
-      if (process.env.NODE_ENV !== 'production') process.stderr.write('[storm] I/O error: ' + (err as Error).message + '\n');
+      if (process.env.NODE_ENV !== 'production') process.stderr.write('[reacterm] I/O error: ' + (err as Error).message + '\n');
     }
   }
 

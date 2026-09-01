@@ -1,6 +1,6 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 export interface ModelBadgeProps {
@@ -14,7 +14,7 @@ export interface ModelBadgeProps {
   providerColors?: Record<string, string>;
 }
 
-function getProviderColors(colors: StormColors): Record<string, string> {
+function getProviderColors(colors: ReactermColors): Record<string, string> {
   return {
     cloud: colors.brand.primary,
     enterprise: colors.success,

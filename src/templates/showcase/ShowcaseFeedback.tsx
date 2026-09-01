@@ -43,7 +43,7 @@ export function ShowcaseFeedback(props: ShowcaseFeedbackProps): React.ReactEleme
     React.createElement("tui-box", { key: "d-spin", flexDirection: "row", marginLeft: 2, gap: 4 },
       React.createElement(Spinner, { type: "dots", label: "dots" }),
       React.createElement(Spinner, { type: "line", label: "line" }),
-      React.createElement(Spinner, { type: "storm", label: "storm" }),
+      React.createElement(Spinner, { type: "reacterm", label: "reacterm" }),
     ),
     blank("b1b"),
 

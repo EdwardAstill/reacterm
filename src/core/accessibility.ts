@@ -14,15 +14,15 @@ export function detectAccessibility(): AccessibilityOptions {
   const env = process.env;
 
   const highContrast =
-    env["STORM_HIGH_CONTRAST"] === "1" ||
+    env["REACTERM_HIGH_CONTRAST"] === "1" ||
     env["HIGH_CONTRAST"] === "1";
 
   const reducedMotion =
-    env["STORM_REDUCED_MOTION"] === "1" ||
+    env["REACTERM_REDUCED_MOTION"] === "1" ||
     env["REDUCE_MOTION"] === "1";
 
   const screenReader =
-    env["STORM_SCREEN_READER"] === "1" ||
+    env["REACTERM_SCREEN_READER"] === "1" ||
     env["ACCESSIBILITY_ENABLED"] === "1" ||
     env["ACCESSIBILITY"] === "1" ||
     env["SCREEN_READER"] === "1" ||

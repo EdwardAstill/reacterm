@@ -9,10 +9,10 @@ import { Editor } from "./Editor.js";
 import { Markdown } from "./Markdown.js";
 import { ScrollView } from "../core/ScrollView.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
 
-export interface MarkdownEditorProps extends StormLayoutStyleProps {
+export interface MarkdownEditorProps extends ReactermLayoutStyleProps {
   /** Markdown source text. Controlled. */
   value: string;
   /** Called on every keystroke. */

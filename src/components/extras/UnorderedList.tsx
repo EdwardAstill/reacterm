@@ -1,6 +1,6 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 const MAX_DEPTH = 20;
@@ -28,7 +28,7 @@ const STATUS_ICONS: Record<ItemStatus, string> = {
   running: "\u25D4", // ◔ (spinner-like)
 };
 
-function getStatusColors(colors: StormColors): Record<ItemStatus, string | number> {
+function getStatusColors(colors: ReactermColors): Record<ItemStatus, string | number> {
   return {
     success: colors.success,
     error: colors.error,

@@ -1,4 +1,4 @@
-//! Storm TUI WASM Hot Path
+//! Reacterm TUI WASM Hot Path
 //!
 //! Replaces the 4 hottest TypeScript functions with native Rust compiled to WASM.
 //! Eliminates GC pauses in the render path. ~50KB binary.
@@ -255,7 +255,7 @@ fn push_sgr(out: &mut String, fg: i32, bg: i32, attrs: u8) {
     if attrs & ATTR_INVERSE != 0 { out.push_str(";7"); }
     if attrs & ATTR_STRIKETHROUGH != 0 { out.push_str(";9"); }
 
-    // Foreground: true color (0x1RRGGBB format from Storm)
+    // Foreground: true color (0x1RRGGBB format from Reacterm)
     if fg >= 0x1000000 {
         let r = (fg >> 16) & 0xFF;
         let g = (fg >> 8) & 0xFF;

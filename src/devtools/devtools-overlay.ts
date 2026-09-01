@@ -221,8 +221,8 @@ export function createDevToolsOverlay(options?: DevToolsOverlayOptions): {
       buf.setCell(panelWidth - 1, panelTop, { char: "┬", fg: COL_DIVIDER, bg: COL_SURF_OVERLAY, attrs: Attr.NONE, ulColor: -1 });
     }
 
-    // Storm DevTools title
-    const title = " Storm DevTools ";
+    // Reacterm DevTools title
+    const title = " Reacterm DevTools ";
     writeStr(buf, 2, panelTop, title, COL_BRAND, COL_SURF_OVERLAY, Attr.BOLD);
 
     // Tab labels

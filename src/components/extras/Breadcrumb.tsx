@@ -4,11 +4,11 @@ import { useTui } from "../../context/TuiContext.js";
 import { useInput } from "../../hooks/useInput.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface BreadcrumbProps extends StormLayoutStyleProps {
+export interface BreadcrumbProps extends ReactermLayoutStyleProps {
   items: string[];
   separator?: string;
   activeColor?: string | number;

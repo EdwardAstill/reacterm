@@ -44,10 +44,10 @@ export interface CrashLogData {
   componentTree?: string;
   terminalSize: { width: number; height: number };
   nodeVersion: string;
-  stormVersion: string;
+  reactermVersion: string;
 }
 
-const STORM_VERSION = "0.1.0";
+const REACTERM_VERSION = "0.1.0";
 
 function buildCrashData(
   app: TuiApp,
@@ -83,7 +83,7 @@ function buildCrashData(
       height: app.screen.height,
     },
     nodeVersion: process.version,
-    stormVersion: STORM_VERSION,
+    reactermVersion: REACTERM_VERSION,
   };
 
   if (cause?.signal) {
@@ -109,7 +109,7 @@ function writeCrashLog(dir: string, data: CrashLogData): string | null {
       mkdirSync(dir, { recursive: true });
     }
     const ts = data.timestamp.replace(/[:.]/g, "-");
-    const filename = `storm-crash-${ts}.json`;
+    const filename = `reacterm-crash-${ts}.json`;
     const filepath = join(dir, filename);
     writeFileSync(filepath, JSON.stringify(data, null, 2), "utf-8");
     return filepath;
@@ -135,7 +135,7 @@ export function enableCrashLog(
     const path = writeCrashLog(dir, data);
     if (path) {
       try {
-        process.stderr.write(`[storm] Crash log written: ${path}\n`);
+        process.stderr.write(`[reacterm] Crash log written: ${path}\n`);
       } catch {
         // stderr may be closed
       }
@@ -157,7 +157,7 @@ export function enableCrashLog(
     const path = writeCrashLog(dir, data);
     if (path) {
       try {
-        process.stderr.write(`[storm] Crash log written: ${path}\n`);
+        process.stderr.write(`[reacterm] Crash log written: ${path}\n`);
       } catch {
         // stderr may be closed
       }

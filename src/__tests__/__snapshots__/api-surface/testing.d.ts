@@ -1,5 +1,5 @@
 /**
- * Storm TUI testing utilities.
+ * Reacterm TUI testing utilities.
  *
  * Provides renderForTest for component testing, renderDriver for app flows,
  * input simulation, assertion helpers, snapshots, scenario replay, explorer
@@ -172,13 +172,13 @@ interface MatcherResult {
  *
  * Usage with vitest:
  * ```ts
- * import { createStormMatchers } from "reacterm";
- * expect.extend(createStormMatchers());
+ * import { createReactermMatchers } from "reacterm";
+ * expect.extend(createReactermMatchers());
  * ```
  *
  * Provided matchers:
- * - `toMatchStormSnapshot(result, snapshotName)` — compare against in-memory snapshot
- * - `toContainStormText(result, text)` — check if output contains text
- * - `toHaveStormLines(result, count)` — check line count
+ * - `toMatchReactermSnapshot(result, snapshotName)` — compare against in-memory snapshot
+ * - `toContainReactermText(result, text)` — check if output contains text
+ * - `toHaveReactermLines(result, count)` — check line count
  */
-export declare function createStormMatchers(): Record<string, (...args: unknown[]) => MatcherResult>;
+export declare function createReactermMatchers(): Record<string, (...args: unknown[]) => MatcherResult>;

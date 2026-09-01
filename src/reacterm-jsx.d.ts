@@ -1,5 +1,5 @@
 /**
- * JSX intrinsic element types for Storm TUI.
+ * JSX intrinsic element types for Reacterm TUI.
  *
  * Provides full type safety for tui-box, tui-text, tui-scroll-view,
  * tui-text-input, and tui-overlay host elements, eliminating the need
@@ -21,7 +21,7 @@ import type {
   GridAutoFlow,
 } from "./layout/engine.js";
 
-interface StormBoxProps {
+interface ReactermBoxProps {
   key?: string | number;
   children?: React.ReactNode;
   // Layout — dimensions
@@ -116,7 +116,7 @@ interface StormBoxProps {
   "aria-hidden"?: boolean;
 }
 
-interface StormTextProps {
+interface ReactermTextProps {
   key?: string | number;
   children?: React.ReactNode;
   color?: string | number;
@@ -136,7 +136,7 @@ interface StormTextProps {
   "aria-hidden"?: boolean;
 }
 
-interface StormScrollViewProps {
+interface ReactermScrollViewProps {
   key?: string | number;
   children?: React.ReactNode;
   // Layout — dimensions
@@ -214,7 +214,7 @@ interface StormScrollViewProps {
   _measureId?: string;
 }
 
-interface StormTextInputProps {
+interface ReactermTextInputProps {
   key?: string | number;
   value?: string;
   onChange?: (value: string) => void;
@@ -238,7 +238,7 @@ interface StormTextInputProps {
   "aria-hidden"?: boolean;
 }
 
-interface StormOverlayProps {
+interface ReactermOverlayProps {
   key?: string | number;
   children?: React.ReactNode;
   visible?: boolean;
@@ -264,11 +264,11 @@ interface StormOverlayProps {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "tui-box": StormBoxProps;
-      "tui-text": StormTextProps;
-      "tui-scroll-view": StormScrollViewProps;
-      "tui-text-input": StormTextInputProps;
-      "tui-overlay": StormOverlayProps;
+      "tui-box": ReactermBoxProps;
+      "tui-text": ReactermTextProps;
+      "tui-scroll-view": ReactermScrollViewProps;
+      "tui-text-input": ReactermTextInputProps;
+      "tui-overlay": ReactermOverlayProps;
     }
   }
 }

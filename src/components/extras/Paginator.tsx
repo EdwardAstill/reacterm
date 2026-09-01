@@ -2,11 +2,11 @@ import React, { useRef, useCallback } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface PaginatorProps extends StormLayoutStyleProps {
+export interface PaginatorProps extends ReactermLayoutStyleProps {
   total: number;
   current: number;
   style?: "dots" | "numbers" | "fraction";

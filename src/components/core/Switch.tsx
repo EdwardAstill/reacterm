@@ -4,7 +4,7 @@ import { useCleanup } from "../../hooks/useCleanup.js";
 import { useTui } from "../../context/TuiContext.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { usePersonality } from "../../core/personality.js";
@@ -13,7 +13,7 @@ import { FOCUS_CHARS } from "../../utils/focus-chars.js";
 
 export type SwitchSize = "sm" | "md" | "lg";
 
-export interface SwitchProps extends StormLayoutStyleProps {
+export interface SwitchProps extends ReactermLayoutStyleProps {
   checked: boolean;
   onChange?: (checked: boolean) => void;
   label?: string;

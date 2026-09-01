@@ -1,6 +1,6 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -10,7 +10,7 @@ import {
   type InlineRenderContext,
 } from "../../utils/markdown/render-blocks.js";
 
-export interface MarkdownProps extends StormLayoutStyleProps {
+export interface MarkdownProps extends ReactermLayoutStyleProps {
   content: string;
   maxWidth?: number;
 }

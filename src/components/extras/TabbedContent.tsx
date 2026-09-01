@@ -3,11 +3,11 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface TabbedContentProps extends StormContainerStyleProps {
+export interface TabbedContentProps extends ReactermContainerStyleProps {
   tabs: Array<{ label: string; key: string }>;
   activeKey: string;
   onTabChange?: (key: string) => void;

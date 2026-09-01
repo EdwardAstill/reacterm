@@ -1,9 +1,9 @@
 import { colors as defaultColors } from "./colors.js";
-import type { StormColors } from "./colors.js";
+import type { ReactermColors } from "./colors.js";
 
 export { defaultColors };
 
-export const arcticTheme: StormColors = {
+export const arcticTheme: ReactermColors = {
   brand: {
     primary: "#5CB8C8",
     light:   "#8AD0D8",
@@ -74,7 +74,7 @@ export const arcticTheme: StormColors = {
   },
 } as const;
 
-export const midnightTheme: StormColors = {
+export const midnightTheme: ReactermColors = {
   brand: {
     primary: "#6B9EF0",
     light:   "#90B8F4",    glow:    "#4878C0",  },
@@ -143,7 +143,7 @@ export const midnightTheme: StormColors = {
   },
 } as const;
 
-export const emberTheme: StormColors = {
+export const emberTheme: ReactermColors = {
   brand: {
     primary: "#6EB0A0",
     light:   "#90C8B8",    glow:    "#588E80",  },
@@ -212,7 +212,7 @@ export const emberTheme: StormColors = {
   },
 } as const;
 
-export const mistTheme: StormColors = {
+export const mistTheme: ReactermColors = {
   brand: {
     primary: "#78B0E8",
     light:   "#A0C8F0",    glow:    "#5888B8",  },
@@ -281,7 +281,7 @@ export const mistTheme: StormColors = {
   },
 } as const;
 
-export const voltageTheme: StormColors = {
+export const voltageTheme: ReactermColors = {
   brand: {
     primary: "#A080E8",
     light:   "#BCA0F0",    glow:    "#7860B8",  },
@@ -350,7 +350,7 @@ export const voltageTheme: StormColors = {
   },
 } as const;
 
-export const duskTheme: StormColors = {
+export const duskTheme: ReactermColors = {
   brand: {
     primary: "#B898D8",
     light:   "#D0B8E8",    glow:    "#9070B0",  },
@@ -419,7 +419,7 @@ export const duskTheme: StormColors = {
   },
 } as const;
 
-export const horizonTheme: StormColors = {
+export const horizonTheme: ReactermColors = {
   brand: {
     primary: "#2890C8",
     light:   "#58B0D8",    glow:    "#1C6898",  },
@@ -488,7 +488,7 @@ export const horizonTheme: StormColors = {
   },
 } as const;
 
-export const neonTheme: StormColors = {
+export const neonTheme: ReactermColors = {
   brand: {
     primary: "#FFB800",
     light:   "#FFD000",
@@ -561,7 +561,7 @@ export const neonTheme: StormColors = {
   },
 } as const;
 
-export const calmTheme: StormColors = {
+export const calmTheme: ReactermColors = {
   brand: {
     primary: "#C49848",
     light:   "#D4A858",
@@ -634,7 +634,7 @@ export const calmTheme: StormColors = {
   },
 } as const;
 
-export const highContrastTheme: StormColors = {
+export const highContrastTheme: ReactermColors = {
   brand: {
     primary: "#FFFFFF",
     light:   "#FFFFFF",
@@ -707,7 +707,7 @@ export const highContrastTheme: StormColors = {
   },
 } as const;
 
-export const monochromeTheme: StormColors = {
+export const monochromeTheme: ReactermColors = {
   brand: {
     primary: "#E0E0E0",
     light:   "#F0F0F0",

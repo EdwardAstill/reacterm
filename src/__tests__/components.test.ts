@@ -1,5 +1,5 @@
 /**
- * Component rendering tests for Storm TUI.
+ * Component rendering tests for Reacterm TUI.
  *
  * Uses renderForTest from the testing utility to render components
  * into a virtual buffer and assert on the plain-text output.
@@ -50,7 +50,7 @@ describe("Card", () => {
   });
 
   it("applies variant without crashing", () => {
-    for (const variant of ["default", "storm", "success", "error", "warning"] as const) {
+    for (const variant of ["default", "reacterm", "success", "error", "warning"] as const) {
       const result = renderForTest(
         React.createElement(Card, { title: "V", variant, children: null },
           React.createElement("tui-text", null, "ok"),
@@ -462,9 +462,9 @@ describe("Divider", () => {
     expect(result.output.length).toBeGreaterThan(0);
   });
 
-  it("renders storm style", () => {
+  it("renders reacterm style", () => {
     const result = renderForTest(
-      React.createElement(Divider, { style: "storm" }),
+      React.createElement(Divider, { style: "reacterm" }),
       { width: 40, height: 3 },
     );
     expect(result.output.includes("\u2501")).toBe(true);
@@ -768,13 +768,22 @@ describe("Spinner", () => {
     result.unmount();
   });
 
-  it("renders storm type", () => {
+  it("renders reacterm type", () => {
     const result = renderForTest(
-      React.createElement(Spinner, { type: "storm" }),
+      React.createElement(Spinner, { type: "reacterm" }),
       { width: 20, height: 3 },
     );
-    // Storm first frame is block characters
+    // Reacterm first frame is block characters
     expect(result.output.includes("\u2591")).toBe(true);
+    result.unmount();
+  });
+
+  it("renders reacterm-logo type", () => {
+    const result = renderForTest(
+      React.createElement(Spinner, { type: "reacterm-logo" }),
+      { width: 20, height: 3 },
+    );
+    expect(result.output).toMatch(/[░█◆]/u);
     result.unmount();
   });
 });

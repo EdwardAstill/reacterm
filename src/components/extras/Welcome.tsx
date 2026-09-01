@@ -7,7 +7,7 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useTui } from "../../context/TuiContext.js";
 import { Gradient } from "../effects/Gradient.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
 import { padEndCells } from "../../core/unicode.js";
@@ -32,7 +32,7 @@ export interface WelcomeShortcut {
   label: string;
 }
 
-export interface WelcomeProps extends StormLayoutStyleProps {
+export interface WelcomeProps extends ReactermLayoutStyleProps {
   /** App title displayed prominently at center. */
   title: string;
   /** Optional app version string (e.g. "v1.2.3"). */

@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useRef } from "react";
-import type { StormColors } from "./colors.js";
+import type { ReactermColors } from "./colors.js";
 import { colors as defaultColors } from "./colors.js";
 import { generateThemeShades, type ThemeShades } from "./shades.js";
 import { TuiContext } from "../context/TuiContext.js";
 
 export interface ThemeWithShades {
-  colors: StormColors;
+  colors: ReactermColors;
   shades: ThemeShades;
 }
 
-function buildThemeWithShades(theme: StormColors): ThemeWithShades {
+function buildThemeWithShades(theme: ReactermColors): ThemeWithShades {
   return {
     colors: theme,
     shades: generateThemeShades(theme),
@@ -20,9 +20,9 @@ const defaultValue: ThemeWithShades = buildThemeWithShades(defaultColors);
 
 const ThemeContext = createContext<ThemeWithShades>(defaultValue);
 
-export function ThemeProvider(props: { theme?: StormColors; children: React.ReactNode }): React.ReactElement {
+export function ThemeProvider(props: { theme?: ReactermColors; children: React.ReactNode }): React.ReactElement {
   const theme = props.theme ?? defaultColors;
-  const cacheRef = useRef<{ theme: StormColors; value: ThemeWithShades } | null>(null);
+  const cacheRef = useRef<{ theme: ReactermColors; value: ThemeWithShades } | null>(null);
 
   if (!cacheRef.current || cacheRef.current.theme !== theme) {
     cacheRef.current = { theme, value: buildThemeWithShades(theme) };

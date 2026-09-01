@@ -44,7 +44,7 @@ export type {
   DiagramEdge,
   CanvasNode,
   CanvasEdge,
-  StormColors,
-  StormPersonality,
+  ReactermColors,
+  ReactermPersonality,
   Locale,
 } from "../../index.js";

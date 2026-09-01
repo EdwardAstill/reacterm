@@ -1,6 +1,6 @@
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 import { useTheme } from "../theme/provider.js";
 
-export function useColors(): StormColors {
+export function useColors(): ReactermColors {
   return useTheme().colors;
 }

@@ -1,5 +1,5 @@
 /**
- * Built-in plugins for Storm TUI.
+ * Built-in plugins for Reacterm TUI.
  */
 
 export { vimModePlugin } from "./vim-mode.js";

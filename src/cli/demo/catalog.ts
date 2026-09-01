@@ -15,10 +15,10 @@ import {
   hackerPreset,
   playfulPreset,
 } from "./demo-kit.js";
-import type { StormColors, StormPersonality } from "./demo-kit.js";
+import type { ReactermColors, ReactermPersonality } from "./demo-kit.js";
 
 // Themes catalog.
-export const THEMES: { name: string; colors: StormColors }[] = [
+export const THEMES: { name: string; colors: ReactermColors }[] = [
   { name: "Arctic", colors: arcticTheme },
   { name: "Midnight", colors: midnightTheme },
   { name: "Ember", colors: emberTheme },
@@ -61,7 +61,7 @@ export const SECTIONS = [
 
 export type SectionKey = typeof SECTIONS[number]["key"];
 
-export const PERSONALITY_PRESETS: { name: string; preset: StormPersonality }[] = [
+export const PERSONALITY_PRESETS: { name: string; preset: ReactermPersonality }[] = [
   { name: "Default", preset: defaultPreset },
   { name: "Minimal", preset: minimalPreset },
   { name: "Hacker",  preset: hackerPreset },

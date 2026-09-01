@@ -2,10 +2,10 @@ import React from "react";
 import { useColors } from "../../hooks/useColors.js";
 import { useInput } from "../../hooks/useInput.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface TagProps extends StormTextStyleProps {
+export interface TagProps extends ReactermTextStyleProps {
   label: string;
   variant?: "filled" | "outlined";
   onRemove?: () => void;

@@ -1,8 +1,8 @@
 [package]
-name = "storm-wasm"
+name = "reacterm-wasm"
 version = "0.1.0"
 edition = "2021"
-description = "Storm TUI hot-path WASM module — buffer, diff, charWidth, renderLine"
+description = "Reacterm TUI hot-path WASM module — buffer, diff, charWidth, renderLine"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

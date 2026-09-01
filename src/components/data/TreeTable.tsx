@@ -6,7 +6,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { padCell } from "../../utils/format.js";
@@ -53,7 +53,7 @@ export interface TreeTableReorderChange extends ReorderChange {
   nextData: TreeTableRow[];
 }
 
-export interface TreeTableProps extends StormContainerStyleProps {
+export interface TreeTableProps extends ReactermContainerStyleProps {
   columns: TableColumn[];
   data: TreeTableRow[];
   treeColumnKey?: string;

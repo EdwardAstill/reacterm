@@ -1,5 +1,5 @@
 /**
- * Storm TUI testing utilities.
+ * Reacterm TUI testing utilities.
  *
  * Provides renderForTest for component testing, renderDriver for app flows,
  * input simulation, assertion helpers, snapshots, scenario replay, explorer
@@ -471,18 +471,18 @@ interface MatcherResult {
  *
  * Usage with vitest:
  * ```ts
- * import { createStormMatchers } from "reacterm";
- * expect.extend(createStormMatchers());
+ * import { createReactermMatchers } from "reacterm";
+ * expect.extend(createReactermMatchers());
  * ```
  *
  * Provided matchers:
- * - `toMatchStormSnapshot(result, snapshotName)` — compare against in-memory snapshot
- * - `toContainStormText(result, text)` — check if output contains text
- * - `toHaveStormLines(result, count)` — check line count
+ * - `toMatchReactermSnapshot(result, snapshotName)` — compare against in-memory snapshot
+ * - `toContainReactermText(result, text)` — check if output contains text
+ * - `toHaveReactermLines(result, count)` — check line count
  */
-export function createStormMatchers(): Record<string, (...args: unknown[]) => MatcherResult> {
+export function createReactermMatchers(): Record<string, (...args: unknown[]) => MatcherResult> {
   return {
-    toMatchStormSnapshot(received: unknown, snapshotName: unknown): MatcherResult {
+    toMatchReactermSnapshot(received: unknown, snapshotName: unknown): MatcherResult {
       const result = received as RenderResult;
       const name = snapshotName as string;
       const { match, diff } = compareSnapshot(result.output, name);
@@ -496,7 +496,7 @@ export function createStormMatchers(): Record<string, (...args: unknown[]) => Ma
       };
     },
 
-    toContainStormText(received: unknown, text: unknown): MatcherResult {
+    toContainReactermText(received: unknown, text: unknown): MatcherResult {
       const result = received as RenderResult;
       const searchText = text as string;
       const pass = result.output.includes(searchText);
@@ -510,7 +510,7 @@ export function createStormMatchers(): Record<string, (...args: unknown[]) => Ma
       };
     },
 
-    toHaveStormLines(received: unknown, count: unknown): MatcherResult {
+    toHaveReactermLines(received: unknown, count: unknown): MatcherResult {
       const result = received as RenderResult;
       const expected = count as number;
       const pass = result.lines.length === expected;

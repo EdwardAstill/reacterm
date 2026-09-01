@@ -1,9 +1,9 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface AvatarProps extends StormTextStyleProps {
+export interface AvatarProps extends ReactermTextStyleProps {
   name: string;
   size?: "small" | "large";
   /** Custom render for the initials display. */

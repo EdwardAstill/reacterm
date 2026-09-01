@@ -162,7 +162,7 @@ export function FinancialDashboard(_props: FinancialDashboardProps): React.React
     flexDirection: "row", width: width - 2, justifyContent: "space-between",
   },
     React.createElement("tui-box", { flexDirection: "row", gap: 2 },
-      React.createElement(Gradient, { colors: [GOLD, ACCENT], children: "STORM TERMINAL" }),
+      React.createElement(Gradient, { colors: [GOLD, ACCENT], children: "REACTERM TERMINAL" }),
       React.createElement(Spinner, { type: "dots", color: GOLD }),
     ),
     React.createElement("tui-text", { color: DIM }, timestamp),
@@ -171,7 +171,7 @@ export function FinancialDashboard(_props: FinancialDashboardProps): React.React
   // -- Portfolio + P&L cards --
   const portfolioCard = React.createElement("tui-box", { flex: 1 },
     React.createElement(Card, {
-      title: "Portfolio Value", icon: "$", variant: "storm",
+      title: "Portfolio Value", icon: "$", variant: "reacterm",
       children: React.createElement("tui-text", { bold: true, color: GOLD }, fmtCompact(portfolioTotal)),
     }),
   );
@@ -296,7 +296,7 @@ export function FinancialDashboard(_props: FinancialDashboardProps): React.React
         flexDirection: "column", width: width - 2, paddingX: 1, gap: 1,
       },
       header,
-      React.createElement(Separator, { style: "storm", color: ACCENT, width: width - 4 }),
+      React.createElement(Separator, { style: "reacterm", color: ACCENT, width: width - 4 }),
       topRow,
       priceChart,
       middleRow,

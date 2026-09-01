@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { usePersonality } from "../../core/personality.js";
@@ -20,7 +20,7 @@ export interface SelectOption {
   description?: string;
 }
 
-export interface SelectProps extends StormLayoutStyleProps {
+export interface SelectProps extends ReactermLayoutStyleProps {
   options: Array<SelectOption>;
   value?: string;
   onChange?: (value: string) => void;

@@ -1,5 +1,5 @@
 /**
- * StormSSHServer — serve Storm TUI apps over SSH.
+ * ReactermSSHServer — serve Reacterm TUI apps over SSH.
  *
  * Users `ssh your-server.com` and get an interactive terminal UI.
  * Each SSH connection gets its own isolated React tree + Screen + InputManager.
@@ -23,7 +23,7 @@ async function loadSSH2(): Promise<SSH2Module> {
       ssh2Module = (m.default ?? m) as SSH2Module;
     } catch {
       throw new Error(
-        '[storm] SSH serving requires the "ssh2" package. Install it: npm install ssh2',
+        '[reacterm] SSH serving requires the "ssh2" package. Install it: npm install ssh2',
       );
     }
   }
@@ -40,7 +40,7 @@ const IDLE_TIMEOUT_MS = 0; // 0 = disabled
 const MAX_AUTH_FAILURES_PER_IP = 10;
 const AUTH_FAILURE_WINDOW_MS = 60_000;
 
-export interface StormSSHOptions {
+export interface ReactermSSHOptions {
   /** Port to listen on. Default: 2222 */
   port?: number;
   /** Host to bind to. Default: "0.0.0.0" */
@@ -101,7 +101,7 @@ function clampDim(value: number): number {
   return Math.floor(value);
 }
 
-/** TTY properties that SSH channels need to emulate for Storm's Screen. */
+/** TTY properties that SSH channels need to emulate for Reacterm's Screen. */
 interface TTYWriteProps {
   isTTY: true;
   columns: number;
@@ -109,7 +109,7 @@ interface TTYWriteProps {
   getColorDepth: () => number;
 }
 
-/** TTY properties that SSH channels need to emulate for Storm's InputManager. */
+/** TTY properties that SSH channels need to emulate for Reacterm's InputManager. */
 interface TTYReadProps {
   isTTY: true;
   isRaw: true;
@@ -177,15 +177,15 @@ interface ActiveSession {
   finalize: () => void;
 }
 
-export class StormSSHServer {
-  private readonly options: StormSSHOptions;
+export class ReactermSSHServer {
+  private readonly options: ReactermSSHOptions;
   private server: InstanceType<SSH2Module["Server"]> | null = null;
   private activeSessions = new Set<ActiveSession>();
   private activeClientFinalizers = new Set<() => void>();
   private activeConnectionCount = 0;
   private rateLimiter = new AuthRateLimiter();
 
-  constructor(options: StormSSHOptions) {
+  constructor(options: ReactermSSHOptions) {
     this.options = options;
   }
 

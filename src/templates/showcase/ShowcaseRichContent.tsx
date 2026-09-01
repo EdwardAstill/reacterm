@@ -13,7 +13,7 @@ export interface ShowcaseRichContentProps {
   imagePath?: string;
 }
 
-const MARKDOWN = `# Storm TUI Framework
+const MARKDOWN = `# Reacterm TUI Framework
 
 A terminal UI framework for building rich applications.
 
@@ -34,16 +34,16 @@ import { Box, Text } from "reacterm/components";
 
 render(
   React.createElement(Box, { borderStyle: "round" },
-    React.createElement(Text, { bold: true }, "Hello Storm!")
+    React.createElement(Text, { bold: true }, "Hello Reacterm!")
   )
 );
 \`\`\`
 
-> Storm provides components, layout, and rendering for terminal UIs.
+> Reacterm provides components, layout, and rendering for terminal UIs.
 
 ---
 
-Built with Storm.`;
+Built with Reacterm.`;
 
 const TS_CODE = `import React, { useState } from "react";
 import { render } from "reacterm";
@@ -154,12 +154,12 @@ export function ShowcaseRichContent(props: ShowcaseRichContentProps): React.Reac
     }, `\n  === ${title} ===\n`),
 
     // 1. Images — PNG decoded and rendered with half-block characters
-    heading("Image — Storm Banner"),
+    heading("Image — Reacterm Banner"),
     gap(),
     React.createElement("tui-box", { key: "img-banner", marginLeft: 2 },
       React.createElement(Image, {
-        src: imagePath ?? path.join(process.cwd(), "examples", "storm-banner.png"),
-        alt: "Storm Banner",
+        src: imagePath ?? path.join(process.cwd(), "examples", "reacterm-banner.png"),
+        alt: "Reacterm Banner",
         width: 60,
         height: 10,
         protocol: "block" as const,

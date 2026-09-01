@@ -52,7 +52,7 @@ export class ConsoleInterceptor {
     // Show any suppressed warnings after TUI exits
     if (this.suppressedWarnings.length > 0 && process.env.NODE_ENV !== "production") {
       this.origConsoleWarn(
-        `[storm] ${this.suppressedWarnings.length} console warnings were suppressed during TUI session.`,
+        `[reacterm] ${this.suppressedWarnings.length} console warnings were suppressed during TUI session.`,
       );
     }
   }

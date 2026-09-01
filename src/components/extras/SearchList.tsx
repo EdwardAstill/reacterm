@@ -14,7 +14,7 @@ import {
   isNavigableItem,
 } from "../../utils/navigation.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 
 export interface SearchListItem {
   /** Stable identifier passed to onSelect. */
@@ -30,7 +30,7 @@ export interface SearchListItem {
 }
 
 export interface SearchListProps<TItem extends SearchListItem = SearchListItem>
-  extends StormLayoutStyleProps {
+  extends ReactermLayoutStyleProps {
   items: TItem[];
   /** Fired when the user presses Enter on an active option. */
   onSelect?: (value: string, item: TItem) => void;

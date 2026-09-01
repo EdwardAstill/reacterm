@@ -4,9 +4,9 @@
  * Applies smaller defaults to Modal, Card, and Button components.
  */
 
-import type { StormPlugin } from "../core/plugin.js";
+import type { ReactermPlugin } from "../core/plugin.js";
 
-export const compactModePlugin: StormPlugin = {
+export const compactModePlugin: ReactermPlugin = {
   name: "compact-mode",
   componentDefaults: {
     Modal: { size: "sm" },

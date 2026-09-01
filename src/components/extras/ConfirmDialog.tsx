@@ -5,7 +5,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { FocusGroup } from "../core/FocusGroup.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
@@ -16,7 +16,7 @@ import { OVERLAY_LAYER } from "../overlay-layers.js";
 /**
  * Runs a 1-second-tick countdown while `active` is true. Side effects use the
  * reacterm render-phase pattern (eager init + useCleanup on unmount); useEffect
- * cleanup is unreliable in Storm's reconciler. Returns remaining whole seconds,
+ * cleanup is unreliable in Reacterm's reconciler. Returns remaining whole seconds,
  * or null when inactive.
  */
 function useCountdown(active: boolean, durationMs: number | undefined, onExpire: () => void): number | null {
@@ -69,7 +69,7 @@ export interface ConfirmDialogAction {
   variant?: "primary" | "danger" | "default";
 }
 
-export interface ConfirmDialogProps extends StormContainerStyleProps {
+export interface ConfirmDialogProps extends ReactermContainerStyleProps {
   visible: boolean;
   message: string;
   onConfirm?: () => void;

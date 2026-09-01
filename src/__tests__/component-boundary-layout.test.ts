@@ -55,7 +55,7 @@ describe("Component boundary layout", () => {
 
     function MyFooter() {
       return React.createElement(Box, { height: 1, flexShrink: 0, overflow: "hidden", flexDirection: "row", paddingX: 1, backgroundColor: "#CBD5E1" },
-        React.createElement(Text, { color: "#111827", bold: true }, "\u26A1 storm"),
+        React.createElement(Text, { color: "#111827", bold: true }, "\u26A1 reacterm"),
         React.createElement(Box, { flex: 1 }),
         React.createElement(Text, { color: "#6B7280" }, "tokens:10.4K"));
     }
@@ -68,7 +68,7 @@ describe("Component boundary layout", () => {
       React.createElement(Box, { flex: 1 },
         React.createElement(Text, { color: "#111827" }, "Content area")),
       React.createElement(Box, { height: 1, flexShrink: 0, overflow: "hidden", flexDirection: "row", paddingX: 1, backgroundColor: "#CBD5E1" },
-        React.createElement(Text, { color: "#111827", bold: true }, "\u26A1 storm"),
+        React.createElement(Text, { color: "#111827", bold: true }, "\u26A1 reacterm"),
         React.createElement(Box, { flex: 1 }),
         React.createElement(Text, { color: "#6B7280" }, "tokens:10.4K")),
     );

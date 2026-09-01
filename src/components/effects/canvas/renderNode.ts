@@ -1,5 +1,5 @@
 import React from "react";
-import { colors as defaultColors, type StormColors } from "../../../theme/colors.js";
+import { colors as defaultColors, type ReactermColors } from "../../../theme/colors.js";
 import type { CanvasNode, CanvasEdge } from "./types.js";
 import { resolveNodeColor, getSiblingEdges, type NodeEntry } from "./canvasUtils.js";
 
@@ -21,7 +21,7 @@ function renderConnector(
   edge: CanvasEdge | undefined,
   direction: "horizontal" | "vertical",
   gap: number,
-  c: StormColors = defaultColors,
+  c: ReactermColors = defaultColors,
 ): React.ReactElement | null {
   if (!edge) return null;
   const style = edge.style ?? "solid";
@@ -62,7 +62,7 @@ export function renderCanvasNode(
   allEdges: CanvasEdge[],
   nodeIndex: Map<string, NodeEntry>,
   depth: number,
-  colors?: StormColors,
+  colors?: ReactermColors,
 ): React.ReactElement {
   const c = colors ?? defaultColors;
   if (depth > MAX_DEPTH) {

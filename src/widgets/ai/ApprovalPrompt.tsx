@@ -8,7 +8,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 
 export interface ApprovalOption {
   key: string;
@@ -35,7 +35,7 @@ export interface ApprovalPromptProps {
   timeoutMessage?: (seconds: number) => string;
 }
 
-function getDefaultOptions(colors: StormColors): readonly ApprovalOption[] {
+function getDefaultOptions(colors: ReactermColors): readonly ApprovalOption[] {
   return [
     { key: "y", label: "approve", color: colors.approval.approve },
     { key: "n", label: "deny", color: colors.approval.deny },
@@ -52,7 +52,7 @@ function formatParams(params: Record<string, unknown>): string {
     .join("\n");
 }
 
-function riskBorderColor(risk: string | undefined, colors: StormColors): string {
+function riskBorderColor(risk: string | undefined, colors: ReactermColors): string {
   if (!risk) return colors.divider;
   const lower = risk.toLowerCase();
   if (lower === "high") return colors.error;

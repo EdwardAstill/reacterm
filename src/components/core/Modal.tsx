@@ -5,7 +5,7 @@ import { FocusGroup } from "./FocusGroup.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePersonality } from "../../core/personality.js";
@@ -166,7 +166,7 @@ function getModalWidth(size: ModalSize, screenWidth: number): number {
   return SIZE_WIDTHS[size] ?? DEFAULTS.modal.width;
 }
 
-export interface ModalProps extends StormContainerStyleProps {
+export interface ModalProps extends ReactermContainerStyleProps {
   visible: boolean;
   title?: string;
   children: React.ReactNode;

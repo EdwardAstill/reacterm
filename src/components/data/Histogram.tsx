@@ -1,11 +1,11 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { formatFixedChartValue } from "./chart-core/format.js";
 
-export interface HistogramProps extends StormLayoutStyleProps {
+export interface HistogramProps extends ReactermLayoutStyleProps {
   /** Raw data values to bin */
   data: number[];
   /** Number of bins (default: auto-computed as sqrt(n), clamped to 3..50) */

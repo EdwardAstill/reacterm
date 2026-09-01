@@ -1,12 +1,12 @@
 import React, { useId } from "react";
 import { getColorAt } from "../../utils/color.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 
-export interface GradientProgressProps extends StormLayoutStyleProps {
+export interface GradientProgressProps extends ReactermLayoutStyleProps {
   value: number;
   width?: number;
   /** Multi-stop gradient colors. Array of 2+ hex colors interpolated evenly.

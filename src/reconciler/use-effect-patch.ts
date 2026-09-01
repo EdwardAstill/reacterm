@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Storm's custom reconciler doesn't reliably fire useEffect cleanup
+ * Reacterm's custom reconciler doesn't reliably fire useEffect cleanup
  * functions. This is the #1 footgun for new users. We monkey-patch
  * React.useEffect to detect when a callback returns a cleanup function
  * and emit a warning pointing to useCleanup() instead.
@@ -31,13 +31,13 @@ export function patchUseEffect(): void {
           _useEffectWarnCount++;
           if (_useEffectWarnCount <= _USE_EFFECT_MAX_PROD_WARNINGS) {
             process.stderr.write(
-              "[storm] Warning: useEffect cleanup function detected. " +
+              "[reacterm] Warning: useEffect cleanup function detected. " +
               "Use useCleanup() instead. See docs/pitfalls.md#4\n",
             );
           }
           if (_useEffectWarnCount === _USE_EFFECT_MAX_PROD_WARNINGS) {
             process.stderr.write(
-              "[storm] ... suppressing further useEffect cleanup warnings.\n",
+              "[reacterm] ... suppressing further useEffect cleanup warnings.\n",
             );
           }
           return result;
@@ -56,8 +56,8 @@ export function patchUseEffect(): void {
         if (!_warnedCallSites.has(callSiteKey)) {
           _warnedCallSites.add(callSiteKey);
           process.stderr.write(
-            "[storm] Warning: useEffect cleanup function detected. " +
-            "In Storm's reconciler, useEffect cleanup may not fire reliably. " +
+            "[reacterm] Warning: useEffect cleanup function detected. " +
+            "In Reacterm's reconciler, useEffect cleanup may not fire reliably. " +
             "Use useCleanup() instead for timers, listeners, and subscriptions. " +
             "See docs/pitfalls.md#4\n",
           );

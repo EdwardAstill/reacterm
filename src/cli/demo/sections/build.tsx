@@ -124,7 +124,7 @@ const ROLE_OPTIONS: SelectOption[] = [
 // React treats as a new component type — and remounts the entire input
 // subtree (TextInput, MaskedInput, TextArea, ChatInput…) on every parent
 // re-render. That re-mount thrashes focus.register/focus.focus calls,
-// triggering the "[storm] Multiple elements have isFocused={true}" warning
+// triggering the "[reacterm] Multiple elements have isFocused={true}" warning
 // every time you tab/click a field.
 interface FormRowProps {
   label: string;

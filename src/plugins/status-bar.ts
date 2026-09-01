@@ -6,7 +6,7 @@
  * FPS, or custom text. The bar updates every frame.
  */
 
-import type { StormPlugin } from "../core/plugin.js";
+import type { ReactermPlugin } from "../core/plugin.js";
 import type { RenderContext } from "../core/render-context.js";
 
 export type StatusBarSegment =
@@ -48,7 +48,7 @@ export interface StatusBarPluginOptions {
  * });
  * ```
  */
-export function statusBarPlugin(options: StatusBarPluginOptions = {}): StormPlugin {
+export function statusBarPlugin(options: StatusBarPluginOptions = {}): ReactermPlugin {
   const segments: StatusBarSegment[] = options.segments ?? [
     { type: "time", format: "24h" },
     { type: "fps" },

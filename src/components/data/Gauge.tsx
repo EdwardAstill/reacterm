@@ -1,7 +1,7 @@
 import React, { useId } from "react";
 import { useColors } from "../../hooks/useColors.js";
 import { BrailleCanvas } from "../../utils/braille-canvas.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -13,7 +13,7 @@ export interface GaugeThreshold {
   color: string | number;
 }
 
-export interface GaugeProps extends StormLayoutStyleProps {
+export interface GaugeProps extends ReactermLayoutStyleProps {
   value: number;
   label?: string;
   color?: string | number;

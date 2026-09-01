@@ -179,10 +179,10 @@ export function ShowcaseLayout(props: ShowcaseLayoutProps): React.ReactElement {
     blank("b8a"),
     React.createElement("tui-box", { key: "d-card", marginLeft: 2 },
       React.createElement(Card, {
-        variant: "storm",
-        title: "Storm Card",
+        variant: "reacterm",
+        title: "Reacterm Card",
         width: 40,
-        children: React.createElement("tui-text", null, "Card body with storm variant styling."),
+        children: React.createElement("tui-text", null, "Card body with reacterm variant styling."),
       }),
     ),
     blank("b8b"),

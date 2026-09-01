@@ -2,13 +2,13 @@ import React, { useRef } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { padEndCells } from "../../core/unicode.js";
 
-export interface StatusMessageProps extends StormTextStyleProps {
+export interface StatusMessageProps extends ReactermTextStyleProps {
   message: string;
   type?: "success" | "warning" | "error" | "info";
   title?: string;
@@ -20,7 +20,7 @@ export interface StatusMessageProps extends StormTextStyleProps {
   renderIcon?: (type: string, icon: string) => React.ReactNode;
 }
 
-function getTypeConfig(colors: StormColors): Record<string, { icon: string; color: string }> {
+function getTypeConfig(colors: ReactermColors): Record<string, { icon: string; color: string }> {
   return {
     success: { icon: "\u2713", color: colors.success },
     warning: { icon: "\u26A0", color: colors.warning },

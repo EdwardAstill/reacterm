@@ -1,6 +1,6 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePersonality } from "../../core/personality.js";
@@ -11,7 +11,7 @@ export interface FooterBinding {
   label: string;
 }
 
-export interface FooterProps extends Omit<StormLayoutStyleProps, "left" | "right"> {
+export interface FooterProps extends Omit<ReactermLayoutStyleProps, "left" | "right"> {
   children?: React.ReactNode;
   borderStyle?: "single" | "double" | "none";
   /** Override: must be numeric for border line repeat. */

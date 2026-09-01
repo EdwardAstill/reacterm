@@ -4,7 +4,7 @@ import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePersonality } from "../../core/personality.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import {
@@ -17,7 +17,7 @@ import {
 const DAY_NAMES_SUN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAY_NAMES_MON = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export interface EventCalendarProps extends StormLayoutStyleProps {
+export interface EventCalendarProps extends ReactermLayoutStyleProps {
   events: EventCalendarEvent[];
   controller?: EventCalendarController;
   anchorDate?: Date;

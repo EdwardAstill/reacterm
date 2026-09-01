@@ -8,7 +8,7 @@ import { wasmTokenizeLine, isWasmTokenizerAvailable } from "../../core/wasm-toke
 import { usePersonality } from "../../core/personality.js";
 import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import type { HighlightSpan } from "../../components/core/TextArea.js";
 import {
   EMPTY_SET,
@@ -812,7 +812,7 @@ function tokenize(code: string, language: string): Token[] {
   return allTokens;
 }
 
-const TOKEN_STYLES: Record<TokenKind, { color?: (s: StormColors["syntax"]) => string; bold?: boolean; dim?: boolean }> = {
+const TOKEN_STYLES: Record<TokenKind, { color?: (s: ReactermColors["syntax"]) => string; bold?: boolean; dim?: boolean }> = {
   comment:      { color: (s) => s.comment, dim: true },
   string:       { color: (s) => s.string },
   keyword:      { color: (s) => s.keyword, bold: true },
@@ -824,7 +824,7 @@ const TOKEN_STYLES: Record<TokenKind, { color?: (s: StormColors["syntax"]) => st
   plain:        {},
 };
 
-function renderToken(token: Token, idx: number, colors: StormColors): React.ReactElement {
+function renderToken(token: Token, idx: number, colors: ReactermColors): React.ReactElement {
   const style = TOKEN_STYLES[token.kind];
   const props: Record<string, unknown> = { key: idx };
   if (style.color) props.color = style.color(colors.syntax);
@@ -833,7 +833,7 @@ function renderToken(token: Token, idx: number, colors: StormColors): React.Reac
   return React.createElement(Text, props, token.text);
 }
 
-function renderLine(lineTokens: Token[], lineIdx: number, colors: StormColors): React.ReactElement {
+function renderLine(lineTokens: Token[], lineIdx: number, colors: ReactermColors): React.ReactElement {
   const children = lineTokens.map((t, i) => renderToken(t, i, colors));
   return React.createElement(Text, { key: lineIdx }, ...children);
 }
@@ -841,7 +841,7 @@ function renderLine(lineTokens: Token[], lineIdx: number, colors: StormColors): 
 export function createSyntaxHighlightLines(
   code: string,
   language: string,
-  colors: StormColors,
+  colors: ReactermColors,
 ): HighlightSpan[][] {
   const tokens = tokenize(code, language);
   const lines: HighlightSpan[][] = [[]];

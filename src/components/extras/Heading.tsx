@@ -1,10 +1,10 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface HeadingProps extends StormLayoutStyleProps {
+export interface HeadingProps extends ReactermLayoutStyleProps {
   children: string;
   level?: 1 | 2 | 3 | 4;
 }

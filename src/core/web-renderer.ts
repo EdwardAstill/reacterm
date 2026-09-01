@@ -180,7 +180,7 @@ export interface WebRendererOptions {
   port?: number;
   /** Bind host (default "localhost"). */
   host?: string;
-  /** Browser page title (default "Storm TUI"). */
+  /** Browser page title (default "Reacterm TUI"). */
   title?: string;
 }
 
@@ -195,7 +195,7 @@ export class WebRenderer {
   constructor(options?: WebRendererOptions) {
     this.port = options?.port ?? 3000;
     this.host = options?.host ?? "localhost";
-    this.title = options?.title ?? "Storm TUI";
+    this.title = options?.title ?? "Reacterm TUI";
   }
 
   /** Number of connected browser clients. */

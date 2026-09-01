@@ -1,4 +1,4 @@
-export type StormColors = {
+export type ReactermColors = {
   brand: { primary: string; light: string; glow: string };
   text: { primary: string; secondary: string; dim: string; disabled: string };
   surface: { base: string; raised: string; overlay: string; highlight: string };
@@ -18,7 +18,7 @@ export type StormColors = {
   syntax: { keyword: string; string: string; number: string; function: string; type: string; comment: string; operator: string };
 };
 
-export const colors: StormColors = {
+export const colors: ReactermColors = {
   brand: {
     primary: "#82AAFF",   // primary accent
     light:   "#A8C8FF",   // active states

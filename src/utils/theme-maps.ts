@@ -1,6 +1,6 @@
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 
-export function getTypeColors(colors: StormColors): Record<string, string> {
+export function getTypeColors(colors: ReactermColors): Record<string, string> {
   return {
     success: colors.success,
     warning: colors.warning,
@@ -9,10 +9,10 @@ export function getTypeColors(colors: StormColors): Record<string, string> {
   };
 }
 
-export function getVariantColors(colors: StormColors): Record<string, string> {
+export function getVariantColors(colors: ReactermColors): Record<string, string> {
   return {
     default: colors.text.dim,
-    storm: colors.brand.primary,
+    reacterm: colors.brand.primary,
     success: colors.success,
     error: colors.error,
     warning: colors.warning,
@@ -20,7 +20,7 @@ export function getVariantColors(colors: StormColors): Record<string, string> {
 }
 
 /** Type-to-color map for ConfirmDialog (different keys than Alert). */
-export function getDialogTypeColors(colors: StormColors): Record<string, string> {
+export function getDialogTypeColors(colors: ReactermColors): Record<string, string> {
   return {
     info: colors.brand.primary,
     warning: colors.warning,
@@ -29,7 +29,7 @@ export function getDialogTypeColors(colors: StormColors): Record<string, string>
 }
 
 /** Variant-to-color map for ConfirmDialog action buttons. */
-export function getDialogVariantColors(colors: StormColors): Record<string, string> {
+export function getDialogVariantColors(colors: ReactermColors): Record<string, string> {
   return {
     primary: colors.brand.primary,
     danger: colors.error,

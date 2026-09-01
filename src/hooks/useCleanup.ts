@@ -8,7 +8,7 @@ let _cleanupLeakWarned = false;
 
 /**
  * Register a cleanup that fires on unmount AND app exit (signals, crashes).
- * useEffect cleanup does NOT fire reliably in Storm's reconciler. Use this instead.
+ * useEffect cleanup does NOT fire reliably in Reacterm's reconciler. Use this instead.
  */
 export function useCleanup(fn: () => void): void {
   const { renderContext } = useTui();
@@ -31,7 +31,7 @@ export function useCleanup(fn: () => void): void {
   if (!_cleanupLeakWarned && renderContext.cleanups.size > MAX_CLEANUPS) {
     _cleanupLeakWarned = true;
     process.stderr.write(
-      `[storm] Warning: cleanup map has ${renderContext.cleanups.size} entries, possible leak\n`,
+      `[reacterm] Warning: cleanup map has ${renderContext.cleanups.size} entries, possible leak\n`,
     );
   }
 }

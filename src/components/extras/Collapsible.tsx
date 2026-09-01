@@ -5,12 +5,12 @@ import { useColors } from "../../hooks/useColors.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import { createAnimation, tickAnimation, type AnimationRef } from "../../utils/animate.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface CollapsibleProps extends StormContainerStyleProps {
+export interface CollapsibleProps extends ReactermContainerStyleProps {
   title: string;
   expanded?: boolean;
   onToggle?: (expanded: boolean) => void;

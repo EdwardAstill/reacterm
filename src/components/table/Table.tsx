@@ -5,7 +5,7 @@ import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
@@ -86,7 +86,7 @@ export interface TableRenderState {
   isEditing: boolean;
 }
 
-export interface TableProps extends StormContainerStyleProps {
+export interface TableProps extends ReactermContainerStyleProps {
   columns: TableColumn[];
   data: Record<string, string | number>[];
   headerColor?: string | number;

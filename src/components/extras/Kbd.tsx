@@ -1,9 +1,9 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface KbdProps extends StormTextStyleProps {
+export interface KbdProps extends ReactermTextStyleProps {
   /** Key label, e.g. "Ctrl+C", "Enter", "Esc" */
   children: string;
 }

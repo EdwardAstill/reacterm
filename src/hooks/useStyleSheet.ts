@@ -1,7 +1,7 @@
 /**
  * useStyleSheet — load and apply a stylesheet file with optional live reloading.
  *
- * Reads a `.storm.css` or `.storm.json` file, converts its rules into a
+ * Reads a `.reacterm.css` or `.reacterm.json` file, converts its rules into a
  * StyleSheet, and injects it into the component tree via StyleContext.
  * When `watch` is enabled, file changes trigger a re-parse and re-render
  * so styles update live without restarting the app.
@@ -11,7 +11,7 @@
  * import { useStyleSheet, Box, Text } from "reacterm";
  *
  * function App() {
- *   useStyleSheet({ path: "./app.storm.css", watch: true });
+ *   useStyleSheet({ path: "./app.reacterm.css", watch: true });
  *   return (
  *     <Box className="sidebar">
  *       <Text className="title">Hello</Text>
@@ -31,7 +31,7 @@ import {
   type ParsedStyleSheet,
 } from "../core/stylesheet-loader.js";
 import { extractThemeOverrides, type DeepPartial } from "../theme/index.js";
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 
 /**
  * Convert parsed rules (selector + Record<string, unknown>) into the
@@ -48,15 +48,15 @@ function toStyleSheetRules(parsed: ParsedStyleSheet): Record<string, StyleRule> 
 /** Return value of {@link useStyleSheet}. */
 export interface UseStyleSheetResult {
   /**
-   * Partial StormColors extracted from `--storm-*` CSS custom properties
+   * Partial ReactermColors extracted from `--reacterm-*` CSS custom properties
    * defined in `:root` blocks. Pass this to `extendTheme(baseTheme, themeOverrides)`
    * and feed the merged theme into `<ThemeProvider>` to close the gap between
-   * Layer 4 (.storm.css variables) and Layer 1 (ThemeProvider).
+   * Layer 4 (.reacterm.css variables) and Layer 1 (ThemeProvider).
    *
    * @example
    * ```tsx
    * function App() {
-   *   const { themeOverrides } = useStyleSheet({ path: "./app.storm.css", watch: true });
+   *   const { themeOverrides } = useStyleSheet({ path: "./app.reacterm.css", watch: true });
    *   const mergedTheme = extendTheme(baseTheme, themeOverrides);
    *   return (
    *     <ThemeProvider theme={mergedTheme}>
@@ -66,7 +66,7 @@ export interface UseStyleSheetResult {
    * }
    * ```
    */
-  themeOverrides: DeepPartial<StormColors>;
+  themeOverrides: DeepPartial<ReactermColors>;
 }
 
 /**
@@ -82,8 +82,8 @@ export interface UseStyleSheetResult {
  *
  * The file watcher is cleaned up when the app unmounts.
  *
- * Additionally, any `--storm-*` CSS custom properties found in `:root`
- * blocks are extracted into `themeOverrides` — a partial `StormColors`
+ * Additionally, any `--reacterm-*` CSS custom properties found in `:root`
+ * blocks are extracted into `themeOverrides` — a partial `ReactermColors`
  * object that can be merged with `extendTheme()` and passed to
  * `<ThemeProvider>` so that `useColors()` reflects live stylesheet values.
  *
@@ -97,7 +97,7 @@ export function useStyleSheet(options: StyleSheetLoaderOptions): UseStyleSheetRe
   const loaderRef = useRef<{
     path: string;
     close: () => void;
-    themeOverrides: DeepPartial<StormColors>;
+    themeOverrides: DeepPartial<ReactermColors>;
   } | null>(null);
 
   // Already initialized for this path — return cached overrides
@@ -121,7 +121,7 @@ export function useStyleSheet(options: StyleSheetLoaderOptions): UseStyleSheetRe
       // Replace the StyleContext value imperatively. The StyleContext.Provider
       // is owned by a parent component (or the framework's render wrapper).
       // We mutate the context's _currentValue directly — same pattern used
-      // throughout storm for imperative updates that bypass React state.
+      // throughout reacterm for imperative updates that bypass React state.
       (StyleContext as unknown as { _currentValue: unknown })._currentValue = newSheet; // React private API — imperative context update
       (StyleContext as unknown as { _currentValue2: unknown })._currentValue2 = newSheet; // React private API — imperative context update
 

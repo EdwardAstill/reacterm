@@ -4,13 +4,13 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 let nextGroupId = 0;
 
-export interface FocusGroupProps extends StormContainerStyleProps {
+export interface FocusGroupProps extends ReactermContainerStyleProps {
   children?: React.ReactNode;
   /** Unique ID for this focus group. Auto-generated if not provided. */
   id?: string;
@@ -48,7 +48,7 @@ export const FocusGroup = React.memo(function FocusGroup(rawProps: FocusGroupPro
   const groupId = groupIdRef.current;
 
   // ── Focus trap mode ────────────────────────────────────────────
-  // Render-phase side effects are intentional here: Storm's reconciler has
+  // Render-phase side effects are intentional here: Reacterm's reconciler has
   // unreliable useEffect cleanup (see hooks/useCleanup.ts), so we register
   // trapFocus eagerly in render and rely on useCleanup for unmount release.
   // Responds to prop changes: false→true activates, true→false releases.

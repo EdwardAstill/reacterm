@@ -4,13 +4,13 @@ import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { getColorAt } from "../../utils/color.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 
 export type LoadingStyle = "spinner" | "dots" | "bar" | "pulse" | "gradient";
 export type LoadingSize = "sm" | "md" | "lg";
 
-export interface LoadingIndicatorProps extends StormLayoutStyleProps {
+export interface LoadingIndicatorProps extends ReactermLayoutStyleProps {
   /** Animation style. @default "spinner" */
   style?: LoadingStyle;
   /** Size of the animation area. @default "md" */

@@ -1,8 +1,8 @@
 import React from "react";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import type { BackgroundProp } from "../../reconciler/types.js";
 
-export interface BoxProps extends StormContainerStyleProps {
+export interface BoxProps extends ReactermContainerStyleProps {
   children?: React.ReactNode;
   /** Background pattern — painted into the buffer before children. */
   background?: BackgroundProp;

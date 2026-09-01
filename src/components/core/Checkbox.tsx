@@ -3,13 +3,13 @@ import { useInput } from "../../hooks/useInput.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useMouseTarget } from "../../hooks/useMouseTarget.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { FOCUS_CHARS } from "../../utils/focus-chars.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 
-export interface CheckboxProps extends StormLayoutStyleProps {
+export interface CheckboxProps extends ReactermLayoutStyleProps {
   checked: boolean;
   onChange?: (checked: boolean) => void;
   label?: string;

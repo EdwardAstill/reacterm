@@ -1,12 +1,12 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface HeaderProps extends Omit<StormLayoutStyleProps, "left" | "right"> {
+export interface HeaderProps extends Omit<ReactermLayoutStyleProps, "left" | "right"> {
   title: string;
   subtitle?: string;
   borderStyle?: "single" | "double" | "none";

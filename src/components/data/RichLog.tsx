@@ -2,9 +2,9 @@ import React, { useRef, createContext, useContext } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { renderHighlightedText } from "../../utils/highlight.js";
@@ -28,7 +28,7 @@ const LEVEL_PREFIX: Record<LogLevel, string> = {
 };
 
 /** Color for each level. */
-function getLevelColors(colors: StormColors): Record<LogLevel, string | number | undefined> {
+function getLevelColors(colors: ReactermColors): Record<LogLevel, string | number | undefined> {
   return {
     debug: undefined, // dim
     info: undefined,  // default
@@ -47,7 +47,7 @@ export interface LogEntry {
   level?: LogLevel;
 }
 
-export interface RichLogProps extends StormContainerStyleProps {
+export interface RichLogProps extends ReactermContainerStyleProps {
   entries: readonly LogEntry[];
   maxVisible?: number;
   autoScroll?: boolean;

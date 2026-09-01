@@ -1,5 +1,5 @@
 /**
- * One-line DevTools enablement for Storm TUI.
+ * One-line DevTools enablement for Reacterm TUI.
  *
  * ```ts
  * const app = render(<App />);
@@ -348,10 +348,10 @@ function formatBytes(bytes: number): string {
 
 function exportProfilerData(profiler: Profiler): void {
   try {
-    const filename = `storm-profiler-${Date.now()}.json`;
+    const filename = `reacterm-profiler-${Date.now()}.json`;
     writeFileSync(filename, profiler.exportJSON(), "utf-8");
-    process.stderr.write(`[storm] Profiler data exported: ${filename}\n`);
+    process.stderr.write(`[reacterm] Profiler data exported: ${filename}\n`);
   } catch (err) {
-    process.stderr.write(`[storm] Failed to export profiler data: ${err}\n`);
+    process.stderr.write(`[reacterm] Failed to export profiler data: ${err}\n`);
   }
 }

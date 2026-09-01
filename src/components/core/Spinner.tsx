@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useImperativeAnimation } from "../../hooks/useImperativeAnimation.js";
 
 export type SpinnerType =
-  | "dots" | "line" | "arc" | "bounce" | "braille" | "storm" | "flywheel"
-  | "clock" | "arrows" | "pulse" | "wave" | "moon" | "diamond" | "storm-logo";
+  | "dots" | "line" | "arc" | "bounce" | "braille" | "reacterm" | "flywheel"
+  | "clock" | "arrows" | "pulse" | "wave" | "moon" | "diamond" | "reacterm-logo";
 
-export interface SpinnerProps extends StormTextStyleProps {
+export interface SpinnerProps extends ReactermTextStyleProps {
   /** Spinner animation style.
    *  @default personality.animation.spinnerType */
   type?: SpinnerType;
@@ -26,7 +26,7 @@ export interface SpinnerProps extends StormTextStyleProps {
   renderLabel?: (label: string) => React.ReactNode;
 }
 
-const STORM_FRAMES: string[] = [
+const REACTERM_FRAMES: string[] = [
   "░░░░░░░░",
   "▒░░░░░░░",
   "▓▒░░░░░░",
@@ -52,12 +52,12 @@ const FLYWHEEL_FRAMES: string[] = [
   "◐", "◓", "◑", "◒",
 ];
 
-// Rotating diamond — single-char variant of the Storm logo.
+// Rotating diamond — single-char variant of the Reacterm logo.
 const DIAMOND_FRAMES: string[] = ["◇", "◈", "◆", "◈", "◇", "◈", "◆", "◈"];
 
-// Mini Storm logo spinner — 3-char wide, same block-density pulse as the full logo.
+// Mini Reacterm logo spinner — 3-char wide, same block-density pulse as the full logo.
 // Cycles density around the center ◆ mark like the logo rotation.
-const STORM_LOGO_FRAMES: string[] = [
+const REACTERM_LOGO_FRAMES: string[] = [
   "█◆█",
   "▓◆▓",
   "▒◆▒",
@@ -79,14 +79,14 @@ const FRAMES: Record<string, string[]> = {
   bounce: ["⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"],
   braille: ["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"],
   flywheel: FLYWHEEL_FRAMES,
-  storm: STORM_FRAMES,
+  reacterm: REACTERM_FRAMES,
   clock: CLOCK_FRAMES,
   arrows: ARROWS_FRAMES,
   pulse: PULSE_FRAMES,
   wave: WAVE_FRAMES,
   moon: MOON_FRAMES,
   diamond: DIAMOND_FRAMES,
-  "storm-logo": STORM_LOGO_FRAMES,
+  "reacterm-logo": REACTERM_LOGO_FRAMES,
 };
 
 export const Spinner = React.memo(function Spinner(rawProps: SpinnerProps): React.ReactElement {

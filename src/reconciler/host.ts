@@ -20,7 +20,7 @@ type HostContext = Record<string, never>;
 type HostUpdatePayload = Record<string, unknown> | null;
 
 /** Extracted from react-reconciler's createReconciler parameter type. */
-type StormHostConfig = Parameters<typeof Reconciler>[0];
+type ReactermHostConfig = Parameters<typeof Reconciler>[0];
 
 // These are set by render() to wire the PluginManager's custom element
 // mount/unmount notifications into the reconciler's tree mutation calls.
@@ -50,7 +50,7 @@ export function setCustomElementLifecycleHooks(
 /** Known built-in element types — anything else is a custom element. */
 const BUILTIN_TYPES = new Set(["tui-box", "tui-text", "tui-scroll-view", "tui-text-input", "tui-overlay"]);
 
-const BOX_IN_TEXT_WARNING = "Storm TUI: <Box> cannot be nested inside <Text>. Use <Text> for styled content, <Box> for layout. Wrap text content in <Text> elements inside a <Box>.";
+const BOX_IN_TEXT_WARNING = "Reacterm TUI: <Box> cannot be nested inside <Text>. Use <Text> for styled content, <Box> for layout. Wrap text content in <Text> elements inside a <Box>.";
 
 function notifyMountIfCustom(child: HostInstance | HostTextInstance): void {
   if ("type" in child && child.type !== "TEXT_NODE" && !BUILTIN_TYPES.has(child.type) && _onCustomElementMount) {
@@ -169,7 +169,7 @@ const LAYOUT_KEYS = [
   "aspectRatio", "order",
 ];
 
-export const hostConfig: StormHostConfig = {
+export const hostConfig: ReactermHostConfig = {
   // ── Feature flags ───────────────────────────────────────────────
 
   supportsMutation: true,

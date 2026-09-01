@@ -4,7 +4,7 @@ import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useTextAreaBehavior } from "../../hooks/headless/useTextAreaBehavior.js";
 import { ScrollView } from "./ScrollView.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 
 /** A colored span returned by user-provided syntax highlighters. */
 export interface HighlightSpan {
@@ -15,7 +15,7 @@ export interface HighlightSpan {
   inverse?: boolean;
 }
 
-export interface TextAreaProps extends StormLayoutStyleProps {
+export interface TextAreaProps extends ReactermLayoutStyleProps {
   /** Current text value (controlled). */
   value: string;
   /** Called on every text change with the full new value. */

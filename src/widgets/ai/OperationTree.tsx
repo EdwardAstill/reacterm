@@ -4,7 +4,7 @@ import { useCleanup } from "../../hooks/useCleanup.js";
 import { fmtDuration } from "../../utils/format.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 
 export interface OpNode {
   id: string;
@@ -41,7 +41,7 @@ const STATUS_ICONS: Record<string, string> = {
   cancelled: "⊘",
 };
 
-function getStatusColors(colors: StormColors): Record<string, string | undefined> {
+function getStatusColors(colors: ReactermColors): Record<string, string | undefined> {
   return {
     pending: colors.tool.pending,
     running: colors.tool.running,

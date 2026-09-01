@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -42,7 +42,7 @@ function isSameDay(a: Date, b: Date): boolean {
     && a.getDate() === b.getDate();
 }
 
-export interface DatePickerProps extends StormLayoutStyleProps {
+export interface DatePickerProps extends ReactermLayoutStyleProps {
   /** Currently selected date. */
   value?: Date;
   /** Called when the user selects a date. */

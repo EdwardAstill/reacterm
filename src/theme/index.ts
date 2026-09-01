@@ -1,6 +1,6 @@
-import { colors as defaultColors, type StormColors } from "./colors.js";
+import { colors as defaultColors, type ReactermColors } from "./colors.js";
 
-export { colors, type StormColors } from "./colors.js";
+export { colors, type ReactermColors } from "./colors.js";
 export { spacing, type SpacingToken } from "./spacing.js";
 export { ThemeProvider, useTheme, ThemeContext, type ThemeWithShades } from "./provider.js";
 export {
@@ -42,27 +42,27 @@ export type DeepPartial<T> = {
  * Deep-merge overrides onto a base theme. Only the properties you specify
  * are replaced; everything else keeps the base value.
  */
-export function extendTheme(base: StormColors, overrides: DeepPartial<StormColors>): StormColors {
-  return deepMerge(base as unknown as Record<string, unknown>, overrides as Record<string, unknown>) as StormColors;
+export function extendTheme(base: ReactermColors, overrides: DeepPartial<ReactermColors>): ReactermColors {
+  return deepMerge(base as unknown as Record<string, unknown>, overrides as Record<string, unknown>) as ReactermColors;
 }
 
 /**
  * Create a full theme by overriding parts of the default color palette.
  */
-export function createTheme(partial: DeepPartial<StormColors>): StormColors {
+export function createTheme(partial: DeepPartial<ReactermColors>): ReactermColors {
   return extendTheme(defaultColors, partial);
 }
 
 /**
- * Mapping from `--storm-{group}-{key}` CSS variable names to nested
- * StormColors paths.
+ * Mapping from `--reacterm-{group}-{key}` CSS variable names to nested
+ * ReactermColors paths.
  *
  * Flat fields (success, warning, error, info, divider) use single-segment
- * names: `--storm-success` → `{ success: "#..." }`.
+ * names: `--reacterm-success` → `{ success: "#..." }`.
  *
- * Nested fields use two segments: `--storm-brand-primary` → `{ brand: { primary: "#..." } }`.
+ * Nested fields use two segments: `--reacterm-brand-primary` → `{ brand: { primary: "#..." } }`.
  *
- * Only variables that start with `--storm-` are processed; everything else
+ * Only variables that start with `--reacterm-` are processed; everything else
  * is silently ignored. Unknown group/key combinations are also skipped so
  * that user-defined custom properties don't pollute the theme.
  */
@@ -70,33 +70,33 @@ export function createTheme(partial: DeepPartial<StormColors>): StormColors {
 /** The set of top-level keys that are flat strings (not nested objects). */
 const FLAT_KEYS = new Set(["success", "warning", "error", "info", "divider"]);
 
-/** All valid nested group names from StormColors. */
+/** All valid nested group names from ReactermColors. */
 const NESTED_GROUPS = new Set([
   "brand", "text", "surface", "system", "user", "assistant", "thinking",
   "tool", "approval", "input", "diff", "syntax",
 ]);
 
 /**
- * Extract `--storm-*` CSS custom properties into a partial StormColors object
+ * Extract `--reacterm-*` CSS custom properties into a partial ReactermColors object
  * suitable for passing to `extendTheme()`.
  *
  * The naming convention:
- * - `--storm-{flat}` where flat is success|warning|error|info|divider
+ * - `--reacterm-{flat}` where flat is success|warning|error|info|divider
  *   → `{ [flat]: value }`
- * - `--storm-{group}-{key}` where group is brand|text|surface|... etc
+ * - `--reacterm-{group}-{key}` where group is brand|text|surface|... etc
  *   → `{ [group]: { [key]: value } }`
  *
  * Variables that don't match either pattern are ignored.
  *
  * @param variables - CSS custom property map (keys include the `--` prefix)
- * @returns A partial StormColors object with only the recognized overrides
+ * @returns A partial ReactermColors object with only the recognized overrides
  *
  * @example
  * ```ts
  * const vars = new Map([
- *   ["--storm-brand-primary", "#FF0000"],
- *   ["--storm-success", "#00FF00"],
- *   ["--storm-text-dim", "#888888"],
+ *   ["--reacterm-brand-primary", "#FF0000"],
+ *   ["--reacterm-success", "#00FF00"],
+ *   ["--reacterm-text-dim", "#888888"],
  * ]);
  * const overrides = extractThemeOverrides(vars);
  * // { brand: { primary: "#FF0000" }, success: "#00FF00", text: { dim: "#888888" } }
@@ -104,18 +104,18 @@ const NESTED_GROUPS = new Set([
  */
 export function extractThemeOverrides(
   variables: Map<string, string> | Record<string, string>,
-): DeepPartial<StormColors> {
+): DeepPartial<ReactermColors> {
   const overrides: Record<string, unknown> = {};
 
   const entries: Iterable<[string, string]> =
     variables instanceof Map ? variables.entries() : Object.entries(variables);
 
   for (const [name, value] of entries) {
-    // Only process --storm-* variables
-    if (!name.startsWith("--storm-")) continue;
+    // Only process --reacterm-* variables
+    if (!name.startsWith("--reacterm-")) continue;
 
-    // Strip the `--storm-` prefix → e.g. "brand-primary" or "success"
-    const rest = name.slice("--storm-".length);
+    // Strip the `--reacterm-` prefix → e.g. "brand-primary" or "success"
+    const rest = name.slice("--reacterm-".length);
 
     // Try flat field first (no hyphen, e.g. "success")
     if (FLAT_KEYS.has(rest)) {
@@ -141,6 +141,6 @@ export function extractThemeOverrides(
     (overrides[group] as Record<string, string>)[camelKey] = value;
   }
 
-  return overrides as DeepPartial<StormColors>;
+  return overrides as DeepPartial<ReactermColors>;
 }
 

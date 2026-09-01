@@ -1,13 +1,13 @@
 import React, { useId } from "react";
 import { BrailleCanvas } from "../../utils/braille-canvas.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { batchColorRuns } from "../../utils/color.js";
 
-export interface SparklineProps extends StormLayoutStyleProps {
+export interface SparklineProps extends ReactermLayoutStyleProps {
   data: readonly number[];
   /** Override: must be numeric for sparkline width calculation. */
   width?: number;

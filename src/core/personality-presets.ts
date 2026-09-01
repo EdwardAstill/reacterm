@@ -1,15 +1,15 @@
 import { colors as defaultColors } from "../theme/colors.js";
-import { createPersonality, type StormPersonality } from "./personality.js";
+import { createPersonality, type ReactermPersonality } from "./personality.js";
 
-// Current Storm style — amber accent, round borders, easeOut
+// Current Reacterm style — amber accent, round borders, easeOut
 // animations, "❯" prompt, "bar" focus indicator.
 
-export const defaultPreset: StormPersonality = createPersonality({});
+export const defaultPreset: ReactermPersonality = createPersonality({});
 
 // Thin single borders, no animations, ">" prompt, "arrow" focus,
 // reduced spacing. For distraction-free work.
 
-export const minimalPreset: StormPersonality = createPersonality({
+export const minimalPreset: ReactermPersonality = createPersonality({
   borders: {
     default: "single",
     focused: "single",
@@ -51,7 +51,7 @@ export const minimalPreset: StormPersonality = createPersonality({
 // ASCII borders, green accent (#00FF00), "$" prompt, fast
 // animations, braille spinner. Terminal purist.
 
-export const hackerPreset: StormPersonality = createPersonality({
+export const hackerPreset: ReactermPersonality = createPersonality({
   colors: {
     brand: {
       primary: "#00FF00",
@@ -118,7 +118,7 @@ export const hackerPreset: StormPersonality = createPersonality({
 // Round borders, bouncy animations, "→" prompt, colorful, slow
 // easing. Fun and expressive.
 
-export const playfulPreset: StormPersonality = createPersonality({
+export const playfulPreset: ReactermPersonality = createPersonality({
   colors: {
     brand: {
       primary: "#FF6B9D",

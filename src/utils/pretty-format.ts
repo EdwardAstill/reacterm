@@ -1,4 +1,4 @@
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 
 export interface Line {
   text: string;
@@ -21,7 +21,7 @@ export function formatValue(
   prefix: string,
   currentPath: string,
   collapsedPaths: Set<string>,
-  colors: StormColors,
+  colors: ReactermColors,
   visited: Set<object> = new Set(),
 ): Line[] {
   const pad = " ".repeat(currentDepth * indent);

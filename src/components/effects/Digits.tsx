@@ -1,9 +1,9 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface DigitsProps extends StormTextStyleProps {
+export interface DigitsProps extends ReactermTextStyleProps {
   /** String of digits, colons, periods, dashes, spaces, or letters to display */
   value: string;
 }

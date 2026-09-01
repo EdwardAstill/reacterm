@@ -76,7 +76,7 @@ function paneLabel(idx: number): string {
 
 export function CodeReview(props: CodeReviewProps): React.ReactElement {
   const colors = useColors();
-  const { repoName = "storm" } = props;
+  const { repoName = "reacterm" } = props;
   const { exit, flushSync } = useTui();
   const { width, height } = useTerminal();
 

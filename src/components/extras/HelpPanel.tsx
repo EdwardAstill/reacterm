@@ -5,7 +5,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useForceUpdate } from "../../hooks/useForceUpdate.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import type { KeyEvent } from "../../input/types.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
@@ -20,7 +20,7 @@ export interface HelpBinding {
   category?: string;
 }
 
-export interface HelpPanelProps extends StormLayoutStyleProps {
+export interface HelpPanelProps extends ReactermLayoutStyleProps {
   /** Array of keyboard shortcut bindings to display. */
   bindings: HelpBinding[];
   /** Display mode: "inline" renders in document flow, "modal" renders as an overlay. */

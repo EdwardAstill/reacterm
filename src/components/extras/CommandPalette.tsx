@@ -7,7 +7,7 @@ import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { FocusGroup } from "../core/FocusGroup.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { findNextNavigable } from "../../utils/navigation.js";
 import { INPUT_PRIORITY } from "../../input/priorities.js";
 import { OVERLAY_LAYER } from "../overlay-layers.js";
@@ -301,7 +301,7 @@ function CommandPaletteItem({ command, isActive = false, children }: CommandPale
   );
 }
 
-export interface CommandPaletteProps extends StormLayoutStyleProps {
+export interface CommandPaletteProps extends ReactermLayoutStyleProps {
   /** Array of command definitions to display. */
   commands: PaletteCommand[];
   /** Called when a command is selected. */

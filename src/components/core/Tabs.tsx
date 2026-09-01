@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { findNextNavigable as findNextNav } from "../../utils/navigation.js";
@@ -20,7 +20,7 @@ export interface Tab {
 
 export type TabsVariant = "bracket" | "plain" | "pill";
 
-export interface TabsProps extends StormLayoutStyleProps {
+export interface TabsProps extends ReactermLayoutStyleProps {
   tabs: Tab[];
   activeKey: string;
   onChange?: (key: string) => void;

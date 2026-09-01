@@ -3,7 +3,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { BrailleCanvas } from "../../utils/braille-canvas.js";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -16,7 +16,7 @@ export interface ScatterPlotSeries {
   color?: string | number;
 }
 
-export interface ScatterPlotProps extends StormLayoutStyleProps {
+export interface ScatterPlotProps extends ReactermLayoutStyleProps {
   series: ScatterPlotSeries[];
   /** Override: must be numeric for chart cell column calculation. */
   width?: number;

@@ -158,7 +158,7 @@ export function ShowcaseData(props: ShowcaseDataProps): React.ReactElement {
     blank("b8a"),
     React.createElement("tui-box", { key: "d-pretty", marginLeft: 2 },
       React.createElement(Pretty, {
-        data: { name: "Storm", version: "1.0", features: ["layout", "scroll"] },
+        data: { name: "Reacterm", version: "1.0", features: ["layout", "scroll"] },
       }),
     ),
     blank("b8b"),

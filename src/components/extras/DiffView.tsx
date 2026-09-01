@@ -3,11 +3,11 @@ import { Box } from "../core/Box.js";
 import { Text } from "../core/Text.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useInput } from "../../hooks/useInput.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormColors } from "../../theme/colors.js";
+import type { ReactermColors } from "../../theme/colors.js";
 
 export interface DiffViewContextValue {
   scrollIndex: number;
@@ -129,7 +129,7 @@ export interface DiffLine {
   newLineNumber?: number;
 }
 
-export interface DiffViewProps extends StormContainerStyleProps {
+export interface DiffViewProps extends ReactermContainerStyleProps {
   /** Raw unified diff string (output of `git diff` etc.) */
   diff?: string;
   /** Or provide pre-parsed lines */
@@ -371,7 +371,7 @@ interface DiffColorPalette {
   focusBg: string;
 }
 
-function getDiffColors(colors: StormColors): DiffColorPalette {
+function getDiffColors(colors: ReactermColors): DiffColorPalette {
   return {
     addedBg: colors.diff.addedBg,
     addedText: colors.diff.added,

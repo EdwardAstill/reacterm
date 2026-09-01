@@ -70,7 +70,7 @@ export function ProjectManager(props: ProjectManagerProps): React.ReactElement {
   const colors = useColors();
   const C = { primary: colors.brand.primary, accent: colors.brand.glow, warn: colors.warning, crit: colors.error, info: colors.info };
   const PRIO_COLOR: Record<string, string> = { High: colors.error, Medium: colors.warning, Low: colors.success };
-  const { projectName = "Storm v2.0" } = props;
+  const { projectName = "Reacterm v2.0" } = props;
   const { exit, flushSync } = useTui();
   const { width, height } = useTerminal();
 

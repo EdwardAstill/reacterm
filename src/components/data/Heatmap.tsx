@@ -3,13 +3,13 @@ import React, { useRef } from "react";
 import { useColors } from "../../hooks/useColors.js";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getColorAt } from "../../utils/color.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { formatLegendNumber } from "./chart-core/format.js";
 
-export interface HeatmapProps extends StormLayoutStyleProps {
+export interface HeatmapProps extends ReactermLayoutStyleProps {
   /** 2D data: rows of values. data[row][col] */
   data: number[][];
   /** Row labels (left side) */

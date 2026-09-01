@@ -1,7 +1,7 @@
 import React, { useRef, createContext, useContext } from "react";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useFormBehavior } from "../../hooks/headless/useFormBehavior.js";
@@ -187,7 +187,7 @@ export interface FormField {
   asyncValidate?: (value: string) => Promise<string | null>;
 }
 
-export interface FormProps extends StormContainerStyleProps {
+export interface FormProps extends ReactermContainerStyleProps {
   fields: FormField[];
   onSubmit?: (values: Record<string, string>) => void;
   isFocused?: boolean;

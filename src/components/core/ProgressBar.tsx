@@ -3,12 +3,12 @@ import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import { useMeasure } from "../../hooks/useMeasure.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 
-export interface ProgressBarProps extends StormLayoutStyleProps {
+export interface ProgressBarProps extends ReactermLayoutStyleProps {
   /** Progress value 0-100. Pass undefined or -1 for indeterminate mode. */
   value: number | undefined;
   /** Override: must be numeric for bar width calculation. */

@@ -8,7 +8,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import type { StormPlugin } from "../core/plugin.js";
+import type { ReactermPlugin } from "../core/plugin.js";
 import type { KeyEvent } from "../input/types.js";
 import type { ScreenBuffer } from "../core/buffer.js";
 import type { RenderContext } from "../core/render-context.js";
@@ -16,7 +16,7 @@ import type { RenderContext } from "../core/render-context.js";
 export interface ScreenshotPluginOptions {
   /** Directory to save screenshots (default: current working directory). */
   outputDir?: string;
-  /** File name prefix (default: "storm-screenshot"). */
+  /** File name prefix (default: "reacterm-screenshot"). */
   prefix?: string;
   /** SVG font size in pixels (default: 14). */
   fontSize?: number;
@@ -42,9 +42,9 @@ export interface ScreenshotPluginOptions {
  * });
  * ```
  */
-export function screenshotPlugin(options: ScreenshotPluginOptions = {}): StormPlugin {
+export function screenshotPlugin(options: ScreenshotPluginOptions = {}): ReactermPlugin {
   const outputDir = options.outputDir ?? process.cwd();
-  const prefix = options.prefix ?? "storm-screenshot";
+  const prefix = options.prefix ?? "reacterm-screenshot";
   const fontSize = options.fontSize ?? 14;
   const fontFamily = options.fontFamily ?? "Menlo, Monaco, monospace";
   const backgroundColor = options.backgroundColor ?? "#0B0E14";
@@ -78,7 +78,7 @@ export function screenshotPlugin(options: ScreenshotPluginOptions = {}): StormPl
 
     const buffer = renderContext.buffer;
     if (!buffer) {
-      process.stderr.write("[storm/screenshot] No buffer available — skipping capture.\n");
+      process.stderr.write("[reacterm/screenshot] No buffer available — skipping capture.\n");
       return;
     }
 
@@ -95,7 +95,7 @@ export function screenshotPlugin(options: ScreenshotPluginOptions = {}): StormPl
     if (options.onCapture) {
       options.onCapture(filePath);
     } else {
-      process.stderr.write(`[storm/screenshot] Saved: ${filePath}\n`);
+      process.stderr.write(`[reacterm/screenshot] Saved: ${filePath}\n`);
     }
   }
 

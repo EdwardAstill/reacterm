@@ -3,7 +3,7 @@ import { useColors } from "../../hooks/useColors.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
 export interface DividerProps {
-  style?: "solid" | "dotted" | "dashed" | "line" | "storm";
+  style?: "solid" | "dotted" | "dashed" | "line" | "reacterm";
   color?: string;
   width?: number;
   label?: string;
@@ -14,7 +14,7 @@ const LINE_CHARS: Record<string, string> = {
   dotted: "\u254C",  // ╌
   dashed: "\u2504",  // ┄
   line: "\u2500",    // ─
-  storm: "\u2501",   // ━
+  reacterm: "\u2501",   // ━
 };
 
 export const Divider = React.memo(function Divider(rawProps: DividerProps): React.ReactElement {
@@ -22,7 +22,7 @@ export const Divider = React.memo(function Divider(rawProps: DividerProps): Reac
   const props = usePluginProps("Divider", rawProps);
   const { style = "solid", color = colors.divider, width = 200, label } = props;
   const char = LINE_CHARS[style] ?? LINE_CHARS["solid"]!;
-  const dim = style !== "storm";
+  const dim = style !== "reacterm";
 
   if (!label) {
     return React.createElement(

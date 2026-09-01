@@ -6,12 +6,12 @@ import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { useForceUpdate } from "../../hooks/useForceUpdate.js";
 import { Markdown } from "./Markdown.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import type { KeyEvent } from "../../input/types.js";
 import type { ScrollState } from "../core/ScrollView.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 
-export interface MarkdownViewerProps extends StormLayoutStyleProps {
+export interface MarkdownViewerProps extends ReactermLayoutStyleProps {
   /** The raw Markdown string to render. */
   content: string;
   /** Maximum width hint for the Markdown content area. */

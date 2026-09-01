@@ -1,9 +1,9 @@
 import React from "react";
-import type { StormTextStyleProps } from "../../styles/styleProps.js";
+import type { ReactermTextStyleProps } from "../../styles/styleProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface LinkProps extends StormTextStyleProps {
+export interface LinkProps extends ReactermTextStyleProps {
   url: string;
   children: React.ReactNode;
 }

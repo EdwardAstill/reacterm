@@ -106,7 +106,7 @@ export function adaptiveChar(
 const UNICODE_BORDERS: Record<string, string> = {
   round: "╭╮╰╯│─",
   heavy: "┏┓┗┛┃━",
-  storm: "╔╗╚╝║═",
+  reacterm: "╔╗╚╝║═",
 };
 
 const ASCII_BORDER = "++++-|";
@@ -116,7 +116,7 @@ const ASCII_BORDER = "++++-|";
  * Falls back to ASCII +-| on non-unicode terminals.
  */
 export function adaptiveBorder(
-  style: "round" | "heavy" | "storm",
+  style: "round" | "heavy" | "reacterm",
   caps: TerminalCapabilities,
 ): string {
   if (!caps.unicode) return ASCII_BORDER;

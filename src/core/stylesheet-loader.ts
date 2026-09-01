@@ -1,13 +1,13 @@
 /**
  * StyleSheet Loader — file-based stylesheet loading with live reloading.
  *
- * Parses `.storm.css` files (CSS-like syntax for terminal components)
+ * Parses `.reacterm.css` files (CSS-like syntax for terminal components)
  * and optionally watches for changes to enable hot-reload during development.
  *
  * @example
  * ```ts
  * const { stylesheet, close } = createStyleSheetLoader({
- *   path: "./app.storm.css",
+ *   path: "./app.reacterm.css",
  *   watch: true,
  *   onReload: (sheet) => console.log("Reloaded", sheet.rules.length, "rules"),
  * });
@@ -43,7 +43,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export interface StyleSheetLoaderOptions {
-  /** Path to .storm.css or .storm.json stylesheet file. */
+  /** Path to .reacterm.css or .reacterm.json stylesheet file. */
   path: string;
   /** Enable file watching for live reload (default: true in dev, false in prod). */
   watch?: boolean;
@@ -145,7 +145,7 @@ function parseBlockDeclarations(body: string): Array<{ name: string; value: stri
 }
 
 /**
- * Parse a .storm.css file into StyleSheet rules.
+ * Parse a .reacterm.css file into StyleSheet rules.
  *
  * Supports:
  * - CSS-like block syntax: `selector { property: value; }`
@@ -155,10 +155,10 @@ function parseBlockDeclarations(body: string): Array<{ name: string; value: stri
  * - Property value auto-parsing (numbers, booleans, strings, percentages)
  * - CSS custom properties: `:root { --name: value; }` and `var(--name)` / `var(--name, fallback)`
  *
- * @param source - The raw .storm.css file content
+ * @param source - The raw .reacterm.css file content
  * @returns Parsed stylesheet with rules and variables
  */
-export function parseStormCSS(source: string): ParsedStyleSheet {
+export function parseReactermCSS(source: string): ParsedStyleSheet {
   // First pass: extract all blocks (selector + raw body)
   interface RawBlock {
     selector: string;
@@ -195,7 +195,7 @@ export function parseStormCSS(source: string): ParsedStyleSheet {
       continue;
     }
 
-    // Find matching closing brace (handles no nesting — storm.css is flat)
+    // Find matching closing brace (handles no nesting — reacterm.css is flat)
     const closeIdx = cleaned.indexOf("}", braceIdx + 1);
     if (closeIdx === -1) break; // Unclosed block — stop parsing
 
@@ -238,7 +238,7 @@ export function parseStormCSS(source: string): ParsedStyleSheet {
 }
 
 /**
- * Parse a .storm.json file into StyleSheet rules.
+ * Parse a .reacterm.json file into StyleSheet rules.
  *
  * Expected format:
  * ```json
@@ -248,7 +248,7 @@ export function parseStormCSS(source: string): ParsedStyleSheet {
  * }
  * ```
  */
-function parseStormJSON(source: string): ParsedStyleSheet {
+function parseReactermJSON(source: string): ParsedStyleSheet {
   const data = JSON.parse(source) as Record<string, Record<string, unknown>>;
   const rules: StyleRule[] = [];
 
@@ -267,10 +267,10 @@ function parseStormJSON(source: string): ParsedStyleSheet {
 function parseFile(filePath: string, source: string): ParsedStyleSheet {
   const ext = path.extname(filePath).toLowerCase();
   if (ext === ".json") {
-    return parseStormJSON(source);
+    return parseReactermJSON(source);
   }
-  // Default: treat as .storm.css
-  return parseStormCSS(source);
+  // Default: treat as .reacterm.css
+  return parseReactermCSS(source);
 }
 
 /** Determine whether watch mode should be enabled by default. */
@@ -333,7 +333,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[reacterm] ${error.message}\x1b[0m\n`);
         }
         return; // Keep the old stylesheet
       }
@@ -348,7 +348,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[reacterm] ${error.message}\x1b[0m\n`);
         }
         return; // Keep the old stylesheet
       }
@@ -380,7 +380,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
         if (options.onError) {
           options.onError(error);
         } else {
-          process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
+          process.stderr.write(`\x1b[33m[reacterm] ${error.message}\x1b[0m\n`);
         }
       });
     } catch (err) {
@@ -391,7 +391,7 @@ export function createStyleSheetLoader(options: StyleSheetLoaderOptions): {
       if (options.onError) {
         options.onError(error);
       } else {
-        process.stderr.write(`\x1b[33m[storm] ${error.message}\x1b[0m\n`);
+        process.stderr.write(`\x1b[33m[reacterm] ${error.message}\x1b[0m\n`);
       }
     }
   }

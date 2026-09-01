@@ -3,7 +3,7 @@ import { useInput } from "../../hooks/useInput.js";
 import type { KeyEvent } from "../../input/types.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
@@ -15,7 +15,7 @@ export interface ListViewItem {
   icon?: string;
 }
 
-export interface ListViewProps extends StormContainerStyleProps {
+export interface ListViewProps extends ReactermContainerStyleProps {
   items: readonly ListViewItem[];
   selectedKey?: string;
   onSelect?: (key: string) => void;

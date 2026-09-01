@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 import { formatValue } from "../utils/pretty-format.js";
 
 const colors = {
@@ -7,7 +7,7 @@ const colors = {
   brand: { primary: "#80f", light: "#a8f" },
   success: "#0c0",
   info: "#08c",
-} as unknown as StormColors;
+} as unknown as ReactermColors;
 
 describe("formatValue", () => {
   it("formats primitives with color tags", () => {

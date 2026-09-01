@@ -7,13 +7,13 @@ import { useCleanup } from "../../hooks/useCleanup.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { Table, type TableProps } from "../table/Table.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 
 type TableRow = Record<string, string | number>;
 
 export interface SearchTableProps
-  extends Omit<TableProps, keyof StormLayoutStyleProps>,
-    StormLayoutStyleProps {
+  extends Omit<TableProps, keyof ReactermLayoutStyleProps>,
+    ReactermLayoutStyleProps {
   /** Column keys to include in the substring match. Default: every column. */
   searchableColumns?: string[];
   /** Custom predicate. Receives the raw row + the (possibly lowercased) query. */

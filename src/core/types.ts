@@ -105,7 +105,7 @@ export function parseColor(input: string | number | undefined): number {
     if (!_warnedColors.has(input)) {
       _warnedColors.add(input);
       process.stderr.write(
-        `[storm] Warning: Unknown color "${input}". ` +
+        `[reacterm] Warning: Unknown color "${input}". ` +
         "Supported formats: named colors, #RGB, #RRGGBB, rgb(r,g,b), or ANSI 0-255.\n",
       );
     }
@@ -194,7 +194,7 @@ export interface Rect {
   height: number;
 }
 
-export type BorderStyle = "none" | "single" | "double" | "heavy" | "round" | "ascii" | "storm";
+export type BorderStyle = "none" | "single" | "double" | "heavy" | "round" | "ascii" | "reacterm";
 
 export interface BorderChars {
   topLeft: string;
@@ -246,7 +246,7 @@ export const BORDER_CHARS: Record<Exclude<BorderStyle, "none">, BorderChars> = {
     horizontal: "-",
     vertical: "|",
   },
-  storm: {
+  reacterm: {
     topLeft: "╺",
     topRight: "╸",
     bottomLeft: "╺",

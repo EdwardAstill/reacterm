@@ -2,7 +2,7 @@ import React, { useRef, createContext, useContext } from "react";
 import { useTui } from "../../context/TuiContext.js";
 import { useCleanup } from "../../hooks/useCleanup.js";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { useStyles } from "../../core/style-provider.js";
@@ -10,11 +10,11 @@ import { usePersonality } from "../../core/personality.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { getVariantColors } from "../../utils/theme-maps.js";
 
-export interface CardProps extends StormContainerStyleProps {
+export interface CardProps extends ReactermContainerStyleProps {
   children: React.ReactNode;
   title?: string;
   icon?: string;
-  variant?: "default" | "storm" | "success" | "error" | "warning";
+  variant?: "default" | "reacterm" | "success" | "error" | "warning";
   focused?: boolean;
   "aria-label"?: string;
   /** Footer content rendered at the bottom with a dim divider line above it. */
@@ -28,7 +28,7 @@ export interface CardProps extends StormContainerStyleProps {
 }
 
 export interface CardContextValue {
-  variant: "default" | "storm" | "success" | "error" | "warning";
+  variant: "default" | "reacterm" | "success" | "error" | "warning";
   focused: boolean;
 }
 
@@ -41,7 +41,7 @@ export function useCardContext(): CardContextValue {
 }
 
 export interface CardRootProps {
-  variant?: "default" | "storm" | "success" | "error" | "warning";
+  variant?: "default" | "reacterm" | "success" | "error" | "warning";
   focused?: boolean;
   children: React.ReactNode;
   "aria-label"?: string;

@@ -1,5 +1,5 @@
 /**
- * Integration tests for Storm TUI.
+ * Integration tests for Reacterm TUI.
  *
  * Tests the full render lifecycle, component re-rendering with diffing,
  * imperative mutation patterns, error recovery, focus management,
@@ -15,7 +15,7 @@ import { RenderContext } from "../core/render-context.js";
 import { ScreenBuffer } from "../core/buffer.js";
 import { RenderErrorBoundary } from "../core/error-boundary.js";
 import { FocusManager } from "../core/focus.js";
-import { PluginManager, type StormPlugin } from "../core/plugin.js";
+import { PluginManager, type ReactermPlugin } from "../core/plugin.js";
 import { createRoot, createElement, createTextNode, type TuiRoot } from "../reconciler/types.js";
 
 // ── 1. Full Render Lifecycle ───────────────────────────────────────────
@@ -24,13 +24,13 @@ describe("Full render lifecycle", () => {
   it("should mount, paint, and unmount cleanly", () => {
     const result = renderForTest(
       React.createElement("tui-box", { flexDirection: "column" },
-        React.createElement("tui-text", null, "Hello Storm"),
+        React.createElement("tui-text", null, "Hello Reacterm"),
         React.createElement("tui-text", { bold: true }, "Ready"),
       ),
       { width: 40, height: 10 },
     );
 
-    expect(result.hasText("Hello Storm")).toBe(true);
+    expect(result.hasText("Hello Reacterm")).toBe(true);
     expect(result.hasText("Ready")).toBe(true);
     expect(result.lines.length).toBeGreaterThan(0);
 
@@ -404,7 +404,7 @@ describe("Error recovery", () => {
     const errors = boundary.getErrors();
     expect(errors).toHaveLength(1);
     const formatted = boundary.formatError(errors[0]!);
-    expect(formatted).toContain("[Storm Error]");
+    expect(formatted).toContain("[Reacterm Error]");
     expect(formatted).toContain("diff");
     expect(formatted).toContain("Diff mismatch");
   });
@@ -657,7 +657,7 @@ describe("Plugin system", () => {
   });
 
   it("should intercept component props via onComponentProps", () => {
-    const plugin: StormPlugin = {
+    const plugin: ReactermPlugin = {
       name: "test-interceptor",
       onComponentProps: (componentName, props) => {
         if (componentName === "Button") {
@@ -681,7 +681,7 @@ describe("Plugin system", () => {
   });
 
   it("should apply component defaults from plugin", () => {
-    const plugin: StormPlugin = {
+    const plugin: ReactermPlugin = {
       name: "defaults-plugin",
       componentDefaults: {
         Button: { variant: "primary", size: "medium" },
@@ -707,7 +707,7 @@ describe("Plugin system", () => {
   it("should run lifecycle hooks", () => {
     const lifecycle: string[] = [];
 
-    const plugin: StormPlugin = {
+    const plugin: ReactermPlugin = {
       name: "lifecycle-plugin",
       beforeRender: () => { lifecycle.push("before"); },
       afterRender: (info) => { lifecycle.push(`after:${info.renderTimeMs}ms`); },
@@ -726,7 +726,7 @@ describe("Plugin system", () => {
   it("should process key events through plugin chain", () => {
     const consumed: string[] = [];
 
-    const plugin: StormPlugin = {
+    const plugin: ReactermPlugin = {
       name: "key-interceptor",
       onKey: (event) => {
         if (event.ctrl && event.key === "s") {

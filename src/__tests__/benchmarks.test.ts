@@ -1,5 +1,5 @@
 /**
- * Storm TUI Performance Benchmark Suite
+ * Reacterm TUI Performance Benchmark Suite
  *
  * Reproducible benchmarks that run as part of the test suite.
  * Thresholds are generous enough for CI but meaningful enough to catch regressions.
@@ -364,7 +364,7 @@ describe("Performance benchmarks", () => {
         computeLayout(tree, 0, 0, W, H);
 
         // Paint pass (write to buffer based on layout)
-        buf.writeString(0, 0, `Storm TUI | frame ${tick}`.padEnd(W), 0xD4A053, 0x1E1E2E, 0);
+        buf.writeString(0, 0, `Reacterm TUI | frame ${tick}`.padEnd(W), 0xD4A053, 0x1E1E2E, 0);
         for (let y = 1; y < H - 1; y++) {
           if (y < 16) {
             buf.writeString(0, y, `Nav ${y}`.padEnd(30), 0x888888, 0x1E1E2E, 0);

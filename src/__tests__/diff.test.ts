@@ -1,5 +1,5 @@
 /**
- * DiffRenderer tests for Storm TUI.
+ * DiffRenderer tests for Reacterm TUI.
  *
  * Tests the cell-level and row-level diff algorithm that produces
  * minimal ANSI output for terminal updates.

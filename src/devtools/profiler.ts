@@ -1,5 +1,5 @@
 /**
- * Deep profiler -- per-frame timing, memory, GC pressure, and Storm internals.
+ * Deep profiler -- per-frame timing, memory, GC pressure, and Reacterm internals.
  *
  * Designed for zero overhead when disabled. Memory is sampled every 10th frame
  * to avoid the cost of process.memoryUsage() on every tick.
@@ -41,7 +41,7 @@ export interface ProfilerSnapshot {
   heapDelta: number;
   gcPressure: number;
 
-  // Storm internals
+  // Reacterm internals
   bufferBytes: number;
   cellsChanged: number;
   totalCells: number;

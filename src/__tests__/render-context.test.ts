@@ -1,5 +1,5 @@
 /**
- * RenderContext tests for Storm TUI.
+ * RenderContext tests for Reacterm TUI.
  *
  * Tests the mutable per-render state container: layout invalidation,
  * scroll state management, dirty region tracking, metrics, and cleanup APIs.

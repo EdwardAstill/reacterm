@@ -158,7 +158,7 @@ export function buildWebRendererPage(options: WebRendererPageOptions): string {
     <div id="grid">
       <div id="splash">
         <div class="logo">&#x26A1;</div>
-        <div class="msg">Waiting for Storm TUI&hellip;</div>
+        <div class="msg">Waiting for Reacterm TUI&hellip;</div>
       </div>
     </div>
     <div id="cursor"></div>

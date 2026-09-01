@@ -8,6 +8,29 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import React from "react";
 import { renderToString } from "../../src/reconciler/render-to-string.js";
+import {
+  createReactermMatchers,
+  parseReactermCSS,
+  type ReactermColors,
+  type ReactermContainerStyleProps,
+  type ReactermLayoutStyleProps,
+  type ReactermPersonality,
+  type ReactermPlugin,
+  type ReactermSSHOptions,
+  type ReactermSSHServer,
+  type ReactermTextStyleProps,
+} from "../../src/index.js";
+
+type ReactermPublicTypes = [
+  ReactermColors,
+  ReactermPersonality,
+  ReactermTextStyleProps,
+  ReactermLayoutStyleProps,
+  ReactermContainerStyleProps,
+  ReactermPlugin,
+  ReactermSSHOptions,
+  ReactermSSHServer,
+];
 
 // ── Components ──────────────────────────────────────────────────────────
 import {
@@ -101,6 +124,15 @@ function renderHook(name: string, hookFn: () => void): void {
 const noop = () => {};
 
 describe("all public exports", () => {
+  it("exposes only the Reacterm parser and matcher names", () => {
+    expect(parseReactermCSS("Text { bold: true; }").rules).toHaveLength(1);
+    expect(Object.keys(createReactermMatchers()).sort()).toEqual([
+      "toContainReactermText",
+      "toHaveReactermLines",
+      "toMatchReactermSnapshot",
+    ]);
+  });
+
   beforeAll(() => {
     styleFixtureDirectory = mkdtempSync(join(tmpdir(), "reacterm-style-"));
     styleFixturePath = join(styleFixtureDirectory, "fixture.css");

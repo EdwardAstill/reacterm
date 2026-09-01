@@ -1,14 +1,14 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
 import { BrailleCanvas } from "../../utils/braille-canvas.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import type { ChartSeries } from "./chart-types.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { resample, formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { getBrailleChartMetrics } from "./chart-core/format.js";
 
-export interface AreaChartProps extends StormLayoutStyleProps {
+export interface AreaChartProps extends ReactermLayoutStyleProps {
   series: ChartSeries[];
   /** Override: must be numeric for chart cell column calculation. */
   width?: number;

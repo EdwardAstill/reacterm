@@ -1,10 +1,10 @@
 import React from "react";
 import { useColors } from "../../hooks/useColors.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { pickStyleProps } from "../../styles/applyStyles.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 
-export interface KeyboardHelpProps extends StormLayoutStyleProps {
+export interface KeyboardHelpProps extends ReactermLayoutStyleProps {
   bindings: Array<{ key: string; label: string }>;
   separator?: string;
   keyColor?: string | number;

@@ -73,7 +73,7 @@ export function ShowcaseChat(props: ShowcaseChatProps): React.ReactElement {
   // 5. MessageBubble
   const messageBubble = React.createElement(MessageBubble, {
     symbol: ">", symbolColor: colors.user.symbol,
-    children: React.createElement("tui-text", null, "How do I use Storm TUI?"),
+    children: React.createElement("tui-text", null, "How do I use Reacterm TUI?"),
   });
 
   // 6. StatusLine
@@ -89,12 +89,12 @@ export function ShowcaseChat(props: ShowcaseChatProps): React.ReactElement {
   // 8. AnimatedLogo (removed — placeholder)
   const logo = React.createElement("tui-text", {
     color: colors.text.secondary, italic: true,
-  }, "Storm");
+  }, "Reacterm");
 
   // 9. ComponentGallery — text description only
   const galleryNote = React.createElement("tui-text", {
     color: colors.text.secondary, italic: true,
-  }, "  ComponentGallery: interactive split-pane catalog of all Storm components. Too complex to embed inline — run it standalone.");
+  }, "  ComponentGallery: interactive split-pane catalog of all Reacterm components. Too complex to embed inline — run it standalone.");
 
   const footer = React.createElement("tui-text", { dim: true }, "  [q] Quit");
 

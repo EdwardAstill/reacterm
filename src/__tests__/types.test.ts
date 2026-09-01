@@ -152,7 +152,7 @@ describe("Style conversion", () => {
 
 describe("BORDER_CHARS", () => {
   it("has all expected border styles", () => {
-    const styles = ["single", "double", "heavy", "round", "ascii", "storm"] as const;
+    const styles = ["single", "double", "heavy", "round", "ascii", "reacterm"] as const;
     for (const style of styles) {
       const chars = BORDER_CHARS[style];
       expect(chars).toHaveProperty("topLeft");

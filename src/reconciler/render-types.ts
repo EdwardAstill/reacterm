@@ -4,10 +4,10 @@ import type { ScreenOptions } from "../core/screen.js";
 import type { Screen } from "../core/screen.js";
 import type { InputManager } from "../input/manager.js";
 import type { ErrorBoundaryOptions } from "../core/error-boundary.js";
-import type { PluginManager, StormPlugin } from "../core/plugin.js";
+import type { PluginManager, ReactermPlugin } from "../core/plugin.js";
 import type { MiddlewarePipeline } from "../core/middleware.js";
 import type { TuiRoot, BackgroundProp } from "./types.js";
-import type { StormColors } from "../theme/colors.js";
+import type { ReactermColors } from "../theme/colors.js";
 
 export interface FullRenderMetrics extends RenderMetrics {
   renderTime: number; // ms
@@ -49,9 +49,9 @@ export interface RenderOptions extends ScreenOptions {
    */
   autoScroll?: boolean;
   /** Plugins to register before initial render. */
-  plugins?: StormPlugin[];
+  plugins?: ReactermPlugin[];
   /** Color theme to apply. When set, ThemeProvider uses this instead of the dark default. */
-  theme?: StormColors;
+  theme?: ReactermColors;
   /**
    * Set the terminal's default background color via OSC 11.
    * - `string`: use that hex color (e.g. "#0A0A0A")

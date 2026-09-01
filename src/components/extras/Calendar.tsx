@@ -4,12 +4,12 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
 import { MONTH_NAMES, DAY_HEADERS_SUN, DAY_HEADERS_MON, getDaysInMonth, getFirstDayOfWeek } from "../../utils/date.js";
 
-export interface CalendarProps extends StormLayoutStyleProps {
+export interface CalendarProps extends ReactermLayoutStyleProps {
   year: number;
   month: number;
   selectedDay?: number;

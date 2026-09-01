@@ -4,14 +4,14 @@ import { useStyles } from "../../core/style-provider.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
-import type { StormContainerStyleProps, StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps, ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { Divider } from "../core/Divider.js";
 import { TextArea, type HighlightSpan, type TextAreaProps } from "../core/TextArea.js";
 import { createSyntaxHighlightLines } from "../../widgets/dev/SyntaxHighlight.js";
 
-type EditorTextAreaProps = Omit<TextAreaProps, keyof StormLayoutStyleProps | "highlight" | "flex">;
+type EditorTextAreaProps = Omit<TextAreaProps, keyof ReactermLayoutStyleProps | "highlight" | "flex">;
 
-export interface EditorProps extends StormContainerStyleProps, EditorTextAreaProps {
+export interface EditorProps extends ReactermContainerStyleProps, EditorTextAreaProps {
   /** Title shown in the editor header. @default "Editor" */
   title?: string;
   /** Language identifier used for the header badge and built-in syntax highlighting. */

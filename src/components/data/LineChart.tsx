@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { BrailleCanvas } from "../../utils/braille-canvas.js";
 import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { useColors } from "../../hooks/useColors.js";
 import { resample, formatAxisLabel, getSeriesPalette, composeBrailleCells } from "../../utils/chart-helpers.js";
@@ -15,7 +15,7 @@ export interface LineChartSeries {
   name?: string;
 }
 
-export interface LineChartProps extends StormLayoutStyleProps {
+export interface LineChartProps extends ReactermLayoutStyleProps {
   series: LineChartSeries[];
   /** Override: must be numeric for chart cell column calculation. */
   width?: number;

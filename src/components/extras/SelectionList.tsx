@@ -4,7 +4,7 @@ import { useInput } from "../../hooks/useInput.js";
 import { useTui } from "../../context/TuiContext.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormLayoutStyleProps } from "../../styles/styleProps.js";
+import type { ReactermLayoutStyleProps } from "../../styles/styleProps.js";
 import { usePluginProps } from "../../hooks/usePluginProps.js";
 import { usePersonality } from "../../core/personality.js";
 import { pickLayoutProps } from "../../styles/applyStyles.js";
@@ -14,7 +14,7 @@ export interface SelectionListItem {
   value: string;
 }
 
-export interface SelectionListProps extends StormLayoutStyleProps {
+export interface SelectionListProps extends ReactermLayoutStyleProps {
   items: Array<{ label: string; value: string }>;
   selectedValues: string[];
   onChange?: (values: string[]) => void;

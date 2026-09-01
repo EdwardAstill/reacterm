@@ -2,7 +2,7 @@ import React, { useRef, useCallback, createContext, useContext } from "react";
 import { useInput } from "../../hooks/useInput.js";
 import { useColors } from "../../hooks/useColors.js";
 import type { KeyEvent } from "../../input/types.js";
-import type { StormContainerStyleProps } from "../../styles/styleProps.js";
+import type { ReactermContainerStyleProps } from "../../styles/styleProps.js";
 import { mergeBoxStyles, pickStyleProps } from "../../styles/applyStyles.js";
 import { DEFAULTS } from "../../styles/defaults.js";
 import { useStyles } from "../../core/style-provider.js";
@@ -15,7 +15,7 @@ export interface AlertAction {
   onAction: () => void;
 }
 
-export interface AlertProps extends StormContainerStyleProps {
+export interface AlertProps extends ReactermContainerStyleProps {
   children: React.ReactNode;
   type?: "success" | "warning" | "error" | "info";
   title?: string;

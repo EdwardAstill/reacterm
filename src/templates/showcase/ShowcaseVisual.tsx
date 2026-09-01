@@ -45,7 +45,7 @@ export function ShowcaseVisual(props: ShowcaseVisualProps): React.ReactElement {
   // 1. Gradient
   const gradient = React.createElement(Gradient, {
     colors: [colors.brand.primary, colors.success],
-    children: "Storm TUI Framework",
+    children: "Reacterm TUI Framework",
   });
 
   // 2. GradientBorder
@@ -85,7 +85,7 @@ export function ShowcaseVisual(props: ShowcaseVisualProps): React.ReactElement {
   const sepLine = React.createElement(Separator, { style: "line", label: "line" });
   const sepDashed = React.createElement(Separator, { style: "dashed", label: "dashed" });
   const sepDotted = React.createElement(Separator, { style: "dotted", label: "dotted" });
-  const sepStorm = React.createElement(Separator, { style: "storm", label: "storm" });
+  const sepReacterm = React.createElement(Separator, { style: "reacterm", label: "reacterm" });
 
   // 9. Image — block fallback
   const image = React.createElement(Image, {
@@ -107,7 +107,7 @@ export function ShowcaseVisual(props: ShowcaseVisualProps): React.ReactElement {
       heading("RevealTransition"), React.createElement("tui-box", { marginLeft: 2 }, reveal), gap(),
       heading("GradientProgress"), React.createElement("tui-box", { marginLeft: 2 }, gradientProgress), gap(),
       heading("Separator — all 4 styles"),
-      sepLine, sepDashed, sepDotted, sepStorm, gap(),
+      sepLine, sepDashed, sepDotted, sepReacterm, gap(),
       heading("Image (block fallback)"), React.createElement("tui-box", { marginLeft: 2 }, image), gap(),
       footer,
     ),

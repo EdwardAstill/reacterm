@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { colors as defaultColors, type StormColors } from "./colors.js";
+import { colors as defaultColors, type ReactermColors } from "./colors.js";
 import { type DeepPartial } from "./index.js";
 import { isPlainObject, deepMerge } from "./utils.js";
 
@@ -11,9 +11,9 @@ import { isPlainObject, deepMerge } from "./utils.js";
  * will override the defaults. All other values keep the default palette.
  *
  * @param filePath - Absolute or relative path to a JSON theme file.
- * @returns A complete StormColors object with defaults filled in.
+ * @returns A complete ReactermColors object with defaults filled in.
  */
-export function loadTheme(filePath: string): StormColors {
+export function loadTheme(filePath: string): ReactermColors {
   const resolved = path.resolve(filePath);
   const raw = fs.readFileSync(resolved, "utf-8");
   return parseTheme(raw);
@@ -25,9 +25,9 @@ export function loadTheme(filePath: string): StormColors {
  * Partial themes are deep-merged with the default color palette.
  *
  * @param json - A JSON string representing a full or partial theme.
- * @returns A complete StormColors object with defaults filled in.
+ * @returns A complete ReactermColors object with defaults filled in.
  */
-export function parseTheme(json: string): StormColors {
+export function parseTheme(json: string): ReactermColors {
   if (json.length > 1024 * 1024) throw new Error("Theme file exceeds 1MB limit");
   const parsed: unknown = JSON.parse(json);
   if (!isPlainObject(parsed)) {
@@ -36,16 +36,16 @@ export function parseTheme(json: string): StormColors {
   return deepMerge(
     defaultColors as unknown as Record<string, unknown>,
     parsed,
-  ) as StormColors;
+  ) as ReactermColors;
 }
 
 /**
  * Save a theme to a JSON file as pretty-printed JSON.
  *
- * @param theme - The StormColors theme to save.
+ * @param theme - The ReactermColors theme to save.
  * @param filePath - Absolute or relative path to write the JSON file.
  */
-export function saveTheme(theme: StormColors, filePath: string): void {
+export function saveTheme(theme: ReactermColors, filePath: string): void {
   const resolved = path.resolve(filePath);
   const dir = path.dirname(resolved);
   if (!fs.existsSync(dir)) {
@@ -57,9 +57,9 @@ export function saveTheme(theme: StormColors, filePath: string): void {
 /**
  * Export a theme as a formatted JSON string without writing to disk.
  *
- * @param theme - The StormColors theme to serialize.
+ * @param theme - The ReactermColors theme to serialize.
  * @returns A pretty-printed JSON string.
  */
-export function serializeTheme(theme: StormColors): string {
+export function serializeTheme(theme: ReactermColors): string {
   return JSON.stringify(theme, null, 2);
 }
