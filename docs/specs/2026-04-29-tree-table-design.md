@@ -80,7 +80,7 @@ export interface TreeTableRow {
   icon?: string;
 }
 
-export interface TreeTableProps extends StormContainerStyleProps {
+export interface TreeTableProps extends ReactermContainerStyleProps {
   columns: TableColumn[];
   data: TreeTableRow[];
   /**
